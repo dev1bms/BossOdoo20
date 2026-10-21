@@ -54,6 +54,7 @@ class BossPricing(models.AbstractModel):
             "container_type_id": _("Container type"), "gross_kg": _("Gross weight"), "volume_m3": _("Volume"),
             "pallets": _("Pallets"), "goods_value": _("Goods value"), "duties_amount": _("Customs duties"),
             "storage_days": _("Days (estimate)"), "km": _("Kilometres"),
+            "awb_kg": _("Chargeable weight of the air waybill"), "state_id": _("Province (inland)"),
             "volumetric_factor": _("Volumetric factor of the tariff"),
             "base_services": _("Base services of the same supplier"),
             "base_services_currency": _("Base services in the tariff currency"),
@@ -73,8 +74,9 @@ class BossPricing(models.AbstractModel):
             return CostResult("ok", line=Line, candidates=Line)
         if mode == "manual":
             return CostResult("manual", line=Line, candidates=Line)
-        if mode != "tariff" or product.boss_cost_method not in engine.METHODS:
+        if mode != "tariff":
             return CostResult("not_ready", line=Line, candidates=Line)
+        # The method belongs to each supplier price line (one service, different suppliers, different methods).
 
         lines = Line.search([("product_id", "=", product.id), ("uom_id", "=", uom.id),
                              ("tariff_id.active", "=", True)])

@@ -48,6 +48,7 @@
                             <field name="carrier_id" readonly="state != 'draft'"/>
                             <field name="port_ids" widget="many2many_tags" readonly="state != 'draft'"/>
                             <field name="country_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                            <field name="state_ids" widget="many2many_tags" readonly="state != 'draft'"/>
                             <field name="customer_id" readonly="state != 'draft'"/>
                         </group>
                     </group>

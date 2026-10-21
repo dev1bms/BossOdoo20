@@ -6,7 +6,8 @@ class BossTariff(models.Model):
 
     def _boss_refresh_quotations(self):
         """Open quotations of these services see the new state at once (frozen lines never change)."""
-        lines = self.env["sale.order.line"].search([
+        # System refresh: the approver may not have access to quotations.
+        lines = self.env["sale.order.line"].sudo().search([
             ("product_id", "in", self.line_ids.product_id.ids),
             ("boss_price_frozen", "=", False),
             ("order_id.state", "in", ("draft", "sent")),

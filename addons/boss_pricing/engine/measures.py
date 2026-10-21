@@ -47,6 +47,8 @@ def raw_measure(basis, inputs, params):
         if not factor:
             raise MissingInput("volumetric_factor")
         return max(_required(inputs, "gross_kg"), _required(inputs, "volume_m3") * dec(factor))
+    if basis == "awb_kg":
+        return _required(inputs, "awb_kg")
     if basis in ("pallets", "goods_value", "duties_amount", "km"):
         return _required(inputs, basis)
     raise ValueError(f"unknown quantity basis {basis}")

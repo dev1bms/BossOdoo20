@@ -107,7 +107,8 @@ def time_based(params, inputs):
 
     free_mode 'deduct': only the days after the free period are paid; 'threshold': once the free
     period is exceeded every day from day 1 is paid. Day tiers apply by the day's position since the
-    start ('positional') or, with 'whole_stay', the tier reached by the whole stay prices every day.
+    start ('positional', e.g. «día 5 hasta el 7»), by the position after the free period ('relative',
+    e.g. «5 días a 40, a partir de ahí 95») or, with 'whole_stay', the tier reached by the whole stay.
     """
     days = inputs.get("storage_days")
     if days in (None, False, ""):
@@ -120,10 +121,13 @@ def time_based(params, inputs):
         charged = range(free + 1, days + 1)
     quantity, raw = measure(params.get("basis") or "containers", inputs, params)
     tiers = params.get("brackets") or []
-    if params.get("tier_mode") == "whole_stay":
+    mode = params.get("tier_mode") or "positional"
+    if mode == "whole_stay":
         prices = [dec(_bracket(tiers, dec(days))["unit_price"])] * len(charged)
     else:
-        prices = [dec(_bracket(tiers, dec(day))["unit_price"]) for day in charged]
+        first = charged[0] if charged else 1
+        position = (lambda day: day) if mode == "positional" else (lambda day: day - first + 1)
+        prices = [dec(_bracket(tiers, dec(position(day)))["unit_price"]) for day in charged]
     amount = sum(prices, dec(0)) * quantity
     steps = [("time", {"days": days, "free": free, "charged_days": len(charged), "quantity": quantity,
                        "raw": raw, "day_prices": prices, "amount": amount})]

@@ -24,7 +24,12 @@ class SaleOrder(models.Model):
         "Planned date", tracking=True,
         help="ETA for imports, ETD for exports. It chooses the version of each supplier tariff.")
     boss_container_ids = fields.One2many("boss.shipment.container", "order_id", "Containers", copy=True)
+    boss_inland_state_id = fields.Many2one(
+        "res.country.state", "Inland province", domain="[('country_id.code', '=', 'ES')]", tracking=True,
+        help="Province of the pickup (export) or delivery (import) place in Spain; hauliers price by zone.")
     boss_gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2))
+    boss_awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2),
+                               help="Chargeable weight written on the air waybill; air handlers price on it.")
     boss_volume_m3 = fields.Float("Volume (m³)", digits=(12, 3))
     boss_pallets = fields.Integer("Pallets")
     boss_goods_value = fields.Monetary("Goods value", currency_field="currency_id",
@@ -51,10 +56,12 @@ class SaleOrder(models.Model):
             "carrier_id": self.boss_carrier_id.id,
             "port_id": self.boss_port_id.id,
             "country_id": self.boss_country_id.id,
+            "state_id": self.boss_inland_state_id.id,
             "customer_id": self.partner_id.commercial_partner_id.id,
             "containers": [{"size": c.size, "type_id": c.container_type_id.id, "quantity": c.quantity}
                            for c in self.boss_container_ids],
             "gross_kg": self.boss_gross_kg or None,
+            "awb_kg": self.boss_awb_kg or None,
             "volume_m3": self.boss_volume_m3 or None,
             "pallets": self.boss_pallets or None,
             "goods_value": self.boss_goods_value or None,

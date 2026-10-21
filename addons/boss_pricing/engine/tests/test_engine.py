@@ -124,6 +124,11 @@ class TestMethods(unittest.TestCase):
                                                    "unit_size": 100, "round_up": True, "min_amount": 50})
         self.assertEqual(amount(threshold, gross_kg=500, volume_m3=1, storage_days=2), Decimal("0.00"))
         self.assertEqual(amount(threshold, gross_kg=500, volume_m3=1, storage_days=3), Decimal("150.00"))
+        relative = rule(1, method="time", params={"free_days": 7, "tier_mode": "relative", "basis": "containers",
+                                                  "brackets": [{"up_to": 5, "unit_price": 10},
+                                                               {"up_to": 0, "unit_price": 20}]})
+        # days 8..12 are the first 5 charged days at 10, days 13..15 at 20: (50 + 60) x 2 containers
+        self.assertEqual(amount(relative, containers=cont, storage_days=15), Decimal("220.00"))
         whole = rule(1, method="time", params={"free_days": 0, "brackets": tiers, "tier_mode": "whole_stay",
                                                "basis": "containers"})
         self.assertEqual(amount(whole, containers=cont, storage_days=8), Decimal("320.00"))

@@ -32,6 +32,7 @@
                             <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_port_id" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_country_id" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_inland_state_id" readonly="state in ('sale', 'cancel')"/>
                         </group>
                         <group string="Carrier and date">
                             <field name="boss_carrier_id" readonly="state in ('sale', 'cancel')"/>
@@ -41,6 +42,8 @@
                         <group string="Cargo">
                             <field name="boss_gross_kg" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_volume_m3" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_awb_kg" readonly="state in ('sale', 'cancel')"
+                                   invisible="boss_transport_mode != 'air'"/>
                             <field name="boss_pallets" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_goods_value" readonly="state in ('sale', 'cancel')"/>
                         </group>

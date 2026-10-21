@@ -801,7 +801,7 @@
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
         <field name="boss_pricing_mode">tariff</field>
-        <field name="boss_cost_method">route_tiers</field>
+        <field name="boss_cost_method">brackets</field>
         <field name="description">Road pickup or delivery priced by the haulier by route zone and weight brackets.</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_legacy_codes">TRI, TRE</field>
@@ -821,7 +821,7 @@
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
         <field name="boss_pricing_mode">tariff</field>
-        <field name="boss_cost_method">route_tiers</field>
+        <field name="boss_cost_method">brackets</field>
         <field name="description">Road haulage of the container by route, per container.</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_legacy_codes">TCC, TTC</field>

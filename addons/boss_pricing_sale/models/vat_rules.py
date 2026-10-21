@@ -10,7 +10,7 @@ Zones: PRO = mainland Spain + Balearics, CAN = Canary Islands, COM = rest of the
 
 NR_PAIRS = {("PRO", "PRO"), ("CAN", "PRO"), ("COM", "PRO"), ("COM", "COM"), ("TER", "PRO"), ("TER", "COM")}
 CANARY_STATE_CODES = {"GC", "TF"}
-SPAIN_OUTSIDE_ZONES = {"CE", "ML"}  # Ceuta, Melilla: not covered by the rules -> pending
+SPAIN_OUTSIDE_ZONES = {"CE", "ME"}  # Ceuta, Melilla (Odoo codes): zone not settled (P17) -> pending
 
 
 def zone(country_code, state_code=None, eu_codes=frozenset(), canary=False):

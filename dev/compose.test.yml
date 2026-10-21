@@ -28,6 +28,7 @@ services:
     volumes:
       - ../odoo-20.0+e.20261020:/opt/odoo-src:ro
       - ../addons:/mnt/extra-addons:ro
+      - ../samples-private:/mnt/samples:ro
       - odoo-data:/var/lib/odoo
 
 volumes:

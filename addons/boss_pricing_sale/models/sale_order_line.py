@@ -21,6 +21,7 @@ COST_FIELDS = ("boss_cost_status", "boss_cost_amount", "boss_cost_currency_id", 
 SHIPMENT_DEPENDS = (
     "order_id.partner_id", "order_id.boss_direction", "order_id.boss_transport_mode", "order_id.boss_load_type",
     "order_id.boss_carrier_id", "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_planned_date",
+    "order_id.boss_inland_state_id", "order_id.boss_awb_kg",
     "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
     "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
     "order_id.boss_pallets", "order_id.boss_goods_value", "order_id.boss_duties_amount",

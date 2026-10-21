@@ -20,6 +20,7 @@ BASES = [
     ("volume_m3", "Volume (m³)"),
     ("wm", "W/M: larger of tonnes and m³"),
     ("chargeable_kg", "Chargeable kg (volumetric factor of the document)"),
+    ("awb_kg", "Chargeable kg of the air waybill (entered)"),
     ("pallets", "Pallets"),
     ("km", "Kilometres"),
 ]
@@ -72,9 +73,11 @@ class BossTariffLine(models.Model):
     free_mode = fields.Selection([("deduct", "Free days are deducted"),
                                   ("threshold", "Once exceeded, every day is charged from day 1")],
                                  default="deduct")
-    tier_mode = fields.Selection([("positional", "Each day at the tier of its position"),
+    tier_mode = fields.Selection([("positional", "Day number since the start (\"day 5 to 7\")"),
+                                  ("relative", "Days after the free period (\"5 days at X, then Y\")"),
                                   ("whole_stay", "Every day at the tier reached by the whole stay")],
-                                 default="positional")
+                                 default="positional",
+                                 help="How the 'Up to' of the day tiers is read.")
     friday_extra_day = fields.Boolean(help="One more free day when the period starts on a Friday.")
     saturday_until_monday = fields.Boolean(help="Free until Monday when the period starts on a Saturday.")
     min_amount = fields.Float("Minimum", min_display_digits="Product Price",

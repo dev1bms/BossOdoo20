@@ -4,7 +4,7 @@ from odoo.exceptions import UserError, ValidationError
 # ADR-002: the scope of a tariff = conditions shared by every line. Each one maps to a shipment
 # input of the same name in boss.pricing (one place, one meaning).
 SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_ids", "country_ids",
-                "customer_id")
+                "state_ids", "customer_id")
 # Approved = evidence: these fields never change; a change is a new version.
 GOVERNED_FIELDS = SCOPE_FIELDS + (
     "partner_id", "currency_id", "valid_from", "valid_to", "document", "document_reference",
@@ -60,6 +60,9 @@ class BossTariff(models.Model):
     country_ids = fields.Many2many(
         "res.country", string="Countries abroad",
         help="Origin country of an import or destination country of an export. Empty: any.")
+    state_ids = fields.Many2many(
+        "res.country.state", string="Provinces (inland)", domain="[('country_id.code', '=', 'ES')]",
+        help="Province of the pickup or delivery place in Spain (e.g. a haulier's zone). Empty: any.")
     customer_id = fields.Many2one("res.partner", "Customer", tracking=True,
                                   help="Prices agreed for this customer only. They win over general prices.")
     line_ids = fields.One2many("boss.tariff.line", "tariff_id", "Prices", copy=True)
@@ -151,4 +154,6 @@ class BossTariff(models.Model):
             conditions["port_id"] = set(self.port_ids.ids)
         if self.country_ids:
             conditions["country_id"] = set(self.country_ids.ids)
+        if self.state_ids:
+            conditions["state_id"] = set(self.state_ids.ids)
         return conditions
