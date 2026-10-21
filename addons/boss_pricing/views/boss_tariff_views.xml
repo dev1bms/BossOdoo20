@@ -47,23 +47,25 @@
                         <group>
                             <field name="carrier_id" readonly="state != 'draft'"/>
                             <field name="port_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                            <field name="country_ids" widget="many2many_tags" readonly="state != 'draft'"/>
                             <field name="customer_id" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Prices" name="prices">
                             <field name="line_ids" readonly="state != 'draft'">
-                                <list editable="bottom">
+                                <list>
                                     <field name="product_id"/>
-                                    <field name="allowed_uom_ids" column_invisible="1"/>
                                     <field name="uom_id"/>
-                                    <field name="method" optional="hide"/>
+                                    <field name="container_size" optional="show"/>
+                                    <field name="container_type_ids" widget="many2many_tags" optional="show"/>
+                                    <field name="method"/>
+                                    <field name="basis" optional="show"/>
                                     <field name="unit_price"/>
+                                    <field name="rate" optional="hide"/>
                                     <field name="min_amount" optional="show"/>
-                                    <field name="max_amount" optional="hide"/>
                                     <field name="on_request" optional="show"/>
                                     <field name="document_page"/>
-                                    <field name="note" optional="hide"/>
                                 </list>
                             </field>
                         </page>
@@ -73,6 +75,72 @@
                     </notebook>
                 </sheet>
                 <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_view_form" model="ir.ui.view">
+        <field name="name">boss.tariff.line.form</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group string="Service">
+                        <field name="product_id"/>
+                        <field name="allowed_uom_ids" invisible="1"/>
+                        <field name="uom_id"/>
+                        <field name="container_size"/>
+                        <field name="container_type_ids" widget="many2many_tags"/>
+                        <field name="document_page"/>
+                        <field name="on_request"/>
+                    </group>
+                    <group string="Calculation">
+                        <field name="method"/>
+                        <field name="basis" invisible="method == 'percent'"/>
+                        <field name="volumetric_factor" invisible="basis != 'chargeable_kg' and basis_2 != 'chargeable_kg'"/>
+                        <field name="unit_size" invisible="method == 'percent'"/>
+                        <field name="round_up" invisible="method == 'percent'"/>
+                        <field name="unit_price" invisible="method not in ('per_unit', 'max_of_bases')"/>
+                        <field name="min_amount"/>
+                        <field name="max_amount"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group invisible="method != 'max_of_bases'" string="Second basis">
+                    <field name="basis_2"/>
+                    <field name="unit_price_2"/>
+                    <field name="b2_unit_size"/>
+                    <field name="b2_round_up"/>
+                </group>
+                <group invisible="method != 'percent'" string="Percentage">
+                    <field name="percent_base"/>
+                    <field name="rate"/>
+                    <field name="base_product_ids" widget="many2many_tags" invisible="percent_base != 'services'"/>
+                </group>
+                <group invisible="method != 'time'" string="Free period">
+                    <group>
+                        <field name="free_days"/>
+                        <field name="free_hours"/>
+                        <field name="free_mode"/>
+                    </group>
+                    <group>
+                        <field name="tier_mode"/>
+                        <field name="friday_extra_day"/>
+                        <field name="saturday_until_monday"/>
+                    </group>
+                </group>
+                <group invisible="method != 'brackets'">
+                    <field name="floor_previous"/>
+                    <field name="per_container"/>
+                </group>
+                <field name="bracket_ids" invisible="method not in ('brackets', 'time')">
+                    <list editable="bottom">
+                        <field name="up_to"/>
+                        <field name="fixed_amount" column_invisible="parent.method == 'time'"/>
+                        <field name="unit_price"/>
+                    </list>
+                </field>
+                <field name="note" placeholder="Conditions or remarks of the document"/>
             </form>
         </field>
     </record>
@@ -135,6 +203,8 @@
             <list create="0">
                 <field name="product_id"/>
                 <field name="uom_id"/>
+                <field name="container_size" optional="show"/>
+                <field name="method" optional="show"/>
                 <field name="unit_price"/>
                 <field name="min_amount" optional="show"/>
                 <field name="max_amount" optional="hide"/>

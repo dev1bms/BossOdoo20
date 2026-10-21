@@ -9,6 +9,7 @@
                 <field name="name"/>
                 <field name="kind"/>
                 <field name="country_id"/>
+                <field name="canary_islands"/>
             </list>
         </field>
     </record>

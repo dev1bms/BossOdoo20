@@ -10,8 +10,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -19,6 +19,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Main sea freight of an import, quoted by the carrier or agent for each shipment.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="204"/>
         <field name="boss_o17_concept_code">FMI</field>
     </record>
@@ -37,6 +38,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Sea freight of an import in groupage, quoted by the consolidator or agent.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="204"/>
         <field name="boss_o17_concept_code">FMI</field>
     </record>
@@ -46,8 +48,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -55,6 +57,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Main sea freight of an export, quoted by the carrier for each shipment.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="203"/>
         <field name="boss_o17_concept_code">FME</field>
     </record>
@@ -73,6 +76,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Sea freight of an export in groupage, quoted by the consolidator.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="203"/>
         <field name="boss_o17_concept_code">FME</field>
     </record>
@@ -91,6 +95,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Main air freight of an import, quoted by the airline or agent.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="200"/>
         <field name="boss_o17_concept_code">FAI</field>
     </record>
@@ -109,6 +114,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Main air freight of an export, quoted by the airline or consolidator.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="199"/>
         <field name="boss_o17_concept_code">FAE</field>
     </record>
@@ -118,8 +124,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -127,6 +133,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Loading or unloading of the container at the sea terminal, charged by the carrier per container.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="230"/>
         <field name="boss_o17_concept_code">THC</field>
     </record>
@@ -145,6 +152,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">max_of_bases</field>
         <field name="description">Handling of groupage cargo at the CFS; the larger of tonnes x price and m³ x price.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="230"/>
         <field name="boss_o17_concept_code">THC</field>
     </record>
@@ -154,8 +162,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -163,6 +171,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Every carrier charge always applied that is not T3, BL/DOC, CES or DEM/OCU/DET; the lines add up.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="202"/>
         <field name="boss_o17_concept_code">GLO</field>
     </record>
@@ -172,8 +181,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -181,6 +190,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier compliance charge per container (port charges family).</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="202"/>
         <field name="boss_o17_concept_code">GLO</field>
     </record>
@@ -190,8 +200,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -199,6 +209,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier logistics fee per container (port charges family).</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="202"/>
         <field name="boss_o17_concept_code">GLO</field>
     </record>
@@ -218,6 +229,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier environmental surcharge per TEU on some trades.</field>
         <field name="boss_open_question">P24</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="202"/>
         <field name="boss_o17_concept_code">GLO</field>
     </record>
@@ -228,7 +240,7 @@
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
         <field name="uom_id" ref="uom_ton"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c20'), ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_container')])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -236,6 +248,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Port authority tax on the goods, per tonne or per container type depending on the supplier.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="228"/>
         <field name="boss_o17_concept_code">T3</field>
     </record>
@@ -245,8 +258,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -255,6 +268,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier per-container port fee that includes the T-3 tax.</field>
         <field name="boss_open_question">P11</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="228"/>
         <field name="boss_o17_concept_code">T3</field>
     </record>
@@ -273,6 +287,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier fee for the master B/L, charged once per shipment.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="194"/>
         <field name="boss_o17_concept_code">DOC</field>
     </record>
@@ -291,6 +306,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Issue of a house B/L, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="194"/>
         <field name="boss_o17_concept_code">DOC</field>
     </record>
@@ -300,8 +316,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -309,6 +325,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier release of the container, per container; differs by port and direction.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="185"/>
         <field name="boss_o17_concept_code">CES</field>
     </record>
@@ -318,8 +335,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -328,6 +345,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier charge for the verified gross mass declaration, per container.</field>
         <field name="boss_open_question">P12</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="235"/>
         <field name="boss_o17_concept_code">VGM</field>
     </record>
@@ -346,6 +364,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Supplier fee for an occasional correction; amount taken from the supplier.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="319"/>
         <field name="boss_o17_concept_code">COR</field>
     </record>
@@ -364,6 +383,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">EU entry summary declaration, per B/L.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="195"/>
         <field name="boss_o17_concept_code">ENS</field>
     </record>
@@ -382,6 +402,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">US customs advance filing, per B/L.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="181"/>
         <field name="boss_o17_concept_code">AMS</field>
     </record>
@@ -391,8 +412,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -400,6 +421,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">time</field>
         <field name="description">Days beyond the carrier's free time, per container and day, between the supplier's start and end events.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="191"/>
         <field name="boss_o17_concept_code">DEM</field>
     </record>
@@ -409,8 +431,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -419,6 +441,7 @@
         <field name="boss_cost_method">time</field>
         <field name="description">Use of the container outside the terminal beyond free time; own code or part of DEM is undecided.</field>
         <field name="boss_open_question">P09</field>
+        <field name="boss_vat_class">NR</field>
     </record>
     <record id="service_ocu" model="product.template">
         <field name="name">Port storage (per container and day)</field>
@@ -426,8 +449,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -435,6 +458,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">time</field>
         <field name="description">Port occupancy of the full container beyond free days, by port group and container type.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="218"/>
         <field name="boss_o17_concept_code">OCU</field>
     </record>
@@ -453,6 +477,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">time</field>
         <field name="description">Storage at the airport handler, space x time, with free hours or days.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="207"/>
         <field name="boss_o17_concept_code">ALM</field>
     </record>
@@ -462,8 +487,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -471,6 +496,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Moving the container to the inspection point, on request, per container.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="224"/>
         <field name="boss_o17_concept_code">POT</field>
     </record>
@@ -489,6 +515,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Handler fee per chargeable kg with a minimum.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="210"/>
         <field name="boss_o17_concept_code">HAN</field>
     </record>
@@ -508,6 +535,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Documentation fee for the air waybill.</field>
         <field name="boss_open_question">P25</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="297"/>
         <field name="boss_o17_concept_code">AWB</field>
     </record>
@@ -527,6 +555,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Handler surcharge; its concept, unit and scope are not confirmed yet.</field>
         <field name="boss_open_question">P10</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="329"/>
         <field name="boss_o17_concept_code">ETX</field>
     </record>
@@ -545,6 +574,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Security screening of air export cargo; per AWB or per kg depending on the supplier.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="222"/>
         <field name="boss_o17_concept_code">X-R</field>
     </record>
@@ -563,6 +593,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Customs broker fee for the import declaration.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="198"/>
         <field name="boss_o17_concept_code">FAD</field>
     </record>
@@ -581,6 +612,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Customs broker fee for the export declaration.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="193"/>
         <field name="boss_o17_concept_code">DEX</field>
     </record>
@@ -600,6 +632,7 @@
         <field name="boss_cost_method">percent</field>
         <field name="description">Cost of the customs guarantee, a percentage of the declaration duties with a minimum.</field>
         <field name="boss_open_question">P13</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="184"/>
         <field name="boss_o17_concept_code">CAU</field>
     </record>
@@ -618,6 +651,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Issue of the preferential origin certificate.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="196"/>
         <field name="boss_o17_concept_code">EUR1</field>
     </record>
@@ -636,6 +670,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Customs transit document, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="231"/>
         <field name="boss_o17_concept_code">TRA</field>
     </record>
@@ -654,6 +689,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Customs penalty passed on at cost; amount of each case.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="330"/>
         <field name="boss_o17_concept_code">SAD</field>
     </record>
@@ -672,6 +708,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">RoHS control, paid per document; several per consignment are possible.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="352"/>
         <field name="boss_o17_concept_code">ROH</field>
     </record>
@@ -690,6 +727,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">SOIVRE quality inspection, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="227"/>
         <field name="boss_o17_concept_code">SOI</field>
     </record>
@@ -708,6 +746,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Generic inspection, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="212"/>
         <field name="boss_o17_concept_code">INS</field>
     </record>
@@ -726,6 +765,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Health inspection or certificate, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="293"/>
         <field name="boss_o17_concept_code">SAN</field>
     </record>
@@ -744,6 +784,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Pharmacy inspection, per document.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="294"/>
         <field name="boss_o17_concept_code">FAR</field>
     </record>
@@ -762,6 +803,8 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">route_tiers</field>
         <field name="description">Road pickup or delivery priced by the haulier by route zone and weight brackets.</field>
+        <field name="boss_vat_class">NR</field>
+        <field name="boss_legacy_codes">TRI, TRE</field>
         <field name="boss_o17_concept_id" eval="365"/>
         <field name="boss_o17_concept_code">TTE</field>
     </record>
@@ -771,8 +814,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -780,8 +823,29 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">route_tiers</field>
         <field name="description">Road haulage of the container by route, per container.</field>
+        <field name="boss_vat_class">NR</field>
+        <field name="boss_legacy_codes">TCC, TTC</field>
         <field name="boss_o17_concept_id" eval="365"/>
         <field name="boss_o17_concept_code">TTE</field>
+    </record>
+    <record id="service_ftt" model="product.template">
+        <field name="name">Road freight (replaced by TTE-CON)</field>
+        <field name="default_code">FTT</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_road"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Odoo 19 land freight code; Cristina chose TTE for inland transport. Kept for history only.</field>
+        <field name="boss_vat_class">NR</field>
+        <field name="boss_replaced_by_id" ref="service_tte_con"/>
+        <field name="active" eval="False"/>
     </record>
     <record id="service_fs" model="product.template">
         <field name="name">Fuel surcharge (% of road transport)</field>
@@ -798,6 +862,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">percent</field>
         <field name="description">Percentage on the road transport of the same haulier, with its own validity.</field>
+        <field name="boss_vat_class">NR</field>
     </record>
     <record id="service_par" model="product.template">
         <field name="name">Truck waiting time (per hour)</field>
@@ -814,6 +879,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Truck waiting time, per hour requested.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="220"/>
         <field name="boss_o17_concept_code">PAR</field>
     </record>
@@ -832,6 +898,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Origin agent charges abroad, fixed per B/L or AWB.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="197"/>
         <field name="boss_o17_concept_code">EXW</field>
     </record>
@@ -850,6 +917,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Origin agent charges abroad for air cargo, per kg.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="197"/>
         <field name="boss_o17_concept_code">EXW</field>
     </record>
@@ -859,8 +927,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -868,6 +936,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Origin agent charges abroad, per container.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="197"/>
         <field name="boss_o17_concept_code">EXW</field>
     </record>
@@ -886,6 +955,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Origin agent charges abroad for groupage, per m³.</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="197"/>
         <field name="boss_o17_concept_code">EXW</field>
     </record>
@@ -904,6 +974,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Destination agent charges abroad, fixed per shipment.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="190"/>
         <field name="boss_o17_concept_code">DAP</field>
     </record>
@@ -913,8 +984,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -922,6 +993,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Destination agent charges abroad, per container.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="190"/>
         <field name="boss_o17_concept_code">DAP</field>
     </record>
@@ -940,6 +1012,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Cost agreed with the origin agent, never sold as a line.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="221"/>
         <field name="boss_o17_concept_code">PFT</field>
     </record>
@@ -949,8 +1022,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="False"/>
@@ -958,6 +1031,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Cost agreed with the origin agent, never sold as a line.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="221"/>
         <field name="boss_o17_concept_code">PFT</field>
     </record>
@@ -976,6 +1050,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Cost agreed with the origin agent, with minimum and maximum; never sold as a line.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="221"/>
         <field name="boss_o17_concept_code">PFT</field>
     </record>
@@ -985,8 +1060,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -994,6 +1069,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Warehouse loading or unloading of a container.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="206"/>
         <field name="boss_o17_concept_code">OAL</field>
     </record>
@@ -1012,6 +1088,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Warehouse handling of pallets in or out.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="206"/>
         <field name="boss_o17_concept_code">OAL</field>
     </record>
@@ -1030,6 +1107,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Palletising of the goods, per pallet.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="219"/>
         <field name="boss_o17_concept_code">PAL</field>
     </record>
@@ -1039,8 +1117,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -1048,6 +1126,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Fumigation of the container, per container.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="300"/>
         <field name="boss_o17_concept_code">FUM</field>
     </record>
@@ -1066,6 +1145,7 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Courier of original documents, per dispatch.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="305"/>
         <field name="boss_o17_concept_code">MEN</field>
     </record>
@@ -1084,6 +1164,7 @@
         <field name="boss_pricing_mode">own</field>
         <field name="boss_cost_method">none</field>
         <field name="description">BOSS's own fee per sea shipment; no supplier cost.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="189"/>
         <field name="boss_o17_concept_code">CSM</field>
     </record>
@@ -1102,6 +1183,7 @@
         <field name="boss_pricing_mode">own</field>
         <field name="boss_cost_method">none</field>
         <field name="description">BOSS's own fee per air shipment; no supplier cost.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="188"/>
         <field name="boss_o17_concept_code">CSA</field>
     </record>
@@ -1120,6 +1202,7 @@
         <field name="boss_pricing_mode">own</field>
         <field name="boss_cost_method">none</field>
         <field name="description">BOSS's own fee per road shipment; no supplier cost.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="304"/>
         <field name="boss_o17_concept_code">CST</field>
     </record>
@@ -1135,10 +1218,11 @@
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
-        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_pricing_mode">pending</field>
         <field name="boss_cost_method">percent</field>
         <field name="description">Percentage covering the bank loss on USD amounts.</field>
         <field name="boss_open_question">P03</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="236"/>
         <field name="boss_o17_concept_code">QBR</field>
     </record>
@@ -1158,6 +1242,7 @@
         <field name="boss_cost_method">percent</field>
         <field name="description">Insurance premium as a percentage of the insured value, with a minimum.</field>
         <field name="boss_open_question">P13</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="226"/>
         <field name="boss_o17_concept_code">SEG</field>
     </record>
@@ -1176,6 +1261,7 @@
         <field name="boss_pricing_mode">manual</field>
         <field name="boss_cost_method">manual</field>
         <field name="description">Catch-all local arrival charges; amount taken from the supplier.</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="208"/>
         <field name="boss_o17_concept_code">GLL</field>
     </record>
@@ -1195,6 +1281,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Used in Odoo 17 (one customer); definition and unit not decided.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="213"/>
         <field name="boss_o17_concept_code">VET</field>
     </record>
@@ -1214,6 +1301,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Carrier T-3 handling at cost in Odoo 17; scope not decided.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="239"/>
         <field name="boss_o17_concept_code">GT3</field>
     </record>
@@ -1233,6 +1321,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Destruction of goods at cost (rare); definition pending.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="332"/>
         <field name="boss_o17_concept_code">DES</field>
     </record>
@@ -1242,8 +1331,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -1252,6 +1341,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Rarely used; definition pending.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="234"/>
         <field name="boss_o17_concept_code">VAC</field>
     </record>
@@ -1261,8 +1351,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -1271,6 +1361,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Overlaps with POT; to decide whether it stays a separate service.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="223"/>
         <field name="boss_o17_concept_code">POS</field>
     </record>
@@ -1280,8 +1371,8 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_c20"/>
-        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45'), ref('uom_kg_gross'), ref('uom_shipment')])]"/>
+        <field name="uom_id" ref="uom_container"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_kg_gross'), ref('uom_shipment')])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
@@ -1290,6 +1381,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Surcharge for dangerous goods; three different bases seen, not decided.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="211"/>
         <field name="boss_o17_concept_code">IMO</field>
     </record>
@@ -1309,6 +1401,7 @@
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Clearance type used by two customers; meaning to confirm.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="316"/>
         <field name="boss_o17_concept_code">DVD</field>
     </record>
@@ -1328,6 +1421,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Used for weekly T1 transits of one customer; to confirm.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="311"/>
         <field name="boss_o17_concept_code">GAV</field>
     </record>
@@ -1347,6 +1441,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Duty paid on behalf of the customer, amount from the customs declaration.</field>
         <field name="boss_open_question">P18</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="182"/>
         <field name="boss_o17_concept_code">ARA</field>
     </record>
@@ -1366,6 +1461,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Tax paid on behalf of the customer, amount from the customs declaration.</field>
         <field name="boss_open_question">P18</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="348"/>
         <field name="boss_o17_concept_code">PLA</field>
     </record>
@@ -1385,6 +1481,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Import VAT paid on behalf of the customer, amount from the customs declaration.</field>
         <field name="boss_open_question">P18</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="215"/>
         <field name="boss_o17_concept_code">IVA</field>
     </record>
@@ -1404,6 +1501,7 @@
         <field name="boss_cost_method">manual</field>
         <field name="description">Anti-dumping duty; treatment not decided.</field>
         <field name="boss_open_question">P16</field>
+        <field name="boss_vat_class">NS</field>
         <field name="boss_o17_concept_id" eval="346"/>
         <field name="boss_o17_concept_code">DUM</field>
     </record>

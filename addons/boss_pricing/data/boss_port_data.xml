@@ -5,6 +5,8 @@
     <record id="port_esalg" model="boss.port"><field name="name">Algeciras</field><field name="code">ESALG</field><field name="country_id" ref="base.es"/></record>
     <record id="port_esbio" model="boss.port"><field name="name">Bilbao</field><field name="code">ESBIO</field><field name="country_id" ref="base.es"/></record>
     <record id="port_esvgo" model="boss.port"><field name="name">Vigo</field><field name="code">ESVGO</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_eslpa" model="boss.port"><field name="name">Las Palmas</field><field name="code">ESLPA</field><field name="country_id" ref="base.es"/><field name="canary_islands" eval="True"/></record>
+    <record id="port_essct" model="boss.port"><field name="name">Santa Cruz de Tenerife</field><field name="code">ESSCT</field><field name="country_id" ref="base.es"/><field name="canary_islands" eval="True"/></record>
     <record id="port_esmad_air" model="boss.port"><field name="name">Madrid-Barajas</field><field name="code">MAD</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
     <record id="port_esbcn_air" model="boss.port"><field name="name">Barcelona-El Prat</field><field name="code">BCN</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
     <record id="port_esvlc_air" model="boss.port"><field name="name">Valencia (airport)</field><field name="code">VLC</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="container_type_dv" model="boss.container.type"><field name="code">DV</field><field name="name">Dry standard</field><field name="sequence">1</field></record>
+    <record id="container_type_hc" model="boss.container.type"><field name="code">HC</field><field name="name">Dry high cube</field><field name="sequence">2</field></record>
+    <record id="container_type_rf" model="boss.container.type"><field name="code">RF</field><field name="name">Reefer</field><field name="sequence">3</field></record>
+    <record id="container_type_ot" model="boss.container.type"><field name="code">OT</field><field name="name">Open top</field><field name="sequence">4</field></record>
+    <record id="container_type_fr" model="boss.container.type"><field name="code">FR</field><field name="name">Flat rack</field><field name="sequence">5</field></record>
+    <record id="container_type_tk" model="boss.container.type"><field name="code">TK</field><field name="name">Tank</field><field name="sequence">6</field></record>
+</odoo>

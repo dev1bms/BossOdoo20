@@ -43,7 +43,7 @@ class Rule:
     priority: int = 10  # lower wins; set on purpose by the approver
     # condition name -> accepted values; a missing key means "any"
     conditions: dict = field(default_factory=dict)
-    params: dict = field(default_factory=dict)  # method parameters (unit_price, min_amount...)
+    params: dict = field(default_factory=dict)  # method parameters read from the supplier document
 
     def valid_on(self, day):
         return (not self.valid_from or self.valid_from <= day) and (

@@ -10,6 +10,14 @@
                          help="What to do when a supplier price is in another currency than the quotation.">
                     <field name="boss_fx_policy"/>
                 </setting>
+                <setting id="boss_vat_mapping" string="VAT of BOSS services"
+                         help="Odoo tax for each VAT class given by the VAT rules. Empty: the VAT of those lines stays pending and the quotation cannot be sent or confirmed.">
+                    <div class="content-group">
+                        <div class="row"><label for="boss_tax_nr_id" class="col-lg-5 o_light_label"/><field name="boss_tax_nr_id"/></div>
+                        <div class="row"><label for="boss_tax_ex_id" class="col-lg-5 o_light_label"/><field name="boss_tax_ex_id"/></div>
+                        <div class="row"><label for="boss_tax_ns_id" class="col-lg-5 o_light_label"/><field name="boss_tax_ns_id"/></div>
+                    </div>
+                </setting>
             </setting>
         </field>
     </record>

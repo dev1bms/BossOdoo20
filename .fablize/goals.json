@@ -1,0 +1,62 @@
+{
+ "brief": "BOSS Odoo 20 pricing phase 1: CRM -> accepted quotation for all valid BOSS services, verified against supplier documents, deployed, ES/EN guide published at doc.bosscontinental.com/new",
+ "created": "2026-10-21T16:51:29.964800+00:00",
+ "goals": [
+  {
+   "id": "G001",
+   "title": "G1 Sources",
+   "objective": "Source index and knowledge extraction with provenance (SharePoint NEW ODOO, O19, O20)",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G002",
+   "title": "G2 Model fixes",
+   "objective": "Container size as condition, VAT treatment status blocking send/confirm, backend tariff permissions, history kept",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G003",
+   "title": "G3 Methods",
+   "objective": "Engine methods max-of-bases, brackets, percentage, time-based estimate vs actual; manual/offer costs",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G004",
+   "title": "G4 Catalogue",
+   "objective": "Every service mapped to its source, legacy codes kept, method per service, ES/EN help",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G005",
+   "title": "G5 Samples",
+   "objective": "Reference samples from supplier documents (THC, ALM, others), idempotent loader, independent expected results in tests",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G006",
+   "title": "G6 UI cycle",
+   "objective": "CRM to accepted quotation verified in the UI on an isolated DB, incl. missing definition and return; screenshots",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G007",
+   "title": "G7 Deploy",
+   "objective": "Modules deployed to the Odoo 20 env after identity check; commits",
+   "status": "pending",
+   "evidence": null
+  },
+  {
+   "id": "G008",
+   "title": "G8 Guide",
+   "objective": "ES/EN guide built, old guide archived dated, new guide published and verified",
+   "status": "pending",
+   "evidence": null
+  }
+ ]
+}

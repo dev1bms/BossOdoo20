@@ -11,6 +11,9 @@
                         <field name="sale_line_id" invisible="1"/>
                         <field name="product_id" readonly="1"/>
                         <field name="uom_id" readonly="1"/>
+                        <field name="container_size" readonly="1" invisible="not container_size"/>
+                        <field name="container_type_id" readonly="1" invisible="not container_type_id"/>
+                        <field name="price_by_container_type" invisible="not container_type_id"/>
                         <field name="unit_price"/>
                         <field name="min_amount"/>
                         <field name="max_amount"/>
@@ -37,6 +40,7 @@
                     <group>
                         <field name="carrier_id"/>
                         <field name="port_ids" widget="many2many_tags"/>
+                        <field name="country_ids" widget="many2many_tags"/>
                         <field name="only_this_customer"/>
                     </group>
                 </group>

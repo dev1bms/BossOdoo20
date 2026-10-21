@@ -4,23 +4,24 @@
 """
 from decimal import ROUND_HALF_UP, Decimal
 
-from .methods import METHODS, MissingInput, dec
+from .methods import METHODS
+from .methods_base import MissingInput, OutOfRange, dec
 from .model import Match, Result, Rule, Status
 from .selection import select
 
-__all__ = ["Match", "Result", "Rule", "Status", "price", "select"]
+__all__ = ["METHODS", "Match", "Result", "Rule", "Status", "price", "select"]
 
 
-def price(rules, shipment, day, quantity, decimals=2):
+def price(rules, inputs, day, decimals=2):
     """Price one service on one charge basis for one shipment.
 
     rules: engine Rules of this service and charge basis (any state/validity).
-    shipment: dict of shipment inputs used by rule conditions.
+    inputs: shipment inputs + line inputs (line_qty, container filter...) used by conditions and
+        quantities.
     day: date that picks the tariff version (None = not known yet).
-    quantity: quantity in the charge basis (None or <= 0 = not known yet).
     decimals: rounding of the result (currency precision), ROUND_HALF_UP.
     """
-    result = select(rules, shipment, day)
+    result = select(rules, inputs, day)
     if result.status is not Status.OK:
         return result
     rule = result.rule
@@ -28,15 +29,19 @@ def price(rules, shipment, day, quantity, decimals=2):
     if rule.on_request:
         result.status = Status.ON_REQUEST
         return result
-    if quantity is None or dec(quantity) <= 0:
+    try:
+        amount, steps = METHODS[rule.method](rule.params, inputs)
+    except MissingInput as exc:
+        result.status = Status.MISSING_INPUT
+        result.missing = ["quantity" if name == "line_qty" else name for name in exc.names]
+        return result
+    except OutOfRange:
+        result.status, result.steps = Status.NO_TARIFF, [("out_of_range", {})]
+        return result
+    if inputs.get("line_qty") not in (None, False, "") and dec(inputs["line_qty"]) <= 0:
         result.status, result.missing = Status.MISSING_INPUT, ["quantity"]
         return result
-    result.quantity = dec(quantity)
-    try:
-        amount, steps = METHODS[rule.method](rule.params, result.quantity)
-    except MissingInput as exc:
-        result.status, result.missing = Status.MISSING_INPUT, exc.names
-        return result
+    result.quantity = dec(inputs.get("line_qty") or 0)
     result.amount = amount.quantize(Decimal(1).scaleb(-decimals), rounding=ROUND_HALF_UP)
     result.steps = steps
     return result

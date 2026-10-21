@@ -34,6 +34,12 @@ class BossSupplierPriceWizard(models.TransientModel):
     carrier_id = fields.Many2one("res.partner", "Carrier", compute="_compute_from_line", store=True, readonly=False, precompute=True)
     port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_from_line", store=True,
                                 readonly=False, precompute=True)
+    country_ids = fields.Many2many("res.country", string="Countries abroad", compute="_compute_from_line",
+                                   store=True, readonly=False, precompute=True)
+    container_size = fields.Selection(related="sale_line_id.boss_container_size", string="Container size")
+    container_type_id = fields.Many2one(related="sale_line_id.boss_container_type_id", string="Container type")
+    price_by_container_type = fields.Boolean(
+        "Only for this container type", help="The document prices this container type differently.")
     only_this_customer = fields.Boolean(help="Price agreed for this customer only.")
     # The price itself.
     unit_price = fields.Float(required=True, min_display_digits="Product Price")
@@ -58,6 +64,7 @@ class BossSupplierPriceWizard(models.TransientModel):
             wiz.load_type = order.boss_load_type
             wiz.carrier_id = supplier
             wiz.port_ids = order.boss_port_id
+            wiz.country_ids = order.boss_country_id
 
     def _tariff_values(self):
         order = self.sale_line_id.order_id
@@ -67,6 +74,7 @@ class BossSupplierPriceWizard(models.TransientModel):
             "document_name": self.document_name, "document_reference": self.document_reference,
             "direction": self.direction, "transport_mode": self.transport_mode, "load_type": self.load_type,
             "carrier_id": self.carrier_id.id, "port_ids": [(6, 0, self.port_ids.ids)],
+            "country_ids": [(6, 0, self.country_ids.ids)],
             "customer_id": order.partner_id.commercial_partner_id.id if self.only_this_customer else False,
         }
 
@@ -78,7 +86,8 @@ class BossSupplierPriceWizard(models.TransientModel):
         self.env["boss.tariff.line"].create({
             "tariff_id": tariff.id, "product_id": self.product_id.id, "uom_id": self.uom_id.id,
             "unit_price": self.unit_price, "min_amount": self.min_amount, "max_amount": self.max_amount,
-            "document_page": self.document_page,
+            "document_page": self.document_page, "container_size": self.container_size,
+            "container_type_ids": [(6, 0, self.container_type_id.ids if self.price_by_container_type else [])],
         })
         if self.submit:
             tariff.action_submit()

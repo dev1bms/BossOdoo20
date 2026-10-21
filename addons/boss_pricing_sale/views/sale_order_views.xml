@@ -31,16 +31,28 @@
                             <field name="boss_transport_mode" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_port_id" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_country_id" readonly="state in ('sale', 'cancel')"/>
                         </group>
                         <group string="Carrier and date">
                             <field name="boss_carrier_id" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_planned_date" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_pricing_frozen" invisible="1"/>
                         </group>
+                        <group string="Cargo">
+                            <field name="boss_gross_kg" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_volume_m3" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_pallets" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_goods_value" readonly="state in ('sale', 'cancel')"/>
+                        </group>
+                        <group string="Estimates">
+                            <field name="boss_storage_days" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_duties_amount" readonly="state in ('sale', 'cancel')"/>
+                        </group>
                     </group>
                     <field name="boss_container_ids" readonly="state in ('sale', 'cancel')">
                         <list editable="bottom">
                             <field name="size"/>
+                            <field name="container_type_id" options="{'no_create': True}"/>
                             <field name="quantity"/>
                         </list>
                     </field>
@@ -49,6 +61,9 @@
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="before">
                 <field name="boss_pricing_mode" column_invisible="1"/>
                 <field name="boss_price_frozen" column_invisible="1"/>
+                <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen"/>
+                <field name="boss_container_type_id" optional="show" string="Type" readonly="boss_price_frozen"
+                       options="{'no_create': True}"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//column[@name='price_unit']" position="before">
                 <field name="boss_cost_status" string="Cost" widget="badge" optional="show"
@@ -71,6 +86,9 @@
                        decoration-success="boss_sale_status in ('agreed', 'manual', 'free')"
                        decoration-danger="boss_sale_status == 'missing'"/>
                 <field name="boss_sale_free" optional="hide" readonly="boss_price_frozen"/>
+                <field name="boss_cost_is_estimate" optional="hide" string="Estimate"/>
+                <field name="boss_vat_status" string="VAT" widget="badge" optional="show"
+                       decoration-success="boss_vat_status == 'ok'" decoration-danger="boss_vat_status == 'pending'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="attributes">
                 <attribute name="readonly">is_downpayment or boss_price_frozen</attribute>
@@ -121,6 +139,8 @@
                             <field name="product_id" readonly="1"/>
                             <field name="product_uom_id" string="Charge basis" readonly="1"/>
                             <field name="product_uom_qty" readonly="1"/>
+                            <field name="boss_container_size" readonly="1" invisible="not boss_container_size"/>
+                            <field name="boss_container_type_id" readonly="1" invisible="not boss_container_type_id"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                         <group string="Result">
@@ -132,6 +152,7 @@
                             <field name="boss_sale_status"/>
                             <field name="margin_percent" widget="percentage" string="Margin (on sale)"/>
                             <field name="boss_markup" widget="percentage"/>
+                            <field name="boss_cost_is_estimate"/>
                         </group>
                     </group>
                     <group string="How the cost is computed">
@@ -141,6 +162,12 @@
                         <field name="boss_tariff_line_id" invisible="not boss_tariff_line_id"/>
                         <field name="boss_cost_candidate_ids" widget="many2many_tags" invisible="not boss_cost_candidate_ids"/>
                         <field name="boss_manual_cost_note" invisible="boss_cost_status not in ('manual', 'not_ready')"/>
+                    </group>
+                    <group string="VAT">
+                        <field name="boss_vat_class"/>
+                        <field name="boss_vat_status"/>
+                        <field name="boss_vat_trace"/>
+                        <field name="tax_ids" widget="many2many_tags" readonly="1"/>
                     </group>
                 </sheet>
             </form>

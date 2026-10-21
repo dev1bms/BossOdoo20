@@ -1,13 +1,16 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
-# ADR-002: the scope of a tariff = conditions that every line shares. Each one maps to a shipment
+# ADR-002: the scope of a tariff = conditions shared by every line. Each one maps to a shipment
 # input of the same name in boss.pricing (one place, one meaning).
-SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_ids", "customer_id")
+SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_ids", "country_ids",
+                "customer_id")
 # Approved = evidence: these fields never change; a change is a new version.
 GOVERNED_FIELDS = SCOPE_FIELDS + (
     "partner_id", "currency_id", "valid_from", "valid_to", "document", "document_reference",
 )
+# Only set by the workflow methods (never by create, import, RPC or a form).
+WORKFLOW_FIELDS = ("state", "approved_by_id", "approved_date", "version", "lineage_id")
 
 DIRECTIONS = [("import", "Import"), ("export", "Export")]
 TRANSPORT_MODES = [("sea", "Sea"), ("air", "Air"), ("road", "Road")]
@@ -29,7 +32,7 @@ class BossTariff(models.Model):
         default="draft", required=True, readonly=True, copy=False, tracking=True,
         help="Only approved tariffs price quotations.",
     )
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=True, tracking=True)
     company_id = fields.Many2one("res.company", required=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one("res.currency", required=True, tracking=True,
                                   default=lambda self: self.env.company.currency_id)
@@ -54,6 +57,9 @@ class BossTariff(models.Model):
     carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True,
                                  help="Shipping line, airline or haulier the prices apply to. Empty: any.")
     port_ids = fields.Many2many("boss.port", string="Ports", help="Empty: any port.")
+    country_ids = fields.Many2many(
+        "res.country", string="Countries abroad",
+        help="Origin country of an import or destination country of an export. Empty: any.")
     customer_id = fields.Many2one("res.partner", "Customer", tracking=True,
                                   help="Prices agreed for this customer only. They win over general prices.")
     line_ids = fields.One2many("boss.tariff.line", "tariff_id", "Prices", copy=True)
@@ -69,12 +75,20 @@ class BossTariff(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Every tariff starts as a draft of its own lineage, whatever the caller sends (form, import, RPC).
+        for vals in vals_list:
+            if (vals.get("state") or "draft") != "draft" or any(
+                    vals.get(f) for f in ("approved_by_id", "approved_date", "lineage_id")):
+                raise UserError(self.env._("A supplier tariff is always created as a draft and approved by a person."))
+            vals.pop("version", None)
         tariffs = super().create(vals_list)
-        for tariff in tariffs.filtered(lambda t: not t.lineage_id):
-            tariff.lineage_id = tariff
+        for tariff in tariffs:
+            tariff._workflow_write({"lineage_id": tariff.id})
         return tariffs
 
     def write(self, vals):
+        if set(vals) & set(WORKFLOW_FIELDS):
+            raise UserError(self.env._("Status, approval and version of a tariff change only through its buttons."))
         if ("priority" in vals and self.filtered(lambda t: t.state != "draft")
                 and not self.env.user.has_group("boss_pricing.group_tariff_approver")):
             raise UserError(self.env._("Only a tariff approver can change the priority of a submitted tariff."))
@@ -83,6 +97,10 @@ class BossTariff(models.Model):
                 "A tariff that was sent for approval cannot change. Set it back to draft, or create a "
                 "new version if it is approved."))
         return super().write(vals)
+
+    def _workflow_write(self, vals):
+        """The only path that changes WORKFLOW_FIELDS (skips the guard of write())."""
+        return super(BossTariff, self).write(vals)
 
     def action_submit(self):
         for tariff in self:
@@ -94,26 +112,25 @@ class BossTariff(models.Model):
                 raise UserError(self.env._(
                     "Attach the supplier document of '%s': every price must be traceable to it.",
                     tariff.name))
-            tariff.state = "to_approve"
+            tariff._workflow_write({"state": "to_approve"})
 
     def action_approve(self):
         if not self.env.user.has_group("boss_pricing.group_tariff_approver"):
             raise UserError(self.env._("Only a tariff approver can approve supplier prices."))
         for tariff in self.filtered(lambda t: t.state == "to_approve"):
-            tariff.write({"state": "approved", "approved_by_id": self.env.uid,
-                          "approved_date": fields.Datetime.now()})
+            tariff._workflow_write({"state": "approved", "approved_by_id": self.env.uid,
+                                    "approved_date": fields.Datetime.now()})
 
     def action_back_to_draft(self):
-        for tariff in self.filtered(lambda t: t.state == "to_approve"):
-            tariff.state = "draft"
+        self.filtered(lambda t: t.state == "to_approve")._workflow_write({"state": "draft"})
 
     def action_new_version(self):
         self.ensure_one()
         if self.state != "approved":
             raise UserError(self.env._("Only an approved tariff gets new versions; edit the draft instead."))
         latest = self.search([("lineage_id", "=", self.lineage_id.id)], order="version desc", limit=1)
-        new = self.copy({"name": self.name, "lineage_id": self.lineage_id.id, "version": latest.version + 1,
-                         "valid_from": fields.Date.today(), "valid_to": False})
+        new = self.copy({"name": self.name, "valid_from": fields.Date.today(), "valid_to": False})
+        new._workflow_write({"lineage_id": self.lineage_id.id, "version": latest.version + 1})
         return new._get_form_action()
 
     def _get_form_action(self):
@@ -132,4 +149,6 @@ class BossTariff(models.Model):
                 conditions[name] = {self[name].id}
         if self.port_ids:
             conditions["port_id"] = set(self.port_ids.ids)
+        if self.country_ids:
+            conditions["country_id"] = set(self.country_ids.ids)
         return conditions

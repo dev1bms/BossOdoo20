@@ -10,6 +10,7 @@
         "security/boss_pricing_security.xml",
         "security/ir.access.csv",
         "data/boss_port_data.xml",
+        "data/boss_container_type_data.xml",
         "views/boss_port_views.xml",
         "views/boss_tariff_views.xml",
     ],
