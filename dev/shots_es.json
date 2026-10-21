@@ -6,13 +6,13 @@
  },
  {
   "name": "02-oferta-envio",
-  "url": "/odoo/sale.order/9",
+  "url": "/odoo/sale.order/11",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Envío').click(); await sleep(800); return 'envio';"
  },
  {
   "name": "03-oferta-lineas",
-  "url": "/odoo/sale.order/9",
+  "url": "/odoo/sale.order/11",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); return 'lineas';",
   "size": [
@@ -22,30 +22,30 @@
  },
  {
   "name": "04-detalle-calculo",
-  "url": "/odoo/sale.order/9",
+  "url": "/odoo/sale.order/11",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); const row = Array.from(document.querySelectorAll('div[name=\"order_line\"] tr.o_data_row')).find(r => r.innerText.includes('[THC]') && r.innerText.includes(\"40'\")); row.querySelector('button[name=\"action_boss_pricing_details\"]').click(); await sleep(1800); return 'detalle';"
  },
  {
   "name": "05-anadir-precio-proveedor",
-  "url": "/odoo/sale.order/9",
+  "url": "/odoo/sale.order/11",
   "wait": 6,
-  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); const row = Array.from(document.querySelectorAll('div[name=\"order_line\"] tr.o_data_row')).find(r => r.innerText.includes('[CES]') && r.innerText.includes(\"20'\")); row.querySelector('button[name=\"action_boss_add_supplier_price\"]').click(); await sleep(1800); return 'wizard';"
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); const row = Array.from(document.querySelectorAll('div[name=\"order_line\"] tr.o_data_row')).find(r => r.innerText.includes('[CES]') && r.innerText.includes(\"40'\")); row.querySelector('button[name=\"action_boss_add_supplier_price\"]').click(); await sleep(1800); return 'wizard';"
  },
  {
   "name": "06-envio-bloqueado",
-  "url": "/odoo/sale.order/9",
+  "url": "/odoo/sale.order/11",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Enviar').click(); await sleep(1800); return 'enviar';"
  },
  {
   "name": "07-tarifa",
-  "url": "/odoo/action-boss_pricing.boss_tariff_action/7",
+  "url": "/odoo/action-boss_pricing.boss_tariff_action/17",
   "wait": 6
  },
  {
   "name": "08-precio-tiempo",
-  "url": "/odoo/action-boss_pricing.boss_tariff_action/7",
+  "url": "/odoo/action-boss_pricing.boss_tariff_action/17",
   "wait": 6,
   "js": "const row = Array.from(document.querySelectorAll('div[name=\"line_ids\"] tr.o_data_row')).find(r => r.innerText.includes('[DEM]')); row.querySelector('td.o_data_cell').click(); await sleep(1800); return 'linea';"
  },
@@ -73,7 +73,7 @@
  },
  {
   "name": "13-oferta-aceptada",
-  "url": "/odoo/sale.order/8",
+  "url": "/odoo/sale.order/10",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); return 'aceptada';",
   "size": [
@@ -83,7 +83,7 @@
  },
  {
   "name": "14-recotizar",
-  "url": "/odoo/sale.order/8",
+  "url": "/odoo/sale.order/10",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Recotizar').click(); await sleep(2000); return 'recotizar';"
  },

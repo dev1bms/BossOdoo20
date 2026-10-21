@@ -4,6 +4,7 @@
 
 steps.json: [{"name": "01-crm", "url": "/odoo/crm/1", "wait": 4, "js": "optional async JS body", "clip": [x,y,w,h]}]
 Local test database only (http://localhost:8069, test admin account). Standard library only.
+SHOT_BASE=<url> SHOT_LOGIN=0 captures another local site (e.g. the guide); a step may set "ready" (CSS selector).
 """
 import base64
 import json
@@ -17,7 +18,8 @@ import time
 import urllib.request
 from pathlib import Path
 
-BASE = "http://localhost:8069"
+BASE = os.environ.get("SHOT_BASE", "http://localhost:8069")
+ODOO_READY = ".o_form_view, .o_list_view, .o_kanban_view, .o_setting_container, .o_settings_container"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 PORT = 9339
 
@@ -101,18 +103,27 @@ def main(steps_file, out_dir):
         cdp.call("Page.enable")
         cdp.call("Emulation.setDeviceMetricsOverride", width=1440, height=900, deviceScaleFactor=1, mobile=False)
         cdp.call("Emulation.setEmulatedMedia", features=[{"name": "prefers-color-scheme", "value": "light"}])
-        cdp.call("Page.navigate", url=f"{BASE}/web/login")
-        time.sleep(3)
-        print(cdp.js("""const l = document.querySelector('#login'), p = document.querySelector('#password');
-            l.value = 'admin'; p.value = 'admin'; l.form.submit(); return 'login';"""))
-        time.sleep(6)
+        if os.environ.get("SHOT_LOGIN", "1") == "1":
+            cdp.call("Page.navigate", url=f"{BASE}/web/login")
+            for _ in range(60):  # the login form may take a while on a freshly started server
+                time.sleep(1)
+                if cdp.js("return !!document.querySelector('#login');"):
+                    break
+            print(cdp.js("""const l = document.querySelector('#login'), p = document.querySelector('#password');
+                l.value = 'admin'; p.value = 'admin'; l.form.submit(); return 'login';"""))
+            for _ in range(240):  # first load after a module update regenerates the assets
+                time.sleep(1)
+                if cdp.js("return !location.pathname.startsWith('/web/login') && document.readyState === 'complete';"):
+                    break
+            else:
+                sys.exit("login failed")
         for step in steps:
             width, height = step.get("size", (1440, 900))
             cdp.call("Emulation.setDeviceMetricsOverride", width=width, height=height, deviceScaleFactor=1, mobile=False)
             cdp.call("Page.navigate", url=BASE + step["url"])
             for _ in range(120):  # wait until the Odoo view is rendered (assets may be rebuilding)
                 time.sleep(1)
-                if cdp.js("return !!document.querySelector('.o_form_view, .o_list_view, .o_kanban_view, .o_setting_container, .o_settings_container');"):
+                if cdp.js(f"return !!document.querySelector({json.dumps(step.get('ready', ODOO_READY))});"):
                     break
             time.sleep(step.get("wait", 5))
             if step.get("js"):
