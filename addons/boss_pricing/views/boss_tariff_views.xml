@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_tariff_view_form" model="ir.ui.view">
+        <field name="name">boss.tariff.form</field>
+        <field name="model">boss.tariff</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Send for approval" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state != 'to_approve'"
+                            groups="boss_pricing.group_tariff_approver"
+                            confirm="Approved prices are used in quotations and can no longer change. Approve?"/>
+                    <button name="action_back_to_draft" type="object" string="Back to draft" invisible="state != 'to_approve'"/>
+                    <button name="action_new_version" type="object" string="New version" invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. MSC local charges import 2026"/></h1>
+                    </div>
+                    <group>
+                        <group string="Supplier and document">
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="document" filename="document_name" readonly="state != 'draft'"/>
+                            <field name="document_name" invisible="1"/>
+                            <field name="document_reference" readonly="state != 'draft'"/>
+                            <field name="currency_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Validity">
+                            <field name="valid_from" readonly="state != 'draft'"/>
+                            <field name="valid_to" readonly="state != 'draft'"/>
+                            <field name="version"/>
+                            <field name="priority"/>
+                            <field name="approved_by_id" invisible="state != 'approved'"/>
+                            <field name="approved_date" invisible="state != 'approved'"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Applies to (empty = any)">
+                        <group>
+                            <field name="direction" readonly="state != 'draft'"/>
+                            <field name="transport_mode" readonly="state != 'draft'"/>
+                            <field name="load_type" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="carrier_id" readonly="state != 'draft'"/>
+                            <field name="port_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                            <field name="customer_id" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prices" name="prices">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="allowed_uom_ids" column_invisible="1"/>
+                                    <field name="uom_id"/>
+                                    <field name="method" optional="hide"/>
+                                    <field name="unit_price"/>
+                                    <field name="min_amount" optional="show"/>
+                                    <field name="max_amount" optional="hide"/>
+                                    <field name="on_request" optional="show"/>
+                                    <field name="document_page"/>
+                                    <field name="note" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="boss_tariff_view_list" model="ir.ui.view">
+        <field name="name">boss.tariff.list</field>
+        <field name="model">boss.tariff</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'draft'" decoration-warning="state == 'to_approve'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="version"/>
+                <field name="valid_from"/>
+                <field name="valid_to"/>
+                <field name="direction" optional="show"/>
+                <field name="load_type" optional="show"/>
+                <field name="carrier_id" optional="show"/>
+                <field name="customer_id" optional="hide"/>
+                <field name="priority" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'" decoration-warning="state == 'to_approve'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_tariff_view_search" model="ir.ui.view">
+        <field name="name">boss.tariff.search</field>
+        <field name="model">boss.tariff</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="line_ids" string="Service" filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                <filter string="Waiting for approval" name="to_approve" domain="[('state', '=', 'to_approve')]"/>
+                <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Supplier" name="groupby_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="boss_tariff_action" model="ir.actions.act_window">
+        <field name="name">Supplier tariffs</field>
+        <field name="res_model">boss.tariff</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Enter a supplier tariff</p>
+            <p>One tariff = one supplier document, its validity and what it applies to. Its prices are used in quotations once approved.</p>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_view_list" model="ir.ui.view">
+        <field name="name">boss.tariff.line.list</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="product_id"/>
+                <field name="uom_id"/>
+                <field name="unit_price"/>
+                <field name="min_amount" optional="show"/>
+                <field name="max_amount" optional="hide"/>
+                <field name="currency_id" optional="show"/>
+                <field name="on_request" optional="hide"/>
+                <field name="partner_id"/>
+                <field name="tariff_id"/>
+                <field name="document_page" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'" decoration-warning="state == 'to_approve'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_view_search" model="ir.ui.view">
+        <field name="name">boss.tariff.line.search</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="tariff_id"/>
+                <filter string="Approved" name="approved" domain="[('tariff_id.state', '=', 'approved')]"/>
+                <filter string="Not approved" name="not_approved" domain="[('tariff_id.state', '!=', 'approved')]"/>
+                <group>
+                    <filter string="Service" name="groupby_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Supplier" name="groupby_partner" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_action" model="ir.actions.act_window">
+        <field name="name">Supplier prices</field>
+        <field name="res_model">boss.tariff.line</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_groupby_product': 1}</field>
+    </record>
+</odoo>

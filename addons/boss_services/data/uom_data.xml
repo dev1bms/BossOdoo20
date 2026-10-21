@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charge bases: independent units, never converted (ADR-002). -->
+<odoo noupdate="1">
+    <record id="uom_c20" model="uom.uom">
+        <field name="name">Container 20'</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">container_20</field>
+    </record>
+    <record id="uom_c40" model="uom.uom">
+        <field name="name">Container 40'</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">container_40</field>
+    </record>
+    <record id="uom_c45" model="uom.uom">
+        <field name="name">Container 45'</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">container_45</field>
+    </record>
+    <record id="uom_teu" model="uom.uom">
+        <field name="name">TEU</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">teu</field>
+    </record>
+    <record id="uom_shipment" model="uom.uom">
+        <field name="name">Shipment</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">shipment</field>
+    </record>
+    <record id="uom_bl" model="uom.uom">
+        <field name="name">Bill of lading</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_awb" model="uom.uom">
+        <field name="name">Air waybill</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_declaration" model="uom.uom">
+        <field name="name">Customs declaration</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_document" model="uom.uom">
+        <field name="name">Document</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_kg_gross" model="uom.uom">
+        <field name="name">Gross kg</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_kg_air" model="uom.uom">
+        <field name="name">Chargeable kg (air)</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_kg_road" model="uom.uom">
+        <field name="name">Chargeable kg (road)</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_ton" model="uom.uom">
+        <field name="name">Gross tonne</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_m3" model="uom.uom">
+        <field name="name">Cubic metre</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_wm" model="uom.uom">
+        <field name="name">W/M (weight or measure)</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_pallet" model="uom.uom">
+        <field name="name">Pallet</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+    <record id="uom_hour" model="uom.uom">
+        <field name="name">Hour</field>
+        <field name="relative_factor" eval="1.0"/>
+        <field name="boss_quantity_source">input</field>
+    </record>
+</odoo>

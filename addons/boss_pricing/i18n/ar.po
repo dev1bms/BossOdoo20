@@ -1,0 +1,915 @@
+# Translation of BOSS module boss_pricing: Arabic (ar_001).
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "%(qty)s x %(price)s per %(uom)s = %(amount)s"
+msgstr "%(qty)s × %(price)s لكل %(uom)s = %(amount)s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "'%(uom)s' is not a charge basis of %(service)s."
+msgstr "'%(uom)s' ليس أساس احتساب للخدمة %(service)s."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "(maximum applied)"
+msgstr "(طُبّق الحد الأقصى)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "(minimum applied)"
+msgstr "(طُبّق الحد الأدنى)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ", document %(doc)s page %(page)s"
+msgstr "، المستند %(doc)s الصفحة %(page)s"
+
+#. module: boss_pricing
+#: model:ir.model.constraint,message:boss_pricing.constraint_boss_tariff_line_service_basis_unique
+msgid "A tariff has one price per service and charge basis."
+msgstr "للتعرفة سعر واحد لكل خدمة وأساس احتساب."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"A tariff that was sent for approval cannot change. Set it back to draft, or create a new version if it is approved."
+msgstr ""
+"لا يمكن تغيير تعرفة أُرسلت للاعتماد. أعِدها إلى مسودة، أو أنشئ نسخة جديدة إن كانت معتمدة."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__active
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Add at least one price before sending '%s'."
+msgstr "أضف سعراً واحداً على الأقل قبل إرسال '%s'."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__air
+msgid "Air"
+msgstr "جوي"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__air
+msgid "Air cargo"
+msgstr "شحن جوي"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_port__kind__air
+msgid "Airport"
+msgstr "مطار"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esalg
+msgid "Algeciras"
+msgstr "الجزيرة الخضراء"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__lineage_id
+msgid "All versions of the same supplier tariff share it."
+msgstr "تشترك فيه كل نسخ تعرفة المورد نفسها."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__allowed_uom_ids
+msgid "Allowed Uom"
+msgstr "الوحدات المسموحة"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Applies to (empty = any)"
+msgstr "تنطبق على (فارغ = أي)"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Approve"
+msgstr "اعتماد"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__state__approved
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Approved"
+msgstr "معتمدة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__approved_by_id
+msgid "Approved By"
+msgstr "اعتمدها"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__approved_date
+msgid "Approved Date"
+msgstr "تاريخ الاعتماد"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid ""
+"Approved prices are used in quotations and can no longer change. Approve?"
+msgstr ""
+"تُستخدم الأسعار المعتمدة في العروض ولا يمكن تغييرها بعد ذلك. هل تعتمدها؟"
+
+#. module: boss_pricing
+#: model:res.groups,name:boss_pricing.group_tariff_approver
+msgid "Approver"
+msgstr "معتمِد"
+
+#. module: boss_pricing
+#: model:res.groups,comment:boss_pricing.group_tariff_approver
+msgid ""
+"Approves supplier tariffs: only approved prices are used in quotations."
+msgstr "يعتمد تعرفات الموردين: لا تُستخدم في العروض إلا الأسعار المعتمدة."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Archived"
+msgstr "مؤرشفة"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"Attach the supplier document of '%s': every price must be traceable to it."
+msgstr "أرفق مستند المورد للتعرفة '%s': يجب أن يمكن تتبّع كل سعر إليه."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: boss_pricing
+#: model:ir.module.module,shortdesc:base.module_boss_pricing
+msgid "BOSS Pricing"
+msgstr "تسعير BOSS"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "BOSS own fee: no supplier cost."
+msgstr "أتعاب BOSS الخاصة: دون تكلفة مورد."
+
+#. module: boss_pricing
+#: model:ir.model,name:boss_pricing.model_boss_pricing
+msgid "BOSS pricing service"
+msgstr "خدمة تسعير BOSS"
+
+#. module: boss_pricing
+#: model:res.groups.privilege,name:boss_pricing.res_groups_privilege_boss_pricing
+msgid "BOSS supplier tariffs"
+msgstr "تعرفات موردي BOSS"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Back to draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esbcn
+msgid "Barcelona"
+msgstr "برشلونة"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esbcn_air
+msgid "Barcelona-El Prat"
+msgstr "برشلونة - إل برات"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esbio
+msgid "Bilbao"
+msgstr "بلباو"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Calculation '%s' is not available yet: enter the cost manually."
+msgstr "طريقة الحساب '%s' غير متاحة بعد: أدخل التكلفة يدوياً."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__carrier_id
+msgid "Carrier"
+msgstr "الناقل / الخط الملاحي"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__uom_id
+msgid "Charge basis"
+msgstr "أساس الاحتساب"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__country_id
+msgid "Country"
+msgstr "الدولة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__create_uid
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__create_uid
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__create_date
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__create_date
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__currency_id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__display_name
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_pricing__display_name
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__display_name
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__document_name
+msgid "Document Name"
+msgstr "اسم المستند"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__document_reference
+msgid "Document Reference"
+msgstr "مرجع المستند"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__state__draft
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__name
+msgid "E.g. MSC local charges import 2026."
+msgstr "مثال: MSC رسوم محلية للاستيراد 2026."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__load_type
+msgid "Empty: any load type."
+msgstr "فارغ: أي شكل شحن."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__transport_mode
+msgid "Empty: any mode."
+msgstr "فارغ: أي وسيلة."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__port_ids
+msgid "Empty: any port."
+msgstr "فارغ: أي ميناء."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__direction
+msgid "Empty: import and export."
+msgstr "فارغ: استيراد وتصدير."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__valid_to
+msgid "Empty: valid until a newer version starts."
+msgstr "فارغ: صالحة حتى تبدأ نسخة أحدث."
+
+#. module: boss_pricing
+#: model_terms:ir.actions.act_window,help:boss_pricing.boss_tariff_action
+msgid "Enter a supplier tariff"
+msgstr "أدخل تعرفة مورد"
+
+#. module: boss_pricing
+#: model:res.groups,comment:boss_pricing.group_tariff_user
+msgid "Enters supplier tariffs and sends them for approval. Never approves."
+msgstr "يُدخل تعرفات الموردين ويرسلها للاعتماد، ولا يعتمدها أبداً."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__export
+msgid "Export"
+msgstr "تصدير"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__fcl
+msgid "FCL (full container)"
+msgstr "FCL (حاوية كاملة)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Fill in on the quotation: %s"
+msgstr "أكمل في العرض: %s"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__lineage_id
+msgid "First version"
+msgstr "النسخة الأولى"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_pricing__id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا كان محدداً، فهناك رسائل جديدة تحتاج إلى انتباهك."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__message_has_error
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا كان محدداً، فبعض الرسائل بها خطأ في التسليم."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__import
+msgid "Import"
+msgstr "استيراد"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__lcl
+msgid "LCL (groupage)"
+msgstr "LCL (شحن مجمّع)"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__write_uid
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__write_uid
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__write_date
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__write_date
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__load_type
+msgid "Load Type"
+msgstr "شكل الشحن"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Load type"
+msgstr "شكل الشحن"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__priority
+msgid ""
+"Lower wins when two tariffs apply to the same shipment. Set it on purpose to resolve a conflict; equal priorities with the same scope are reported as a conflict."
+msgstr ""
+"يفوز الرقم الأصغر عندما تنطبق تعرفتان على الشحنة نفسها. تُضبط عمداً لحل التعارض؛ وعند تساوي الأولوية والنطاق يُعرض تعارض."
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esmad_air
+msgid "Madrid-Barajas"
+msgstr "مدريد - باراخاس"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Manual amount: enter the expected cost of this shipment (e.g. the freight offer)."
+msgstr "مبلغ يدوي: أدخل التكلفة المتوقعة لهذه الشحنة (مثل عرض أجرة الشحن)."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__max_amount
+msgid "Maximum"
+msgstr "الحد الأقصى"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__max_amount
+msgid "Maximum of the line total. Empty: no maximum."
+msgstr "الحد الأقصى لإجمالي البند. فارغ: بلا حد أقصى."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__method
+msgid "Method"
+msgstr "طريقة الحساب"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__min_amount
+msgid "Minimum"
+msgstr "الحد الأدنى"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__min_amount
+msgid "Minimum of the line total (all units of this charge together)."
+msgstr "الحد الأدنى لإجمالي البند (كل وحدات هذا الرسم معاً)."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_port__name
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "New version"
+msgstr "نسخة جديدة"
+
+#. module: boss_pricing
+#: model:res.groups.privilege,placeholder:boss_pricing.res_groups_privilege_boss_pricing
+msgid "No"
+msgstr "لا"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"No approved supplier price of %(service)s per %(uom)s applies to this shipment."
+msgstr ""
+"لا ينطبق على هذه الشحنة أي سعر مورد معتمد للخدمة %(service)s لكل %(uom)s."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
+msgid "Not approved"
+msgstr "غير معتمدة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__note
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل ذات خطأ التسليم"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__on_request
+msgid "On Request"
+msgstr "عند الطلب"
+
+#. module: boss_pricing
+#: model_terms:ir.actions.act_window,help:boss_pricing.boss_tariff_action
+msgid ""
+"One tariff = one supplier document, its validity and what it applies to. Its prices are used in quotations once approved."
+msgstr ""
+"التعرفة = مستند مورد واحد وصلاحيته وما ينطبق عليه. وتُستخدم أسعارها في العروض بعد اعتمادها."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Only a tariff approver can approve supplier prices."
+msgstr "لا يعتمد أسعار الموردين إلا معتمِد التعرفات."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Only a tariff approver can change the priority of a submitted tariff."
+msgstr "لا يغيّر أولوية تعرفة مُرسلة إلا المعتمِد."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Only an approved tariff gets new versions; edit the draft instead."
+msgstr "لا تُنشأ نسخ جديدة إلا لتعرفة معتمدة؛ عدّل المسودة بدلاً من ذلك."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__state
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__state
+msgid "Only approved tariffs price quotations."
+msgstr "لا تُسعّر العروضَ إلا التعرفاتُ المعتمدة."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__document_page
+msgid "Page"
+msgstr "الصفحة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__document_page
+msgid "Page of the supplier document where this price is."
+msgstr "صفحة مستند المورد التي يرد فيها هذا السعر."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Pending business decision (%s): not priced automatically; enter the cost manually if this quotation needs it."
+msgstr ""
+"بانتظار قرار تجاري (%s): لا يُسعَّر آلياً؛ أدخل التكلفة يدوياً إن احتاجها هذا العرض."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Planned date (ETA import / ETD export)"
+msgstr "التاريخ المتوقع (ETA للاستيراد / ETD للتصدير)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Port"
+msgstr "الميناء"
+
+#. module: boss_pricing
+#: model:ir.model,name:boss_pricing.model_boss_port
+msgid "Port or airport"
+msgstr "ميناء أو مطار"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__port_ids
+msgid "Ports"
+msgstr "الموانئ"
+
+#. module: boss_pricing
+#: model:ir.actions.act_window,name:boss_pricing.boss_port_action
+msgid "Ports and airports"
+msgstr "الموانئ والمطارات"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__method__per_unit
+msgid "Price per unit"
+msgstr "سعر للوحدة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__method
+msgid ""
+"Price per unit: unit price x quantity in the charge basis, then minimum and maximum on the line total."
+msgstr ""
+"سعر للوحدة: سعر الوحدة × الكمية بأساس الاحتساب، ثم الحد الأدنى والأقصى على إجمالي البند."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__line_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Prices"
+msgstr "الأسعار"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__customer_id
+msgid "Prices agreed for this customer only. They win over general prices."
+msgstr "أسعار متفق عليها لهذا العميل فقط، وتتقدم على الأسعار العامة."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__priority
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__road
+msgid "Road"
+msgstr "بري"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__road
+msgid "Road cargo"
+msgstr "شحن بري"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__sea
+msgid "Sea"
+msgstr "بحري"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_port__kind__sea
+msgid "Sea port"
+msgstr "ميناء بحري"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Send for approval"
+msgstr "إرسال للاعتماد"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__product_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Service"
+msgstr "الخدمة"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Several supplier prices apply: %s. Choose the carrier, narrow a tariff scope or set a priority."
+msgstr ""
+"تنطبق عدة أسعار موردين: %s. اختر الناقل، أو ضيّق نطاق إحدى التعرفات، أو حدّد أولوية."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__carrier_id
+msgid "Shipping line, airline or haulier the prices apply to. Empty: any."
+msgstr ""
+"الخط الملاحي أو شركة الطيران أو الناقل الذي تنطبق عليه الأسعار. فارغ: أي."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Source: %(tariff)s v%(version)s (%(supplier)s), valid from %(start)s"
+msgstr ""
+"المصدر: %(tariff)s النسخة %(version)s (%(supplier)s)، صالحة من %(start)s"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__state
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__partner_id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__partner_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Supplier and document"
+msgstr "المورد والمستند"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__document
+msgid "Supplier document"
+msgstr "مستند المورد"
+
+#. module: boss_pricing
+#: model:ir.model,name:boss_pricing.model_boss_tariff_line
+msgid "Supplier price"
+msgstr "سعر المورد"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Supplier price entered but not approved yet: %s"
+msgstr "سعر المورد مُدخل لكنه غير معتمد بعد: %s"
+
+#. module: boss_pricing
+#: model:ir.actions.act_window,name:boss_pricing.boss_tariff_line_action
+msgid "Supplier prices"
+msgstr "أسعار الموردين"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "Supplier prices cannot be negative."
+msgstr "لا يمكن أن تكون أسعار الموردين سالبة."
+
+#. module: boss_pricing
+#: model:ir.model,name:boss_pricing.model_boss_tariff
+msgid "Supplier tariff"
+msgstr "تعرفة المورد"
+
+#. module: boss_pricing
+#: model:ir.actions.act_window,name:boss_pricing.boss_tariff_action
+msgid "Supplier tariffs"
+msgstr "تعرفات الموردين"
+
+#. module: boss_pricing
+#: model:ir.module.module,summary:base.module_boss_pricing
+msgid ""
+"Supplier tariffs with document, validity and approval; one engine to price a service"
+msgstr ""
+"تعرفات الموردين مع المستند والصلاحية والاعتماد؛ ومحرك واحد لتسعير الخدمة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__tariff_id
+msgid "Tariff"
+msgstr "التعرفة"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__document
+msgid "The PDF (or file) received from the supplier."
+msgstr "ملف PDF (أو غيره) المستلم من المورد."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__on_request
+msgid ""
+"The document says 'on request': there is no amount; the quotation shows it as pending."
+msgstr "ينص المستند على 'عند الطلب': لا يوجد مبلغ، ويظهر في العرض معلّقاً."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "The end of validity is before its start."
+msgstr "نهاية الصلاحية قبل بدايتها."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "The maximum is lower than the minimum."
+msgstr "الحد الأقصى أقل من الحد الأدنى."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "The supplier document says 'on request' (%s): ask the supplier."
+msgstr "ينص مستند المورد على 'عند الطلب' (%s): اسأل المورد."
+
+#. module: boss_pricing
+#: model:ir.model.constraint,message:boss_pricing.constraint_boss_port_code_kind_unique
+msgid "This code already exists."
+msgstr "هذا الرمز موجود مسبقاً."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__document_reference
+msgid ""
+"Title and edition of the document, e.g. 'DRY - Gastos locales 2026 (09/2026)'."
+msgstr "عنوان المستند وإصداره، مثل 'DRY - Gastos locales 2026 (09/2026)'."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__transport_mode
+msgid "Transport Mode"
+msgstr "وسيلة النقل"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Transport mode"
+msgstr "وسيلة النقل"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_port__code
+msgid "UN/LOCODE for sea ports, IATA code for airports."
+msgstr "رمز UN/LOCODE للموانئ ورمز IATA للمطارات."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: boss_pricing
+#: model:res.groups,name:boss_pricing.group_tariff_user
+msgid "User: enter tariffs"
+msgstr "مستخدم: يُدخل التعرفات"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esvlc
+msgid "Valencia"
+msgstr "فالنسيا"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esvlc_air
+msgid "Valencia (airport)"
+msgstr "فالنسيا (المطار)"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__valid_from
+msgid "Valid From"
+msgstr "صالحة من"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__valid_to
+msgid "Valid To"
+msgstr "صالحة حتى"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Validity"
+msgstr "الصلاحية"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__version
+msgid "Version"
+msgstr "النسخة"
+
+#. module: boss_pricing
+#: model:boss.port,name:boss_pricing.port_esvgo
+msgid "Vigo"
+msgstr "فيغو"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__state__to_approve
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
+msgid "Waiting for approval"
+msgstr "بانتظار الاعتماد"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__uom_id
+msgid ""
+"What the price is per: container 40', B/L, shipment, chargeable kg... Each basis is priced on its own; there is no conversion between bases."
+msgstr ""
+"ما يُحتسب عليه السعر: حاوية 40 قدماً، بوليصة، شحنة، كغ محتسب... كل أساس يُسعَّر وحده ولا تحويل بين الأسس."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__partner_id
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__partner_id
+msgid "Who invoices BOSS for these services."
+msgstr "الجهة التي تُصدر فاتورة هذه الخدمات إلى BOSS."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "e.g. MSC local charges import 2026"
+msgstr "مثال: MSC رسوم محلية للاستيراد 2026"

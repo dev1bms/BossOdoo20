@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_add_services_view_form" model="ir.ui.view">
+        <field name="name">boss.add.services.form</field>
+        <field name="model">boss.add.services</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">One line per service; container services get one line per container size of the shipment.</p>
+                <group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                </group>
+                <footer>
+                    <button name="action_add" type="object" string="Add" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

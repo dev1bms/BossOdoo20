@@ -1,0 +1,1410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BOSS service catalogue (docs/catalogo-servicios.md). Codes and O17 concept ids kept for traceability. -->
+<odoo noupdate="1">
+    <record id="product_category_services" model="product.category">
+        <field name="name">BOSS services</field>
+    </record>
+    <record id="service_fmi" model="product.template">
+        <field name="name">Ocean freight import (FCL, per container)</field>
+        <field name="default_code">FMI</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Main sea freight of an import, quoted by the carrier or agent for each shipment.</field>
+        <field name="boss_o17_concept_id" eval="204"/>
+        <field name="boss_o17_concept_code">FMI</field>
+    </record>
+    <record id="service_fmi_lcl" model="product.template">
+        <field name="name">Ocean freight import (LCL, per W/M)</field>
+        <field name="default_code">FMI-LCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_wm"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_m3')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Sea freight of an import in groupage, quoted by the consolidator or agent.</field>
+        <field name="boss_o17_concept_id" eval="204"/>
+        <field name="boss_o17_concept_code">FMI</field>
+    </record>
+    <record id="service_fme" model="product.template">
+        <field name="name">Ocean freight export (FCL, per container)</field>
+        <field name="default_code">FME</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Main sea freight of an export, quoted by the carrier for each shipment.</field>
+        <field name="boss_o17_concept_id" eval="203"/>
+        <field name="boss_o17_concept_code">FME</field>
+    </record>
+    <record id="service_fme_lcl" model="product.template">
+        <field name="name">Ocean freight export (LCL, per W/M)</field>
+        <field name="default_code">FME-LCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_wm"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_m3')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Sea freight of an export in groupage, quoted by the consolidator.</field>
+        <field name="boss_o17_concept_id" eval="203"/>
+        <field name="boss_o17_concept_code">FME</field>
+    </record>
+    <record id="service_fai" model="product.template">
+        <field name="name">Air freight import (per chargeable kg)</field>
+        <field name="default_code">FAI</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_air"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Main air freight of an import, quoted by the airline or agent.</field>
+        <field name="boss_o17_concept_id" eval="200"/>
+        <field name="boss_o17_concept_code">FAI</field>
+    </record>
+    <record id="service_fae" model="product.template">
+        <field name="name">Air freight export (per chargeable kg)</field>
+        <field name="default_code">FAE</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_air"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Main air freight of an export, quoted by the airline or consolidator.</field>
+        <field name="boss_o17_concept_id" eval="199"/>
+        <field name="boss_o17_concept_code">FAE</field>
+    </record>
+    <record id="service_thc" model="product.template">
+        <field name="name">Terminal handling (FCL, per container)</field>
+        <field name="default_code">THC</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Loading or unloading of the container at the sea terminal, charged by the carrier per container.</field>
+        <field name="boss_o17_concept_id" eval="230"/>
+        <field name="boss_o17_concept_code">THC</field>
+    </record>
+    <record id="service_thc_lcl" model="product.template">
+        <field name="name">CFS handling (LCL)</field>
+        <field name="default_code">THC-LCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_wm"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">max_of_bases</field>
+        <field name="description">Handling of groupage cargo at the CFS; the larger of tonnes x price and m³ x price.</field>
+        <field name="boss_o17_concept_id" eval="230"/>
+        <field name="boss_o17_concept_code">THC</field>
+    </record>
+    <record id="service_glo" model="product.template">
+        <field name="name">Carrier port charges (per container)</field>
+        <field name="default_code">GLO</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Every carrier charge always applied that is not T3, BL/DOC, CES or DEM/OCU/DET; the lines add up.</field>
+        <field name="boss_o17_concept_id" eval="202"/>
+        <field name="boss_o17_concept_code">GLO</field>
+    </record>
+    <record id="service_glo_ccc" model="product.template">
+        <field name="name">Container compliance charge (per container)</field>
+        <field name="default_code">GLO-CCC</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier compliance charge per container (port charges family).</field>
+        <field name="boss_o17_concept_id" eval="202"/>
+        <field name="boss_o17_concept_code">GLO</field>
+    </record>
+    <record id="service_glo_log" model="product.template">
+        <field name="name">Carrier logistics fee (per container)</field>
+        <field name="default_code">GLO-LOG</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier logistics fee per container (port charges family).</field>
+        <field name="boss_o17_concept_id" eval="202"/>
+        <field name="boss_o17_concept_code">GLO</field>
+    </record>
+    <record id="service_glo_fueleu" model="product.template">
+        <field name="name">FuelEU Maritime surcharge (per TEU)</field>
+        <field name="default_code">GLO-FUELEU</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_teu"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier environmental surcharge per TEU on some trades.</field>
+        <field name="boss_open_question">P24</field>
+        <field name="boss_o17_concept_id" eval="202"/>
+        <field name="boss_o17_concept_code">GLO</field>
+    </record>
+    <record id="service_t3" model="product.template">
+        <field name="name">Port goods tax T-3 (per gross tonne)</field>
+        <field name="default_code">T3</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_ton"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c20'), ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Port authority tax on the goods, per tonne or per container type depending on the supplier.</field>
+        <field name="boss_o17_concept_id" eval="228"/>
+        <field name="boss_o17_concept_code">T3</field>
+    </record>
+    <record id="service_t3_pad" model="product.template">
+        <field name="name">Carrier port fee incl. T-3 (PAD, per container)</field>
+        <field name="default_code">T3-PAD</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier per-container port fee that includes the T-3 tax.</field>
+        <field name="boss_open_question">P11</field>
+        <field name="boss_o17_concept_id" eval="228"/>
+        <field name="boss_o17_concept_code">T3</field>
+    </record>
+    <record id="service_bl" model="product.template">
+        <field name="name">Master bill of lading (per shipment)</field>
+        <field name="default_code">BL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier fee for the master B/L, charged once per shipment.</field>
+        <field name="boss_o17_concept_id" eval="194"/>
+        <field name="boss_o17_concept_code">DOC</field>
+    </record>
+    <record id="service_doc" model="product.template">
+        <field name="name">House bill of lading issue (HBL)</field>
+        <field name="default_code">DOC</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_bl"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Issue of a house B/L, per document.</field>
+        <field name="boss_o17_concept_id" eval="194"/>
+        <field name="boss_o17_concept_code">DOC</field>
+    </record>
+    <record id="service_ces" model="product.template">
+        <field name="name">Container release (per container)</field>
+        <field name="default_code">CES</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier release of the container, per container; differs by port and direction.</field>
+        <field name="boss_o17_concept_id" eval="185"/>
+        <field name="boss_o17_concept_code">CES</field>
+    </record>
+    <record id="service_vgm" model="product.template">
+        <field name="name">Verified gross mass (per container)</field>
+        <field name="default_code">VGM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Carrier charge for the verified gross mass declaration, per container.</field>
+        <field name="boss_open_question">P12</field>
+        <field name="boss_o17_concept_id" eval="235"/>
+        <field name="boss_o17_concept_code">VGM</field>
+    </record>
+    <record id="service_cor" model="product.template">
+        <field name="name">B/L or manifest correction (per correction)</field>
+        <field name="default_code">COR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Supplier fee for an occasional correction; amount taken from the supplier.</field>
+        <field name="boss_o17_concept_id" eval="319"/>
+        <field name="boss_o17_concept_code">COR</field>
+    </record>
+    <record id="service_ens" model="product.template">
+        <field name="name">ENS / ICS2 filing (per B/L)</field>
+        <field name="default_code">ENS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_bl"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">EU entry summary declaration, per B/L.</field>
+        <field name="boss_o17_concept_id" eval="195"/>
+        <field name="boss_o17_concept_code">ENS</field>
+    </record>
+    <record id="service_ams" model="product.template">
+        <field name="name">AMS / ISF filing to US customs (per B/L)</field>
+        <field name="default_code">AMS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_bl"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">US customs advance filing, per B/L.</field>
+        <field name="boss_o17_concept_id" eval="181"/>
+        <field name="boss_o17_concept_code">AMS</field>
+    </record>
+    <record id="service_dem" model="product.template">
+        <field name="name">Carrier demurrage and detention (per container and day)</field>
+        <field name="default_code">DEM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">time</field>
+        <field name="description">Days beyond the carrier's free time, per container and day, between the supplier's start and end events.</field>
+        <field name="boss_o17_concept_id" eval="191"/>
+        <field name="boss_o17_concept_code">DEM</field>
+    </record>
+    <record id="service_det" model="product.template">
+        <field name="name">Container detention (per day)</field>
+        <field name="default_code">DET</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">time</field>
+        <field name="description">Use of the container outside the terminal beyond free time; own code or part of DEM is undecided.</field>
+        <field name="boss_open_question">P09</field>
+    </record>
+    <record id="service_ocu" model="product.template">
+        <field name="name">Port storage (per container and day)</field>
+        <field name="default_code">OCU</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">time</field>
+        <field name="description">Port occupancy of the full container beyond free days, by port group and container type.</field>
+        <field name="boss_o17_concept_id" eval="218"/>
+        <field name="boss_o17_concept_code">OCU</field>
+    </record>
+    <record id="service_alm" model="product.template">
+        <field name="name">Airport storage (per 100 kg or fraction and day)</field>
+        <field name="default_code">ALM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">time</field>
+        <field name="description">Storage at the airport handler, space x time, with free hours or days.</field>
+        <field name="boss_o17_concept_id" eval="207"/>
+        <field name="boss_o17_concept_code">ALM</field>
+    </record>
+    <record id="service_pot" model="product.template">
+        <field name="name">Positioning for inspection (per container)</field>
+        <field name="default_code">POT</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Moving the container to the inspection point, on request, per container.</field>
+        <field name="boss_o17_concept_id" eval="224"/>
+        <field name="boss_o17_concept_code">POT</field>
+    </record>
+    <record id="service_han" model="product.template">
+        <field name="name">Airport handling (per chargeable kg)</field>
+        <field name="default_code">HAN</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_air"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Handler fee per chargeable kg with a minimum.</field>
+        <field name="boss_o17_concept_id" eval="210"/>
+        <field name="boss_o17_concept_code">HAN</field>
+    </record>
+    <record id="service_awb" model="product.template">
+        <field name="name">Air waybill issue (AWB)</field>
+        <field name="default_code">AWB</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_awb"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Documentation fee for the air waybill.</field>
+        <field name="boss_open_question">P25</field>
+        <field name="boss_o17_concept_id" eval="297"/>
+        <field name="boss_o17_concept_code">AWB</field>
+    </record>
+    <record id="service_etx" model="product.template">
+        <field name="name">Energy tax (handler surcharge)</field>
+        <field name="default_code">ETX</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Handler surcharge; its concept, unit and scope are not confirmed yet.</field>
+        <field name="boss_open_question">P10</field>
+        <field name="boss_o17_concept_id" eval="329"/>
+        <field name="boss_o17_concept_code">ETX</field>
+    </record>
+    <record id="service_x_r" model="product.template">
+        <field name="name">Air security screening (X-ray / PNS)</field>
+        <field name="default_code">X-R</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_awb"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_kg_air'), ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Security screening of air export cargo; per AWB or per kg depending on the supplier.</field>
+        <field name="boss_o17_concept_id" eval="222"/>
+        <field name="boss_o17_concept_code">X-R</field>
+    </record>
+    <record id="service_fad" model="product.template">
+        <field name="name">Import customs clearance (per declaration)</field>
+        <field name="default_code">FAD</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Customs broker fee for the import declaration.</field>
+        <field name="boss_o17_concept_id" eval="198"/>
+        <field name="boss_o17_concept_code">FAD</field>
+    </record>
+    <record id="service_dex" model="product.template">
+        <field name="name">Export customs clearance (per declaration)</field>
+        <field name="default_code">DEX</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Customs broker fee for the export declaration.</field>
+        <field name="boss_o17_concept_id" eval="193"/>
+        <field name="boss_o17_concept_code">DEX</field>
+    </record>
+    <record id="service_cau" model="product.template">
+        <field name="name">Customs guarantee fee (% of declaration duties)</field>
+        <field name="default_code">CAU</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">percent</field>
+        <field name="description">Cost of the customs guarantee, a percentage of the declaration duties with a minimum.</field>
+        <field name="boss_open_question">P13</field>
+        <field name="boss_o17_concept_id" eval="184"/>
+        <field name="boss_o17_concept_code">CAU</field>
+    </record>
+    <record id="service_eur1" model="product.template">
+        <field name="name">EUR.1 / ATR certificate issue</field>
+        <field name="default_code">EUR1</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_document')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Issue of the preferential origin certificate.</field>
+        <field name="boss_o17_concept_id" eval="196"/>
+        <field name="boss_o17_concept_code">EUR1</field>
+    </record>
+    <record id="service_tra" model="product.template">
+        <field name="name">Customs transit T1 / EXS (per document)</field>
+        <field name="default_code">TRA</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Customs transit document, per document.</field>
+        <field name="boss_o17_concept_id" eval="231"/>
+        <field name="boss_o17_concept_code">TRA</field>
+    </record>
+    <record id="service_sad" model="product.template">
+        <field name="name">Customs penalty or surcharge (at cost)</field>
+        <field name="default_code">SAD</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Customs penalty passed on at cost; amount of each case.</field>
+        <field name="boss_o17_concept_id" eval="330"/>
+        <field name="boss_o17_concept_code">SAD</field>
+    </record>
+    <record id="service_roh" model="product.template">
+        <field name="name">RoHS control (per document)</field>
+        <field name="default_code">ROH</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">RoHS control, paid per document; several per consignment are possible.</field>
+        <field name="boss_o17_concept_id" eval="352"/>
+        <field name="boss_o17_concept_code">ROH</field>
+    </record>
+    <record id="service_soi" model="product.template">
+        <field name="name">SOIVRE inspection (per document)</field>
+        <field name="default_code">SOI</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">SOIVRE quality inspection, per document.</field>
+        <field name="boss_o17_concept_id" eval="227"/>
+        <field name="boss_o17_concept_code">SOI</field>
+    </record>
+    <record id="service_ins" model="product.template">
+        <field name="name">Inspection (per document)</field>
+        <field name="default_code">INS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Generic inspection, per document.</field>
+        <field name="boss_o17_concept_id" eval="212"/>
+        <field name="boss_o17_concept_code">INS</field>
+    </record>
+    <record id="service_san" model="product.template">
+        <field name="name">Health inspection or certificate (per document)</field>
+        <field name="default_code">SAN</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Health inspection or certificate, per document.</field>
+        <field name="boss_o17_concept_id" eval="293"/>
+        <field name="boss_o17_concept_code">SAN</field>
+    </record>
+    <record id="service_far" model="product.template">
+        <field name="name">Pharmacy inspection (per document)</field>
+        <field name="default_code">FAR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Pharmacy inspection, per document.</field>
+        <field name="boss_o17_concept_id" eval="294"/>
+        <field name="boss_o17_concept_code">FAR</field>
+    </record>
+    <record id="service_tte_con" model="product.template">
+        <field name="name">Road transport, general cargo (pickup / delivery)</field>
+        <field name="default_code">TTE-CON</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_road"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">route_tiers</field>
+        <field name="description">Road pickup or delivery priced by the haulier by route zone and weight brackets.</field>
+        <field name="boss_o17_concept_id" eval="365"/>
+        <field name="boss_o17_concept_code">TTE</field>
+    </record>
+    <record id="service_tte_fcl" model="product.template">
+        <field name="name">Road transport of containers (per container)</field>
+        <field name="default_code">TTE-FCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">route_tiers</field>
+        <field name="description">Road haulage of the container by route, per container.</field>
+        <field name="boss_o17_concept_id" eval="365"/>
+        <field name="boss_o17_concept_code">TTE</field>
+    </record>
+    <record id="service_fs" model="product.template">
+        <field name="name">Fuel surcharge (% of road transport)</field>
+        <field name="default_code">FS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">percent</field>
+        <field name="description">Percentage on the road transport of the same haulier, with its own validity.</field>
+    </record>
+    <record id="service_par" model="product.template">
+        <field name="name">Truck waiting time (per hour)</field>
+        <field name="default_code">PAR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_hour"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Truck waiting time, per hour requested.</field>
+        <field name="boss_o17_concept_id" eval="220"/>
+        <field name="boss_o17_concept_code">PAR</field>
+    </record>
+    <record id="service_exw" model="product.template">
+        <field name="name">Origin charges abroad (per B/L or AWB)</field>
+        <field name="default_code">EXW</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Origin agent charges abroad, fixed per B/L or AWB.</field>
+        <field name="boss_o17_concept_id" eval="197"/>
+        <field name="boss_o17_concept_code">EXW</field>
+    </record>
+    <record id="service_exw_air" model="product.template">
+        <field name="name">Origin charges abroad, air (per kg)</field>
+        <field name="default_code">EXW-AIR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_gross"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Origin agent charges abroad for air cargo, per kg.</field>
+        <field name="boss_o17_concept_id" eval="197"/>
+        <field name="boss_o17_concept_code">EXW</field>
+    </record>
+    <record id="service_exw_fcl" model="product.template">
+        <field name="name">Origin charges abroad (per container)</field>
+        <field name="default_code">EXW-FCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Origin agent charges abroad, per container.</field>
+        <field name="boss_o17_concept_id" eval="197"/>
+        <field name="boss_o17_concept_code">EXW</field>
+    </record>
+    <record id="service_exw_lcl" model="product.template">
+        <field name="name">Origin charges abroad, LCL (per m³)</field>
+        <field name="default_code">EXW-LCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_m3"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Origin agent charges abroad for groupage, per m³.</field>
+        <field name="boss_o17_concept_id" eval="197"/>
+        <field name="boss_o17_concept_code">EXW</field>
+    </record>
+    <record id="service_dap" model="product.template">
+        <field name="name">Destination charges abroad (per shipment)</field>
+        <field name="default_code">DAP</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Destination agent charges abroad, fixed per shipment.</field>
+        <field name="boss_o17_concept_id" eval="190"/>
+        <field name="boss_o17_concept_code">DAP</field>
+    </record>
+    <record id="service_dap_con" model="product.template">
+        <field name="name">Destination charges abroad (per container)</field>
+        <field name="default_code">DAP-CON</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Destination agent charges abroad, per container.</field>
+        <field name="boss_o17_concept_id" eval="190"/>
+        <field name="boss_o17_concept_code">DAP</field>
+    </record>
+    <record id="service_pft_air" model="product.template">
+        <field name="name">Origin agent profit share (air, per kg)</field>
+        <field name="default_code">PFT-AIR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_kg_air"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Cost agreed with the origin agent, never sold as a line.</field>
+        <field name="boss_o17_concept_id" eval="221"/>
+        <field name="boss_o17_concept_code">PFT</field>
+    </record>
+    <record id="service_pft_fcl" model="product.template">
+        <field name="name">Origin agent profit share (FCL, per container)</field>
+        <field name="default_code">PFT-FCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Cost agreed with the origin agent, never sold as a line.</field>
+        <field name="boss_o17_concept_id" eval="221"/>
+        <field name="boss_o17_concept_code">PFT</field>
+    </record>
+    <record id="service_pft_lcl" model="product.template">
+        <field name="name">Origin agent profit share (LCL, per m³)</field>
+        <field name="default_code">PFT-LCL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_m3"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Cost agreed with the origin agent, with minimum and maximum; never sold as a line.</field>
+        <field name="boss_o17_concept_id" eval="221"/>
+        <field name="boss_o17_concept_code">PFT</field>
+    </record>
+    <record id="service_oal_con" model="product.template">
+        <field name="name">Warehouse operation per container (loading / unloading)</field>
+        <field name="default_code">OAL-CON</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Warehouse loading or unloading of a container.</field>
+        <field name="boss_o17_concept_id" eval="206"/>
+        <field name="boss_o17_concept_code">OAL</field>
+    </record>
+    <record id="service_oal_pal" model="product.template">
+        <field name="name">Warehouse operation per pallet (in / out)</field>
+        <field name="default_code">OAL-PAL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_pallet"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Warehouse handling of pallets in or out.</field>
+        <field name="boss_o17_concept_id" eval="206"/>
+        <field name="boss_o17_concept_code">OAL</field>
+    </record>
+    <record id="service_pal" model="product.template">
+        <field name="name">Palletising (per pallet)</field>
+        <field name="default_code">PAL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_pallet"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Palletising of the goods, per pallet.</field>
+        <field name="boss_o17_concept_id" eval="219"/>
+        <field name="boss_o17_concept_code">PAL</field>
+    </record>
+    <record id="service_fum" model="product.template">
+        <field name="name">Container fumigation (per container)</field>
+        <field name="default_code">FUM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Fumigation of the container, per container.</field>
+        <field name="boss_o17_concept_id" eval="300"/>
+        <field name="boss_o17_concept_code">FUM</field>
+    </record>
+    <record id="service_men" model="product.template">
+        <field name="name">Document courier (per dispatch)</field>
+        <field name="default_code">MEN</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Courier of original documents, per dispatch.</field>
+        <field name="boss_o17_concept_id" eval="305"/>
+        <field name="boss_o17_concept_code">MEN</field>
+    </record>
+    <record id="service_csm" model="product.template">
+        <field name="name">Sea consignment / booking fee (BOSS fee)</field>
+        <field name="default_code">CSM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="boss_pricing_mode">own</field>
+        <field name="boss_cost_method">none</field>
+        <field name="description">BOSS's own fee per sea shipment; no supplier cost.</field>
+        <field name="boss_o17_concept_id" eval="189"/>
+        <field name="boss_o17_concept_code">CSM</field>
+    </record>
+    <record id="service_csa" model="product.template">
+        <field name="name">Air agency fee (BOSS fee)</field>
+        <field name="default_code">CSA</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="boss_pricing_mode">own</field>
+        <field name="boss_cost_method">none</field>
+        <field name="description">BOSS's own fee per air shipment; no supplier cost.</field>
+        <field name="boss_o17_concept_id" eval="188"/>
+        <field name="boss_o17_concept_code">CSA</field>
+    </record>
+    <record id="service_cst" model="product.template">
+        <field name="name">Road consignment fee (BOSS fee)</field>
+        <field name="default_code">CST</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="boss_pricing_mode">own</field>
+        <field name="boss_cost_method">none</field>
+        <field name="description">BOSS's own fee per road shipment; no supplier cost.</field>
+        <field name="boss_o17_concept_id" eval="304"/>
+        <field name="boss_o17_concept_code">CST</field>
+    </record>
+    <record id="service_qbr" model="product.template">
+        <field name="name">Bank exchange loss (% of USD amounts)</field>
+        <field name="default_code">QBR</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">percent</field>
+        <field name="description">Percentage covering the bank loss on USD amounts.</field>
+        <field name="boss_open_question">P03</field>
+        <field name="boss_o17_concept_id" eval="236"/>
+        <field name="boss_o17_concept_code">QBR</field>
+    </record>
+    <record id="service_seg" model="product.template">
+        <field name="name">Cargo insurance in transit (% of insured value)</field>
+        <field name="default_code">SEG</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">tariff</field>
+        <field name="boss_cost_method">percent</field>
+        <field name="description">Insurance premium as a percentage of the insured value, with a minimum.</field>
+        <field name="boss_open_question">P13</field>
+        <field name="boss_o17_concept_id" eval="226"/>
+        <field name="boss_o17_concept_code">SEG</field>
+    </record>
+    <record id="service_gll" model="product.template">
+        <field name="name">Other local arrival charges (supplier amount)</field>
+        <field name="default_code">GLL</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Catch-all local arrival charges; amount taken from the supplier.</field>
+        <field name="boss_o17_concept_id" eval="208"/>
+        <field name="boss_o17_concept_code">GLL</field>
+    </record>
+    <record id="service_vet" model="product.template">
+        <field name="name">Veterinary inspection</field>
+        <field name="default_code">VET</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_document"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Used in Odoo 17 (one customer); definition and unit not decided.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="213"/>
+        <field name="boss_o17_concept_code">VET</field>
+    </record>
+    <record id="service_gt3" model="product.template">
+        <field name="name">T-3 handling</field>
+        <field name="default_code">GT3</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Carrier T-3 handling at cost in Odoo 17; scope not decided.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="239"/>
+        <field name="boss_o17_concept_code">GT3</field>
+    </record>
+    <record id="service_des" model="product.template">
+        <field name="name">Destruction of goods</field>
+        <field name="default_code">DES</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Destruction of goods at cost (rare); definition pending.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="332"/>
+        <field name="boss_o17_concept_code">DES</field>
+    </record>
+    <record id="service_vac" model="product.template">
+        <field name="name">Container stripping / truck delivery</field>
+        <field name="default_code">VAC</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Rarely used; definition pending.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="234"/>
+        <field name="boss_o17_concept_code">VAC</field>
+    </record>
+    <record id="service_pos" model="product.template">
+        <field name="name">Positioning for border inspection / scanner</field>
+        <field name="default_code">POS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Overlaps with POT; to decide whether it stays a separate service.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="223"/>
+        <field name="boss_o17_concept_code">POS</field>
+    </record>
+    <record id="service_imo" model="product.template">
+        <field name="name">Dangerous goods surcharge</field>
+        <field name="default_code">IMO</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_c20"/>
+        <field name="uom_ids" eval="[Command.set([ref('uom_c40'), ref('uom_c45'), ref('uom_kg_gross'), ref('uom_shipment')])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Surcharge for dangerous goods; three different bases seen, not decided.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="211"/>
+        <field name="boss_o17_concept_code">IMO</field>
+    </record>
+    <record id="service_dvd" model="product.template">
+        <field name="name">DVD customs clearance</field>
+        <field name="default_code">DVD</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">per_unit</field>
+        <field name="description">Clearance type used by two customers; meaning to confirm.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="316"/>
+        <field name="boss_o17_concept_code">DVD</field>
+    </record>
+    <record id="service_gav" model="product.template">
+        <field name="name">Vigo warehouse charges</field>
+        <field name="default_code">GAV</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Used for weekly T1 transits of one customer; to confirm.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="311"/>
+        <field name="boss_o17_concept_code">GAV</field>
+    </record>
+    <record id="service_ara" model="product.template">
+        <field name="name">Import duty (paid on behalf)</field>
+        <field name="default_code">ARA</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Duty paid on behalf of the customer, amount from the customs declaration.</field>
+        <field name="boss_open_question">P18</field>
+        <field name="boss_o17_concept_id" eval="182"/>
+        <field name="boss_o17_concept_code">ARA</field>
+    </record>
+    <record id="service_pla" model="product.template">
+        <field name="name">Plastic packaging tax (paid on behalf)</field>
+        <field name="default_code">PLA</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Tax paid on behalf of the customer, amount from the customs declaration.</field>
+        <field name="boss_open_question">P18</field>
+        <field name="boss_o17_concept_id" eval="348"/>
+        <field name="boss_o17_concept_code">PLA</field>
+    </record>
+    <record id="service_iva" model="product.template">
+        <field name="name">Import VAT (paid on behalf)</field>
+        <field name="default_code">IVA</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Import VAT paid on behalf of the customer, amount from the customs declaration.</field>
+        <field name="boss_open_question">P18</field>
+        <field name="boss_o17_concept_id" eval="215"/>
+        <field name="boss_o17_concept_code">IVA</field>
+    </record>
+    <record id="service_dum" model="product.template">
+        <field name="name">Anti-dumping duty (paid on behalf)</field>
+        <field name="default_code">DUM</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_services"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_declaration"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Anti-dumping duty; treatment not decided.</field>
+        <field name="boss_open_question">P16</field>
+        <field name="boss_o17_concept_id" eval="346"/>
+        <field name="boss_o17_concept_code">DUM</field>
+    </record>
+</odoo>

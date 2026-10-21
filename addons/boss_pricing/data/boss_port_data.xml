@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="port_esvlc" model="boss.port"><field name="name">Valencia</field><field name="code">ESVLC</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esbcn" model="boss.port"><field name="name">Barcelona</field><field name="code">ESBCN</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esalg" model="boss.port"><field name="name">Algeciras</field><field name="code">ESALG</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esbio" model="boss.port"><field name="name">Bilbao</field><field name="code">ESBIO</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esvgo" model="boss.port"><field name="name">Vigo</field><field name="code">ESVGO</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esmad_air" model="boss.port"><field name="name">Madrid-Barajas</field><field name="code">MAD</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esbcn_air" model="boss.port"><field name="name">Barcelona-El Prat</field><field name="code">BCN</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
+    <record id="port_esvlc_air" model="boss.port"><field name="name">Valencia (airport)</field><field name="code">VLC</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
+</odoo>

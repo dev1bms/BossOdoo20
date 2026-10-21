@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_reprice_wizard_view_form" model="ir.ui.view">
+        <field name="name">boss.reprice.wizard.form</field>
+        <field name="model">boss.reprice.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">The accepted prices stay in the pricing history; this change is recorded with its reason.</p>
+                <group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="reason" placeholder="Why the accepted prices change"/>
+                </group>
+                <field name="line_ids">
+                    <list editable="bottom" create="0" delete="0">
+                        <field name="sale_line_id" column_invisible="1"/>
+                        <field name="currency_id" column_invisible="1"/>
+                        <field name="product_id" readonly="1"/>
+                        <field name="uom_id" readonly="1"/>
+                        <field name="quantity" readonly="1"/>
+                        <field name="current_cost" readonly="1"/>
+                        <field name="recompute_cost"/>
+                        <field name="current_price" readonly="1"/>
+                        <field name="new_price"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_apply" type="object" string="Re-price" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

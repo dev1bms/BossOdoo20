@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+boss_shipment_container_salesman,Planned containers,boss.shipment.container,sales_team.group_sale_salesman,crud,
+boss_pricing_snapshot_salesman,Pricing snapshots: read,boss.pricing.snapshot,sales_team.group_sale_salesman,r,
+boss_add_services_salesman,Add services,boss.add.services,sales_team.group_sale_salesman,crud,
+boss_supplier_price_wizard_tariff_user,Add supplier price,boss.supplier.price.wizard,boss_pricing.group_tariff_user,crud,
+boss_reprice_wizard_manager,Re-price,boss.reprice.wizard,sales_team.group_sale_manager,crud,
+boss_reprice_wizard_line_manager,Re-price lines,boss.reprice.wizard.line,sales_team.group_sale_manager,crud,

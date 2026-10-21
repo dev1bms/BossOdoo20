@@ -1,0 +1,961 @@
+# Translation of BOSS module boss_pricing_sale: Arabic (ar_001).
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_markup
+msgid ""
+"(Sale - cost) / cost. The margin shown by Odoo is (sale - cost) / sale."
+msgstr ""
+"(البيع - التكلفة) / التكلفة. أما الهامش الذي يعرضه Odoo فهو (البيع - التكلفة) / البيع."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "<strong>Pricing to complete: </strong>"
+msgstr "<strong>تسعير يلزم استكماله: </strong>"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "A price of %s must say its charge basis (container 40', B/L, kg...)."
+msgstr "يجب أن يحدد سعر %s أساس احتسابه (حاوية 40 قدماً، بوليصة، كغ...)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_snapshot__kind__acceptance
+msgid "Acceptance"
+msgstr "القبول"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__current_price
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_price_frozen
+msgid "Accepted price"
+msgstr "السعر المقبول"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid ""
+"Accepted prices are frozen. Changes go through <strong>Re-price</strong>, with a reason."
+msgstr ""
+"الأسعار المقبولة مجمّدة. تتم التغييرات عبر <strong>إعادة التسعير</strong> مع ذكر السبب."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__current_cost
+msgid "Accepted unit cost"
+msgstr "تكلفة الوحدة المقبولة"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
+msgid "Add"
+msgstr "إضافة"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_add_services
+msgid "Add BOSS services to a quotation"
+msgstr "إضافة خدمات BOSS إلى عرض"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_supplier_price_wizard
+msgid "Add a supplier price from a quotation"
+msgstr "إضافة سعر مورد من عرض"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Add services"
+msgstr "إضافة خدمات"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Add supplier price"
+msgstr "إضافة سعر مورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
+msgid "Add to draft tariff"
+msgstr "إضافة إلى تعرفة مسودة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__agreed
+msgid "Agreed price (pricelist)"
+msgstr "سعر متفق عليه (قائمة الأسعار)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__air
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__air
+msgid "Air"
+msgstr "جوي"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__air
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_load_type__air
+msgid "Air cargo"
+msgstr "شحن جوي"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Applies to (from the quotation; empty = any)"
+msgstr "تنطبق على (من العرض؛ فارغ = أي)"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "Attach the supplier document to send the price for approval."
+msgstr "أرفق مستند المورد لإرسال السعر للاعتماد."
+
+#. module: boss_pricing_sale
+#: model:ir.module.module,shortdesc:base.module_boss_pricing_sale
+msgid "BOSS Pricing on Quotations"
+msgstr "تسعير BOSS في العروض"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_currency_id
+msgid "Boss Cost Currency"
+msgstr "عملة التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_pricing_alert
+msgid "Boss Pricing Alert"
+msgstr "تنبيه التسعير"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__carrier_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_carrier_id
+msgid "Carrier"
+msgstr "الناقل / الخط الملاحي"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Carrier and date"
+msgstr "الناقل والتاريخ"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__uom_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Charge basis"
+msgstr "أساس الاحتساب"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_res_company
+msgid "Company"
+msgstr "الشركة"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_sale_free
+msgid ""
+"Confirms that a zero sale price is intended. Without it a zero price means 'missing'."
+msgstr "يؤكد أن سعر البيع الصفري مقصود. ومن دونه يعني الصفر 'سعر ناقص'."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_container_ids
+msgid "Containers"
+msgstr "الحاويات"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"Cost in %(cur)s and quotation in %(order)s: no conversion policy yet (company setting)."
+msgstr ""
+"التكلفة بعملة %(cur)s والعرض بعملة %(order)s: لا توجد سياسة تحويل بعد (إعداد الشركة)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_manual_cost_note
+msgid "Cost reference"
+msgstr "مرجع التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_pricing_mode
+msgid "Cost source"
+msgstr "مصدر التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_status
+msgid "Cost status"
+msgstr "حالة التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__currency_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__data
+msgid "Data"
+msgstr "البيانات"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__date
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__direction
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_tariff__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__res_company__boss_fx_policy__none
+msgid "Do not convert: the cost stays pending"
+msgstr "لا تحويل: تبقى التكلفة معلّقة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document_name
+msgid "Document Name"
+msgstr "اسم المستند"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document_reference
+msgid "Document Reference"
+msgstr "مرجع المستند"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_manual_cost_note
+msgid "E.g. supplier offer number."
+msgstr "مثل رقم عرض المورد."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_planned_date
+msgid ""
+"ETA for imports, ETD for exports. It chooses the version of each supplier tariff."
+msgstr "ETA للاستيراد وETD للتصدير، ويحدد نسخة كل تعرفة مورد."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
+msgid "Empty: a new tariff is created with the data below."
+msgstr "فارغ: تُنشأ تعرفة جديدة بالبيانات أدناه."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__manual
+msgid "Entered by a person"
+msgstr "أدخله شخص"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_amount
+msgid "Expected cost"
+msgstr "التكلفة المتوقعة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_manual_cost
+msgid ""
+"Expected cost per unit entered by a person when the service is not priced from a tariff (freight offer, amount paid on behalf of the customer...)."
+msgstr ""
+"التكلفة المتوقعة للوحدة يُدخلها شخص عندما لا تُسعَّر الخدمة من تعرفة (عرض أجرة شحن، مبلغ مدفوع نيابة عن العميل...)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_amount
+msgid "Expected supplier cost of the whole line, in the tariff currency."
+msgstr "تكلفة المورد المتوقعة للبند كاملاً، بعملة التعرفة."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__export
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_direction__export
+msgid "Export"
+msgstr "تصدير"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__fcl
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_load_type__fcl
+msgid "FCL (full container)"
+msgstr "FCL (حاوية كاملة)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_sale_free
+msgid "Free of charge"
+msgstr "مجاناً"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__free
+msgid "Free of charge (confirmed)"
+msgstr "مجاناً (مؤكَّد)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_explanation
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "How the cost is computed"
+msgstr "كيف تُحتسب التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_tariff__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__import
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_direction__import
+msgid "Import"
+msgstr "استيراد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__lcl
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_load_type__lcl
+msgid "LCL (groupage)"
+msgstr "LCL (شحن مجمّع)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__line_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Line"
+msgstr "البند"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_reprice_wizard_line
+msgid "Line to re-price"
+msgstr "بند لإعادة التسعير"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_snapshot_view_form
+msgid "Lines"
+msgstr "البنود"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__load_type
+msgid "Load Type"
+msgstr "شكل الشحن"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_load_type
+msgid "Load type"
+msgstr "شكل الشحن"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Look up supplier prices again (e.g. after a tariff was approved)."
+msgstr "إعادة البحث عن أسعار الموردين (مثلاً بعد اعتماد تعرفة)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__manual
+msgid "Manual amount"
+msgstr "مبلغ يدوي"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Manual cost per unit: %(cost)s %(cur)s %(ref)s"
+msgstr "تكلفة يدوية للوحدة: %(cost)s %(cur)s %(ref)s"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_manual_cost
+msgid "Manual unit cost"
+msgstr "تكلفة الوحدة اليدوية"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Margin (on sale)"
+msgstr "الهامش (على سعر البيع)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_markup
+msgid "Markup on cost"
+msgstr "نسبة الإضافة على التكلفة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__max_amount
+msgid "Maximum"
+msgstr "الحد الأقصى"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__min_amount
+msgid "Minimum"
+msgstr "الحد الأدنى"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_missing
+msgid "Missing data"
+msgstr "البيانات الناقصة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__missing_input
+msgid "Missing shipment data"
+msgstr "بيانات الشحنة ناقصة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__submit
+msgid "Needs the supplier document. Approval is always a separate step."
+msgstr "يتطلب مستند المورد. والاعتماد خطوة منفصلة دائماً."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__new_price
+msgid "New price"
+msgstr "السعر الجديد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__no_tariff
+msgid "No supplier price"
+msgstr "لا يوجد سعر مورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__not_ready
+msgid "Not priced automatically"
+msgstr "لا يُسعَّر آلياً"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__res_company__boss_fx_policy__rate_quotation
+msgid "Odoo exchange rate of the quotation date"
+msgstr "سعر صرف Odoo بتاريخ العرض"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__on_request
+msgid "On request"
+msgstr "عند الطلب"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
+msgid ""
+"One line per service; container services get one line per container size of the shipment."
+msgstr "بند لكل خدمة؛ وخدمات الحاويات لها بند لكل مقاس حاوية في الشحنة."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__only_this_customer
+msgid "Only This Customer"
+msgstr "هذا العميل فقط"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Open the service"
+msgstr "فتح الخدمة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__order_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__order_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__order_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__order_id
+msgid "Order"
+msgstr "الطلب"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__currency
+msgid "Other currency, no conversion policy"
+msgstr "عملة أخرى دون سياسة تحويل"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document_page
+msgid "Page"
+msgstr "الصفحة"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_shipment_container
+msgid "Planned containers of a quotation"
+msgstr "الحاويات المتوقعة في العرض"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_planned_date
+msgid "Planned date"
+msgstr "التاريخ المتوقع"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_port_id
+msgid "Port or airport in Spain where BOSS handles the cargo."
+msgstr "الميناء أو المطار في إسبانيا حيث تتولى BOSS البضاعة."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__port_ids
+msgid "Ports"
+msgstr "الموانئ"
+
+#. module: boss_pricing_sale
+#: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ports
+msgid "Ports and airports"
+msgstr "الموانئ والمطارات"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Price"
+msgstr "السعر"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__only_this_customer
+msgid "Price agreed for this customer only."
+msgstr "سعر متفق عليه لهذا العميل فقط."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__pending_approval
+msgid "Price waiting for approval"
+msgstr "سعر بانتظار الاعتماد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__ok
+msgid "Priced"
+msgstr "مُسعَّر"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_product_pricelist_item
+msgid "Pricelist Rule"
+msgstr "قاعدة قائمة الأسعار"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_pricing_frozen
+msgid "Prices frozen"
+msgstr "أسعار مجمّدة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_candidate_ids
+msgid "Prices involved"
+msgstr "الأسعار المعنية"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_reprice_wizard.py:0
+msgid "Prices re-priced. Reason: %s"
+msgstr "أُعيد التسعير. السبب: %s"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_snapshot_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Pricing history"
+msgstr "سجل التسعير"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Pricing of %s"
+msgstr "تسعير %s"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_pricing_snapshot
+msgid "Pricing snapshot of a quotation"
+msgstr "لقطة أسعار العرض"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__product_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__quantity
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Re-price"
+msgstr "إعادة التسعير"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "Re-price accepted quotation"
+msgstr "إعادة تسعير عرض مقبول"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_reprice_wizard
+msgid "Re-price an accepted quotation"
+msgstr "إعادة تسعير عرض مقبول"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_snapshot__kind__repricing
+msgid "Re-pricing"
+msgstr "إعادة التسعير"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__reason
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__reason
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_snapshot_view_form
+msgid "Reason"
+msgstr "السبب"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__recompute_cost
+msgid "Recompute cost from tariffs"
+msgstr "إعادة احتساب التكلفة من التعرفات"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Review the supplier price"
+msgstr "مراجعة سعر المورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__road
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__road
+msgid "Road"
+msgstr "بري"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__road
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_load_type__road
+msgid "Road cargo"
+msgstr "شحن بري"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Route"
+msgstr "المسار"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Sale"
+msgstr "البيع"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__sale_line_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__sale_line_id
+msgid "Sale Line"
+msgstr "بند البيع"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_sale_status
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Sale price"
+msgstr "سعر البيع"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__missing
+msgid "Sale price missing"
+msgstr "سعر البيع ناقص"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "Sale price missing: %s"
+msgstr "سعر البيع ناقص: %s"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "بند أمر البيع"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Save price"
+msgstr "حفظ السعر"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__sea
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__sea
+msgid "Sea"
+msgstr "بحري"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__submit
+msgid "Send for approval now"
+msgstr "إرسال للاعتماد الآن"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__product_ids
+msgid "Services"
+msgstr "الخدمات"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_pricing_frozen
+msgid ""
+"Set when the quotation is accepted: prices only change through Re-price, with a reason."
+msgstr ""
+"يُفعَّل عند قبول العرض: لا تتغير الأسعار إلا عبر إعادة التسعير مع ذكر السبب."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__conflict
+msgid "Several prices apply"
+msgstr "تنطبق عدة أسعار"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Shipment"
+msgstr "الشحنة"
+
+#. module: boss_pricing_sale
+#: model:ir.module.module,summary:base.module_boss_pricing_sale
+msgid ""
+"Shipment data, supplier cost and sale price per quotation line; frozen on acceptance"
+msgstr ""
+"بيانات الشحنة وتكلفة المورد وسعر البيع لكل بند في العرض؛ تُجمَّد عند القبول"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_snapshot__data
+msgid "Shipment inputs, policy and every line with its price source."
+msgstr "بيانات الشحنة والسياسة وكل بند مع مصدر سعره."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_carrier_id
+msgid "Shipping line, airline or haulier."
+msgstr "الخط الملاحي أو شركة الطيران أو الناقل."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__size
+msgid "Size"
+msgstr "المقاس"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_port_id
+msgid "Spanish port / airport"
+msgstr "الميناء / المطار في إسبانيا"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__summary
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__partner_id
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_fx_policy
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_fx_policy
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Supplier cost in another currency"
+msgstr "تكلفة المورد بعملة أخرى"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document
+msgid "Supplier document"
+msgstr "مستند المورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_tariff_line_id
+msgid "Supplier price"
+msgstr "سعر المورد"
+
+#. module: boss_pricing_sale
+#: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_tariff_lines
+msgid "Supplier prices"
+msgstr "أسعار الموردين"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_tariff
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Supplier tariff"
+msgstr "تعرفة المورد"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_pricing_mode
+msgid ""
+"Supplier tariff: the cost is computed from approved supplier tariffs.\n"
+"Manual amount: a person enters the cost of each shipment (freight offer, amount paid on behalf of the customer...).\n"
+"BOSS own fee: no supplier cost.\n"
+"Pending business decision: the service exists but is not priced until the open question is answered."
+msgstr ""
+"تعرفة المورد: تُحتسب التكلفة من تعرفات الموردين المعتمدة.\n"
+"مبلغ يدوي: يُدخل شخصٌ تكلفة كل شحنة (عرض أجرة الشحن، مبلغ مدفوع نيابة عن العميل...).\n"
+"أتعاب BOSS الخاصة: دون تكلفة مورد.\n"
+"بانتظار قرار تجاري: الخدمة موجودة لكنها لا تُسعَّر حتى يُجاب عن السؤال المفتوح."
+
+#. module: boss_pricing_sale
+#: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_tariffs
+msgid "Supplier tariffs"
+msgstr "تعرفات الموردين"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_name
+msgid "Tariff name"
+msgstr "اسم التعرفة"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Tariffs involved"
+msgstr "التعرفات المعنية"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
+msgid ""
+"The accepted prices stay in the pricing history; this change is recorded with its reason."
+msgstr "تبقى الأسعار المقبولة في السجل، ويُسجَّل هذا التغيير مع سببه."
+
+#. module: boss_pricing_sale
+#: model:ir.model.constraint,message:boss_pricing_sale.constraint_boss_shipment_container_quantity_positive
+msgid "The number of containers must be positive."
+msgstr "يجب أن يكون عدد الحاويات موجباً."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid ""
+"The price is saved in a supplier tariff (never on the quotation) and is used once it is approved."
+msgstr "يُحفظ السعر في تعرفة مورد (لا في العرض أبداً) ويُستخدم بعد اعتماده."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"This line belongs to an accepted quotation. Use 'Re-price' and give the reason."
+msgstr "هذا البند من عرض مقبول. استخدم 'إعادة التسعير' واذكر السبب."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__transport_mode
+msgid "Transport Mode"
+msgstr "وسيلة النقل"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_transport_mode
+msgid "Transport mode"
+msgstr "وسيلة النقل"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid ""
+"Two prices of %(service)s per %(uom)s overlap in %(pricelist)s: keep one, or make their dates consecutive."
+msgstr ""
+"يتداخل سعران للخدمة %(service)s لكل %(uom)s في %(pricelist)s: أبقِ واحداً أو اجعل تواريخهما متتالية."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__uom_id
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Unit cost (quotation currency)"
+msgstr "تكلفة الوحدة (بعملة العرض)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Update costs"
+msgstr "تحديث التكاليف"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__valid_from
+msgid "Valid From"
+msgstr "صالحة من"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__valid_to
+msgid "Valid To"
+msgstr "صالحة حتى"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"What to do when a supplier price is in another currency than the quotation."
+msgstr "ما العمل عندما يكون سعر المورد بعملة غير عملة العرض."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
+msgid "Why the accepted prices change"
+msgstr "لماذا تتغير الأسعار المقبولة"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
+msgid "cost"
+msgstr "تكلفة"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
+msgid "sale"
+msgstr "بيع"

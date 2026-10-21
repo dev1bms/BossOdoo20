@@ -1,0 +1,8 @@
+id,name,model_id,group_id/id,operation,domain
+boss_port_read,Ports: read,boss.port,base.group_user,r,
+boss_port_tariff_user,Ports: maintain,boss.port,group_tariff_user,cru,
+boss_tariff_read,Tariffs: read,boss.tariff,base.group_user,r,
+boss_tariff_user,Tariffs: enter,boss.tariff,group_tariff_user,cru,
+boss_tariff_user_unlink_draft,Tariffs: delete drafts,boss.tariff,group_tariff_user,d,"[('state', '=', 'draft')]"
+boss_tariff_line_read,Tariff lines: read,boss.tariff.line,base.group_user,r,
+boss_tariff_line_user,Tariff lines: enter,boss.tariff.line,group_tariff_user,crud,"[('tariff_id.state', '=', 'draft')]"

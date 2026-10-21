@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form.boss.pricing</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_boss_add_services" type="object" string="Add services"
+                        invisible="state not in ('draft', 'sent')"/>
+                <button name="action_boss_update_costs" type="object" string="Update costs"
+                        invisible="state not in ('draft', 'sent')"
+                        help="Look up supplier prices again (e.g. after a tariff was approved)."/>
+                <button name="action_boss_reprice" type="object" string="Re-price"
+                        invisible="not boss_pricing_frozen or state != 'sale'" groups="sales_team.group_sale_manager"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div class="alert alert-warning mb-2" role="alert" invisible="not boss_pricing_alert">
+                    <strong>Pricing to complete: </strong><field name="boss_pricing_alert" nolabel="1" class="d-inline"/>
+                </div>
+                <div class="alert alert-info mb-2" role="status" invisible="not boss_pricing_frozen">
+                    Accepted prices are frozen. Changes go through <strong>Re-price</strong>, with a reason.
+                </div>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']" position="before">
+                <page string="Shipment" name="boss_shipment">
+                    <group>
+                        <group string="Route">
+                            <field name="boss_direction" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_transport_mode" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_port_id" readonly="state in ('sale', 'cancel')"/>
+                        </group>
+                        <group string="Carrier and date">
+                            <field name="boss_carrier_id" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_planned_date" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_pricing_frozen" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="boss_container_ids" readonly="state in ('sale', 'cancel')">
+                        <list editable="bottom">
+                            <field name="size"/>
+                            <field name="quantity"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="before">
+                <field name="boss_pricing_mode" column_invisible="1"/>
+                <field name="boss_price_frozen" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//column[@name='price_unit']" position="before">
+                <field name="boss_cost_status" string="Cost" widget="badge" optional="show"
+                       decoration-success="boss_cost_status == 'ok'"
+                       decoration-warning="boss_cost_status in ('missing_input', 'pending_approval', 'manual', 'not_ready', 'currency', 'on_request')"
+                       decoration-danger="boss_cost_status in ('no_tariff', 'conflict')"/>
+                <button name="action_boss_pricing_details" type="object" icon="fa-info-circle" title="How the cost is computed"
+                        invisible="not boss_pricing_mode"/>
+                <button name="action_boss_add_supplier_price" type="object" icon="fa-plus-circle" title="Add supplier price"
+                        invisible="boss_cost_status != 'no_tariff'" groups="boss_pricing.group_tariff_user"/>
+                <button name="action_boss_open_tariffs" type="object" icon="fa-check-square-o" title="Review the supplier price"
+                        invisible="boss_cost_status not in ('pending_approval', 'conflict')"/>
+                <button name="action_boss_open_service" type="object" icon="fa-question-circle" title="Open the service"
+                        invisible="boss_cost_status != 'not_ready'"/>
+                <field name="boss_manual_cost" optional="show"
+                       invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
+                <field name="boss_manual_cost_note" optional="hide"
+                       invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
+                <field name="boss_sale_status" string="Sale" widget="badge" optional="show"
+                       decoration-success="boss_sale_status in ('agreed', 'manual', 'free')"
+                       decoration-danger="boss_sale_status == 'missing'"/>
+                <field name="boss_sale_free" optional="hide" readonly="boss_price_frozen"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="attributes">
+                <attribute name="readonly">is_downpayment or boss_price_frozen</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">qty_invoiced &gt; 0 or boss_price_frozen</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Pricing history" name="boss_pricing_history" invisible="not boss_snapshot_ids">
+                    <field name="boss_snapshot_ids">
+                        <list>
+                            <field name="date"/>
+                            <field name="kind"/>
+                            <field name="user_id"/>
+                            <field name="reason"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- sale_margin adds the unit cost: for BOSS services it comes from the supplier price, never typed. -->
+    <record id="sale_margin_sale_order" model="ir.ui.view">
+        <field name="name">sale.order.margin.form.boss.pricing</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//list//field[@name='purchase_price']" position="attributes">
+                <attribute name="optional">show</attribute>
+                <attribute name="readonly">boss_pricing_mode</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//field[@name='margin_percent']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_line_view_form_boss_pricing" model="ir.ui.view">
+        <field name="name">sale.order.line.form.boss.pricing</field>
+        <field name="model">sale.order.line</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form edit="0" create="0">
+                <sheet>
+                    <group>
+                        <group string="Line">
+                            <field name="product_id" readonly="1"/>
+                            <field name="product_uom_id" string="Charge basis" readonly="1"/>
+                            <field name="product_uom_qty" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Result">
+                            <field name="boss_cost_status"/>
+                            <field name="boss_cost_amount"/>
+                            <field name="boss_cost_currency_id" invisible="1"/>
+                            <field name="purchase_price" string="Unit cost (quotation currency)"/>
+                            <field name="price_unit" string="Sale price"/>
+                            <field name="boss_sale_status"/>
+                            <field name="margin_percent" widget="percentage" string="Margin (on sale)"/>
+                            <field name="boss_markup" widget="percentage"/>
+                        </group>
+                    </group>
+                    <group string="How the cost is computed">
+                        <field name="boss_cost_explanation" nolabel="1" colspan="2"/>
+                    </group>
+                    <group>
+                        <field name="boss_tariff_line_id" invisible="not boss_tariff_line_id"/>
+                        <field name="boss_cost_candidate_ids" widget="many2many_tags" invisible="not boss_cost_candidate_ids"/>
+                        <field name="boss_manual_cost_note" invisible="boss_cost_status not in ('manual', 'not_ready')"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

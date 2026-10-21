@@ -1,0 +1,60 @@
+2026-10-21 14:06:18,325 1 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/extra-addons', skipped
+2026-10-21 14:06:18,325 1 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/extra-addons', skipped
+2026-10-21 14:06:18,327 1 INFO ? odoo: Odoo version 20.0-20261015
+2026-10-21 14:06:18,327 1 INFO ? odoo: Using configuration file at /etc/odoo/odoo.conf
+2026-10-21 14:06:18,327 1 INFO ? odoo: addons paths: _NamespacePath(['/usr/lib/python3/dist-packages/odoo/addons', '/var/lib/odoo/addons/20.0', '/mnt/spike-addons', '/usr/lib/python3/dist-packages/addons'])
+2026-10-21 14:06:18,327 1 INFO ? odoo: database: odoo@spike-db:5432
+2026-10-21 14:06:19,140 1 INFO ? odoo.service.server: HTTP service running on 0.0.0.0:8069
+2026-10-21 14:06:19,149 1 INFO spike_adr002 odoo.tests.common: Importing test framework
+2026-10-21 14:06:19,190 1 INFO spike_adr002 odoo.modules.loading: loading 1 modules...
+2026-10-21 14:06:19,197 1 INFO spike_adr002 odoo.modules.loading: 1 modules loaded in 0.01s, 0 queries (+0 extra)
+2026-10-21 14:06:19,240 1 INFO spike_adr002 odoo.modules.loading: updating modules list
+2026-10-21 14:06:19,243 1 INFO spike_adr002 odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via n/a
+2026-10-21 14:06:19,638 1 WARNING spike_adr002 odoo.modules.module: Missing `author` key in manifest for 'boss_spike_adr002', defaulting to ''
+2026-10-21 14:06:19,649 1 WARNING spike_adr002 odoo.modules.module: Missing `author` key in manifest for 'boss_spike_adr002', defaulting to ''
+2026-10-21 14:06:20,663 1 INFO spike_adr002 odoo.addons.base.models.ir_module: ALLOW access to module.button_upgrade on ['BOSS spike ADR-002 (throwaway)'] to user __system__ #1 via n/a
+2026-10-21 14:06:20,663 1 INFO spike_adr002 odoo.addons.base.models.ir_module: ALLOW access to module.update_list on ['BOSS spike ADR-002 (throwaway)'] to user __system__ #1 via n/a
+2026-10-21 14:06:20,834 1 WARNING spike_adr002 odoo.modules.module: Missing `author` key in manifest for 'boss_spike_adr002', defaulting to ''
+2026-10-21 14:06:21,526 1 INFO spike_adr002 odoo.addons.base.models.ir_module: ALLOW access to module.button_install on [] to user __system__ #1 via n/a
+2026-10-21 14:06:21,566 1 INFO spike_adr002 odoo.modules.loading: loading 57 modules...
+2026-10-21 14:06:21,899 1 WARNING spike_adr002 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-21 14:06:22,282 1 INFO spike_adr002 odoo.modules.loading: Loading module boss_spike_adr002 (54/57)
+2026-10-21 14:06:22,586 1 INFO spike_adr002 odoo.registry: module boss_spike_adr002: creating or updating database tables
+2026-10-21 14:06:22,725 1 INFO spike_adr002 odoo.registry: Registry changed, signaling through the database
+2026-10-21 14:06:22,844 1 INFO spike_adr002 odoo.modules.loading: Module boss_spike_adr002 loaded in 0.56s, 61 queries (+61 other)
+2026-10-21 14:06:22,851 1 INFO spike_adr002 odoo.modules.loading: 57 modules loaded in 1.28s, 61 queries (+61 extra)
+2026-10-21 14:06:23,209 1 INFO spike_adr002 odoo.registry: verifying fields for every extended model
+2026-10-21 14:06:23,914 1 INFO spike_adr002 odoo.modules.loading: Modules loaded.
+2026-10-21 14:06:23,926 1 INFO spike_adr002 odoo.registry: Registry changed, signaling through the database
+2026-10-21 14:06:23,932 1 INFO spike_adr002 odoo.registry: Registry loaded in 4.790s
+2026-10-21 14:06:23,933 1 INFO spike_adr002 odoo.service.server: Starting post tests
+2026-10-21 14:06:24,000 1 INFO spike_adr002 odoo.addons.base.models.res_users: Group change: user 1 with IP n/a changed groups of user 1 who belonged to [27, 33, 23, 38, 10, 9, 19, 5, 16] with changes [(<Command.LINK: 4>, 15, 0)]
+2026-10-21 14:06:24,291 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_1_fixed_sale_price_per_charge_base ...
+2026-10-21 14:06:24,459 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T1 lines (unit, qty, price_unit, subtotal) = [("Cont 20'", 2.0, 180.0, 360.0), ("Cont 40'", 1.0, 240.0, 240.0), ('W/M', 12.5, 12.0, 150.0)]
+2026-10-21 14:06:24,472 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_2_missing_rule_and_generic_rule_fallback ...
+2026-10-21 14:06:24,574 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T2a no 40' rule -> rule=False price_unit=999.0 (list_price sentinel 999)
+2026-10-21 14:06:24,613 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T2b rule without unit (180/cont) applied to W/M -> price_unit=180.0
+2026-10-21 14:06:24,615 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_3_conflicting_rules ...
+2026-10-21 14:06:24,705 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T3 two 40' rules (240, 250) -> picked 250.0, no error raised
+2026-10-21 14:06:24,706 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_4_relative_units_convert_silently ...
+2026-10-21 14:06:24,814 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T4 fixed 240 on a 40' rule, 40' defined as 2 TEU -> price_unit=480.0
+2026-10-21 14:06:24,815 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T4b 1 Cont 20' converted to W/M (unrelated bases) = 1.0 (no error)
+2026-10-21 14:06:24,817 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_5_supplierinfo_selection ...
+2026-10-21 14:06:24,842 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T5a _select_seller(40') -> {'supplierinfo': product.supplierinfo(6,), 'partner_id': res.partner(9,), 'price': 10.0, 'discount': 0.0, 'price_discounted': 10.0, 'currency_id': res.currency(126,), 'uom_id': uom.uom(38,), 'min_qty': 0.0, 'delay': 1}
+2026-10-21 14:06:24,843 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T5b _select_seller(40', force_uom) -> {'supplierinfo': product.supplierinfo(4,), 'partner_id': res.partner(9,), 'price': 150.0, 'discount': 0.0, 'price_discounted': 150.0, 'currency_id': res.currency(126,), 'uom_id': uom.uom(36,), 'min_qty': 0.0, 'delay': 1}
+2026-10-21 14:06:24,845 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_6_cost_plus_percentage ...
+2026-10-21 14:06:24,920 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T6a cost 100, surcharge 25% -> price_unit=125.0 (margin 25% would be 133.33)
+2026-10-21 14:06:24,928 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T6b + price_min_margin 30 -> price_unit=130.0 subtotal=260.0 (minimum applies per unit)
+2026-10-21 14:06:24,932 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: Starting TestSpike.test_7_offers_isolated_and_accepted_offer_frozen ...
+2026-10-21 14:06:25,045 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T7a after markup 25->40: accepted A=125.0, draft B=275.0 (no action)
+2026-10-21 14:06:25,051 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T7b draft B after 'update prices' = 308.0
+2026-10-21 14:06:25,081 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T7c accepted A after changing quantity to 2 -> price_unit=140.0
+2026-10-21 14:06:25,082 1 INFO spike_adr002 odoo.addons.boss_spike_adr002.tests.test_spike: FINDING T7d accepted A after changing its cost to 150 -> price_unit=210.0
+2026-10-21 14:06:25,088 1 INFO spike_adr002 odoo.addons.base.models.ir_attachment: filestore gc 0 checked, 0 removed
+2026-10-21 14:06:25,089 1 INFO spike_adr002 odoo.service.server: 7 post-tests in 1.16s, 617 queries
+2026-10-21 14:06:25,089 1 INFO spike_adr002 odoo.tests.stats: boss_spike_adr002: 9 tests 1.15s 617 queries
+2026-10-21 14:06:25,089 1 INFO spike_adr002 odoo.tests.result: 0 failed, 0 error(s) of 7 tests when loading database 'spike_adr002'
+2026-10-21 14:06:25,089 1 INFO spike_adr002 odoo.service.server.ThreadedServer: Initiating shutdown
+2026-10-21 14:06:25,090 1 INFO spike_adr002 odoo.service.server.ThreadedServer: Hit CTRL-C again or send a second signal to force the shutdown.
+2026-10-21 14:06:25,090 1 INFO spike_adr002 odoo.addons.bus.websocket: Disconnecting 0 websockets
+2026-10-21 14:06:25,191 1 INFO spike_adr002 odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 1 connections 

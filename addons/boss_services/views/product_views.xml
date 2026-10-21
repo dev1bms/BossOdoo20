@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.boss.services</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_information']" position="after">
+                <page string="BOSS pricing" name="boss_pricing" invisible="not boss_pricing_mode">
+                    <group>
+                        <group string="How it is priced">
+                            <field name="boss_pricing_mode"/>
+                            <field name="boss_cost_method"/>
+                            <field name="boss_open_question" invisible="not boss_open_question"/>
+                        </group>
+                        <group string="Traceability">
+                            <field name="default_code" string="Service code"/>
+                            <field name="boss_o17_concept_code"/>
+                            <field name="boss_o17_concept_id"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="What the service is and who provides it."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">product.template.search.boss.services</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <filter name="services" position="after">
+                <filter string="BOSS services" name="boss_services" domain="[('boss_pricing_mode', '!=', False)]"/>
+                <filter string="Pending business decision" name="boss_pending" domain="[('boss_pricing_mode', '=', 'pending')]"/>
+            </filter>
+            <xpath expr="//group" position="inside">
+                <filter string="Cost source" name="groupby_boss_pricing_mode" context="{'group_by': 'boss_pricing_mode'}"/>
+                <filter string="Calculation method" name="groupby_boss_cost_method" context="{'group_by': 'boss_cost_method'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

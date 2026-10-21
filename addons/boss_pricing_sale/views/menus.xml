@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_boss_tariffs" name="Supplier tariffs" parent="sale.product_menu_catalog"
+              action="boss_pricing.boss_tariff_action" sequence="50"/>
+    <menuitem id="menu_boss_tariff_lines" name="Supplier prices" parent="sale.product_menu_catalog"
+              action="boss_pricing.boss_tariff_line_action" sequence="55"/>
+    <menuitem id="menu_boss_ports" name="Ports and airports" parent="sale.menu_sale_config"
+              action="boss_pricing.boss_port_action" sequence="60"/>
+</odoo>

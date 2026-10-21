@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_supplier_price_wizard_view_form" model="ir.ui.view">
+        <field name="name">boss.supplier.price.wizard.form</field>
+        <field name="model">boss.supplier.price.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">The price is saved in a supplier tariff (never on the quotation) and is used once it is approved.</p>
+                <group>
+                    <group string="Price">
+                        <field name="sale_line_id" invisible="1"/>
+                        <field name="product_id" readonly="1"/>
+                        <field name="uom_id" readonly="1"/>
+                        <field name="unit_price"/>
+                        <field name="min_amount"/>
+                        <field name="max_amount"/>
+                        <field name="document_page"/>
+                    </group>
+                    <group string="Supplier tariff">
+                        <field name="partner_id"/>
+                        <field name="tariff_id" options="{'no_create': True}"/>
+                        <field name="tariff_name" invisible="tariff_id" required="not tariff_id"/>
+                        <field name="valid_from" invisible="tariff_id" required="not tariff_id"/>
+                        <field name="valid_to" invisible="tariff_id"/>
+                        <field name="currency_id" invisible="tariff_id" required="not tariff_id"/>
+                        <field name="document" filename="document_name" invisible="tariff_id"/>
+                        <field name="document_name" invisible="1"/>
+                        <field name="document_reference" invisible="tariff_id"/>
+                    </group>
+                </group>
+                <group string="Applies to (from the quotation; empty = any)" invisible="tariff_id">
+                    <group>
+                        <field name="direction"/>
+                        <field name="transport_mode"/>
+                        <field name="load_type"/>
+                    </group>
+                    <group>
+                        <field name="carrier_id"/>
+                        <field name="port_ids" widget="many2many_tags"/>
+                        <field name="only_this_customer"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="submit"/>
+                </group>
+                <footer>
+                    <button name="action_save" type="object" string="Save price" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

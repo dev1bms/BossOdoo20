@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Same effect as Settings > Units of measure: services are sold per container, BL, kg... -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[Command.link(ref('uom.group_uom'))]"/>
+    </record>
+    <record id="base.user_root" model="res.users">
+        <field name="group_ids" eval="[Command.link(ref('uom.group_uom'))]"/>
+    </record>
+</odoo>

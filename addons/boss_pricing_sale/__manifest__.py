@@ -1,0 +1,20 @@
+{
+    "name": "BOSS Pricing on Quotations",
+    "summary": "Shipment data, supplier cost and sale price per quotation line; frozen on acceptance",
+    "version": "20.0.1.0.0",
+    "category": "Sales/Sales",
+    "author": "BiDATiA",
+    "license": "LGPL-3",
+    "depends": ["boss_pricing", "sale_management", "sale_crm", "sale_margin"],
+    "data": [
+        "security/ir.access.csv",
+        "wizard/boss_add_services_views.xml",
+        "wizard/boss_supplier_price_wizard_views.xml",
+        "wizard/boss_reprice_wizard_views.xml",
+        "views/sale_order_views.xml",
+        "views/boss_pricing_snapshot_views.xml",
+        "views/res_config_settings_views.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+}

@@ -1,0 +1,1146 @@
+# Translation of BOSS module boss_services: Spanish (es_ES).
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ams
+msgid "AMS / ISF filing to US customs (per B/L)"
+msgstr "Transmisión AMS / ISF a la aduana de EE. UU. (por BL)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_csa
+msgid "Air agency fee (BOSS fee)"
+msgstr "Consignación aérea / agency fee (honorario BOSS)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fae
+msgid "Air freight export (per chargeable kg)"
+msgstr "Flete aéreo exportación (por kg tasable)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fai
+msgid "Air freight import (per chargeable kg)"
+msgstr "Flete aéreo importación (por kg tasable)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_x_r
+msgid "Air security screening (X-ray / PNS)"
+msgstr "Control de seguridad aérea (rayos X / PNS)"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_awb
+msgid "Air waybill"
+msgstr "Guía aérea (AWB)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_awb
+msgid "Air waybill issue (AWB)"
+msgstr "Emisión de guía aérea (AWB)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_han
+msgid "Airport handling (per chargeable kg)"
+msgstr "Manipulación en terminal aérea (por kg tasable)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_alm
+msgid "Airport storage (per 100 kg or fraction and day)"
+msgstr "Almacenaje aéreo (por 100 kg o fracción y día)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dum
+msgid "Anti-dumping duty (paid on behalf)"
+msgstr "Antidumping (suplido)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dum
+msgid "Anti-dumping duty; treatment not decided."
+msgstr "Derecho antidumping; tratamiento sin decidir."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_cor
+msgid "B/L or manifest correction (per correction)"
+msgstr "Corrección de BL / manifiesto (por corrección)"
+
+#. module: boss_services
+#: model:ir.module.module,shortdesc:base.module_boss_services
+msgid "BOSS Services"
+msgstr "BOSS Servicios"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_pricing_mode__own
+msgid "BOSS own fee (no cost)"
+msgstr "Honorario propio de BOSS (sin coste)"
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "BOSS pricing"
+msgstr "Precios BOSS"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_uom_uom__boss_quantity_source
+msgid "BOSS quantity"
+msgstr "Cantidad BOSS"
+
+#. module: boss_services
+#: model:ir.module.module,summary:base.module_boss_services
+msgid ""
+"BOSS service catalogue: services as standard products, charge bases as units"
+msgstr ""
+"Catálogo de servicios BOSS: servicios como productos estándar y bases de cobro como unidades"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_search_view
+msgid "BOSS services"
+msgstr "Servicios BOSS"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_csa
+msgid "BOSS's own fee per air shipment; no supplier cost."
+msgstr ""
+"Honorario propio de BOSS por expediente aéreo; sin coste de proveedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_cst
+msgid "BOSS's own fee per road shipment; no supplier cost."
+msgstr ""
+"Honorario propio de BOSS por expediente terrestre; sin coste de proveedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_csm
+msgid "BOSS's own fee per sea shipment; no supplier cost."
+msgstr ""
+"Honorario propio de BOSS por expediente marítimo; sin coste de proveedor."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_qbr
+msgid "Bank exchange loss (% of USD amounts)"
+msgstr "Quebranto bancario (% sobre importes en USD)"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_bl
+msgid "Bill of lading"
+msgstr "Conocimiento (BL)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__tiers
+msgid "Brackets"
+msgstr "Tramos"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_thc_lcl
+msgid "CFS handling (LCL)"
+msgstr "Manipulación en CFS (grupaje)"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_cost_method
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_cost_method
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_search_view
+msgid "Calculation method"
+msgstr "Forma de cálculo"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_seg
+msgid "Cargo insurance in transit (% of insured value)"
+msgstr "Seguro de la mercancía en tránsito (% del valor asegurado)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_gt3
+msgid "Carrier T-3 handling at cost in Odoo 17; scope not decided."
+msgstr ""
+"Gestión de la T-3 de la naviera a coste en Odoo 17; alcance sin decidir."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_vgm
+msgid ""
+"Carrier charge for the verified gross mass declaration, per container."
+msgstr "Cargo de la naviera por la declaración VGM, por contenedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_glo_ccc
+msgid "Carrier compliance charge per container (port charges family)."
+msgstr ""
+"Cargo de cumplimiento de la naviera por contenedor (familia de gastos portuarios)."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dem
+msgid "Carrier demurrage and detention (per container and day)"
+msgstr "Demoras y detention de naviera (por contenedor y día)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_glo_fueleu
+msgid "Carrier environmental surcharge per TEU on some trades."
+msgstr "Recargo medioambiental de la naviera por TEU en algunos tráficos."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_bl
+msgid "Carrier fee for the master B/L, charged once per shipment."
+msgstr "Tasa de la naviera por el BL máster, una vez por expediente."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_glo_log
+msgid "Carrier logistics fee (per container)"
+msgstr "Gastos logísticos de naviera (por contenedor)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_glo_log
+msgid "Carrier logistics fee per container (port charges family)."
+msgstr ""
+"Tasa logística de la naviera por contenedor (familia de gastos portuarios)."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_t3_pad
+msgid "Carrier per-container port fee that includes the T-3 tax."
+msgstr "Tasa portuaria de la naviera por contenedor que incluye la T-3."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_glo
+msgid "Carrier port charges (per container)"
+msgstr "Gastos portuarios de naviera (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_t3_pad
+msgid "Carrier port fee incl. T-3 (PAD, per container)"
+msgstr "Tasa portuaria de naviera, T-3 incluida (PAD, por contenedor)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ces
+msgid ""
+"Carrier release of the container, per container; differs by port and direction."
+msgstr ""
+"Cesión del contenedor por la naviera, por contenedor; varía por puerto y sentido."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_gll
+msgid "Catch-all local arrival charges; amount taken from the supplier."
+msgstr "Otros gastos locales de llegada; importe según el proveedor."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_kg_air
+msgid "Chargeable kg (air)"
+msgstr "kg tasable aéreo"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_kg_road
+msgid "Chargeable kg (road)"
+msgstr "kg tasable terrestre"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dvd
+msgid "Clearance type used by two customers; meaning to confirm."
+msgstr "Tipo de despacho usado por dos clientes; significado por confirmar."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_c20
+msgid "Container 20'"
+msgstr "Contenedor 20'"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_c40
+msgid "Container 40'"
+msgstr "Contenedor 40'"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_c45
+msgid "Container 45'"
+msgstr "Contenedor 45'"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_glo_ccc
+msgid "Container compliance charge (per container)"
+msgstr "Container Compliance Charge (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_det
+msgid "Container detention (per day)"
+msgstr "Detention de contenedor (por días)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fum
+msgid "Container fumigation (per container)"
+msgstr "Fumigación de contenedor (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ces
+msgid "Container release (per container)"
+msgstr "Cesión de contenedor (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_vac
+msgid "Container stripping / truck delivery"
+msgstr "Vaciado de contenedor / entrega en camión"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_20
+msgid "Containers 20'"
+msgstr "Contenedores de 20'"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_40
+msgid "Containers 40'"
+msgstr "Contenedores de 40'"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_45
+msgid "Containers 45'"
+msgstr "Contenedores de 45'"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pft_air
+#: model_terms:product.template,description:boss_services.service_pft_fcl
+msgid "Cost agreed with the origin agent, never sold as a line."
+msgstr "Coste pactado con el agente en origen; nunca se vende como línea."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pft_lcl
+msgid ""
+"Cost agreed with the origin agent, with minimum and maximum; never sold as a line."
+msgstr ""
+"Coste pactado con el agente en origen, con mínimo y máximo; nunca se vende como línea."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_cau
+msgid ""
+"Cost of the customs guarantee, a percentage of the declaration duties with a minimum."
+msgstr ""
+"Coste del aval aduanero, porcentaje de los impuestos del DUA con mínimo."
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_pricing_mode
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_pricing_mode
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_search_view
+msgid "Cost source"
+msgstr "Origen del coste"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_men
+msgid "Courier of original documents, per dispatch."
+msgstr "Mensajería de documentos originales, por envío."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_m3
+msgid "Cubic metre"
+msgstr "Metro cúbico"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dex
+msgid "Customs broker fee for the export declaration."
+msgstr "Honorario del agente de aduanas por el DUA de exportación."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fad
+msgid "Customs broker fee for the import declaration."
+msgstr "Honorario del agente de aduanas por el DUA de importación."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_declaration
+msgid "Customs declaration"
+msgstr "Despacho (DUA)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_cau
+msgid "Customs guarantee fee (% of declaration duties)"
+msgstr "Caución del aval aduanero (% de los impuestos del DUA)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_sad
+msgid "Customs penalty or surcharge (at cost)"
+msgstr "Sanción o recargo aduanero (a coste)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_sad
+msgid "Customs penalty passed on at cost; amount of each case."
+msgstr "Sanción de aduana repercutida a coste; importe de cada caso."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_tra
+msgid "Customs transit T1 / EXS (per document)"
+msgstr "Tránsito aduanero T1 / EXS (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_tra
+msgid "Customs transit document, per document."
+msgstr "Documento de tránsito aduanero, por documento."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dvd
+msgid "DVD customs clearance"
+msgstr "Despacho DVD"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_imo
+msgid "Dangerous goods surcharge"
+msgstr "Mercancía peligrosa (recargo)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dem
+msgid ""
+"Days beyond the carrier's free time, per container and day, between the supplier's start and end events."
+msgstr ""
+"Días que superan el tiempo libre de la naviera, por contenedor y día, entre los eventos de inicio y fin del proveedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dap
+msgid "Destination agent charges abroad, fixed per shipment."
+msgstr "Gastos del agente en destino, fijos por expediente."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_dap_con
+msgid "Destination agent charges abroad, per container."
+msgstr "Gastos del agente en destino, por contenedor."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dap_con
+msgid "Destination charges abroad (per container)"
+msgstr "Gastos en destino extranjero (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dap
+msgid "Destination charges abroad (per shipment)"
+msgstr "Gastos en destino extranjero (por expediente)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_des
+msgid "Destruction of goods"
+msgstr "Destrucción de mercancía"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_des
+msgid "Destruction of goods at cost (rare); definition pending."
+msgstr ""
+"Destrucción de mercancía a coste (poco frecuente); definición pendiente."
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_template__display_name
+#: model:ir.model.fields,field_description:boss_services.field_uom_uom__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_document
+msgid "Document"
+msgstr "Documento"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_men
+msgid "Document courier (per dispatch)"
+msgstr "Mensajería de documentos (por envío)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_awb
+msgid "Documentation fee for the air waybill."
+msgstr "Tasa de documentación de la guía aérea."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ara
+msgid ""
+"Duty paid on behalf of the customer, amount from the customs declaration."
+msgstr "Arancel pagado por cuenta del cliente; importe según el DUA."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ens
+msgid "ENS / ICS2 filing (per B/L)"
+msgstr "Declaración ENS / ICS2 (por BL)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ens
+msgid "EU entry summary declaration, per B/L."
+msgstr "Declaración sumaria de entrada en la UE, por BL."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_eur1
+msgid "EUR.1 / ATR certificate issue"
+msgstr "Emisión de certificado EUR.1 / ATR"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_etx
+msgid "Energy tax (handler surcharge)"
+msgstr "Energy tax (recargo del handler)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__input
+msgid "Entered on the line"
+msgstr "Se indica en la línea"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_glo
+msgid ""
+"Every carrier charge always applied that is not T3, BL/DOC, CES or DEM/OCU/DET; the lines add up."
+msgstr ""
+"Todo cargo fijo de la naviera que no es T3, BL/DOC, CES ni DEM/OCU/DET; las líneas se suman."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_dex
+msgid "Export customs clearance (per declaration)"
+msgstr "Despacho de aduana de exportación (por DUA)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fs
+msgid "Fuel surcharge (% of road transport)"
+msgstr "Recargo de combustible (% sobre el transporte terrestre)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_glo_fueleu
+msgid "FuelEU Maritime surcharge (per TEU)"
+msgstr "Recargo FuelEU Maritime (por TEU)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fum
+msgid "Fumigation of the container, per container."
+msgstr "Fumigación del contenedor, por contenedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ins
+msgid "Generic inspection, per document."
+msgstr "Inspección genérica, por documento."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_kg_gross
+msgid "Gross kg"
+msgstr "kg bruto"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_ton
+msgid "Gross tonne"
+msgstr "Tonelada bruta"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_han
+msgid "Handler fee per chargeable kg with a minimum."
+msgstr "Tarifa del handler por kg tasable con mínimo."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_etx
+msgid "Handler surcharge; its concept, unit and scope are not confirmed yet."
+msgstr "Recargo del handler; concepto, unidad y alcance sin confirmar."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_thc_lcl
+msgid ""
+"Handling of groupage cargo at the CFS; the larger of tonnes x price and m³ x price."
+msgstr ""
+"Manipulación de la mercancía de grupaje en el CFS; el mayor de toneladas x precio y m³ x precio."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_san
+msgid "Health inspection or certificate (per document)"
+msgstr "Inspección / certificado de Sanidad (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_san
+msgid "Health inspection or certificate, per document."
+msgstr "Inspección o certificado sanitario, por documento."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_hour
+msgid "Hour"
+msgstr "Hora"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_doc
+msgid "House bill of lading issue (HBL)"
+msgstr "Emisión de conocimiento house (HBL)"
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "How it is priced"
+msgstr "Cómo se cotiza"
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_cost_method
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_cost_method
+msgid ""
+"How supplier prices of this service are usually computed. A supplier price line may use another method if the supplier document says so."
+msgstr ""
+"Cómo se calculan normalmente los precios de proveedor de este servicio. Una línea de precio puede usar otra forma si el documento del proveedor lo indica."
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_template__id
+#: model:ir.model.fields,field_description:boss_services.field_uom_uom__id
+msgid "ID"
+msgstr ""
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_o17_concept_id
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_o17_concept_id
+msgid "Identity of the Odoo 17 concept (x_concept) for migration."
+msgstr "Identidad del concepto de Odoo 17 (x_concept) para la migración."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_iva
+msgid "Import VAT (paid on behalf)"
+msgstr "IVA de importación (suplido)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_iva
+msgid ""
+"Import VAT paid on behalf of the customer, amount from the customs declaration."
+msgstr ""
+"IVA de importación pagado por cuenta del cliente; importe según el DUA."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fad
+msgid "Import customs clearance (per declaration)"
+msgstr "Despacho de aduana de importación (por DUA)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ara
+msgid "Import duty (paid on behalf)"
+msgstr "Arancel de importación (suplido)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ins
+msgid "Inspection (per document)"
+msgstr "Inspección (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_seg
+msgid ""
+"Insurance premium as a percentage of the insured value, with a minimum."
+msgstr "Prima del seguro como porcentaje del valor asegurado, con mínimo."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_doc
+msgid "Issue of a house B/L, per document."
+msgstr "Emisión de un BL house, por documento."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_eur1
+msgid "Issue of the preferential origin certificate."
+msgstr "Emisión del certificado de origen preferencial."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__max_of_bases
+msgid "Larger of several bases"
+msgstr "El mayor de varias bases"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_thc
+msgid ""
+"Loading or unloading of the container at the sea terminal, charged by the carrier per container."
+msgstr ""
+"Carga o descarga del contenedor en la terminal marítima; la naviera la cobra por contenedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fae
+msgid "Main air freight of an export, quoted by the airline or consolidator."
+msgstr ""
+"Flete aéreo principal de una exportación, cotizado por la aerolínea o el consolidador."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fai
+msgid "Main air freight of an import, quoted by the airline or agent."
+msgstr ""
+"Flete aéreo principal de una importación, cotizado por la aerolínea o el agente."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fme
+msgid ""
+"Main sea freight of an export, quoted by the carrier for each shipment."
+msgstr ""
+"Flete marítimo principal de una exportación, cotizado por la naviera en cada envío."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fmi
+msgid ""
+"Main sea freight of an import, quoted by the carrier or agent for each shipment."
+msgstr ""
+"Flete marítimo principal de una importación, cotizado por la naviera o el agente en cada envío."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__manual
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_pricing_mode__manual
+msgid "Manual amount"
+msgstr "Importe manual"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_bl
+msgid "Master bill of lading (per shipment)"
+msgstr "Conocimiento de embarque máster (por expediente)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pot
+msgid ""
+"Moving the container to the inspection point, on request, per container."
+msgstr ""
+"Traslado del contenedor al punto de inspección, a petición, por contenedor."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__none
+msgid "No cost"
+msgstr "Sin coste"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fme
+msgid "Ocean freight export (FCL, per container)"
+msgstr "Flete marítimo exportación (FCL, por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fme_lcl
+msgid "Ocean freight export (LCL, per W/M)"
+msgstr "Flete marítimo exportación grupaje (por W/M)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fmi
+msgid "Ocean freight import (FCL, per container)"
+msgstr "Flete marítimo importación (FCL, por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_fmi_lcl
+msgid "Ocean freight import (LCL, per W/M)"
+msgstr "Flete marítimo importación grupaje (por W/M)"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_o17_concept_id
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_o17_concept_id
+msgid "Odoo 17 concept ID"
+msgstr "ID del concepto en Odoo 17"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_o17_concept_code
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_o17_concept_code
+msgid "Odoo 17 concept code"
+msgstr "Código del concepto en Odoo 17"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__shipment
+msgid "One per shipment"
+msgstr "Uno por expediente"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_open_question
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_open_question
+msgid "Open question"
+msgstr "Pregunta abierta"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_exw_air
+msgid "Origin agent charges abroad for air cargo, per kg."
+msgstr "Gastos del agente en origen para carga aérea, por kg."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_exw_lcl
+msgid "Origin agent charges abroad for groupage, per m³."
+msgstr "Gastos del agente en origen para grupaje, por m³."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_exw
+msgid "Origin agent charges abroad, fixed per B/L or AWB."
+msgstr "Gastos del agente en origen, fijos por BL o AWB."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_exw_fcl
+msgid "Origin agent charges abroad, per container."
+msgstr "Gastos del agente en origen, por contenedor."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pft_fcl
+msgid "Origin agent profit share (FCL, per container)"
+msgstr "Profit share del agente en origen (FCL, por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pft_lcl
+msgid "Origin agent profit share (LCL, per m³)"
+msgstr "Profit share del agente en origen (LCL, por m³)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pft_air
+msgid "Origin agent profit share (air, per kg)"
+msgstr "Profit share del agente en origen (aéreo, por kg)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_exw
+msgid "Origin charges abroad (per B/L or AWB)"
+msgstr "Gastos en origen extranjero (por BL / AWB)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_exw_fcl
+msgid "Origin charges abroad (per container)"
+msgstr "Gastos en origen extranjero (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_exw_lcl
+msgid "Origin charges abroad, LCL (per m³)"
+msgstr "Gastos en origen extranjero grupaje (por m³)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_exw_air
+msgid "Origin charges abroad, air (per kg)"
+msgstr "Gastos en origen extranjero aéreo (por kg)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_gll
+msgid "Other local arrival charges (supplier amount)"
+msgstr "Otros gastos locales de llegada (importe del proveedor)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pos
+msgid "Overlaps with POT; to decide whether it stays a separate service."
+msgstr "Se solapa con POT; decidir si sigue siendo un servicio aparte."
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_pallet
+msgid "Pallet"
+msgstr "Palé"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pal
+msgid "Palletising (per pallet)"
+msgstr "Paletizado (por palé)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pal
+msgid "Palletising of the goods, per pallet."
+msgstr "Paletizado de la mercancía, por palé."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_pricing_mode__pending
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_search_view
+msgid "Pending business decision"
+msgstr "Pendiente de decisión de negocio"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_qbr
+msgid "Percentage covering the bank loss on USD amounts."
+msgstr "Porcentaje que cubre la pérdida bancaria en importes en USD."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__percent
+msgid "Percentage of a base"
+msgstr "Porcentaje de una base"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fs
+msgid ""
+"Percentage on the road transport of the same haulier, with its own validity."
+msgstr ""
+"Porcentaje sobre el transporte terrestre del mismo transportista, con su propia vigencia."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_far
+msgid "Pharmacy inspection (per document)"
+msgstr "Inspección de Farmacia (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_far
+msgid "Pharmacy inspection, per document."
+msgstr "Inspección de Farmacia, por documento."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pla
+msgid "Plastic packaging tax (paid on behalf)"
+msgstr "Impuesto sobre plástico no reutilizable (suplido)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_t3
+msgid ""
+"Port authority tax on the goods, per tonne or per container type depending on the supplier."
+msgstr ""
+"Tasa de la autoridad portuaria sobre la mercancía, por tonelada o por tipo de contenedor según el proveedor."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_t3
+msgid "Port goods tax T-3 (per gross tonne)"
+msgstr "Tasa T-3 portuaria (por tonelada de peso bruto)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ocu
+msgid ""
+"Port occupancy of the full container beyond free days, by port group and container type."
+msgstr ""
+"Ocupación del contenedor lleno en puerto más allá de los días libres, por grupo de puertos y tipo."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ocu
+msgid "Port storage (per container and day)"
+msgstr "Ocupación de puerto (por contenedor y día)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pos
+msgid "Positioning for border inspection / scanner"
+msgstr "Posicionado PIF / escáner"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pot
+msgid "Positioning for inspection (per container)"
+msgstr "Posicionado en terminal para inspección (por contenedor)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__per_unit
+msgid "Price per unit"
+msgstr "Precio por unidad"
+
+#. module: boss_services
+#: model:ir.model,name:boss_services.model_product_template
+msgid "Product"
+msgstr ""
+
+#. module: boss_services
+#: model:ir.model,name:boss_services.model_uom_uom
+msgid "Product Unit of Measure"
+msgstr ""
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_vac
+msgid "Rarely used; definition pending."
+msgstr "Uso muy escaso; definición pendiente."
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_open_question
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_open_question
+msgid ""
+"Reference of the open business question (docs/preguntas-abiertas.md) that affects this service."
+msgstr ""
+"Referencia de la pregunta de negocio abierta (docs/preguntas-abiertas.md) que afecta a este servicio."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_roh
+msgid "RoHS control (per document)"
+msgstr "Control RoHS (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_roh
+msgid ""
+"RoHS control, paid per document; several per consignment are possible."
+msgstr "Control RoHS, se paga por documento; puede haber varios por partida."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_cst
+msgid "Road consignment fee (BOSS fee)"
+msgstr "Consignación terrestre (honorario BOSS)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_tte_fcl
+msgid "Road haulage of the container by route, per container."
+msgstr ""
+"Transporte del contenedor por carretera según la ruta, por contenedor."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_tte_con
+msgid ""
+"Road pickup or delivery priced by the haulier by route zone and weight brackets."
+msgstr ""
+"Recogida o entrega por carretera según el transportista, por zona de ruta y tramos de peso."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_tte_fcl
+msgid "Road transport of containers (per container)"
+msgstr "Transporte terrestre de contenedor (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_tte_con
+msgid "Road transport, general cargo (pickup / delivery)"
+msgstr "Transporte terrestre convencional (recogida / entrega)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__route_tiers
+msgid "Route and brackets"
+msgstr "Ruta y tramos"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_soi
+msgid "SOIVRE inspection (per document)"
+msgstr "Inspección SOIVRE (por documento)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_soi
+msgid "SOIVRE quality inspection, per document."
+msgstr "Inspección de calidad SOIVRE, por documento."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_csm
+msgid "Sea consignment / booking fee (BOSS fee)"
+msgstr "Consignación marítima / booking fee (honorario BOSS)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fme_lcl
+msgid "Sea freight of an export in groupage, quoted by the consolidator."
+msgstr ""
+"Flete marítimo de una exportación en grupaje, cotizado por el consolidador."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_fmi_lcl
+msgid ""
+"Sea freight of an import in groupage, quoted by the consolidator or agent."
+msgstr ""
+"Flete marítimo de una importación en grupaje, cotizado por el consolidador o el agente."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_x_r
+msgid ""
+"Security screening of air export cargo; per AWB or per kg depending on the supplier."
+msgstr ""
+"Control de seguridad de la carga aérea de exportación; por AWB o por kg según el proveedor."
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "Service code"
+msgstr "Código del servicio"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_shipment
+msgid "Shipment"
+msgstr "Expediente"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_alm
+msgid ""
+"Storage at the airport handler, space x time, with free hours or days."
+msgstr ""
+"Almacenaje en el handler del aeropuerto, espacio x tiempo, con horas o días libres."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_cor
+msgid ""
+"Supplier fee for an occasional correction; amount taken from the supplier."
+msgstr ""
+"Tasa del proveedor por una corrección eventual; importe según el proveedor."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_pricing_mode__tariff
+msgid "Supplier tariff"
+msgstr "Tarifa de proveedor"
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_pricing_mode
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_pricing_mode
+msgid ""
+"Supplier tariff: the cost is computed from approved supplier tariffs.\n"
+"Manual amount: a person enters the cost of each shipment (freight offer, amount paid on behalf of the customer...).\n"
+"BOSS own fee: no supplier cost.\n"
+"Pending business decision: the service exists but is not priced until the open question is answered."
+msgstr ""
+"Tarifa de proveedor: el coste se calcula con tarifas de proveedor aprobadas.\n"
+"Importe manual: una persona indica el coste de cada envío (oferta de flete, suplido...).\n"
+"Honorario propio de BOSS: sin coste de proveedor.\n"
+"Pendiente de decisión de negocio: el servicio existe pero no se cotiza hasta responder la pregunta abierta."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_imo
+msgid ""
+"Surcharge for dangerous goods; three different bases seen, not decided."
+msgstr ""
+"Recargo por mercancía peligrosa; se han visto tres bases distintas, sin decidir."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_gt3
+msgid "T-3 handling"
+msgstr "Gestión T-3"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_teu
+msgid "TEU"
+msgstr "TEU"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__teu
+msgid "TEU of the containers"
+msgstr "TEU de los contenedores"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_pla
+msgid ""
+"Tax paid on behalf of the customer, amount from the customs declaration."
+msgstr "Impuesto pagado por cuenta del cliente; importe según el DUA."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_thc
+msgid "Terminal handling (FCL, per container)"
+msgstr "Manipulación en terminal marítima (FCL, por contenedor)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__time
+msgid "Time with free period"
+msgstr "Tiempo con periodo libre"
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "Traceability"
+msgstr "Trazabilidad"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_par
+msgid "Truck waiting time (per hour)"
+msgstr "Paralización del camión (por hora de espera)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_par
+msgid "Truck waiting time, per hour requested."
+msgstr "Espera del camión, por hora solicitada."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ams
+msgid "US customs advance filing, per B/L."
+msgstr "Transmisión anticipada a la aduana de EE. UU., por BL."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_det
+msgid ""
+"Use of the container outside the terminal beyond free time; own code or part of DEM is undecided."
+msgstr ""
+"Uso del contenedor fuera de la terminal más allá del tiempo libre; pendiente decidir si es código propio o parte de DEM."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_gav
+msgid "Used for weekly T1 transits of one customer; to confirm."
+msgstr "Usado para tránsitos T1 semanales de un cliente; por confirmar."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_vet
+msgid "Used in Odoo 17 (one customer); definition and unit not decided."
+msgstr "Usado en Odoo 17 (un cliente); definición y unidad sin decidir."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_vgm
+msgid "Verified gross mass (per container)"
+msgstr "Verificación de la masa bruta (por contenedor)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_vet
+msgid "Veterinary inspection"
+msgstr "Veterinaria"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_gav
+msgid "Vigo warehouse charges"
+msgstr "Gastos almacén Vigo"
+
+#. module: boss_services
+#: model:uom.uom,name:boss_services.uom_wm
+msgid "W/M (weight or measure)"
+msgstr "W/M (peso o volumen)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_oal_pal
+msgid "Warehouse handling of pallets in or out."
+msgstr "Entrada o salida de palés en almacén."
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_oal_con
+msgid "Warehouse loading or unloading of a container."
+msgstr "Carga o descarga de un contenedor en almacén."
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_oal_con
+msgid "Warehouse operation per container (loading / unloading)"
+msgstr "Operación de almacén por contenedor (carga / descarga)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_oal_pal
+msgid "Warehouse operation per pallet (in / out)"
+msgstr "Operación de almacén por palé (entrada / salida)"
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "What the service is and who provides it."
+msgstr "Qué es el servicio y quién lo presta."
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_uom_uom__boss_quantity_source
+msgid ""
+"Where the quantity of a quotation line in this charge basis comes from. Empty: not a BOSS charge basis."
+msgstr ""
+"De dónde sale la cantidad de una línea de oferta en esta base de cobro. Vacío: no es una base de cobro BOSS."

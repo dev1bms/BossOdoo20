@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_pricing_snapshot_view_form" model="ir.ui.view">
+        <field name="name">boss.pricing.snapshot.form</field>
+        <field name="model">boss.pricing.snapshot</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="kind"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <group string="Reason" invisible="not reason">
+                        <field name="reason" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Lines">
+                        <field name="summary" nolabel="1" colspan="2"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

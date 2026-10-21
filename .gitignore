@@ -1,0 +1,19 @@
+# Odoo source (Enterprise tarball): never in Git
+/odoo-20.0+e.*/
+# Local research notes (may contain real supplier prices)
+/.research/
+# Supplier documents and exports: confidential
+*.pdf
+*.xlsx
+*.xls
+# Python / tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+# Secrets and local config
+.env
+*.local.conf
+# Real supplier price samples (loaded into Odoo, never in Git)
+/samples-private/

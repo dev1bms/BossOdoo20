@@ -1,0 +1,7 @@
+from . import res_company
+from . import boss_shipment_container
+from . import boss_pricing_snapshot
+from . import boss_tariff
+from . import product_pricelist_item
+from . import sale_order
+from . import sale_order_line
