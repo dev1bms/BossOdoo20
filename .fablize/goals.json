@@ -6,22 +6,22 @@
    "id": "G001",
    "title": "G1 Sources",
    "objective": "Source index and knowledge extraction with provenance (SharePoint NEW ODOO, O19, O20)",
-   "status": "pending",
-   "evidence": null
+   "status": "complete",
+   "evidence": ".research/05 (9 Excel, all opened), 06 (MSC Jan/Feb/Sep, Hapag, CMA, notices), 07 (IRENEO MAD/BCN, 3 msg, WFS 2026), 08 doc site; missing docs listed (Hapag/CMA local charges, CFS, brokers, insurers)"
   },
   {
    "id": "G002",
    "title": "G2 Model fixes",
    "objective": "Container size as condition, VAT treatment status blocking send/confirm, backend tariff permissions, history kept",
-   "status": "pending",
-   "evidence": null
+   "status": "complete",
+   "evidence": "commit b242af1 + 2140038"
   },
   {
    "id": "G003",
    "title": "G3 Methods",
    "objective": "Engine methods max-of-bases, brackets, percentage, time-based estimate vs actual; manual/offer costs",
-   "status": "pending",
-   "evidence": null
+   "status": "complete",
+   "evidence": "engine methods per_unit/max_of_bases/brackets/percent/time (positional, relative, whole stay; deduct/threshold); manual cost on manual/not_ready lines"
   },
   {
    "id": "G004",

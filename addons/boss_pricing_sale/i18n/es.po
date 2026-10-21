@@ -5,6 +5,16 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
+"%(order)s is not ready to send or accept:\n"
+"%(details)s"
+msgstr ""
+"%(order)s no está lista para enviar o aceptar:\n"
+"%(details)s"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_markup
 msgid ""
 "(Sale - cost) / cost. The margin shown by Odoo is (sale - cost) / sale."
@@ -125,11 +135,21 @@ msgid "Boss Pricing Alert"
 msgstr "Aviso de precios"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_steps
+msgid "Calculation steps"
+msgstr "Pasos del cálculo"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Cargo"
+msgstr "Carga"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__carrier_id
@@ -149,6 +169,22 @@ msgid "Charge basis"
 msgstr "Base de cobro"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_awb_kg
+msgid "Chargeable weight (AWB, kg)"
+msgstr "Peso tasable (AWB, kg)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_awb_kg
+msgid ""
+"Chargeable weight written on the air waybill; air handlers price on it."
+msgstr "Peso tasable escrito en la guía aérea; los handlers cotizan sobre él."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_goods_value
+msgid "Commercial value of the goods (insurance, value brackets)."
+msgstr "Valor comercial de la mercancía (seguro, tramos por valor)."
+
+#. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_res_company
 msgid "Company"
 msgstr "Compañía"
@@ -166,9 +202,33 @@ msgstr ""
 "Confirma que el precio de venta cero es intencionado. Sin ello, cero significa 'falta precio'."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__container_size
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_container_size
+msgid "Container size"
+msgstr "Tamaño de contenedor"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__container_type_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_container_type_id
+msgid "Container type"
+msgstr "Tipo de contenedor"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_container_ids
 msgid "Containers"
 msgstr "Contenedores"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__container_size
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_container_size
+msgid "Containers of this size only. Empty: all sizes."
+msgstr "Solo contenedores de este tamaño. Vacío: todos."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__container_type_id
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_container_type_id
+msgid "Containers of this type only. Empty: all types."
+msgstr "Solo contenedores de este tipo. Vacío: todos."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
@@ -199,6 +259,16 @@ msgid "Cost status"
 msgstr "Estado del coste"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__country_ids
+msgid "Countries abroad"
+msgstr "Países en el extranjero"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_country_id
+msgid "Country abroad"
+msgstr "País en el extranjero"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_uid
@@ -225,6 +295,11 @@ msgid "Currency"
 msgstr "Moneda"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_duties_amount
+msgid "Customs duties (estimate)"
+msgstr "Impuestos aduaneros (estimación)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__data
 msgid "Data"
 msgstr "Datos"
@@ -233,6 +308,23 @@ msgstr "Datos"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__date
 msgid "Date"
 msgstr "Fecha"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_storage_days
+msgid ""
+"Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is only known when the period ends (default 0)."
+msgstr ""
+"Días supuestos para almacenaje, demoras y ocupación en la oferta. El coste real solo se conoce al terminar el periodo (por defecto 0)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_storage_days
+msgid "Days in storage (estimate)"
+msgstr "Días de almacenaje (estimación)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__ok
+msgid "Determined"
+msgstr "Determinado"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__direction
@@ -272,9 +364,22 @@ msgid "Document Reference"
 msgstr "Referencia del documento"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_duties_amount
+msgid "Duties and taxes of the customs declaration, for the guarantee fee."
+msgstr "Aranceles e impuestos del DUA, para la caución."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_manual_cost_note
 msgid "E.g. supplier offer number."
 msgstr "P. ej. número de la oferta del proveedor."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"ESTIMATE with %s days assumed; the actual cost is known when the period ends."
+msgstr ""
+"ESTIMACIÓN con %s días supuestos; el coste real se conoce al terminar el periodo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_planned_date
@@ -282,6 +387,11 @@ msgid ""
 "ETA for imports, ETD for exports. It chooses the version of each supplier tariff."
 msgstr ""
 "ETA en importación, ETD en exportación. Elige la versión de cada tarifa de proveedor."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_class__ex
+msgid "EX"
+msgstr "EX"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
@@ -292,6 +402,17 @@ msgstr "Vacío: se crea una tarifa nueva con los datos de abajo."
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__manual
 msgid "Entered by a person"
 msgstr "Indicado por una persona"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_is_estimate
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Estimate"
+msgstr "Estimación"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Estimates"
+msgstr "Estimaciones"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_amount
@@ -310,6 +431,11 @@ msgstr ""
 msgid "Expected supplier cost of the whole line, in the tariff currency."
 msgstr ""
 "Coste de proveedor previsto de toda la línea, en la moneda de la tarifa."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_margin_sale_order
+msgid "Expected unit cost"
+msgstr "Coste previsto (ud.)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__export
@@ -332,6 +458,16 @@ msgstr "Sin cargo"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__free
 msgid "Free of charge (confirmed)"
 msgstr "Sin cargo (confirmado)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_goods_value
+msgid "Goods value"
+msgstr "Valor de la mercancía"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_gross_kg
+msgid "Gross weight (kg)"
+msgstr "Peso bruto (kg)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_explanation
@@ -361,6 +497,11 @@ msgstr "ID"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_direction__import
 msgid "Import"
 msgstr "Importación"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_inland_state_id
+msgid "Inland province"
+msgstr "Provincia interior"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__kind
@@ -431,6 +572,11 @@ msgid "Manual amount"
 msgstr "Importe manual"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Manual cost"
+msgstr "Coste manual"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid "Manual cost per unit: %(cost)s %(cur)s %(ref)s"
@@ -472,6 +618,16 @@ msgid "Missing shipment data"
 msgstr "Faltan datos del envío"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_class__nr
+msgid "NR"
+msgstr "NR"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_class__ns
+msgid "NS"
+msgstr "NS"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__submit
 msgid "Needs the supplier document. Approval is always a separate step."
 msgstr ""
@@ -498,6 +654,13 @@ msgid "Odoo exchange rate of the quotation date"
 msgstr "Tipo de cambio de Odoo de la fecha de la oferta"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"Odoo tax for each VAT class given by the VAT rules. Empty: the VAT of those lines stays pending and the quotation cannot be sent or confirmed."
+msgstr ""
+"Impuesto de Odoo para cada clase de IVA que dan las reglas. Vacío: el IVA de esas líneas queda pendiente y la oferta no se puede enviar ni confirmar."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__on_request
 msgid "On request"
 msgstr "A consultar"
@@ -515,6 +678,11 @@ msgid "Only This Customer"
 msgstr "Solo este cliente"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__price_by_container_type
+msgid "Only for this container type"
+msgstr "Solo para este tipo de contenedor"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Open the service"
 msgstr "Abrir el servicio"
@@ -528,6 +696,13 @@ msgid "Order"
 msgstr "Pedido"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_country_id
+msgid ""
+"Origin country of an import or destination country of an export. Used by tariffs and VAT."
+msgstr ""
+"País de origen de una importación o de destino de una exportación. Lo usan las tarifas y el IVA."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__currency
 msgid "Other currency, no conversion policy"
 msgstr "Otra moneda, sin política de conversión"
@@ -536,6 +711,16 @@ msgstr "Otra moneda, sin política de conversión"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document_page
 msgid "Page"
 msgstr "Página"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_pallets
+msgid "Pallets"
+msgstr "Palés"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__pending
+msgid "Pending"
+msgstr "Pendiente"
 
 #. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_boss_shipment_container
@@ -627,6 +812,13 @@ msgid "Product"
 msgstr "Producto"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_inland_state_id
+msgid ""
+"Province of the pickup (export) or delivery (import) place in Spain; hauliers price by zone."
+msgstr ""
+"Provincia del lugar de recogida (exportación) o entrega (importación) en España; los transportistas cotizan por zona."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__quantity
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__quantity
 msgid "Quantity"
@@ -711,15 +903,29 @@ msgid "Sale price"
 msgstr "Precio de venta"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__missing
 msgid "Sale price missing"
 msgstr "Falta precio de venta"
 
 #. module: boss_pricing_sale
-#. odoo-python
-#: code:addons/boss_pricing_sale/models/sale_order.py:0
-msgid "Sale price missing: %s"
-msgstr "Falta precio de venta: %s"
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_tax_ex_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_tax_ex_id
+msgid "Sale tax for EX lines (exempt)"
+msgstr "Impuesto de venta para líneas EX (exentas)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_tax_nr_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_tax_nr_id
+msgid "Sale tax for NR lines"
+msgstr "Impuesto de venta para líneas NR"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_tax_ns_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_tax_ns_id
+msgid "Sale tax for NS lines (not subject)"
+msgstr "Impuesto de venta para líneas NS (no sujetas)"
 
 #. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_sale_order
@@ -788,6 +994,7 @@ msgstr "Naviera, aerolínea o transportista."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__size
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Size"
 msgstr "Tamaño"
 
@@ -871,6 +1078,11 @@ msgstr ""
 "Los precios aceptados quedan en el historial; este cambio se registra con su motivo."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__price_by_container_type
+msgid "The document prices this container type differently."
+msgstr "El documento cotiza este tipo de contenedor de forma distinta."
+
+#. module: boss_pricing_sale
 #: model:ir.model.constraint,message:boss_pricing_sale.constraint_boss_shipment_container_quantity_positive
 msgid "The number of containers must be positive."
 msgstr "El número de contenedores debe ser positivo."
@@ -891,6 +1103,13 @@ msgstr ""
 "Esta línea pertenece a una oferta aceptada. Use 'Recotizar' e indique el motivo."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_is_estimate
+msgid ""
+"Time-based cost computed with the days assumed on the quotation; the actual cost is known when the period ends."
+msgstr ""
+"Coste por tiempo calculado con los días supuestos en la oferta; el coste real se conoce al terminar el periodo."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__transport_mode
 msgid "Transport Mode"
 msgstr "Modo de transporte"
@@ -907,6 +1126,12 @@ msgid ""
 "Two prices of %(service)s per %(uom)s overlap in %(pricelist)s: keep one, or make their dates consecutive."
 msgstr ""
 "Dos precios de %(service)s por %(uom)s se solapan en %(pricelist)s: deje uno o haga consecutivas sus fechas."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__container_type_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Type"
+msgstr "Tipo"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__uom_id
@@ -934,6 +1159,29 @@ msgid "User"
 msgstr "Usuario"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_vat_status
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "VAT"
+msgstr "IVA"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_vat_class
+msgid "VAT class"
+msgstr "Clase de IVA"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "VAT of BOSS services"
+msgstr "IVA de los servicios BOSS"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "VAT pending"
+msgstr "IVA pendiente"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__valid_from
 msgid "Valid From"
 msgstr "Válida desde"
@@ -942,6 +1190,11 @@ msgstr "Válida desde"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__valid_to
 msgid "Valid To"
 msgstr "Válida hasta"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_volume_m3
+msgid "Volume (m³)"
+msgstr "Volumen (m³)"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
@@ -956,9 +1209,20 @@ msgid "Why the accepted prices change"
 msgstr "Por qué cambian los precios aceptados"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_vat_trace
+msgid "Why this VAT"
+msgstr "Por qué este IVA"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "boss_vat_status"
+msgstr "Estado del IVA"
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -969,5 +1233,23 @@ msgstr "coste"
 #. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
+msgid "estimate"
+msgstr "estimación"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "no Odoo tax set for class %s (Sales settings)"
+msgstr "sin impuesto de Odoo para la clase %s (ajustes de Ventas)"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
 msgid "sale"
 msgstr "venta"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "sale price missing"
+msgstr "falta el precio de venta"

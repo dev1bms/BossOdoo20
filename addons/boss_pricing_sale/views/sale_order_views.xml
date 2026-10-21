@@ -61,11 +61,11 @@
                     </field>
                 </page>
             </xpath>
-            <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="before">
+            <xpath expr="//field[@name='order_line']//list//column[@name='sol_qty']" position="before">
                 <field name="boss_pricing_mode" column_invisible="1"/>
                 <field name="boss_price_frozen" column_invisible="1"/>
                 <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen"/>
-                <field name="boss_container_type_id" optional="show" string="Type" readonly="boss_price_frozen"
+                <field name="boss_container_type_id" optional="hide" string="Type" readonly="boss_price_frozen"
                        options="{'no_create': True}"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//column[@name='price_unit']" position="before">
@@ -81,16 +81,16 @@
                         invisible="boss_cost_status not in ('pending_approval', 'conflict')"/>
                 <button name="action_boss_open_service" type="object" icon="fa-question-circle" title="Open the service"
                         invisible="boss_cost_status != 'not_ready'"/>
-                <field name="boss_manual_cost" optional="show"
+                <field name="boss_manual_cost" string="Manual cost" optional="show"
                        invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
                 <field name="boss_manual_cost_note" optional="hide"
                        invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
-                <field name="boss_sale_status" string="Sale" widget="badge" optional="show"
+                <field name="boss_sale_status" string="Sale" widget="badge" optional="hide"
                        decoration-success="boss_sale_status in ('agreed', 'manual', 'free')"
                        decoration-danger="boss_sale_status == 'missing'"/>
                 <field name="boss_sale_free" optional="hide" readonly="boss_price_frozen"/>
                 <field name="boss_cost_is_estimate" optional="hide" string="Estimate"/>
-                <field name="boss_vat_status" string="VAT" widget="badge" optional="show"
+                <field name="boss_vat_status" string="VAT" widget="badge" optional="hide"
                        decoration-success="boss_vat_status == 'ok'" decoration-danger="boss_vat_status == 'pending'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="attributes">
@@ -123,6 +123,7 @@
             <xpath expr="//field[@name='order_line']//list//field[@name='purchase_price']" position="attributes">
                 <attribute name="optional">show</attribute>
                 <attribute name="readonly">boss_pricing_mode</attribute>
+                <attribute name="string">Expected unit cost</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//field[@name='margin_percent']" position="attributes">
                 <attribute name="readonly">1</attribute>

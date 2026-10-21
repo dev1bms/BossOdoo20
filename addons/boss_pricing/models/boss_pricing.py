@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 
 from odoo import api, models
-from odoo.tools.misc import formatLang
+from odoo.tools.misc import format_date, formatLang
 
 from .. import engine
 from .boss_tariff_line import BASES, PERCENT_BASES
@@ -152,7 +152,7 @@ class BossPricing(models.AbstractModel):
                                           for code, values in steps or [])))
             source = _("Source: %(tariff)s v%(version)s (%(supplier)s), valid from %(start)s",
                        tariff=tariff.name, version=tariff.version, supplier=tariff.partner_id.name,
-                       start=tariff.valid_from)
+                       start=format_date(self.env, tariff.valid_from))
             if tariff.document_reference or line.document_page:
                 source += _(", document %(doc)s page %(page)s",
                             doc=tariff.document_reference or "-", page=line.document_page or "-")

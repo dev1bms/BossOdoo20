@@ -121,12 +121,20 @@ msgid "Bank exchange loss (% of USD amounts)"
 msgstr "Quebranto bancario (% sobre importes en USD)"
 
 #. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_vat_class
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_vat_class
+msgid ""
+"Base VAT class of the service (Ángel's VAT rules, 31/08/2026). NS and EX never carry VAT; NR follows the origin/destination and customer rules. The Odoo tax used for each class is a company setting."
+msgstr ""
+"Clase de IVA base del servicio (reglas de IVA de Ángel, 31/08/2026). NS y EX nunca llevan IVA; NR sigue las reglas de origen/destino y del cliente. El impuesto de Odoo de cada clase es un ajuste de la compañía."
+
+#. module: boss_services
 #: model:uom.uom,name:boss_services.uom_bl
 msgid "Bill of lading"
 msgstr "Conocimiento (BL)"
 
 #. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__tiers
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__brackets
 msgid "Brackets"
 msgstr "Tramos"
 
@@ -234,19 +242,9 @@ msgid "Clearance type used by two customers; meaning to confirm."
 msgstr "Tipo de despacho usado por dos clientes; significado por confirmar."
 
 #. module: boss_services
-#: model:uom.uom,name:boss_services.uom_c20
-msgid "Container 20'"
-msgstr "Contenedor 20'"
-
-#. module: boss_services
-#: model:uom.uom,name:boss_services.uom_c40
-msgid "Container 40'"
-msgstr "Contenedor 40'"
-
-#. module: boss_services
-#: model:uom.uom,name:boss_services.uom_c45
-msgid "Container 45'"
-msgstr "Contenedor 45'"
+#: model:uom.uom,name:boss_services.uom_container
+msgid "Container"
+msgstr "Contenedor"
 
 #. module: boss_services
 #: model:product.template,name:boss_services.service_glo_ccc
@@ -274,19 +272,9 @@ msgid "Container stripping / truck delivery"
 msgstr "Vaciado de contenedor / entrega en camión"
 
 #. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_20
-msgid "Containers 20'"
-msgstr "Contenedores de 20'"
-
-#. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_40
-msgid "Containers 40'"
-msgstr "Contenedores de 40'"
-
-#. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container_45
-msgid "Containers 45'"
-msgstr "Contenedores de 45'"
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__container
+msgid "Containers (of the line's size and type)"
+msgstr "Contenedores (del tamaño y tipo de la línea)"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_pft_air
@@ -417,7 +405,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_services.field_product_template__display_name
 #: model:ir.model.fields,field_description:boss_services.field_uom_uom__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre mostrado"
 
 #. module: boss_services
 #: model:uom.uom,name:boss_services.uom_document
@@ -456,6 +444,11 @@ msgid "EUR.1 / ATR certificate issue"
 msgstr "Emisión de certificado EUR.1 / ATR"
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_vat_class__ex
+msgid "EX - exempt"
+msgstr "EX - exento"
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_etx
 msgid "Energy tax (handler surcharge)"
 msgstr "Energy tax (recargo del handler)"
@@ -476,6 +469,18 @@ msgstr ""
 #: model:product.template,name:boss_services.service_dex
 msgid "Export customs clearance (per declaration)"
 msgstr "Despacho de aduana de exportación (por DUA)"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_legacy_codes
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_legacy_codes
+msgid "Former codes"
+msgstr "Códigos anteriores"
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_replaced_by_id
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_replaced_by_id
+msgid "Former service kept for history; quote the new one."
+msgstr "Servicio anterior conservado como histórico; cotice el nuevo."
 
 #. module: boss_services
 #: model:product.template,name:boss_services.service_fs
@@ -506,6 +511,16 @@ msgstr "kg bruto"
 #: model:uom.uom,name:boss_services.uom_ton
 msgid "Gross tonne"
 msgstr "Tonelada bruta"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__gross_kg
+msgid "Gross weight (kg)"
+msgstr "Peso bruto (kg)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__gross_ton
+msgid "Gross weight (tonnes)"
+msgstr "Peso bruto (toneladas)"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_han
@@ -553,15 +568,15 @@ msgstr "Cómo se cotiza"
 #: model:ir.model.fields,help:boss_services.field_product_product__boss_cost_method
 #: model:ir.model.fields,help:boss_services.field_product_template__boss_cost_method
 msgid ""
-"How supplier prices of this service are usually computed. A supplier price line may use another method if the supplier document says so."
+"How supplier prices of this service are usually computed; it is the default of a new supplier price. Each supplier price line uses the method of its own document."
 msgstr ""
-"Cómo se calculan normalmente los precios de proveedor de este servicio. Una línea de precio puede usar otra forma si el documento del proveedor lo indica."
+"Cómo se calculan normalmente los precios de proveedor de este servicio; es el valor por defecto de un precio nuevo. Cada línea de precio usa la forma de cálculo de su propio documento."
 
 #. module: boss_services
 #: model:ir.model.fields,field_description:boss_services.field_product_template__id
 #: model:ir.model.fields,field_description:boss_services.field_uom_uom__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: boss_services
 #: model:ir.model.fields,help:boss_services.field_product_product__boss_o17_concept_id
@@ -614,8 +629,8 @@ msgstr "Emisión del certificado de origen preferencial."
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__max_of_bases
-msgid "Larger of several bases"
-msgstr "El mayor de varias bases"
+msgid "Larger of two bases"
+msgstr "El mayor de dos bases"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc
@@ -669,6 +684,16 @@ msgstr ""
 "Traslado del contenedor al punto de inspección, a petición, por contenedor."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_vat_class__nr
+msgid "NR - normal rules"
+msgstr "NR - reglas generales"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_vat_class__ns
+msgid "NS - not subject"
+msgstr "NS - no sujeto"
+
+#. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__none
 msgid "No cost"
 msgstr "Sin coste"
@@ -694,6 +719,12 @@ msgid "Ocean freight import (LCL, per W/M)"
 msgstr "Flete marítimo importación grupaje (por W/M)"
 
 #. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_legacy_codes
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_legacy_codes
+msgid "Odoo 17 codes now priced as this service."
+msgstr "Códigos de Odoo 17 que ahora se cotizan con este servicio."
+
+#. module: boss_services
 #: model:ir.model.fields,field_description:boss_services.field_product_product__boss_o17_concept_id
 #: model:ir.model.fields,field_description:boss_services.field_product_template__boss_o17_concept_id
 msgid "Odoo 17 concept ID"
@@ -704,6 +735,13 @@ msgstr "ID del concepto en Odoo 17"
 #: model:ir.model.fields,field_description:boss_services.field_product_template__boss_o17_concept_code
 msgid "Odoo 17 concept code"
 msgstr "Código del concepto en Odoo 17"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_ftt
+msgid ""
+"Odoo 19 land freight code; Cristina chose TTE for inland transport. Kept for history only."
+msgstr ""
+"Código de flete terrestre de Odoo 19; Cristina eligió TTE para el transporte terrestre. Solo histórico."
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__shipment
@@ -797,10 +835,20 @@ msgid "Palletising of the goods, per pallet."
 msgstr "Paletizado de la mercancía, por palé."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__pallets
+msgid "Pallets"
+msgstr "Palés"
+
+#. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_pricing_mode__pending
 #: model_terms:ir.ui.view,arch_db:boss_services.product_template_search_view
 msgid "Pending business decision"
 msgstr "Pendiente de decisión de negocio"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__time
+msgid "Per day with free period"
+msgstr "Por día con periodo libre"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_qbr
@@ -876,7 +924,7 @@ msgstr "Precio por unidad"
 #. module: boss_services
 #: model:ir.model,name:boss_services.model_product_template
 msgid "Product"
-msgstr ""
+msgstr "Producto"
 
 #. module: boss_services
 #: model:ir.model,name:boss_services.model_uom_uom
@@ -897,6 +945,12 @@ msgstr ""
 "Referencia de la pregunta de negocio abierta (docs/preguntas-abiertas.md) que afecta a este servicio."
 
 #. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_replaced_by_id
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_replaced_by_id
+msgid "Replaced by"
+msgstr "Sustituido por"
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_roh
 msgid "RoHS control (per document)"
 msgstr "Control RoHS (por documento)"
@@ -911,6 +965,11 @@ msgstr "Control RoHS, se paga por documento; puede haber varios por partida."
 #: model:product.template,name:boss_services.service_cst
 msgid "Road consignment fee (BOSS fee)"
 msgstr "Consignación terrestre (honorario BOSS)"
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_ftt
+msgid "Road freight (replaced by TTE-CON)"
+msgstr "Flete terrestre (sustituido por TTE-CON)"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_tte_fcl
@@ -934,11 +993,6 @@ msgstr "Transporte terrestre de contenedor (por contenedor)"
 #: model:product.template,name:boss_services.service_tte_con
 msgid "Road transport, general cargo (pickup / delivery)"
 msgstr "Transporte terrestre convencional (recogida / entrega)"
-
-#. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__route_tiers
-msgid "Route and brackets"
-msgstr "Ruta y tramos"
 
 #. module: boss_services
 #: model:product.template,name:boss_services.service_soi
@@ -1052,11 +1106,6 @@ msgid "Terminal handling (FCL, per container)"
 msgstr "Manipulación en terminal marítima (FCL, por contenedor)"
 
 #. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__time
-msgid "Time with free period"
-msgstr "Tiempo con periodo libre"
-
-#. module: boss_services
 #: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
 msgid "Traceability"
 msgstr "Trazabilidad"
@@ -1094,6 +1143,12 @@ msgid "Used in Odoo 17 (one customer); definition and unit not decided."
 msgstr "Usado en Odoo 17 (un cliente); definición y unidad sin decidir."
 
 #. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_vat_class
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_vat_class
+msgid "VAT class"
+msgstr "Clase de IVA"
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_vgm
 msgid "Verified gross mass (per container)"
 msgstr "Verificación de la masa bruta (por contenedor)"
@@ -1109,9 +1164,19 @@ msgid "Vigo warehouse charges"
 msgstr "Gastos almacén Vigo"
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__volume_m3
+msgid "Volume (m³)"
+msgstr "Volumen (m³)"
+
+#. module: boss_services
 #: model:uom.uom,name:boss_services.uom_wm
 msgid "W/M (weight or measure)"
 msgstr "W/M (peso o volumen)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__wm
+msgid "W/M: larger of tonnes and m³"
+msgstr "W/M: el mayor de toneladas y m³"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_oal_pal

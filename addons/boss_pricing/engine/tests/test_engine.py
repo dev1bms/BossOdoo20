@@ -133,6 +133,7 @@ class TestMethods(unittest.TestCase):
                                                "basis": "containers"})
         self.assertEqual(amount(whole, containers=cont, storage_days=8), Decimal("320.00"))
         self.assertEqual(price([deduct], {**SHIP, "containers": cont}, D).missing, ["storage_days"])
+        self.assertEqual(amount(deduct, containers=cont, storage_days=0), Decimal("0.00"))  # estimate 0 days
 
 
 if __name__ == "__main__":

@@ -63,7 +63,7 @@ def main(pot, addon, lang, *extra):
             missing.append(msgid)
         lines += comments + [f"msgid {quote(msgid)}", f"msgstr {quote(msgstr)}", ""]
     out_path.parent.mkdir(exist_ok=True)
-    out_path.write_text("\n".join(lines), encoding="utf-8")
+    out_path.write_bytes("\n".join(lines).encode("utf-8"))
     print(f"{out_path}: {len(missing)} untranslated", file=sys.stderr)
     for msgid in missing:
         print("  -", msgid[:90].replace("\n", " "), file=sys.stderr)

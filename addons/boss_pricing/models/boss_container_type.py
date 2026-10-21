@@ -9,6 +9,7 @@ class BossContainerType(models.Model):
     _name = "boss.container.type"
     _description = "Container type"
     _order = "sequence, code"
+    _rec_names_search = ["code", "name"]
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char(required=True, help="E.g. DV, HC, RF, OT, FR, TK.")

@@ -1,0 +1,96 @@
+[
+ {
+  "name": "01-oportunidad",
+  "url": "/odoo/crm/1",
+  "wait": 8
+ },
+ {
+  "name": "02-oferta-envio",
+  "url": "/odoo/sale.order/9",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Envío').click(); await sleep(800); return 'envio';"
+ },
+ {
+  "name": "03-oferta-lineas",
+  "url": "/odoo/sale.order/9",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); return 'lineas';",
+  "size": [
+   1920,
+   1000
+  ]
+ },
+ {
+  "name": "04-detalle-calculo",
+  "url": "/odoo/sale.order/9",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); const row = Array.from(document.querySelectorAll('div[name=\"order_line\"] tr.o_data_row')).find(r => r.innerText.includes('[THC]') && r.innerText.includes(\"40'\")); row.querySelector('button[name=\"action_boss_pricing_details\"]').click(); await sleep(1800); return 'detalle';"
+ },
+ {
+  "name": "05-anadir-precio-proveedor",
+  "url": "/odoo/sale.order/9",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); const row = Array.from(document.querySelectorAll('div[name=\"order_line\"] tr.o_data_row')).find(r => r.innerText.includes('[CES]') && r.innerText.includes(\"20'\")); row.querySelector('button[name=\"action_boss_add_supplier_price\"]').click(); await sleep(1800); return 'wizard';"
+ },
+ {
+  "name": "06-envio-bloqueado",
+  "url": "/odoo/sale.order/9",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Enviar').click(); await sleep(1800); return 'enviar';"
+ },
+ {
+  "name": "07-tarifa",
+  "url": "/odoo/action-boss_pricing.boss_tariff_action/7",
+  "wait": 6
+ },
+ {
+  "name": "08-precio-tiempo",
+  "url": "/odoo/action-boss_pricing.boss_tariff_action/7",
+  "wait": 6,
+  "js": "const row = Array.from(document.querySelectorAll('div[name=\"line_ids\"] tr.o_data_row')).find(r => r.innerText.includes('[DEM]')); row.querySelector('td.o_data_cell').click(); await sleep(1800); return 'linea';"
+ },
+ {
+  "name": "09-tarifas-lista",
+  "url": "/odoo/action-boss_pricing.boss_tariff_action",
+  "wait": 5
+ },
+ {
+  "name": "10-precios-proveedor",
+  "url": "/odoo/action-boss_pricing.boss_tariff_line_action",
+  "wait": 5
+ },
+ {
+  "name": "11-servicio",
+  "url": "/odoo/action-sale.product_template_action/7",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Precios BOSS').click(); await sleep(800); return 'servicio';"
+ },
+ {
+  "name": "12-servicios-lista",
+  "url": "/odoo/action-sale.product_template_action?view_type=list",
+  "wait": 6,
+  "js": "const i = document.querySelector('.o_searchview_input'); i.value = 'BOSS'; return 'lista';"
+ },
+ {
+  "name": "13-oferta-aceptada",
+  "url": "/odoo/sale.order/8",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); return 'aceptada';",
+  "size": [
+   1920,
+   1000
+  ]
+ },
+ {
+  "name": "14-recotizar",
+  "url": "/odoo/sale.order/8",
+  "wait": 6,
+  "js": "Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Recotizar').click(); await sleep(2000); return 'recotizar';"
+ },
+ {
+  "name": "15-ajustes-iva",
+  "url": "/odoo/settings#sale_management",
+  "wait": 8,
+  "js": "const s = document.getElementById('boss_vat_mapping') || Array.from(document.querySelectorAll('.o_setting_box, [id]')).find(e => e.innerText && e.innerText.includes('IVA de los servicios BOSS')); s && s.scrollIntoView({block: 'center'}); await sleep(800); return s ? 'ok' : 'not found';"
+ }
+]
