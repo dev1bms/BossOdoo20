@@ -4,7 +4,7 @@ Status: accepted (technical). Business values are not decided here: they are tar
 open questions (`docs/preguntas-abiertas.md`).
 
 ## Context (evidence)
-- Odoo 19 keyed prices by *concept* (siblings borrowed prices: OAL-PAL took OAL-CON's 140 €/cont),
+- Odoo 19 keyed prices by *concept* (siblings borrowed prices: OAL-PAL took OAL-CON's price),
   had ≥ 5 different selection rules, only used *active* tariff versions and kept business numbers
   in Python (`.research/02_calc_methods.md` §11, local file).
 - Spike on Odoo 20 (`spikes/boss_spike_adr002`) and code reading (`.research/04_odoo20_standard.md`):

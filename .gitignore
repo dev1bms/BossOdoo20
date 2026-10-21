@@ -19,3 +19,5 @@ __pycache__/
 /samples-private/
 # Work-tracking state of the assistant tooling
 /.fablize/
+# Local assistant tool config (preview servers)
+/.claude/
