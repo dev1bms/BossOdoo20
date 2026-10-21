@@ -1,0 +1,42 @@
+{
+ "sections": [
+  {"id": "inicio", "title": {"es": "Inicio", "en": "Start"}},
+  {"id": "ciclo", "title": {"es": "Del CRM a la oferta aceptada", "en": "From CRM to the accepted quotation"}},
+  {"id": "tarifas", "title": {"es": "Tarifas de proveedor", "en": "Supplier tariffs"}},
+  {"id": "calculo", "title": {"es": "Formas de cálculo", "en": "Calculation methods"}},
+  {"id": "servicios", "title": {"es": "Servicios", "en": "Services"}},
+  {"id": "srv-maritimo", "title": {"es": "Servicios marítimos", "en": "Sea services"}},
+  {"id": "srv-tiempo", "title": {"es": "Servicios por tiempo", "en": "Time-based services"}},
+  {"id": "srv-aereo", "title": {"es": "Servicios aéreos", "en": "Air services"}},
+  {"id": "srv-aduanas", "title": {"es": "Aduanas e inspecciones", "en": "Customs and inspections"}},
+  {"id": "srv-terrestre", "title": {"es": "Transporte terrestre", "en": "Road transport"}},
+  {"id": "srv-agentes", "title": {"es": "Agentes en origen y destino", "en": "Origin and destination agents"}},
+  {"id": "srv-almacen", "title": {"es": "Almacén y otros", "en": "Warehouse and other"}},
+  {"id": "srv-propios", "title": {"es": "Honorarios, finanzas y suplidos", "en": "Fees, finance and paid on behalf"}},
+  {"id": "srv-pendientes", "title": {"es": "Pendientes de decisión", "en": "Pending decision"}},
+  {"id": "config", "title": {"es": "Configuración", "en": "Settings"}},
+  {"id": "tecnico", "title": {"es": "Técnico", "en": "Technical"}}
+ ],
+ "pages": [
+  {"id": "inicio", "section": "inicio", "title": {"es": "Qué hace el sistema", "en": "What the system does"}},
+  {"id": "roles", "section": "inicio", "title": {"es": "Roles y permisos", "en": "Roles and permissions"}},
+  {"id": "oportunidad", "section": "ciclo", "title": {"es": "1. Oportunidad", "en": "1. Opportunity"}},
+  {"id": "oferta-envio", "section": "ciclo", "title": {"es": "2. Oferta y datos del envío", "en": "2. Quotation and shipment data"}},
+  {"id": "anadir-servicios", "section": "ciclo", "title": {"es": "3. Añadir servicios", "en": "3. Add services"}},
+  {"id": "coste", "section": "ciclo", "title": {"es": "4. Coste y su explicación", "en": "4. Cost and its explanation"}},
+  {"id": "sin-precio", "section": "ciclo", "title": {"es": "5. Cuando falta un precio", "en": "5. When a price is missing"}},
+  {"id": "venta-iva", "section": "ciclo", "title": {"es": "6. Precio de venta e IVA", "en": "6. Sale price and VAT"}},
+  {"id": "aceptacion", "section": "ciclo", "title": {"es": "7. Enviar, aceptar y recotizar", "en": "7. Send, accept and re-price"}},
+  {"id": "tarifa-alta", "section": "tarifas", "title": {"es": "Introducir una tarifa", "en": "Enter a tariff"}},
+  {"id": "tarifa-aprobacion", "section": "tarifas", "title": {"es": "Aprobación, versiones e historial", "en": "Approval, versions and history"}},
+  {"id": "tarifa-listas", "section": "tarifas", "title": {"es": "Buscar tarifas y precios", "en": "Find tariffs and prices"}},
+  {"id": "metodos", "section": "calculo", "title": {"es": "Las cinco formas de cálculo", "en": "The five calculation methods"}},
+  {"id": "cantidades", "section": "calculo", "title": {"es": "Sobre qué se cobra (bases)", "en": "What is charged on (bases)"}},
+  {"id": "seleccion", "section": "calculo", "title": {"es": "Qué precio se elige", "en": "Which price is chosen"}},
+  {"id": "catalogo", "section": "servicios", "title": {"es": "Catálogo de servicios", "en": "Service catalogue"}},
+  {"id": "iva-moneda", "section": "config", "title": {"es": "IVA y monedas", "en": "VAT and currencies"}},
+  {"id": "preguntas", "section": "config", "title": {"es": "Decisiones pendientes", "en": "Pending decisions"}},
+  {"id": "arquitectura", "section": "tecnico", "title": {"es": "Arquitectura", "en": "Architecture"}},
+  {"id": "mantenimiento", "section": "tecnico", "title": {"es": "Mantenimiento y despliegue", "en": "Maintenance and deployment"}}
+ ]
+}
