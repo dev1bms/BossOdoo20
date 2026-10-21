@@ -17,3 +17,5 @@ __pycache__/
 *.local.conf
 # Real supplier price samples (loaded into Odoo, never in Git)
 /samples-private/
+# Work-tracking state of the assistant tooling
+/.fablize/
