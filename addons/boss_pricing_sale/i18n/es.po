@@ -1667,9 +1667,19 @@ msgid "TER - third countries"
 msgstr "TER - terceros países"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope
+msgid "Tariff applies to"
+msgstr "La tarifa se aplica a"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_name
 msgid "Tariff name"
 msgstr "Nombre de la tarifa"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope_confirmed
+msgid "Tariff scope reviewed"
+msgstr "Alcance de la tarifa revisado"
 
 #. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_tariffs
@@ -1750,6 +1760,13 @@ msgid ""
 "The price used is not approved: the result is a simulation, not usable in quotations until the tariff is approved."
 msgstr ""
 "El precio usado no está aprobado: el resultado es una simulación, no utilizable en ofertas hasta que se apruebe la tarifa."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope_confirmed
+msgid ""
+"The scope of the chosen draft tariff matches its supplier document (empty fields = applies to any). Needed to send it for approval."
+msgstr ""
+"El alcance de la tarifa en borrador elegida coincide con su documento de proveedor (campos vacíos = vale para cualquiera). Necesario para enviarla a aprobación."
 
 #. module: boss_pricing_sale
 #. odoo-python

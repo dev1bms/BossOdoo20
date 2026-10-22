@@ -1452,6 +1452,14 @@ msgid "Only approved tariffs price quotations."
 msgstr "Solo las tarifas aprobadas cotizan ofertas."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Only demo prices exist for %(service)s per %(uom)s: they price demo customers only, never a real customer. Enter the supplier's real price, or choose a demo customer to try the demo price."
+msgstr ""
+"Solo hay precios de demostración de %(service)s por %(uom)s: cotizan únicamente clientes de demostración, nunca un cliente real. Introduzca el precio real del proveedor o elija un cliente de demostración para probar el precio de demostración."
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__container_size
 msgid "Only for containers of this size. Empty: any size."
 msgstr "Solo para contenedores de este tamaño. Vacío: cualquier tamaño."

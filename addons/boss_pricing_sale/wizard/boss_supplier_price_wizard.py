@@ -46,6 +46,11 @@ class BossSupplierPriceWizard(models.TransientModel):
     min_amount = fields.Float("Minimum", min_display_digits="Product Price")
     max_amount = fields.Float("Maximum", min_display_digits="Product Price")
     document_page = fields.Char("Page")
+    tariff_scope = fields.Char(related="tariff_id.scope_summary", string="Tariff applies to")
+    tariff_scope_confirmed = fields.Boolean(
+        "Tariff scope reviewed", compute="_compute_tariff_scope_confirmed", store=True, readonly=False,
+        help="The scope of the chosen draft tariff matches its supplier document (empty fields = applies to any). "
+        "Needed to send it for approval.")
     submit = fields.Boolean("Send for approval now", default=True,
                             help="Needs the supplier document. Approval is always a separate step.")
 
@@ -121,11 +126,18 @@ class BossSupplierPriceWizard(models.TransientModel):
             "is_demo": order.partner_id.commercial_partner_id.boss_demo,
         }
 
+    @api.depends("tariff_id")
+    def _compute_tariff_scope_confirmed(self):
+        for wizard in self:
+            wizard.tariff_scope_confirmed = wizard.tariff_id.scope_confirmed
+
     def action_save(self):
         self.ensure_one()
         self._check_complete()
         if self.submit and not (self.document or (self.tariff_id and self.tariff_id.document)):
             raise UserError(self.env._("Attach the supplier document to send the price for approval."))
+        if self.tariff_id and self.tariff_scope_confirmed and not self.tariff_id.scope_confirmed:
+            self.tariff_id.scope_confirmed = True  # reviewed here, next to the scope summary
         tariff = self.tariff_id or self.env["boss.tariff"].create(self._tariff_values())
         self.env["boss.tariff.line"].create({
             "tariff_id": tariff.id, "product_id": self.product_id.id, "uom_id": self.uom_id.id,

@@ -22,6 +22,8 @@
                     <group string="Supplier tariff">
                         <field name="partner_id" required="1"/>
                         <field name="tariff_id" options="{'no_create': True}"/>
+                        <field name="tariff_scope" invisible="not tariff_id"/>
+                        <field name="tariff_scope_confirmed" invisible="not tariff_id"/>
                         <field name="tariff_name" invisible="tariff_id" required="not tariff_id"/>
                         <field name="valid_from" invisible="tariff_id" required="not tariff_id"/>
                         <field name="valid_to" invisible="tariff_id"/>

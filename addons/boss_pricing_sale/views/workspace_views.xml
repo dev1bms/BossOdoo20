@@ -97,7 +97,7 @@
         <field name="inherit_id" ref="boss_pricing.boss_tariff_line_view_list_ws"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_ws_document']" position="before">
-                <button name="action_ws_test" type="object" icon="science" title="Test pricing"/>
+                <button name="action_ws_test" type="object" icon="science" title="Test pricing" aria-label="Test pricing"/>
             </xpath>
         </field>
     </record>

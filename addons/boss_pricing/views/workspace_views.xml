@@ -28,8 +28,8 @@
                 <field name="document_page" string="Page" optional="hide"/>
                 <field name="tariff_id" optional="hide"/>
                 <field name="tariff_state" column_invisible="1"/>
-                <button name="action_ws_document" type="object" icon="picture_as_pdf" title="Open the supplier document"/>
-                <button name="action_ws_duplicate" type="object" icon="content_copy" title="Copy this price (draft tariff)"
+                <button name="action_ws_document" type="object" icon="picture_as_pdf" title="Open the supplier document" aria-label="Open the supplier document"/>
+                <button name="action_ws_duplicate" type="object" icon="content_copy" title="Copy this price (draft tariff)" aria-label="Copy this price (draft tariff)"
                         invisible="tariff_state != 'draft'" groups="boss_pricing.group_tariff_user"/>
             </list>
         </field>
@@ -114,8 +114,8 @@
                        decoration-success="boss_ws_readiness == 'ready'"
                        decoration-warning="boss_ws_readiness in ('pending', 'outdated')"
                        decoration-danger="boss_ws_readiness == 'no_price'"/>
-                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices of this service"/>
-                <button name="action_boss_ws_new_price" type="object" icon="add_circle" title="Add a supplier price to this service"
+                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices of this service" aria-label="Supplier prices of this service"/>
+                <button name="action_boss_ws_new_price" type="object" icon="add_circle" title="Add a supplier price to this service" aria-label="Add a supplier price to this service"
                         invisible="boss_pricing_mode != 'tariff'" groups="boss_pricing.group_tariff_user"/>
             </list>
         </field>
@@ -213,9 +213,9 @@
                 <field name="boss_ws_price_count" string="Prices" optional="show"/>
                 <field name="boss_ws_pending_count" string="To approve" decoration-warning="boss_ws_pending_count"/>
                 <field name="boss_ws_outdated_count" string="Expired / expiring" decoration-danger="boss_ws_outdated_count"/>
-                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices"/>
-                <button name="action_boss_ws_tariffs" type="object" icon="description" title="Tariffs and documents"/>
-                <button name="action_boss_ws_open" type="object" icon="open_in_new" title="Open the contact"/>
+                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices" aria-label="Supplier prices"/>
+                <button name="action_boss_ws_tariffs" type="object" icon="description" title="Tariffs and documents" aria-label="Tariffs and documents"/>
+                <button name="action_boss_ws_open" type="object" icon="open_in_new" title="Open the contact" aria-label="Open the contact"/>
             </list>
         </field>
     </record>
