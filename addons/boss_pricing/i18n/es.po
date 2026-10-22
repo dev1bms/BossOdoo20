@@ -1580,8 +1580,8 @@ msgstr "Secuencia"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__product_id
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__service_name
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_list_ws
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search

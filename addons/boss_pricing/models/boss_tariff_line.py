@@ -227,6 +227,7 @@ class BossTariffLineWorkspace(models.Model):
     document_reference = fields.Char(related="tariff_id.document_reference")
     company_id = fields.Many2one(related="tariff_id.company_id", store=True)
     service_code = fields.Char(related="product_id.default_code", string="Code")
+    service_name = fields.Char(related="product_id.name", string="Service")
     validity_state = fields.Selection(VALIDITY_STATES, "Validity", compute="_compute_workspace_display")
     price_display = fields.Char("Price", compute="_compute_workspace_display",
                                 help="Price with its unit (never the total of the service).")

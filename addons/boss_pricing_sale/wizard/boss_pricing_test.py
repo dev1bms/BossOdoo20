@@ -105,8 +105,9 @@ class BossPricingTest(models.TransientModel):
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
-        if self.product_id and self.uom_id not in self.allowed_uom_ids:
-            self.uom_id = self.product_id.uom_id if self.product_id.uom_id in self.allowed_uom_ids else False
+        allowed = self.product_id.product_tmpl_id._boss_charge_bases() if self.product_id else False
+        if allowed and self.uom_id not in allowed:
+            self.uom_id = self.product_id.uom_id
 
     @api.onchange("storage_days")
     def _onchange_storage_days(self):

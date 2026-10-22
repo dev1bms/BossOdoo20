@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <list decoration-muted="validity_state in ('expired', 'replaced')">
                 <field name="service_code" string="Code" width="70px"/>
-                <field name="product_id" string="Service" width="150px"/>
+                <field name="service_name" width="150px"/>
                 <field name="partner_id" string="Supplier" width="120px"/>
                 <field name="scope_display" width="190px"/>
                 <field name="calc_display" optional="hide"/>
@@ -25,8 +25,8 @@
                 <field name="document_page" string="Page" optional="hide"/>
                 <field name="tariff_id" optional="hide"/>
                 <field name="tariff_state" column_invisible="1"/>
-                <button name="action_ws_document" type="object" icon="fa-file-pdf-o" title="Open the supplier document"/>
-                <button name="action_ws_duplicate" type="object" icon="fa-clone" title="Copy this price (draft tariff)"
+                <button name="action_ws_document" type="object" icon="picture_as_pdf" title="Open the supplier document"/>
+                <button name="action_ws_duplicate" type="object" icon="content_copy" title="Copy this price (draft tariff)"
                         invisible="tariff_state != 'draft'" groups="boss_pricing.group_tariff_user"/>
             </list>
         </field>
@@ -49,7 +49,7 @@
                         domain="[('tariff_state', '=', 'approved'), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d')), ('valid_to', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
                 <filter string="Expired" name="ws_expired"
                         domain="[('valid_to', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
-                <separator/>
+                <!-- same group: the status filters add up (valid OR draft OR waiting...) -->
                 <filter string="Draft" name="ws_draft" domain="[('tariff_state', '=', 'draft')]"/>
                 <filter string="Waiting for approval" name="ws_pending" domain="[('tariff_state', '=', 'to_approve')]"/>
                 <filter string="Approved" name="ws_approved" domain="[('tariff_state', '=', 'approved')]"/>
@@ -108,8 +108,8 @@
                        decoration-success="boss_ws_readiness == 'ready'"
                        decoration-warning="boss_ws_readiness in ('pending', 'outdated')"
                        decoration-danger="boss_ws_readiness == 'no_price'"/>
-                <button name="action_boss_ws_prices" type="object" icon="fa-list" title="Supplier prices of this service"/>
-                <button name="action_boss_ws_open" type="object" icon="fa-external-link" title="Open the product"/>
+                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices of this service"/>
+                <button name="action_boss_ws_open" type="object" icon="open_in_new" title="Open the product"/>
             </list>
         </field>
     </record>
@@ -133,11 +133,11 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="fa-money"
+                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="payments"
                         invisible="boss_pricing_mode != 'tariff'" groups="boss_pricing.group_tariff_user">
                     <field name="boss_ws_price_count" widget="statinfo" string="Supplier prices"/>
                 </button>
-                <button name="action_boss_ws_guide" type="object" class="oe_stat_button" icon="fa-book"
+                <button name="action_boss_ws_guide" type="object" class="oe_stat_button" icon="book"
                         invisible="not boss_pricing_mode" string="Guide"/>
             </xpath>
         </field>
@@ -158,9 +158,9 @@
                 <field name="boss_ws_price_count" string="Prices" optional="show"/>
                 <field name="boss_ws_pending_count" string="To approve" decoration-warning="boss_ws_pending_count"/>
                 <field name="boss_ws_outdated_count" string="Expired / expiring" decoration-danger="boss_ws_outdated_count"/>
-                <button name="action_boss_ws_prices" type="object" icon="fa-list" title="Supplier prices"/>
-                <button name="action_boss_ws_tariffs" type="object" icon="fa-file-text-o" title="Tariffs and documents"/>
-                <button name="action_boss_ws_open" type="object" icon="fa-external-link" title="Open the contact"/>
+                <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices"/>
+                <button name="action_boss_ws_tariffs" type="object" icon="description" title="Tariffs and documents"/>
+                <button name="action_boss_ws_open" type="object" icon="open_in_new" title="Open the contact"/>
             </list>
         </field>
     </record>
@@ -183,11 +183,11 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_boss_ws_tariffs" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                <button name="action_boss_ws_tariffs" type="object" class="oe_stat_button" icon="description"
                         invisible="not boss_ws_tariff_count" groups="boss_pricing.group_tariff_user">
                     <field name="boss_ws_tariff_count" widget="statinfo" string="Supplier tariffs"/>
                 </button>
-                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="fa-money"
+                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="payments"
                         invisible="not boss_ws_price_count" groups="boss_pricing.group_tariff_user">
                     <field name="boss_ws_price_count" widget="statinfo" string="Supplier prices"/>
                 </button>
