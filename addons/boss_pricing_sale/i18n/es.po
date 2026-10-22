@@ -458,8 +458,10 @@ msgstr "Días del envío"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_days
-msgid "Days of this line when it does not use the days of the shipment."
-msgstr "Días de esta línea cuando no usa los días del envío."
+msgid ""
+"Days priced on this line: the days of the shipment unless an estimate of the line or the actual period is typed (typing a number makes it the estimate of this line)."
+msgstr ""
+"Días que se cotizan en esta línea: los del envío salvo que se escriba una estimación de la línea o el periodo real (escribir un número lo convierte en la estimación de esta línea)."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__ok
@@ -601,11 +603,6 @@ msgstr ""
 msgid "Expected supplier cost of the whole line, in the tariff currency."
 msgstr ""
 "Coste de proveedor previsto de toda la línea, en la moneda de la tarifa."
-
-#. module: boss_pricing_sale
-#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_margin_sale_order
-msgid "Expected unit cost"
-msgstr "Coste previsto (ud.)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__export
@@ -1485,6 +1482,11 @@ msgstr "Unidad"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__unit_price
 msgid "Unit Price"
 msgstr "Precio unitario"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_margin_sale_order
+msgid "Unit cost"
+msgstr "Coste ud."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing

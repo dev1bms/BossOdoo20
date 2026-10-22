@@ -249,6 +249,8 @@ class TestQuotationPricing(TransactionCase):
         # 40': 240 + 20 % = 288; 20': 180 + 20 % = 216 < 180 + 40 minimum margin -> 220
         self.assertEqual((l40.price_unit, l40.boss_sale_status), (288.0, "cost_based"))
         self.assertEqual(l20.price_unit, 220.0)
+        # the line total follows quantity x price (2 containers of 20'), also right after creation
+        self.assertEqual((l20.product_uom_qty, l20.price_subtotal), (2.0, 440.0))
         self.assertIn("minimum margin", l20.boss_sale_explanation)
         # A shipment change on the draft re-prices cost and sale; no old price stays looking valid.
         order.boss_carrier_id = self.carrier_b

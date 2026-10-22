@@ -137,7 +137,10 @@ class SaleOrderLine(models.Model):
         auto = self.browse([lines[i].id for i in counted])
         self.env.add_to_compute(self._fields["product_uom_qty"], auto)
         auto._recompute_recordset(["product_uom_qty"])
-        auto._boss_recompute_cost()  # the cost was precomputed with the default quantity
+        # An explicit recompute does not notify the fields that depend on the quantity (cost, sale price, line
+        # total, taxes): notify them like a write would, so nothing keeps the default quantity of 1.
+        auto.modified(["product_uom_qty"])
+        auto._boss_recompute_cost()
         return lines
 
     # --- quantity: charge bases counted from the shipment -------------------------------------------
@@ -282,6 +285,8 @@ class SaleOrderLine(models.Model):
         for fname in ("boss_cost_status", "purchase_price", "price_unit"):
             self.env.add_to_compute(self._fields[fname], lines)
             lines._recompute_recordset([fname])
+            # notify the dependent fields (sale price, line total, taxes, margin) like a write would
+            lines.modified([fname])
         lines.invalidate_recordset(["boss_sale_status", "boss_sale_explanation", "boss_markup"])
 
     # --- VAT: Ángel's rules give the class; the BOSS VAT table gives the Odoo tax (ADR-004) ------------------
