@@ -111,7 +111,7 @@ def time_based(params, inputs):
     e.g. «5 días a 40, a partir de ahí 95») or, with 'whole_stay', the tier reached by the whole stay.
     """
     days = inputs.get("storage_days")
-    if days is None or days == "":  # 0 days is a valid estimate (quotation default), not missing
+    if days is None or days == "":  # not indicated; 0 days indicated is a valid estimate
         raise MissingInput("storage_days")
     days = int(days)
     free = _free_days(params, inputs)

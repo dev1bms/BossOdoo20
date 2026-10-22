@@ -14,27 +14,27 @@ class BossSupplierPriceWizard(models.TransientModel):
     sale_line_id = fields.Many2one("sale.order.line", required=True)
     product_id = fields.Many2one(related="sale_line_id.product_id")
     uom_id = fields.Many2one(related="sale_line_id.product_uom_id", string="Charge basis")
-    partner_id = fields.Many2one("res.partner", "Supplier", required=True,
-                                 compute="_compute_from_line", store=True, readonly=False, precompute=True)
+    partner_id = fields.Many2one("res.partner", "Supplier",  # required in the form; checked on save
+                                 compute="_compute_partner_id", store=True, readonly=False, precompute=True)
     tariff_id = fields.Many2one(
         "boss.tariff", "Add to draft tariff",
         domain="[('partner_id', '=', partner_id), ('state', '=', 'draft')]",
         help="Empty: a new tariff is created with the data below.")
     # New tariff: header and scope, pre-filled from the quotation (editable).
-    tariff_name = fields.Char("Tariff name", compute="_compute_from_line", store=True, readonly=False, precompute=True)
-    valid_from = fields.Date(compute="_compute_from_line", store=True, readonly=False, precompute=True)
+    tariff_name = fields.Char("Tariff name", compute="_compute_tariff_name", store=True, readonly=False, precompute=True)
+    valid_from = fields.Date(compute="_compute_valid_from", store=True, readonly=False, precompute=True)
     valid_to = fields.Date()
-    currency_id = fields.Many2one("res.currency", compute="_compute_from_line", store=True, readonly=False, precompute=True)
+    currency_id = fields.Many2one("res.currency", compute="_compute_currency_id", store=True, readonly=False, precompute=True)
     document = fields.Binary("Supplier document")
     document_name = fields.Char()
     document_reference = fields.Char()
-    direction = fields.Selection(DIRECTIONS, compute="_compute_from_line", store=True, readonly=False, precompute=True)
-    transport_mode = fields.Selection(TRANSPORT_MODES, compute="_compute_from_line", store=True, readonly=False, precompute=True)
-    load_type = fields.Selection(LOAD_TYPES, compute="_compute_from_line", store=True, readonly=False, precompute=True)
-    carrier_id = fields.Many2one("res.partner", "Carrier", compute="_compute_from_line", store=True, readonly=False, precompute=True)
-    port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_from_line", store=True,
+    direction = fields.Selection(DIRECTIONS, compute="_compute_scope", store=True, readonly=False, precompute=True)
+    transport_mode = fields.Selection(TRANSPORT_MODES, compute="_compute_scope", store=True, readonly=False, precompute=True)
+    load_type = fields.Selection(LOAD_TYPES, compute="_compute_scope", store=True, readonly=False, precompute=True)
+    carrier_id = fields.Many2one("res.partner", "Carrier", compute="_compute_carrier_id", store=True, readonly=False, precompute=True)
+    port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_port_ids", store=True,
                                 readonly=False, precompute=True)
-    country_ids = fields.Many2many("res.country", string="Countries abroad", compute="_compute_from_line",
+    country_ids = fields.Many2many("res.country", string="Countries abroad", compute="_compute_country_ids",
                                    store=True, readonly=False, precompute=True)
     container_size = fields.Selection(related="sale_line_id.boss_container_size", string="Container size")
     container_type_id = fields.Many2one(related="sale_line_id.boss_container_type_id", string="Container type")
@@ -42,29 +42,69 @@ class BossSupplierPriceWizard(models.TransientModel):
         "Only for this container type", help="The document prices this container type differently.")
     only_this_customer = fields.Boolean(help="Price agreed for this customer only.")
     # The price itself.
-    unit_price = fields.Float(required=True, min_display_digits="Product Price")
+    unit_price = fields.Float(min_display_digits="Product Price")  # required in the form; checked on save
     min_amount = fields.Float("Minimum", min_display_digits="Product Price")
     max_amount = fields.Float("Maximum", min_display_digits="Product Price")
     document_page = fields.Char("Page")
     submit = fields.Boolean("Send for approval now", default=True,
                             help="Needs the supplier document. Approval is always a separate step.")
 
+    # One compute per field: a value given by the caller (form, import, RPC) never blanks the others
+    # (the ORM leaves the siblings of a shared compute empty: odoo/orm/models.py, _add_precomputed_values).
     @api.depends("sale_line_id")
-    def _compute_from_line(self):
+    def _compute_partner_id(self):
+        for wiz in self:
+            wiz.partner_id = wiz.sale_line_id.order_id.boss_carrier_id
+
+    @api.depends("sale_line_id", "partner_id", "valid_from")
+    def _compute_tariff_name(self):
+        for wiz in self:
+            year = (wiz.valid_from or fields.Date.today()).year
+            wiz.tariff_name = f"{wiz.partner_id.name or ''} {wiz.sale_line_id.product_id.default_code or ''} {year}".strip()
+
+    @api.depends("sale_line_id")
+    def _compute_valid_from(self):
+        for wiz in self:
+            wiz.valid_from = wiz.sale_line_id.order_id.boss_planned_date or fields.Date.today()
+
+    @api.depends("sale_line_id")
+    def _compute_currency_id(self):
+        for wiz in self:
+            wiz.currency_id = wiz.sale_line_id.order_id.currency_id
+
+    @api.depends("sale_line_id")
+    def _compute_scope(self):
         for wiz in self:
             order = wiz.sale_line_id.order_id
-            supplier = order.boss_carrier_id
-            year = (order.boss_planned_date or fields.Date.today()).year
-            wiz.partner_id = supplier
-            wiz.tariff_name = f"{supplier.name or ''} {wiz.sale_line_id.product_id.default_code or ''} {year}".strip()
-            wiz.valid_from = order.boss_planned_date or fields.Date.today()
-            wiz.currency_id = order.currency_id
             wiz.direction = order.boss_direction
             wiz.transport_mode = order.boss_transport_mode
             wiz.load_type = order.boss_load_type
-            wiz.carrier_id = supplier
-            wiz.port_ids = order.boss_port_id
-            wiz.country_ids = order.boss_country_id
+
+    @api.depends("sale_line_id")
+    def _compute_carrier_id(self):
+        for wiz in self:
+            wiz.carrier_id = wiz.sale_line_id.order_id.boss_carrier_id
+
+    @api.depends("sale_line_id")
+    def _compute_port_ids(self):
+        for wiz in self:
+            wiz.port_ids = wiz.sale_line_id.order_id.boss_port_id
+
+    @api.depends("sale_line_id")
+    def _compute_country_ids(self):
+        for wiz in self:
+            wiz.country_ids = wiz.sale_line_id.order_id.boss_country_id
+
+    def _check_complete(self):
+        """Clear message instead of a database error when the caller left out what a price needs."""
+        _ = self.env._
+        missing = [label for label, ok in (
+            (_("supplier"), self.partner_id), (_("currency"), self.tariff_id or self.currency_id),
+            (_("valid from"), self.tariff_id or self.valid_from), (_("tariff name"), self.tariff_id or self.tariff_name),
+            (_("unit price"), self.unit_price > 0),
+        ) if not ok]
+        if missing:
+            raise UserError(_("The supplier price cannot be saved, missing: %s.", ", ".join(missing)))
 
     def _tariff_values(self):
         order = self.sale_line_id.order_id
@@ -80,6 +120,7 @@ class BossSupplierPriceWizard(models.TransientModel):
 
     def action_save(self):
         self.ensure_one()
+        self._check_complete()
         if self.submit and not (self.document or (self.tariff_id and self.tariff_id.document)):
             raise UserError(self.env._("Attach the supplier document to send the price for approval."))
         tariff = self.tariff_id or self.env["boss.tariff"].create(self._tariff_values())

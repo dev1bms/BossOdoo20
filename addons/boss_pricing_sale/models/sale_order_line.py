@@ -1,14 +1,17 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools.misc import formatLang
 
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 
 from . import vat_rules
+from .product_pricelist_item import BOSS_LINE_COST
 
 SALE_STATUSES = [
     ("missing", "Sale price missing"),
     ("agreed", "Agreed price (pricelist)"),
+    ("cost_based", "From the expected cost (pricelist rule)"),
     ("manual", "Entered by a person"),
     ("free", "Free of charge (confirmed)"),
 ]
@@ -25,7 +28,7 @@ SHIPMENT_DEPENDS = (
     "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
     "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
     "order_id.boss_pallets", "order_id.boss_goods_value", "order_id.boss_duties_amount",
-    "order_id.boss_storage_days",
+    "order_id.boss_storage_days", "order_id.boss_storage_days_known",
     # percentage of other services of the same supplier (fuel surcharge on transport)
     "order_id.order_line.product_id", "order_id.order_line.product_uom_qty",
 )
@@ -72,6 +75,7 @@ class SaleOrderLine(models.Model):
         "Free of charge", copy=False,
         help="Confirms that a zero sale price is intended. Without it a zero price means 'missing'.")
     boss_sale_status = fields.Selection(SALE_STATUSES, "Sale price", compute="_compute_boss_sale_status")
+    boss_sale_explanation = fields.Text("How the sale price is set", compute="_compute_boss_sale_status")
     boss_markup = fields.Float(
         "Markup on cost", compute="_compute_boss_markup",
         help="(Sale - cost) / cost. The margin shown by Odoo is (sale - cost) / sale.")
@@ -114,7 +118,7 @@ class SaleOrderLine(models.Model):
     @api.depends("product_uom_id", "boss_container_size", "boss_container_type_id",
                  "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
                  "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
-                 "order_id.boss_pallets")
+                 "order_id.boss_pallets", "order_id.boss_awb_kg")
     def _compute_product_uom_qty(self):
         frozen = self._boss_skip()
         super(SaleOrderLine, self - frozen)._compute_product_uom_qty()
@@ -123,8 +127,9 @@ class SaleOrderLine(models.Model):
             source = line.product_uom_id.boss_quantity_source
             if source in (False, "input"):
                 continue
-            line.product_uom_qty = line.order_id._boss_quantity(source, line.boss_container_size,
-                                                                line.boss_container_type_id)
+            quantity = line.order_id._boss_quantity(source, line.boss_container_size, line.boss_container_type_id)
+            if quantity is not None:
+                line.product_uom_qty = quantity
 
     # --- cost: one call to boss.pricing --------------------------------------------------------------
 
@@ -141,7 +146,7 @@ class SaleOrderLine(models.Model):
         if related_costs is not None:
             inputs["related_costs"] = related_costs
         return self.env["boss.pricing"].price_cost(self.product_id, self.product_uom_id, inputs,
-                                                   self.order_id.boss_planned_date)
+                                                   self.order_id.boss_planned_date, self.order_id.company_id)
 
     def _boss_related_costs(self):
         """Costs of the other lines of the order, for percentages on services of the same supplier."""
@@ -234,10 +239,14 @@ class SaleOrderLine(models.Model):
             line.purchase_price = line._boss_unit_cost()
 
     def _boss_recompute_cost(self):
+        """Cost, then the sale price built on it (cost-based pricelist rules). An explicit recompute does not
+        propagate to dependent fields like a write does, so the chain is recomputed here in order; typed and
+        accepted prices are kept by _compute_price_unit."""
         lines = self._boss_lines()
-        for fname in ("boss_cost_status", "purchase_price"):
+        for fname in ("boss_cost_status", "purchase_price", "price_unit"):
             self.env.add_to_compute(self._fields[fname], lines)
             lines._recompute_recordset([fname])
+        lines.invalidate_recordset(["boss_sale_status", "boss_sale_explanation", "boss_markup"])
 
     # --- VAT: Ángel's rules, Odoo tax from the company mapping (ADR-004) -----------------------------
 
@@ -285,6 +294,7 @@ class SaleOrderLine(models.Model):
 
     # --- sale price: standard prices, frozen once accepted -------------------------------------------
 
+    @api.depends("purchase_price", "pricelist_item_id")
     def _compute_price_unit(self):
         frozen = self._boss_skip()
         frozen._boss_keep("price_unit")
@@ -295,24 +305,69 @@ class SaleOrderLine(models.Model):
         frozen._boss_keep("discount")
         super(SaleOrderLine, self - frozen)._compute_discount()
 
+    def _boss_cost_known(self):
+        """A cost a sale price can be built on: a supplier price (a justified 0 included) or a manual cost."""
+        self.ensure_one()
+        if self.boss_cost_status == "ok":
+            return bool(self.boss_tariff_line_id)
+        return self.boss_cost_status in ("manual", "not_ready") and bool(self.boss_manual_cost)
+
+    def _get_pricelist_price(self):
+        item = self.pricelist_item_id
+        if item.base != BOSS_LINE_COST:
+            return super()._get_pricelist_price()
+        if not self.product_id.boss_pricing_mode or not self._boss_cost_known():
+            return 0.0  # no cost yet: the sale price stays missing, never built on a zero cost
+        return item._compute_price(
+            product=self.product_id.with_context(**self._get_product_price_context()),
+            boss_unit_cost=self.purchase_price, **self._get_pricelist_kwargs())
+
     @api.onchange("boss_sale_free")
     def _onchange_boss_sale_free(self):
         if self.boss_sale_free:
             self.price_unit = 0.0
 
     @api.depends("price_unit", "technical_price_unit", "boss_sale_free", "product_id", "product_uom_id",
-                 "product_uom_qty")
+                 "product_uom_qty", "pricelist_item_id", "purchase_price", "boss_cost_status", "boss_manual_cost")
     def _compute_boss_sale_status(self):
+        _ = self.env._
         for line in self:
             currency = line.currency_id or line.company_id.currency_id
+            item = line.pricelist_item_id
+            from_rule = item and not currency.compare_amounts(line.technical_price_unit, line.price_unit)
+            cost_rule = from_rule and item.base == BOSS_LINE_COST
             if line.display_type or not line.product_id.boss_pricing_mode:
-                line.boss_sale_status = False
+                status, text = False, False
             elif currency.is_zero(line.price_unit):
-                line.boss_sale_status = "free" if line.boss_sale_free else "missing"
-            elif line.pricelist_item_id and not currency.compare_amounts(line.technical_price_unit, line.price_unit):
-                line.boss_sale_status = "agreed"
+                if line.boss_sale_free:
+                    status, text = "free", _("Free of charge, confirmed by a person.")
+                elif cost_rule and not line._boss_cost_known():
+                    status, text = "missing", _(
+                        "Rule '%(rule)s' of pricelist %(pricelist)s builds the sale price on the expected cost, "
+                        "which is not known yet (see the cost).", rule=item.price, pricelist=item.pricelist_id.name)
+                else:
+                    status, text = "missing", _(
+                        "No sale price: type it, agree it in the customer pricelist or tick 'Free of charge'.")
+            elif cost_rule:
+                status = "cost_based"
+                text = _("Pricelist %(pricelist)s, rule '%(rule)s': expected cost %(cost)s per %(uom)s gives "
+                         "%(price)s.", pricelist=item.pricelist_id.name, rule=item.price,
+                         cost=line._boss_money(line.purchase_price), uom=line.product_uom_id.name,
+                         price=line._boss_money(line.price_unit))
+                if item.price_min_margin and not currency.compare_amounts(
+                        line.price_unit, line.purchase_price + item.price_min_margin):
+                    text += " " + _("The minimum margin of %s per unit applies.", line._boss_money(item.price_min_margin))
+            elif from_rule:
+                status = "agreed"
+                text = _("Agreed price in pricelist %(pricelist)s (%(rule)s) per %(uom)s.",
+                         pricelist=item.pricelist_id.name, rule=item.price, uom=item.uom_id.name or line.product_uom_id.name)
             else:
-                line.boss_sale_status = "manual"
+                status, text = "manual", _("Price typed by a person (not from a pricelist rule).")
+            line.boss_sale_status = status
+            line.boss_sale_explanation = text
+
+    def _boss_money(self, amount):
+        return formatLang(self.env, amount, currency_obj=self.currency_id or self.company_id.currency_id)
 
     @api.depends("price_subtotal", "product_uom_qty", "purchase_price")
     def _compute_boss_markup(self):
@@ -389,6 +444,7 @@ class SaleOrderLine(models.Model):
             "container_size": self.boss_container_size or "", "container_type": self.boss_container_type_id.code or "",
             "price_unit": self.price_unit, "discount": self.discount, "subtotal": self.price_subtotal,
             "currency": self.currency_id.name, "sale_status": self.boss_sale_status,
+            "sale_explanation": self.boss_sale_explanation or "",
             "pricelist_item_id": self.pricelist_item_id.id, "pricelist_rule": self.pricelist_item_id.display_name or "",
             "cost_status": self.boss_cost_status, "cost_amount": self.boss_cost_amount,
             "cost_currency": self.boss_cost_currency_id.name, "unit_cost": self.purchase_price,

@@ -1,7 +1,7 @@
 {
     "name": "BOSS Services",
     "summary": "BOSS service catalogue: services as standard products, charge bases as units",
-    "version": "20.0.1.0.0",
+    "version": "20.0.1.1.0",
     "category": "Sales/Sales",
     "author": "BiDATiA",
     "license": "LGPL-3",

@@ -49,6 +49,7 @@
                         </group>
                         <group string="Estimates">
                             <field name="boss_storage_days" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_storage_days_known" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_duties_amount" readonly="state in ('sale', 'cancel')"/>
                         </group>
                     </group>
@@ -85,8 +86,8 @@
                        invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
                 <field name="boss_manual_cost_note" optional="hide"
                        invisible="boss_cost_status not in ('manual', 'not_ready')" readonly="boss_price_frozen"/>
-                <field name="boss_sale_status" string="Sale" widget="badge" optional="hide"
-                       decoration-success="boss_sale_status in ('agreed', 'manual', 'free')"
+                <field name="boss_sale_status" string="Sale" widget="badge" optional="show"
+                       decoration-success="boss_sale_status in ('agreed', 'cost_based', 'manual', 'free')"
                        decoration-danger="boss_sale_status == 'missing'"/>
                 <field name="boss_sale_free" optional="hide" readonly="boss_price_frozen"/>
                 <field name="boss_cost_is_estimate" optional="hide" string="Estimate"/>
@@ -153,7 +154,7 @@
                             <field name="boss_cost_currency_id" invisible="1"/>
                             <field name="purchase_price" string="Unit cost (quotation currency)"/>
                             <field name="price_unit" string="Sale price"/>
-                            <field name="boss_sale_status"/>
+                            <field name="boss_sale_status" string="Sale price source"/>
                             <field name="margin_percent" widget="percentage" string="Margin (on sale)"/>
                             <field name="boss_markup" widget="percentage"/>
                             <field name="boss_cost_is_estimate"/>
@@ -161,6 +162,10 @@
                     </group>
                     <group string="How the cost is computed">
                         <field name="boss_cost_explanation" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="How the sale price is set">
+                        <field name="pricelist_item_id" readonly="1" invisible="not pricelist_item_id"/>
+                        <field name="boss_sale_explanation" nolabel="1" colspan="2"/>
                     </group>
                     <group>
                         <field name="boss_tariff_line_id" invisible="not boss_tariff_line_id"/>

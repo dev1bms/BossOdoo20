@@ -10,3 +10,5 @@ boss_tariff_bracket_read,Brackets: read,boss.tariff.bracket,base.group_user,r,
 boss_tariff_bracket_user,Brackets: enter,boss.tariff.bracket,group_tariff_user,crud,"[('line_id.tariff_id.state', '=', 'draft')]"
 boss_container_type_read,Container types: read,boss.container.type,base.group_user,r,
 boss_container_type_manager,Container types: maintain,boss.container.type,group_tariff_approver,cru,
+boss_tariff_comp_rule,Tariffs multi-company,boss.tariff,,crud,"[('company_id', 'in', company_ids)]"
+boss_tariff_line_comp_rule,Tariff lines multi-company,boss.tariff.line,,crud,"[('tariff_id.company_id', 'in', company_ids)]"

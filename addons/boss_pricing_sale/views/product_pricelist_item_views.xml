@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sale price from the expected cost of the quotation line: margin on sale next to the surcharge,
+         and the minimum/maximum margin visible to sales managers (standard shows them in debug mode only). -->
+    <record id="product_pricelist_item_form_view_boss" model="ir.ui.view">
+        <field name="name">product.pricelist.item.form.boss</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+        <field name="arch" type="xml">
+            <field name="price_round" position="before">
+                <field name="boss_sale_margin" invisible="compute_price != 'markup' or base != 'boss_line_cost'"/>
+            </field>
+            <xpath expr="//label[@for='price_min_margin']" position="attributes">
+                <attribute name="groups"></attribute>
+            </xpath>
+            <xpath expr="//field[@name='price_min_margin']/.." position="attributes">
+                <attribute name="groups"></attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

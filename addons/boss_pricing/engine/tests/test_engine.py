@@ -136,5 +136,22 @@ class TestMethods(unittest.TestCase):
         self.assertEqual(amount(deduct, containers=cont, storage_days=0), Decimal("0.00"))  # estimate 0 days
 
 
+    def test_time_weekday_rules(self):
+        # WFS-like: 48 h free as a threshold; Saturday arrival free until Monday included; Friday +1 day only
+        # when the tariff says so (WFS ties it to a Monday exit, unknown in a quotation: not set there).
+        cont = [{"size": "40", "type_id": 1, "quantity": 1}]
+        base = {"free_hours": 48, "free_mode": "threshold", "basis": "containers",
+                "brackets": [{"up_to": 0, "unit_price": 10}]}
+        saturday = rule(1, method="time", params={**base, "saturday_until_monday": True})
+        self.assertEqual(amount(saturday, containers=cont, storage_days=3, start_weekday=5), Decimal("0.00"))
+        self.assertEqual(amount(saturday, containers=cont, storage_days=4, start_weekday=5), Decimal("40.00"))
+        self.assertEqual(amount(saturday, containers=cont, storage_days=3, start_weekday=2), Decimal("30.00"))
+        friday = rule(1, method="time", params={**base, "friday_extra_day": True})
+        self.assertEqual(amount(friday, containers=cont, storage_days=3, start_weekday=4), Decimal("0.00"))
+        self.assertEqual(amount(friday, containers=cont, storage_days=4, start_weekday=4), Decimal("40.00"))
+        self.assertEqual(amount(rule(1, method="time", params=base), containers=cont, storage_days=3, start_weekday=4),
+                         Decimal("30.00"))
+
+
 if __name__ == "__main__":
     unittest.main()

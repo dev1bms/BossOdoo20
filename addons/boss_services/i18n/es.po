@@ -237,6 +237,11 @@ msgid "Chargeable kg (road)"
 msgstr "kg tasable terrestre"
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__awb_kg
+msgid "Chargeable weight of the air waybill (entered on the line when empty)"
+msgstr "Peso tasable de la guía aérea (se escribe en la línea si está vacío)"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_dvd
 msgid "Clearance type used by two customers; meaning to confirm."
 msgstr "Tipo de despacho usado por dos clientes; significado por confirmar."
@@ -929,7 +934,7 @@ msgstr "Producto"
 #. module: boss_services
 #: model:ir.model,name:boss_services.model_uom_uom
 msgid "Product Unit of Measure"
-msgstr ""
+msgstr "Unidad de medida del producto"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_vac

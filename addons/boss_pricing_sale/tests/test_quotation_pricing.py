@@ -141,6 +141,70 @@ class TestQuotationPricing(TransactionCase):
         # days 5..9 charged: 3 x 10 + 2 x 20 = 70 per container, 2 containers of 20'
         self.assertEqual((line.boss_cost_amount, line.boss_cost_is_estimate), (140.0, True))
         self.assertIn("9", line.boss_cost_explanation)
+        # Days not indicated: missing data, never a zero cost; 0 days confirmed: inside the free period.
+        unknown = self._line(self._order(services=dem), "20", dem)
+        self.assertEqual((unknown.boss_cost_status, unknown.boss_cost_missing), ("missing_input", "storage_days"))
+        unknown.order_id.boss_storage_days_known = True
+        self.assertEqual((unknown.boss_cost_status, unknown.boss_cost_amount), ("ok", 0.0))
+
+    def test_supplier_price_from_api_and_clear_import_messages(self):
+        order = self._order(carrier=self.carrier_b)
+        line = self._line(order, "40")
+        # A supplier given by the caller does not blank what comes from the quotation (scope, currency, date).
+        wizard = self.env["boss.supplier.price.wizard"].with_user(self.salesman).create({
+            "sale_line_id": line.id, "partner_id": self.carrier_a.id, "unit_price": 250.0, "document": DOC})
+        self.assertEqual((wizard.currency_id, wizard.direction, wizard.valid_from, wizard.carrier_id),
+                         (order.currency_id, "import", date(2026, 11, 2), self.carrier_b))
+        self.assertIn(self.carrier_a.name, wizard.tariff_name)
+        wizard.action_save()
+        self.assertEqual(line.boss_cost_status, "pending_approval")
+        incomplete = self.env["boss.supplier.price.wizard"].create(
+            {"sale_line_id": self._line(order, "20").id, "partner_id": False})
+        with self.assertRaisesRegex(UserError, "supplier, .*unit price"):
+            incomplete.action_save()
+        with self.assertRaisesRegex(UserError, "lacks valid_from"):
+            self.env["boss.tariff"]._boss_import_tariffs({"tariffs": [
+                {"key": "x", "name": "X", "supplier": "S", "lines": [{"service": "THC", "uom": "container"}]}]})
+
+    def test_tariffs_of_another_company_never_price_or_refresh(self):
+        company_b = self.env["res.company"].create({"name": "EMPRESA B (FICTICIA)", "currency_id": self.cur.id})
+        self.approver.write({"company_ids": [Command.link(company_b.id)]})
+        tariff_b = self._tariff(self.carrier_b, [("40", 999.0)]).with_company(company_b)
+        tariff_b.company_id = company_b
+        tariff_b.action_submit()
+        tariff_b.with_user(self.approver).with_company(company_b).action_approve()
+        line = self._line(self._order(carrier=self.carrier_b), "40")
+        self.assertEqual(line.boss_cost_status, "no_tariff")
+        res = self.env["boss.pricing"].price_cost(line.product_id, line.product_uom_id, line._boss_inputs(),
+                                                  date(2026, 11, 2), company_b)
+        self.assertEqual((res.status, res.amount), ("ok", 999.0))
+
+    def test_sale_price_from_cost_rule_follows_the_shipment(self):
+        pricelist = self.env["product.pricelist"].create({
+            "name": "CLIENTE PRUEBA: coste + 20 %", "currency_id": self.cur.id,
+            "item_ids": [Command.create({
+                "applied_on": "1_product", "product_tmpl_id": self.thc.product_tmpl_id.id, "compute_price": "markup",
+                "base": "boss_line_cost", "price_markup": 20.0, "price_min_margin": 40.0})]})
+        order = self._order(pricelist_id=pricelist.id)
+        l20, l40 = self._line(order, "20"), self._line(order, "40")
+        # 40': 240 + 20 % = 288; 20': 180 + 20 % = 216 < 180 + 40 minimum margin -> 220
+        self.assertEqual((l40.price_unit, l40.boss_sale_status), (288.0, "cost_based"))
+        self.assertEqual(l20.price_unit, 220.0)
+        self.assertIn("minimum margin", l20.boss_sale_explanation)
+        # A shipment change on the draft re-prices cost and sale; no old price stays looking valid.
+        order.boss_carrier_id = self.carrier_b
+        self.assertEqual((l40.boss_cost_status, l40.price_unit, l40.boss_sale_status), ("no_tariff", 0.0, "missing"))
+        self.assertIn("not known yet", l40.boss_sale_explanation)
+        order.boss_carrier_id = self.carrier_a
+        self.assertEqual((l40.boss_cost_status, l40.price_unit), ("ok", 288.0))
+        # Margin on sale instead of a surcharge on cost: 240 / (1 - 20 %) = 300.
+        pricelist.item_ids.write({"price_markup": 0.0, "boss_sale_margin": 20.0})
+        order._recompute_prices()
+        self.assertEqual(l40.price_unit, 300.0)
+        self.assertAlmostEqual(l40.margin_percent, 0.2)
+        # A price typed by a person stays and says so.
+        l40.price_unit = 310.0
+        self.assertEqual(l40.boss_sale_status, "manual")
 
     def test_accepted_quotation_is_frozen_until_repriced(self):
         order = self._order()

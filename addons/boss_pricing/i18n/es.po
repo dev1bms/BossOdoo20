@@ -708,6 +708,18 @@ msgstr "Importación"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_import.py:0
+msgid "Import: %(label)s has an unknown charge basis '%(uom)s'."
+msgstr "Importación: %(label)s tiene una base de cobro desconocida «%(uom)s»."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_import.py:0
+msgid "Import: %(label)s lacks %(keys)s."
+msgstr "Importación: a %(label)s le falta %(keys)s."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_import.py:0
 msgid "Import: %(label)s not found (%(domain)s)."
 msgstr "Importación: no se encuentra %(label)s (%(domain)s)."
 
@@ -1567,6 +1579,12 @@ msgstr "sin límite"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "not below the previous bracket: %s"
 msgstr "no inferior al tramo anterior: %s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_import.py:0
+msgid "tariff %(index)s (%(key)s)"
+msgstr "la tarifa %(index)s (%(key)s)"
 
 #. module: boss_pricing
 #. odoo-python

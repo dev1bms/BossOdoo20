@@ -6,7 +6,6 @@ from odoo import api, models
 from odoo.tools.misc import format_date, formatLang
 
 from .. import engine
-from .boss_tariff_line import BASES, PERCENT_BASES
 
 COST_STATUSES = [
     ("ok", "Priced"),
@@ -61,12 +60,13 @@ class BossPricing(models.AbstractModel):
         }
 
     @api.model
-    def price_cost(self, product, uom, inputs, day):
+    def price_cost(self, product, uom, inputs, day, company=None):
         """Expected supplier cost of one quotation line.
 
         inputs: shipment inputs named like the tariff scope (direction, carrier_id, port_id, country_id...)
         plus line inputs (line_qty, container_size, container_type_id) and measures (containers,
         gross_kg, volume_m3, storage_days, related_costs...). `day` picks the tariff version.
+        Only tariffs of `company` (default: current company) apply, whoever asks (also under sudo).
         """
         Line = self.env["boss.tariff.line"]
         mode = product.boss_pricing_mode
@@ -79,7 +79,8 @@ class BossPricing(models.AbstractModel):
         # The method belongs to each supplier price line (one service, different suppliers, different methods).
 
         lines = Line.search([("product_id", "=", product.id), ("uom_id", "=", uom.id),
-                             ("tariff_id.active", "=", True)])
+                             ("tariff_id.active", "=", True),
+                             ("tariff_id.company_id", "=", (company or self.env.company).id)])
         currencies = lines.tariff_id.currency_id
         decimals = currencies[:1].decimal_places if len(currencies) == 1 else 2
         res = engine.price([ln._to_engine_rule() for ln in lines], inputs, day, decimals)
@@ -103,7 +104,9 @@ class BossPricing(models.AbstractModel):
 
     def _explain_step(self, code, v, currency, uom):
         _ = self.env._
-        bases = dict(BASES)
+        line_fields = self.env["boss.tariff.line"]._fields  # labels in the user's language
+        bases = dict(line_fields["basis"]._description_selection(self.env))
+        percent_bases = dict(line_fields["percent_base"]._description_selection(self.env))
         money = lambda x: self._num(x, currency)  # noqa: E731
         if code == "per_unit":
             text = _("%(qty)s x %(price)s per %(uom)s = %(amount)s", qty=self._num(v["quantity"]),
@@ -126,7 +129,7 @@ class BossPricing(models.AbstractModel):
             return _("x %(count)s containers = %(amount)s", count=self._num(v["count"]), amount=money(v["amount"]))
         if code == "percent":
             return _("%(rate)s%% of %(base_kind)s %(base)s = %(amount)s", rate=self._num(v["rate"]),
-                     base_kind=dict(PERCENT_BASES).get(v["base_kind"], v["base_kind"]), base=money(v["base"]),
+                     base_kind=percent_bases.get(v["base_kind"], v["base_kind"]), base=money(v["base"]),
                      amount=money(v["amount"]))
         if code == "time":
             return _("%(days)s days, %(free)s free, %(charged)s charged x %(qty)s = %(amount)s",

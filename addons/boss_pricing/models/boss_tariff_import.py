@@ -11,6 +11,8 @@ from odoo import api, models
 from odoo.exceptions import UserError
 
 XMLID_MODULE = "boss_tariff_import"
+TARIFF_REQUIRED = ("key", "name", "supplier", "valid_from", "lines")
+LINE_REQUIRED = ("service", "uom")
 LINE_KEYS = ("container_size", "method", "basis", "volumetric_factor", "unit_size", "round_up", "unit_price",
              "basis_2", "unit_price_2", "b2_unit_size", "b2_round_up", "floor_previous", "per_container",
              "percent_base", "rate", "free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day",
@@ -26,6 +28,13 @@ class BossTariff(models.Model):
         if not record:
             raise UserError(self.env._("Import: %(label)s not found (%(domain)s).", label=label, domain=domain))
         return record
+
+    @api.model
+    def _boss_import_check(self, spec, required, label):
+        """A clear message for an incomplete file instead of a KeyError deep in the import."""
+        missing = [key for key in required if spec.get(key) in (None, "", [], {})]
+        if missing:
+            raise UserError(self.env._("Import: %(label)s lacks %(keys)s.", label=label, keys=", ".join(missing)))
 
     @api.model
     def _boss_import_service(self, code):
@@ -46,12 +55,17 @@ class BossTariff(models.Model):
         return False
 
     @api.model
-    def _boss_import_line(self, spec):
+    def _boss_import_line(self, spec, label="line"):
+        self._boss_import_check(spec, LINE_REQUIRED, label)
         product = self._boss_import_service(spec["service"])
+        uom = self.env.ref(f"boss_services.uom_{spec['uom']}", raise_if_not_found=False)
+        if not uom:
+            raise UserError(self.env._("Import: %(label)s has an unknown charge basis '%(uom)s'.", label=label,
+                                       uom=spec["uom"]))
         vals = {key: spec[key] for key in LINE_KEYS if key in spec}
         vals.update({
             "product_id": product.id,
-            "uom_id": self.env.ref(f"boss_services.uom_{spec['uom']}").id,
+            "uom_id": uom.id,
             "document_page": spec.get("page"),
             "container_type_ids": [(6, 0, [self._boss_import_ref("boss.container.type", [("code", "=", c)], c).id
                                            for c in spec.get("container_types", [])])],
@@ -66,7 +80,9 @@ class BossTariff(models.Model):
         """Create the tariffs of `data["tariffs"]` that do not exist yet. Returns the created tariffs."""
         created = self.browse()
         IMD = self.env["ir.model.data"]
-        for spec in data.get("tariffs", []):
+        for index, spec in enumerate(data.get("tariffs", []), start=1):
+            label = self.env._("tariff %(index)s (%(key)s)", index=index, key=spec.get("key") or spec.get("name") or "?")
+            self._boss_import_check(spec, TARIFF_REQUIRED, label)
             existing = IMD.search([("module", "=", XMLID_MODULE), ("name", "=", spec["key"])], limit=1)
             if existing and self.browse(existing.res_id).exists():
                 continue
@@ -87,7 +103,8 @@ class BossTariff(models.Model):
                 "state_ids": [(6, 0, [self._boss_import_ref(
                     "res.country.state", [("country_id.code", "=", "ES"), ("code", "=", c)], c).id
                     for c in spec.get("states", [])])],
-                "line_ids": [(0, 0, self._boss_import_line(line)) for line in spec["lines"]],
+                "line_ids": [(0, 0, self._boss_import_line(line, f"{label}, line {n}"))
+                             for n, line in enumerate(spec["lines"], start=1)],
             }
             document = self._boss_import_document(spec)
             if document:

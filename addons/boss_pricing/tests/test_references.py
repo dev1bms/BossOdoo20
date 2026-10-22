@@ -39,7 +39,7 @@ class TestSupplierReferences(TransactionCase):
 
     def _inputs(self, raw):
         inputs = {k: raw[k] for k in ("direction", "transport_mode", "load_type", "line_qty", "gross_kg",
-                                      "volume_m3", "awb_kg", "storage_days", "container_size") if k in raw}
+                                      "volume_m3", "awb_kg", "storage_days", "container_size", "start_weekday") if k in raw}
         if "carrier" in raw:
             inputs["carrier_id"] = self._id("res.partner", [("name", "=", f"{raw['carrier']} [MUESTRA]")])
         if "country" in raw:

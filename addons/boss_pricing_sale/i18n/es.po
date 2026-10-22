@@ -6,6 +6,13 @@ msgstr ""
 
 #. module: boss_pricing_sale
 #. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "%(margin)s %% margin on sale over the expected cost of the line"
+msgstr ""
+"%(margin)s %% de margen sobre la venta a partir del coste previsto de la línea"
+
+#. module: boss_pricing_sale
+#. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid ""
 "%(order)s is not ready to send or accept:\n"
@@ -22,9 +29,23 @@ msgstr ""
 "(Venta - coste) / coste. El margen que muestra Odoo es (venta - coste) / venta."
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "(minimum margin %s per unit)"
+msgstr "(margen mínimo de %s por unidad)"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "<strong>Pricing to complete: </strong>"
 msgstr "<strong>Precios por completar: </strong>"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid ""
+"A margin on sale applies only to rules based on the expected cost of the quotation line."
+msgstr ""
+"El margen sobre la venta solo se aplica a reglas basadas en el coste previsto de la línea de la oferta."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -96,6 +117,13 @@ msgid "Agreed price (pricelist)"
 msgstr "Precio pactado (lista de precios)"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Agreed price in pricelist %(pricelist)s (%(rule)s) per %(uom)s."
+msgstr ""
+"Precio pactado en la lista de precios %(pricelist)s (%(rule)s) por %(uom)s."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__air
 msgid "Air"
@@ -123,6 +151,25 @@ msgstr ""
 #: model:ir.module.module,shortdesc:base.module_boss_pricing_sale
 msgid "BOSS Pricing on Quotations"
 msgstr "BOSS Precios en ofertas"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_product_pricelist_item__base
+msgid ""
+"Base price for computation.\n"
+"Sales Price: The base price will be the Sales Price.\n"
+"Cost Price: The base price will be the cost price.\n"
+"Other Pricelist: Computation of the base price based on another Pricelist."
+msgstr ""
+"Precio base para el cálculo.\n"
+"Precio de venta: el precio base será el precio de venta.\n"
+"Precio de coste: el precio base será el precio de coste.\n"
+"Otra lista de precios: cálculo del precio base de acuerdo con otra lista de precios.\n"
+"Coste previsto de la línea (BOSS): el coste calculado del servicio en la oferta."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__base
+msgid "Based on"
+msgstr "Basado en"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_currency_id
@@ -312,14 +359,19 @@ msgstr "Fecha"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_storage_days
 msgid ""
-"Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is only known when the period ends (default 0)."
+"Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is only known when the period ends."
 msgstr ""
-"Días supuestos para almacenaje, demoras y ocupación en la oferta. El coste real solo se conoce al terminar el periodo (por defecto 0)."
+"Días supuestos de almacenaje, demoras y ocupación de puerto en la oferta. El coste real solo se conoce al terminar el periodo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_storage_days
 msgid "Days in storage (estimate)"
 msgstr "Días de almacenaje (estimación)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_storage_days_known
+msgid "Days indicated"
+msgstr "Días indicados"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__ok
@@ -420,6 +472,17 @@ msgid "Expected cost"
 msgstr "Coste previsto"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "Expected cost of the line %(sign)s %(rate)s %%"
+msgstr "Coste previsto de la línea %(sign)s %(rate)s %%"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__product_pricelist_item__base__boss_line_cost
+msgid "Expected cost of the quotation line (BOSS)"
+msgstr "Coste previsto de la línea de la oferta (BOSS)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_manual_cost
 msgid ""
 "Expected cost per unit entered by a person when the service is not priced from a tariff (freight offer, amount paid on behalf of the customer...)."
@@ -460,6 +523,17 @@ msgid "Free of charge (confirmed)"
 msgstr "Sin cargo (confirmado)"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Free of charge, confirmed by a person."
+msgstr "Sin cargo, confirmado por una persona."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__cost_based
+msgid "From the expected cost (pricelist rule)"
+msgstr "Sobre el coste previsto (regla de lista de precios)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_goods_value
 msgid "Goods value"
 msgstr "Valor de la mercancía"
@@ -475,6 +549,12 @@ msgstr "Peso bruto (kg)"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "How the cost is computed"
 msgstr "Cómo se calcula el coste"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_sale_explanation
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "How the sale price is set"
+msgstr "Cómo se fija el precio de venta"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__id
@@ -593,6 +673,11 @@ msgid "Margin (on sale)"
 msgstr "Margen (sobre venta)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__boss_sale_margin
+msgid "Margin on sale (%)"
+msgstr "Margen sobre la venta (%)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_markup
 msgid "Markup on cost"
 msgstr "Recargo sobre coste"
@@ -637,6 +722,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__new_price
 msgid "New price"
 msgstr "Precio nuevo"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"No sale price: type it, agree it in the customer pricelist or tick 'Free of charge'."
+msgstr ""
+"Sin precio de venta: escríbalo, páctelo en la lista de precios del cliente o marque «Sin cargo»."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__no_tariff
@@ -758,6 +851,20 @@ msgid "Price agreed for this customer only."
 msgstr "Precio pactado solo para este cliente."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_product_pricelist_item__boss_sale_margin
+msgid ""
+"Price so that (price - cost) / price is this percentage: price = cost / (1 - margin). Use it instead of the surcharge on cost, not both. Only with the expected cost of the quotation line."
+msgstr ""
+"Precio tal que (precio - coste) / precio sea este porcentaje: precio = coste / (1 - margen). Se usa en lugar del recargo sobre el coste, no los dos. Solo con el coste previsto de la línea de la oferta."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Price typed by a person (not from a pricelist rule)."
+msgstr ""
+"Precio escrito por una persona (no viene de una regla de lista de precios)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__pending_approval
 msgid "Price waiting for approval"
 msgstr "Precio pendiente de aprobación"
@@ -766,6 +873,14 @@ msgstr "Precio pendiente de aprobación"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__ok
 msgid "Priced"
 msgstr "Cotizado"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"Pricelist %(pricelist)s, rule '%(rule)s': expected cost %(cost)s per %(uom)s gives %(price)s."
+msgstr ""
+"Lista de precios %(pricelist)s, regla «%(rule)s»: el coste previsto de %(cost)s por %(uom)s da %(price)s."
 
 #. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_product_pricelist_item
@@ -886,6 +1001,14 @@ msgid "Route"
 msgstr "Ruta"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"Rule '%(rule)s' of pricelist %(pricelist)s builds the sale price on the expected cost, which is not known yet (see the cost)."
+msgstr ""
+"La regla «%(rule)s» de la lista de precios %(pricelist)s calcula la venta sobre el coste previsto, que aún no se conoce (vea el coste)."
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Sale"
 msgstr "Venta"
@@ -908,6 +1031,11 @@ msgstr "Precio de venta"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__missing
 msgid "Sale price missing"
 msgstr "Falta precio de venta"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
+msgid "Sale price source"
+msgstr "Origen del precio de venta"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_tax_ex_id
@@ -957,6 +1085,13 @@ msgstr "Enviar a aprobación ahora"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__product_ids
 msgid "Services"
 msgstr "Servicios"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_storage_days_known
+msgid ""
+"Set when the days are entered (tick it to confirm 0 days). Until then time-based services (storage, demurrage, port occupancy) show 'missing shipment data' instead of a zero cost."
+msgstr ""
+"Se marca al escribir los días (márquelo para confirmar 0 días). Hasta entonces los servicios por tiempo (almacenaje, demoras, ocupación de puerto) muestran «faltan datos del envío» en lugar de un coste cero."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_pricing_frozen
@@ -1083,6 +1218,24 @@ msgid "The document prices this container type differently."
 msgstr "El documento cotiza este tipo de contenedor de forma distinta."
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "The margin on sale must be between 0 and 100 %."
+msgstr "El margen sobre la venta debe estar entre 0 y 100 %."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "The minimum margin of %s per unit applies."
+msgstr "Se aplica el margen mínimo de %s por unidad."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "The minimum margin should be lower than the maximum margin."
+msgstr "El margen mínimo debe ser inferior al margen máximo."
+
+#. module: boss_pricing_sale
 #: model:ir.model.constraint,message:boss_pricing_sale.constraint_boss_shipment_container_quantity_positive
 msgid "The number of containers must be positive."
 msgstr "El número de contenedores debe ser positivo."
@@ -1093,6 +1246,12 @@ msgid ""
 "The price is saved in a supplier tariff (never on the quotation) and is used once it is approved."
 msgstr ""
 "El precio se guarda en una tarifa de proveedor (nunca en la oferta) y se usa cuando se aprueba."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "The supplier price cannot be saved, missing: %s."
+msgstr "No se puede guardar el precio de proveedor; falta: %s."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -1152,6 +1311,13 @@ msgstr "Coste unitario (moneda de la oferta)"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Update costs"
 msgstr "Actualizar costes"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid ""
+"Use either a surcharge on cost (markup) or a margin on sale, not both."
+msgstr "Use un recargo sobre el coste o un margen sobre la venta, no los dos."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__user_id
@@ -1232,9 +1398,21 @@ msgstr "coste"
 
 #. module: boss_pricing_sale
 #. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "currency"
+msgstr "moneda"
+
+#. module: boss_pricing_sale
+#. odoo-python
 #: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
 msgid "estimate"
 msgstr "estimación"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
+msgid "expected cost of the quotation line"
+msgstr "coste previsto de la línea de la oferta"
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -1253,3 +1431,27 @@ msgstr "venta"
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid "sale price missing"
 msgstr "falta el precio de venta"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "supplier"
+msgstr "proveedor"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "tariff name"
+msgstr "nombre de la tarifa"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "unit price"
+msgstr "precio unitario"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "valid from"
+msgstr "válida desde"

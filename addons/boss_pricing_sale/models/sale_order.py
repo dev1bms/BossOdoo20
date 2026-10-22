@@ -37,9 +37,14 @@ class SaleOrder(models.Model):
     boss_duties_amount = fields.Monetary("Customs duties (estimate)", currency_field="currency_id",
                                          help="Duties and taxes of the customs declaration, for the guarantee fee.")
     boss_storage_days = fields.Integer(
-        "Days in storage (estimate)", default=0,
+        "Days in storage (estimate)",
         help="Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is "
-        "only known when the period ends (default 0).")
+        "only known when the period ends.")
+    # An integer cannot be empty in Odoo: this flag tells 'not indicated yet' from a deliberate 0 days.
+    boss_storage_days_known = fields.Boolean(
+        "Days indicated",
+        help="Set when the days are entered (tick it to confirm 0 days). Until then time-based services "
+        "(storage, demurrage, port occupancy) show 'missing shipment data' instead of a zero cost.")
     boss_pricing_frozen = fields.Boolean(
         "Prices frozen", readonly=True, copy=False,
         help="Set when the quotation is accepted: prices only change through Re-price, with a reason.")
@@ -66,9 +71,25 @@ class SaleOrder(models.Model):
             "pallets": self.boss_pallets or None,
             "goods_value": self.boss_goods_value or None,
             "duties_amount": self.boss_duties_amount or None,
-            "storage_days": self.boss_storage_days,
+            "storage_days": self.boss_storage_days if self.boss_storage_days_known else None,
             "start_weekday": self.boss_planned_date.weekday() if self.boss_planned_date else None,
         }
+
+    @api.onchange("boss_storage_days")
+    def _onchange_boss_storage_days(self):
+        self.boss_storage_days_known = True
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if "boss_storage_days" in vals and "boss_storage_days_known" not in vals:
+                vals["boss_storage_days_known"] = True
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if "boss_storage_days" in vals and "boss_storage_days_known" not in vals:
+            vals = dict(vals, boss_storage_days_known=True)
+        return super().write(vals)
 
     def _boss_quantity(self, source, size=False, ctype=False):
         """Quantity of a charge basis taken from the shipment, or None when entered on the line."""
@@ -84,6 +105,7 @@ class SaleOrder(models.Model):
             "volume_m3": self.boss_volume_m3,
             "wm": max(self.boss_gross_kg / 1000, self.boss_volume_m3),
             "pallets": float(self.boss_pallets),
+            "awb_kg": self.boss_awb_kg or None,  # empty: the quantity stays the one typed on the line
         }
         return values.get(source)
 

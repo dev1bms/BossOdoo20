@@ -16,6 +16,7 @@ class UomUom(models.Model):
             ("volume_m3", "Volume (m³)"),
             ("wm", "W/M: larger of tonnes and m³"),
             ("pallets", "Pallets"),
+            ("awb_kg", "Chargeable weight of the air waybill (entered on the line when empty)"),
             ("input", "Entered on the line"),
         ],
         string="BOSS quantity",

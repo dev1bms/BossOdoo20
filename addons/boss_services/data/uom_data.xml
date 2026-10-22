@@ -44,7 +44,7 @@
     <record id="uom_kg_air" model="uom.uom">
         <field name="name">Chargeable kg (air)</field>
         <field name="relative_factor" eval="1.0"/>
-        <field name="boss_quantity_source">input</field>
+        <field name="boss_quantity_source">awb_kg</field>
     </record>
     <record id="uom_kg_road" model="uom.uom">
         <field name="name">Chargeable kg (road)</field>
