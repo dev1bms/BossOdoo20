@@ -210,6 +210,7 @@ q_es = quotation("demo_q_es", lead_es, {
     "boss_container_ids": [Command.create({"size": "40", "container_type_id": hc.id, "quantity": 1})]},
     [(["THC", "DEM"], msc)])
 lead("demo_lead_live", customer_eu, "[DEMO] Reunión · nueva oferta MSC 2x40'HC Shanghái - Valencia (cliente UE)")
+lead("demo_lead_angel", customer_eu, "[DEMO] Reunión con Ángel · oferta en directo MSC 2x40'HC Shanghái - Valencia (cliente UE)")
 if q_msc.state == "draft":
     q_msc.action_confirm()  # accepted example: frozen prices and snapshot
 env.cr.commit()

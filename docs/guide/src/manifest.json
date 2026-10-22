@@ -123,6 +123,14 @@
    }
   },
   {
+   "id": "demo",
+   "section": "inicio",
+   "title": {
+    "es": "Demostración del sistema de tarifas",
+    "en": "Tariff system demonstration"
+   }
+  },
+  {
    "id": "roles",
    "section": "inicio",
    "title": {
