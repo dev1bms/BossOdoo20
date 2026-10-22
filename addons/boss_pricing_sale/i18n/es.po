@@ -62,6 +62,12 @@ msgstr ""
 "Un precio de %s debe indicar su base de cobro (contenedor 40', BL, kg...)."
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "ACTUAL period of %s days."
+msgstr "PERIODO REAL de %s días."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_snapshot__kind__acceptance
 msgid "Acceptance"
 msgstr "Aceptación"
@@ -83,6 +89,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__current_cost
 msgid "Accepted unit cost"
 msgstr "Coste unitario aceptado"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_days_source__actual
+msgid "Actual period (ended)"
+msgstr "Periodo real (terminado)"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
@@ -214,6 +225,11 @@ msgstr "CAN - Canarias"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_vat_tax__customer_zone__com
 msgid "COM - rest of the EU"
 msgstr "COM - resto de la UE"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_method
+msgid "Calculation method"
+msgstr "Forma de cálculo"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_steps
@@ -399,11 +415,31 @@ msgid "Date"
 msgstr "Fecha"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Days"
+msgstr "Días"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_days
+msgid "Days (line)"
+msgstr "Días (línea)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_storage_days
 msgid ""
 "Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is only known when the period ends."
 msgstr ""
 "Días supuestos de almacenaje, demoras y ocupación de puerto en la oferta. El coste real solo se conoce al terminar el periodo."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_days_source
+msgid "Days for this service"
+msgstr "Días de este servicio"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Days from"
+msgstr "Días de"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_storage_days
@@ -414,6 +450,16 @@ msgstr "Días de almacenaje (estimación)"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_storage_days_known
 msgid "Days indicated"
 msgstr "Días indicados"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_days_source__shipment
+msgid "Days of the shipment"
+msgstr "Días del envío"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_days
+msgid "Days of this line when it does not use the days of the shipment."
+msgstr "Días de esta línea cuando no usa los días del envío."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__ok
@@ -472,9 +518,9 @@ msgstr "P. ej. número de la oferta del proveedor."
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid ""
-"ESTIMATE with %s days assumed; the actual cost is known when the period ends."
+"ESTIMATE with %(days)s days (%(where)s); the actual cost is known when the period ends."
 msgstr ""
-"ESTIMACIÓN con %s días supuestos; el coste real se conoce al terminar el periodo."
+"ESTIMACIÓN con %(days)s días (%(where)s); el coste real se conoce al terminar el periodo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_planned_date
@@ -482,6 +528,14 @@ msgid ""
 "ETA for imports, ETD for exports. It chooses the version of each supplier tariff."
 msgstr ""
 "ETA en importación, ETD en exportación. Elige la versión de cada tarifa de proveedor."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"EU customer without VAT number: the business-to-business rule cannot be applied"
+msgstr ""
+"cliente de la UE sin NIF-IVA: no se puede aplicar la regla entre empresas"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_class__ex
@@ -508,6 +562,11 @@ msgstr "Indicado por una persona"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Estimate"
 msgstr "Estimación"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_days_source__estimate
+msgid "Estimate of this line"
+msgstr "Estimación de esta línea"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
@@ -590,6 +649,13 @@ msgstr "Valor de la mercancía"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_gross_kg
 msgid "Gross weight (kg)"
 msgstr "Peso bruto (kg)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_method
+msgid ""
+"How supplier prices of this service are usually computed; it is the default of a new supplier price. Each supplier price line uses the method of its own document."
+msgstr ""
+"Cómo se calculan normalmente los precios de proveedor de este servicio; es el valor por defecto de un precio nuevo. Cada línea de precio usa la forma de cálculo de su propio documento."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_explanation
@@ -1228,7 +1294,9 @@ msgid "Summary"
 msgstr "Resumen"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__supplier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__partner_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_supplier_id
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -1243,6 +1311,19 @@ msgstr "Coste de proveedor en otra moneda"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__document
 msgid "Supplier document"
 msgstr "Documento del proveedor"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_add_services__supplier_id
+msgid "Supplier of these services (only its tariffs). Empty: any supplier."
+msgstr ""
+"Proveedor de estos servicios (solo sus tarifas). Vacío: cualquier proveedor."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_supplier_id
+msgid ""
+"Supplier of this service. Only its tariffs price the line (handling, storage or road transport often come from another supplier than the carrier). Empty: any supplier whose tariff fits the shipment."
+msgstr ""
+"Proveedor de este servicio. Solo sus tarifas cotizan la línea (manipulación, almacenaje o transporte terrestre suelen venir de otro proveedor distinto de la naviera). Vacío: cualquier proveedor cuya tarifa encaje con el envío."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_tariff_line_id
@@ -1363,6 +1444,13 @@ msgid ""
 "Time-based cost computed with the days assumed on the quotation; the actual cost is known when the period ends."
 msgstr ""
 "Coste por tiempo calculado con los días supuestos en la oferta; el coste real se conoce al terminar el periodo."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_days_source
+msgid ""
+"Time-based services: the days of the Shipment tab, an estimate for this line (e.g. port occupancy shorter than demurrage; 0 is a deliberate zero) or the actual period once it has ended."
+msgstr ""
+"Servicios por tiempo: los días de la pestaña Envío, una estimación de esta línea (p. ej. ocupación de puerto más corta que las demoras; 0 es un cero intencionado) o el periodo real cuando ha terminado."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__transport_mode
@@ -1506,9 +1594,21 @@ msgstr "moneda"
 
 #. module: boss_pricing_sale
 #. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "days of the shipment"
+msgstr "días del envío"
+
+#. module: boss_pricing_sale
+#. odoo-python
 #: code:addons/boss_pricing_sale/models/boss_pricing_snapshot.py:0
 msgid "estimate"
 msgstr "estimación"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "estimate of this line"
+msgstr "estimación de esta línea"
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -1523,6 +1623,14 @@ msgid ""
 "no Odoo tax for class %(cls)s and customer zone %(zone)s in the BOSS VAT table (decision pending)"
 msgstr ""
 "sin impuesto de Odoo para la clase %(cls)s y la zona de cliente %(zone)s en la tabla de IVA BOSS (decisión pendiente)"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"paid on behalf without its document (type the declaration or invoice in 'Cost reference')"
+msgstr ""
+"suplido sin su justificante (escriba el DUA o la factura en «Referencia del coste»)"
 
 #. module: boss_pricing_sale
 #. odoo-python

@@ -41,7 +41,7 @@ class BossVatTax(models.Model):
             ("customer_zone", "in", ["any"] + ([customer_zone] if customer_zone else [])),
             ("service_kind", "in", ["any", kind]),
         ])
-        return rows.sorted(lambda r: (r.customer_zone == "any", r.service_kind == "any"))[:1]
+        return rows.sorted(lambda r: (r.service_kind == "any", r.customer_zone == "any"))[:1]
 
     def _boss_refresh_quotations(self, companies):
         """Open quotations follow a change of the table at once; accepted (frozen) ones never change."""

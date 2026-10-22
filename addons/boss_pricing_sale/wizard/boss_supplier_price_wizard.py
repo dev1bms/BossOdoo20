@@ -54,7 +54,7 @@ class BossSupplierPriceWizard(models.TransientModel):
     @api.depends("sale_line_id")
     def _compute_partner_id(self):
         for wiz in self:
-            wiz.partner_id = wiz.sale_line_id.order_id.boss_carrier_id
+            wiz.partner_id = wiz.sale_line_id.boss_supplier_id or wiz.sale_line_id.order_id.boss_carrier_id
 
     @api.depends("sale_line_id", "partner_id", "valid_from")
     def _compute_tariff_name(self):

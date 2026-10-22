@@ -68,6 +68,13 @@
                 <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen"/>
                 <field name="boss_container_type_id" optional="hide" string="Type" readonly="boss_price_frozen"
                        options="{'no_create': True}"/>
+                <field name="boss_supplier_id" optional="show" readonly="boss_price_frozen"
+                       options="{'no_create': True}"/>
+                <field name="boss_cost_method" column_invisible="1"/>
+                <field name="boss_days_source" optional="show" string="Days from" readonly="boss_price_frozen"
+                       invisible="boss_cost_method != 'time'"/>
+                <field name="boss_days" optional="show" string="Days" readonly="boss_price_frozen"
+                       invisible="boss_cost_method != 'time' or boss_days_source == 'shipment'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//column[@name='price_unit']" position="before">
                 <field name="boss_cost_status" string="Cost" widget="badge" optional="show"
@@ -146,6 +153,10 @@
                             <field name="product_uom_qty" readonly="1"/>
                             <field name="boss_container_size" readonly="1" invisible="not boss_container_size"/>
                             <field name="boss_container_type_id" readonly="1" invisible="not boss_container_type_id"/>
+                            <field name="boss_supplier_id" readonly="1"/>
+                            <field name="boss_days_source" readonly="1" invisible="boss_cost_method != 'time'"/>
+                            <field name="boss_days" readonly="1" invisible="boss_cost_method != 'time' or boss_days_source == 'shipment'"/>
+                            <field name="boss_cost_method" invisible="1"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                         <group string="Result">

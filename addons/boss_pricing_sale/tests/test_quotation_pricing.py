@@ -143,14 +143,47 @@ class TestQuotationPricing(TransactionCase):
         self.assertEqual((line(bl).boss_vat_class, line(bl).tax_ids), ("NR", self.taxes["nr"]))
         self.assertEqual((line(self.thc).boss_vat_status, line(self.thc).tax_ids), ("pending", Tax))
         self.assertIn("decision pending", line(self.thc).boss_vat_trace)
+        self.assertEqual(line(ara).boss_vat_status, "pending")  # paid on behalf needs its document
+        line(ara).boss_manual_cost_note = "DUA 26ES0000000001"
         self.assertEqual(line(ara).tax_ids, self.taxes["ns"])
         self.assertEqual(line(cau).boss_vat_status, "pending")
         # The same services for an EU customer and for a third-country customer: every case is decided.
         Partner = self.env["res.partner"]
-        order.partner_id = Partner.create({"name": "CLIENTE UE (FICTICIO)", "country_id": self.env.ref("base.de").id})
+        eu_customer = Partner.create({"name": "CLIENTE UE (FICTICIO)", "country_id": self.env.ref("base.de").id})
+        order.partner_id = eu_customer
+        self.assertEqual(line(self.thc).boss_vat_status, "pending")  # EU business rule needs the VAT number
+        from stdnum.de import vat as de_vat  # noqa: PLC0415
+        eu_customer.vat = "DE" + next(str(n) for n in range(100000000, 100010000) if de_vat.is_valid(str(n)))
         self.assertEqual((line(bl).boss_vat_class, line(bl).tax_ids, line(self.thc).tax_ids), ("EX", ex_eu, ex_eu))
+        self.assertEqual(line(ara).tax_ids, self.taxes["ns"])  # the zone row never overrides paid on behalf
         order.partner_id = Partner.create({"name": "CLIENTE EEUU (FICTICIO)", "country_id": self.env.ref("base.us").id})
         self.assertEqual((line(bl).tax_ids, line(self.thc).tax_ids, line(ara).tax_ids), (ex_ter, ex_ter, self.taxes["ns"]))
+
+    def test_supplier_per_line_and_days_per_service(self):
+        # Two suppliers price THC 40': the line supplier decides; without it both apply (conflict, never a guess).
+        self._approved(self._tariff(self.carrier_b, [("40", 260.0)], carrier_id=self.carrier_a.id))
+        order = self._order()
+        l40 = self._line(order, "40")
+        self.assertEqual(l40.boss_cost_status, "conflict")
+        l40.boss_supplier_id = self.carrier_b
+        self.assertEqual((l40.boss_cost_status, l40.boss_cost_amount), ("ok", 260.0))
+        l40.boss_supplier_id = self.carrier_a
+        self.assertEqual((l40.boss_cost_status, l40.boss_cost_amount), ("ok", 240.0))
+        # Days per line: shipment days by default, an estimate of the line (0 deliberate) or the actual period.
+        dem = self.env.ref("boss_services.service_dem").product_variant_id
+        self._approved(self.env["boss.tariff"].create({
+            "name": "DEM dias", "partner_id": self.carrier_a.id, "carrier_id": self.carrier_a.id,
+            "currency_id": self.cur.id, "valid_from": date(2026, 1, 1), "document": DOC,
+            "line_ids": [Command.create({"product_id": dem.id, "uom_id": dem.uom_id.id, "method": "time",
+                                         "basis": "containers", "free_days": 4, "free_mode": "deduct",
+                                         "bracket_ids": [Command.create({"up_to": 0, "unit_price": 10})]})]}))
+        line = self._line(self._order(services=dem, boss_storage_days=9), "20", dem)
+        self.assertEqual((line.boss_cost_amount, line.boss_cost_is_estimate), (100.0, True))  # 5 days x 10 x 2
+        line.write({"boss_days_source": "estimate", "boss_days": 0})
+        self.assertEqual((line.boss_cost_status, line.boss_cost_amount), ("ok", 0.0))
+        line.write({"boss_days_source": "actual", "boss_days": 6})
+        self.assertEqual((line.boss_cost_amount, line.boss_cost_is_estimate), (40.0, False))
+        self.assertIn("6", line.boss_cost_explanation)
 
     def test_time_estimate(self):
         dem = self.env.ref("boss_services.service_dem").product_variant_id

@@ -80,7 +80,8 @@ class BossPricing(models.AbstractModel):
 
         lines = Line.search([("product_id", "=", product.id), ("uom_id", "=", uom.id),
                              ("tariff_id.active", "=", True),
-                             ("tariff_id.company_id", "=", (company or self.env.company).id)])
+                             ("tariff_id.company_id", "=", (company or self.env.company).id)]
+                            + ([("tariff_id.partner_id", "=", inputs["supplier_id"])] if inputs.get("supplier_id") else []))
         currencies = lines.tariff_id.currency_id
         decimals = currencies[:1].decimal_places if len(currencies) == 1 else 2
         res = engine.price([ln._to_engine_rule() for ln in lines], inputs, day, decimals)

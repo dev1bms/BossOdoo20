@@ -42,6 +42,17 @@ class SaleOrderLine(models.Model):
                                            help="Containers of this size only. Empty: all sizes.")
     boss_container_type_id = fields.Many2one("boss.container.type", "Container type",
                                              help="Containers of this type only. Empty: all types.")
+    boss_supplier_id = fields.Many2one(
+        "res.partner", "Supplier",
+        help="Supplier of this service. Only its tariffs price the line (handling, storage or road transport often "
+        "come from another supplier than the carrier). Empty: any supplier whose tariff fits the shipment.")
+    boss_cost_method = fields.Selection(related="product_id.boss_cost_method")
+    boss_days_source = fields.Selection(
+        [("shipment", "Days of the shipment"), ("estimate", "Estimate of this line"), ("actual", "Actual period (ended)")],
+        "Days for this service", default="shipment", required=True,
+        help="Time-based services: the days of the Shipment tab, an estimate for this line (e.g. port occupancy shorter "
+        "than demurrage; 0 is a deliberate zero) or the actual period once it has ended.")
+    boss_days = fields.Integer("Days (line)", help="Days of this line when it does not use the days of the shipment.")
     boss_cost_status = fields.Selection(
         COST_STATUSES + [("currency", "Other currency, no conversion policy")], "Cost status",
         compute="_compute_boss_cost", store=True, copy=False, precompute=True)
@@ -139,7 +150,10 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         inputs = self.order_id._boss_shipment_inputs()
         inputs.update({"line_qty": self.product_uom_qty, "container_size": self.boss_container_size or None,
-                       "container_type_id": self.boss_container_type_id.id or None})
+                       "container_type_id": self.boss_container_type_id.id or None,
+                       "supplier_id": self.boss_supplier_id.id or None})
+        if self.boss_days_source != "shipment":
+            inputs["storage_days"] = self.boss_days
         return inputs
 
     def _boss_price(self, related_costs=None):
@@ -164,7 +178,7 @@ class SaleOrderLine(models.Model):
         return related
 
     @api.depends("product_id", "product_uom_id", "product_uom_qty", "currency_id", "boss_container_size",
-                 "boss_container_type_id", *SHIPMENT_DEPENDS)
+                 "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source", *SHIPMENT_DEPENDS)
     def _compute_boss_cost(self):
         frozen = self._boss_skip()
         frozen._boss_keep(*COST_FIELDS)
@@ -188,11 +202,11 @@ class SaleOrderLine(models.Model):
                 "boss_cost_candidate_ids": res.candidates,
                 "boss_cost_missing": ",".join(res.missing) or False,
                 "boss_cost_steps": res.steps or False,
-                "boss_cost_is_estimate": bool(res.line) and res.line.method == "time",
+                "boss_cost_is_estimate": bool(res.line) and res.line.method == "time" and line.boss_days_source != "actual",
             })
 
     @api.depends("boss_cost_status", "boss_cost_amount", "boss_manual_cost", "boss_cost_steps",
-                 "boss_cost_is_estimate")
+                 "boss_cost_is_estimate", "boss_days", "boss_days_source")
     def _compute_boss_cost_explanation(self):
         pricing = self.env["boss.pricing"]
         for line in self:
@@ -211,8 +225,14 @@ class SaleOrderLine(models.Model):
                 text = self.env._("Manual cost per unit: %(cost)s %(cur)s %(ref)s", cost=line.boss_manual_cost,
                                   cur=line.currency_id.name, ref=line.boss_manual_cost_note or "")
             if line.boss_cost_is_estimate and line.boss_cost_status == "ok":
-                text = self.env._("ESTIMATE with %s days assumed; the actual cost is known when the period "
-                                  "ends.", line.order_id.boss_storage_days) + "\n" + text
+                days = line.boss_days if line.boss_days_source == "estimate" else line.order_id.boss_storage_days
+                where = (self.env._("estimate of this line") if line.boss_days_source == "estimate"
+                         else self.env._("days of the shipment"))
+                text = self.env._("ESTIMATE with %(days)s days (%(where)s); the actual cost is known when the period "
+                                  "ends.", days=days, where=where) + "\n" + text
+            elif (line.boss_days_source == "actual" and line.boss_cost_status == "ok"
+                  and line.boss_tariff_line_id.method == "time"):
+                text = self.env._("ACTUAL period of %s days.", line.boss_days) + "\n" + text
             line.boss_cost_explanation = text
 
     def _boss_unit_cost(self):
@@ -266,8 +286,8 @@ class SaleOrderLine(models.Model):
             return spain, abroad, cust_zone
         return None, None, cust_zone
 
-    @api.depends("product_id", "product_id.boss_paid_on_behalf", "order_id.partner_id", "order_id.boss_direction",
-                 "order_id.boss_port_id", "order_id.boss_country_id")
+    @api.depends("product_id", "product_id.boss_paid_on_behalf", "boss_manual_cost_note", "order_id.partner_id",
+                 "order_id.partner_id.vat", "order_id.boss_direction", "order_id.boss_port_id", "order_id.boss_country_id")
     def _compute_boss_vat(self):
         frozen = self._boss_skip()
         frozen._boss_keep("boss_vat_class", "boss_vat_status", "boss_vat_trace", "boss_vat_tax_id")
@@ -279,11 +299,22 @@ class SaleOrderLine(models.Model):
                 continue
             origin, destination, customer = line._boss_zones()
             vat_class, trace = vat_rules.vat_class(line.product_id.boss_vat_class, origin, destination, customer)
-            row = vat_class and VatTax._boss_find(line.order_id.company_id or self.env.company, vat_class, customer,
-                                                  line.product_id.boss_paid_on_behalf)
+            # Paid on behalf only with its document in the customer's name (customs declaration, invoice): the
+            # product flag alone does not prove it.
+            on_behalf = line.product_id.boss_paid_on_behalf and bool(line.boss_manual_cost_note)
+            blocked = False
+            if line.product_id.boss_paid_on_behalf and not on_behalf:
+                trace.append(self.env._("paid on behalf without its document (type the declaration or invoice in "
+                                        "'Cost reference')"))
+                blocked = vat_class == "NS"
+            if vat_class == "EX" and customer == "COM" and not line.order_id.partner_id.commercial_partner_id.vat:
+                trace.append(self.env._("EU customer without VAT number: the business-to-business rule cannot be applied"))
+                blocked = True
+            row = vat_class and not blocked and VatTax._boss_find(
+                line.order_id.company_id or self.env.company, vat_class, customer, on_behalf)
             if row:
                 trace.append(f"{row.tax_id.name} ({row.source})" if row.source else row.tax_id.name)
-            elif vat_class:
+            elif vat_class and not blocked:
                 trace.append(self.env._(
                     "no Odoo tax for class %(cls)s and customer zone %(zone)s in the BOSS VAT table (decision pending)",
                     cls=vat_class, zone=customer or "?"))
