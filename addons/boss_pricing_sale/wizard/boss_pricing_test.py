@@ -47,7 +47,8 @@ class BossPricingTest(models.TransientModel):
     pricelist_id = fields.Many2one("product.pricelist", "Pricelist", compute="_compute_pricelist_id", store=True,
                                    readonly=False, help="Optional: shows the sale price and the profit.")
     container_size = fields.Selection(CONTAINER_SIZES, "Container size")
-    container_type_id = fields.Many2one("boss.container.type", "Container type")
+    container_type_id = fields.Many2one("boss.container.type", "Container type",
+                                        help="Empty: dry standard (DV).")
     container_qty = fields.Integer("Containers", default=1)
     gross_kg = fields.Float("Gross weight (kg)")
     awb_kg = fields.Float("Chargeable weight (AWB, kg)")
@@ -128,9 +129,11 @@ class BossPricingTest(models.TransientModel):
         values = {ofield: self[name].id if hasattr(self[name], "ids") else self[name]
                   for name, ofield in ORDER_FIELDS.items()}
         values["company_id"] = self.env.company.id
-        if self.container_size and self.container_type_id and self.container_qty:
+        if self.container_size and self.container_qty:
+            # no type given: the containers count as dry standard (a price for any type still applies)
+            ctype = self.container_type_id or self.env.ref("boss_pricing.container_type_dv")
             values["boss_container_ids"] = [(0, 0, {"size": self.container_size, "quantity": self.container_qty,
-                                                    "container_type_id": self.container_type_id.id})]
+                                                    "container_type_id": ctype.id})]
         return self.env["sale.order"].new(values)
 
     def _inputs(self, order):

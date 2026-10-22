@@ -668,6 +668,11 @@ msgid "Empty: any supplier (like a quotation line without supplier)."
 msgstr "Vacío: cualquier proveedor (como una línea de oferta sin proveedor)."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__container_type_id
+msgid "Empty: dry standard (DV)."
+msgstr "Vacío: estándar seco (DV)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__manual
 msgid "Entered by a person"
 msgstr "Indicado por una persona"
