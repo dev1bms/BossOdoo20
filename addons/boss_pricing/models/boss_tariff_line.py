@@ -287,7 +287,7 @@ class BossTariffLineWorkspace(models.Model):
 
     def _ws_unit(self, basis, unit_size):
         # per container the unit of the line says it best («Contenedor»); other bases name their measure
-        unit = self.uom_id.name if basis in ("line", "containers") else self._ws_label("basis", basis)
+        unit = (self.uom_id.name or "…") if basis in ("line", "containers") else self._ws_label("basis", basis)
         size = unit_size if unit_size and unit_size != 1 else None
         return f"{self.env['boss.pricing']._num(size)} {unit}" if size else unit
 

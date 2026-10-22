@@ -88,6 +88,9 @@ class BossPricing(models.AbstractModel):
         decimals = currencies[:1].decimal_places if len(currencies) == 1 else 2
         res = engine.price([ln._to_engine_rule(simulate) for ln in lines], inputs, day, decimals)
         line = Line.browse(res.rule.id) if res.rule else Line
+        if (res.status.value == "no_tariff" and inputs.get("tariff_use") != "demo"
+                and lines.filtered("tariff_id.is_demo")):
+            res.steps = [("demo_only", {})]  # say why: the prices that exist are demo prices
         return CostResult(
             status=res.status.value,
             amount=float(res.amount) if res.amount is not None else 0.0,
@@ -170,6 +173,10 @@ class BossPricing(models.AbstractModel):
         if status == "no_tariff":
             if steps and steps[0][0] == "out_of_range":
                 return _("The quantity is outside the brackets of the supplier document: ask the supplier.")
+            if steps and steps[0][0] == "demo_only":
+                return _("Only demo prices exist for %(service)s per %(uom)s: they price demo customers only, "
+                         "never a real customer. Enter the supplier's real price, or choose a demo customer to "
+                         "try the demo price.", service=product.display_name, uom=uom.name)
             if steps and steps[0][0] == "no_rule_on_date":
                 day = steps[0][1].get("date")
                 return _("There are supplier prices of %(service)s per %(uom)s, but none is valid on %(date)s "

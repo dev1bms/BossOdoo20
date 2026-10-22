@@ -13,10 +13,12 @@ SOURCES = {
     "[DEMO] WFS importación aérea Madrid 2026": "[DEMO] WFS ampliación espacio de trabajo 2026",
     "[DEMO] IRENEO distribución desde Barajas 2026": "[DEMO] IRENEO ampliación espacio de trabajo 2026",
 }
+# second MSC draft: target of «Add supplier price» from a quotation (UX acceptance of 22/10/2026)
+EXTRA = {"[DEMO] MSC gastos locales importación Valencia 2026": "[DEMO] MSC precios añadidos desde ofertas 2026"}
 SCOPE = ("partner_id", "currency_id", "direction", "transport_mode", "load_type", "carrier_id", "port_ids",
          "country_ids", "state_ids")
 Tariff = env["boss.tariff"]
-for source_name, name in SOURCES.items():
+for source_name, name in list(SOURCES.items()) + list(EXTRA.items()):
     source = Tariff.search([("name", "=", source_name)], limit=1)
     assert source, source_name
     tariff = Tariff.search([("name", "=", name)], limit=1)

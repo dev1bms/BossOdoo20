@@ -51,7 +51,10 @@ class BossTariffLine(models.Model):
             "date": day, "direction": tariff.direction, "transport_mode": tariff.transport_mode,
             "load_type": tariff.load_type, "carrier_id": tariff.carrier_id.id, "port_id": tariff.port_ids[:1].id,
             "country_id": tariff.country_ids[:1].id, "state_id": tariff.state_ids[:1].id,
-            "customer_id": tariff.customer_id.id, "container_size": self.container_size or False,
+            # a demo price is tried with a demo customer (it never prices a real one)
+            "customer_id": (tariff.customer_id or (self.env["res.partner"].search([("boss_demo", "=", True)], limit=1)
+                                                   if tariff.is_demo else self.env["res.partner"])).id,
+            "container_size": self.container_size or False,
             "container_type_id": self.container_type_ids[:1].id,
         }
         if tariff.state != "approved":
