@@ -51,4 +51,12 @@ Quantity per day (containers, 100 kg…) × price of each charged day.
 Example: 7 free days, "5 days at 30 €, then 80 €", 15 days, 1 container: days 8-12 = 5 × 30 = 150; days 13-15 = 3 × 80 =
 240 → **390 €**. With a 48 h threshold, 500 kg per 100 kg at 10 €/day: 2 days → **0 €**; 3 days → 3 × 5 × 10 = **150 €**.
 
+- **Arrival weekday** (planned date), when the document says so: **Saturday** arrival → free until Monday included (WFS:
+  3 periods); **Friday** arrival → one more free day. WFS only gives the Friday 72 h when the goods leave on Monday, and
+  the quotation does not know the exit day: WFS tariffs leave that option unticked and the estimated cost may be
+  slightly higher than the actual one.
+- **Free hours** (48 h, 36 h…) count as whole days on a quotation: 48 h = 2 periods of 24 h.
+- The quotation days are entered once in the Shipment tab and apply to every time-based service (DEM, OCU, ALM).
+  Without **days indicated** the line says «Missing shipment data»; 0 days indicated is a valid estimate.
+
 > On a quotation the result is an **estimate** with the assumed days; the actual cost is known when the period ends.

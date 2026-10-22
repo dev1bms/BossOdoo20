@@ -1,13 +1,22 @@
-Ajustes › **Ventas** › bloque **Precio**:
+## Compañía
 
-![Ajustes de IVA y moneda](img/15-ajustes-iva.png)
+La compañía del sistema está configurada con los datos de Odoo 17 producción: **Boss Continental S.L.**, España,
+moneda **EUR** y plan contable **PGC PYMEs 2008** (localización española de Odoo, con sus impuestos). Las listas de
+precios están activadas: una **Tarifa general (EUR)** sin precios y, si se pactan, una lista por cliente.
 
 ## IVA de los servicios BOSS
 
-Un impuesto de Odoo para cada clase que dan las reglas: **NR**, **EX** (exento) y **NS** (no sujeto). Mientras un
-impuesto esté vacío, las líneas de esa clase tienen el IVA **pendiente** y la oferta no se puede enviar ni confirmar.
+Ajustes › **Ventas** › bloque **Precio**: un impuesto de Odoo para cada clase que dan las reglas: **NR**, **EX**
+(exento) y **NS** (no sujeto).
 
-> La elección de los impuestos (y la localización contable española) es una decisión de Ángel (P17).
+![Ajustes de IVA y moneda](img/15-ajustes-iva.png)
+
+Mientras un impuesto esté vacío, las líneas de esa clase tienen el IVA **pendiente** y la oferta no se puede enviar
+ni confirmar.
+
+> **Decisión de Ángel (P17)**: qué impuesto del PGC corresponde a cada clase y con qué artículo de exención. Instalar la
+> localización no decide el tratamiento de cada servicio. Como referencia, Odoo 17 usa «21% S», «0% EX S» y
+> «0% EXEMPT NS». Ceuta y Melilla: zona pendiente.
 
 ## Coste de proveedor en otra moneda
 

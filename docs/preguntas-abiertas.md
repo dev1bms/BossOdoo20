@@ -1,39 +1,43 @@
-# Preguntas de negocio abiertas · Open business questions
+# Decisiones de negocio · Business decisions (revisión 22/10/2026)
 
-Solo decisiones que cambian el cálculo o el comportamiento y que no tienen respuesta documentada.
-Cada una indica qué hace hoy el sistema mientras no se decide (nunca un valor inventado).
-Only decisions that change a calculation or a behaviour and have no documented answer; each row says what
-the system does meanwhile. Fuentes / sources: `docs/fuentes.md`.
+Preguntas que cambian un cálculo o un comportamiento. Revisadas contra Odoo 19 (`docs/agents/DECISIONS.md`,
+`BOSS_DECISION_LOG.md`, `iva_rules.md`, actas), la carpeta NEW ODOO y Odoo 17 producción (solo lectura).
+Mientras una pregunta sigue abierta el sistema hace lo que dice la última columna; nunca usa un valor inventado.
 Importes de los ejemplos ilustrativos; las cifras reales de proveedor están en `.research/` (fuera de Git).
+Questions that change a calculation or behaviour, reviewed against the previous projects; open ones are ordered
+by impact. Amounts are illustrative.
 
-| Id | Pregunta / question | Ejemplo | Opciones | Recomendación | Quién | Mientras tanto en el sistema |
-|---|---|---|---|---|---|---|
-| P01 | ¿Puede el sistema **proponer** un precio de venta por regla (recargo % o margen %) que luego confirma una persona? | THC: coste 100 €, ¿proponer 120 € (+20 %)? | a) Nunca, siempre tecleado · b) Propuesta por servicio/cliente que la persona acepta · c) Solo precios pactados por cliente | b) solo para servicios con regla aprobada; distinguiendo recargo (sobre coste) y margen (sobre venta) | Cristina | Venta tecleada o precio pactado en lista de precios; recargo y margen se muestran separados |
-| P02 | ¿Margen mínimo? ¿Quién aprueba vender por debajo? ¿Por unidad, línea u oferta? | THC vendido a 95 € con coste 100 € | a) Solo aviso · b) Bloqueo + aprobación del gestor · c) Mínimo por oferta | a) aviso visible hasta fijar valores | Cristina + Ángel | Margen visible por línea y oferta; sin bloqueo |
-| P03 | Política de **cambio de moneda** para costes en USD y regla de **QBR** (quebranto bancario) | Flete en USD en una oferta en EUR | a) No convertir (coste pendiente) · b) Tipo de Odoo de la fecha de la oferta · c) Tipo interno fijo | b) con el tipo congelado al aceptar | Ángel | a): la línea queda «Otra moneda, sin política»; QBR en «pendiente de decisión» |
-| P04 | ¿Qué fecha elige la **versión de tarifa**? (ETA importación / ETD exportación; excepciones por proveedor) | IRENEO usa ETD también en importación | a) ETA/ETD siempre · b) Por proveedor | a) por defecto; b) solo con evidencia escrita | Ángel / Cristina | Fecha prevista del envío (ETA o ETD) |
-| P05 | ¿Se puede **enviar/confirmar** una oferta con un **coste** aún pendiente? | Despacho sin tarifa del agente de aduanas | a) Sí con aviso · b) Bloquear · c) Bloquear salvo excepción del gestor | a) | Cristina | Aviso visible; se bloquean solo IVA pendiente y precio de venta sin indicar |
-| P06 | Si la tarifa cambia durante la validez de la oferta, ¿se respeta el precio o se recotiza? | FuelEU sube de X a Y €/TEU | a) Respetar · b) Recotizar con motivo | b) con «Recotizar» (motivo y fecha guardados) | Cristina + Ángel | Ofertas aceptadas nunca cambian solas; borradores con «Actualizar costes» |
-| P07 | ¿Quién puede **recotizar** una oferta aceptada? | El cliente acepta un recargo | a) Comercial · b) Gestor comercial · c) Cristina/Ángel | b) | Cristina | Solo administradores de Ventas |
-| P08 | Tipos de contenedor que tienen **precio propio** (HC, reefer, OT/FR) | THC 40'HC igual o distinto de 40'DV | a) Según documento de cada proveedor | a) (ya es dato de tarifa) | — | Condición por tamaño y tipo en cada precio |
-| P09 | **DET**: ¿código propio o dentro de DEM? | Hapag factura demoras+detención juntas | a) Propio · b) Dentro de DEM | a) cuando el proveedor lo factura aparte | Cristina | DET «pendiente de decisión» |
-| P10 | **ETX** (WFS punto 49 «Recargo de mantenimiento»): concepto, unidad y alcance | Importe fijo por AWB en importación | a) ETX por AWB · b) Otro código | a) | Cristina | ETX «pendiente de decisión» |
-| P11 | **PAD**: ¿bajo T3 o GLO? Presentación «THC + gastos portuarios»; IVA de THC (todo EX o una parte EX y el resto NR) | PAD distinto para 20' y 40' | — | Mantener T3-PAD y decidir presentación | Cristina + Ángel | T3-PAD cotiza; IVA según clase EX del servicio |
-| P12 | Servicios **solo coste** en Odoo 19 pero vendidos en Odoo 17 (DEM, OCU, VGM, PFT, GLO): ¿se venden y cómo? | DEM recobrado al cliente | a) Venta tecleada · b) Repercusión a coste · c) No se vende | a) | Cristina | Se pueden añadir a la oferta; venta tecleada |
-| P13 | **Parámetros derivados**: CAU (dos porcentajes distintos en las fuentes, mínimos), SEG (tasas por país, sobre el valor más un recargo) | Caución sobre los impuestos del DUA | — | Cargarlos como tarifas con documento | Cristina + Ángel | Método porcentaje disponible; sin valores cargados |
-| P14 | Factores de **peso tasable** cuando el documento no lo dice (aéreo 167, terrestre 333/270) | WFS no indica factor | a) Peso tasable de la AWB · b) Factor estándar | a) (ya implementado para WFS) | Cristina | Base «kg tasable de la AWB» o factor escrito en la tarifa |
-| P15 | **Días**: ¿el día de llegada cuenta como día 1? ¿días naturales o periodos de 24 h? (MSC no lo dice; WFS MAD/BCN por 24 h) | 96 h = 4 periodos o 5 días | a) Según cada documento | a) | Cristina | En la oferta se indican días/periodos estimados |
-| P16 | Servicios sin definición: VET, GT3, DES, VAC, POS, IMO, DVD, GAV, DUM | VET con coste en Odoo 17 | Definir o retirar | Definir los de uso real | Cristina | «Pendiente de decisión», coste manual posible |
-| P17 | **IVA**: impuesto de Odoo para NR / EX / NS; Ceuta y Melilla; plan contable | Línea NR para cliente peninsular | Elegir impuestos de la localización española | Instalar l10n_es y mapear con Ángel | Ángel | IVA «pendiente» → la oferta no se puede enviar ni confirmar |
-| P18 | **Suplidos** (ARA, PLA, IVA): tratamiento contable y de IVA | Arancel pagado por cuenta del cliente | — | Importe manual a coste, clase NS | Ángel | Importe manual |
-| P19 | ¿Quién **aprueba tarifas**? | — | a) Belal y Cristina · b) Gestor de precios | a) (regla actual) | Cristina | Grupo «Aprobador» (administrador por defecto) |
-| P20 | ¿Quién ve **coste y margen**? | ¿El operador ve la venta? | — | Comercial y gestor | Cristina | Todos los usuarios de Ventas |
-| P21 | ¿Una oferta por envío o **ofertas de tarifa** por ruta (varios envíos)? | FCL mensual Shanghái–Valencia | — | Una por envío en fase 1 | Cristina | Una oferta = un envío |
-| P22 | **Alternativas** (varias navieras) en un documento | MSC vs CMA | a) Varias ofertas por oportunidad · b) Secciones opcionales | a) | Cristina | Varias ofertas bajo la misma oportunidad (estándar) |
-| P23 | **Validez** por defecto y caducidad | 15 días | — | Ajuste estándar de Odoo | Cristina | Validez estándar (30 días en la base de prueba) |
-| P24 | Lista de países «**Lejano Oriente**» (FuelEU) y tráficos «short sea» (THC distinto) | Origen Vietnam | — | Lista escrita por Cristina | Cristina | Muestra MSC limitada a origen China |
-| P25 | **AWB**: máster por expediente o house por AWB | 2 AWB en un expediente | — | Por AWB (documento WFS) | Cristina | AWB por guía |
-| P26 | **Fusiones** propuestas (CSM/CSA/CST, AMS/ENS, inspecciones) | — | — | Mantener códigos hasta decidir | Cristina | Códigos originales |
-| P27 | **Compañía** en Odoo 20: nombre, moneda EUR, país, localización | El servidor está en USD | — | Configurar antes del uso real | Belal / Ángel | Sin cambiar (necesita autorización) |
-| P28 | Tarifas **IRENEO 2025**: ¿siguen vigentes en 2026? Porcentaje de combustible y fecha (dos valores en las fuentes) | Transporte zona 3 | — | Confirmar con IRENEO | Cristina | Muestras con vigencia 2025 (no aplican hoy) |
-| P29 | Tramos de días «Hasta 7 / Más de 7» (WFS): ¿posicional o toda la estancia? | 10 días: 929,10 vs 1.550,00 | a) Posicional · b) Toda la estancia | a) lectura literal | Cristina | Posicional (configurable por precio) |
+## Cerradas con respuesta documentada · Closed
+
+| Id | Pregunta | Respuesta | Fuente | En el sistema |
+|---|---|---|---|---|
+| P04 | ¿Qué fecha elige la versión de tarifa? | Importación ETA, exportación ETD | Ángel, reunión 16/10 (acta Odoo 19 `2026-10-18-reunion-angel-16-10.md`) | Fecha prevista del envío. Excepciones por proveedor: no hay ninguna escrita |
+| P08 | ¿Qué tipos de contenedor tienen precio propio? | Es un dato de cada documento, no una decisión | Documentos MSC/Hapag/CMA; ejemplo T3 por tipo (Cristina 28/09) | Condición por tamaño y tipo en cada precio |
+| P15 | ¿Cómo cuentan los días libres de WFS? | Umbral: superados, se cobra desde el día 1 | Cristina 08/09 (decisión B20) y documento WFS 2026 | ALM con modo «umbral» y periodos de 24 h. Para navieras manda cada documento (ver P29) |
+| P25 | AWB/BL: ¿máster por expediente o house? | Máster por expediente; los house son la excepción (≈10 %) | Cristina 28/09 (Plan detallado previsiones, «Explicaciones previsiones») | BL y AWB una vez por expediente; DOC para el house |
+| P27 | Compañía de Odoo 20: datos, moneda, país, plan contable | Los de Odoo 17 producción: Boss Continental S.L., EUR, España, PGC PYMEs 2008 | `res.company` de Odoo 17 (lectura 22/10) | Configurada en `boss20` (`dev/setup_company.py`) |
+
+## Abiertas por impacto · Open, by impact
+
+| # | Id | Pregunta | Qué bloquea hoy | Servicios | Propuesta práctica | Quién | Mientras tanto |
+|---|---|---|---|---|---|---|---|
+| 1 | P17 | **IVA**: impuesto de Odoo para cada clase NR / EX / NS, y zona de Ceuta y Melilla | **Toda oferta**: no se puede enviar ni confirmar con IVA pendiente | Todos | Elegir entre los impuestos del PGC PYMEs ya instalados (en Odoo 17 se usan «21% S», «0% EX S» y «0% EXEMPT NS») y dar los artículos de exención | Ángel | IVA «pendiente»; las reglas de clase (Ángel, 31/08) sí funcionan |
+| 2 | P19 | **Aprobar las tarifas** de muestra/reales tras revisarlas | Cálculo automático en el servidor (ninguna tarifa aprobada) | THC, T3-PAD, BL, GLO-CCC, GLO-FUELEU, DEM, OCU, ALM, HAN, AWB, X-R | Revisar cada tarifa con su PDF y ejemplos (`ejemplos-referencia.md`) y pulsar «Aprobar» | Cristina (o Belal) | Precio «pendiente de aprobación» |
+| 3 | P03 | **Cambio de moneda** para costes en USD y regla del **QBR** | Costes en USD en ofertas en EUR | FMI/FME/FAI/FAE en USD, cualquier tarifa en USD, QBR | Tipo de Odoo del día de la oferta, congelado al aceptar; QBR si la oferta en USD se factura en EUR (requisito de Cristina en «Nuevo Odoo.xlsx») | Ángel | Línea «Otra moneda, sin política»; QBR pendiente |
+| 4 | P28 | ¿Las tarifas **IRENEO 2025** siguen vigentes en 2026? ¿Qué recargo de combustible y desde cuándo? | Transporte terrestre y aéreo de IRENEO en 2026 | TTE-CON, FS, SEG, HAN y X-R de IRENEO | Pedir a IRENEO la tarifa 2026 o una confirmación escrita | Cristina | Muestras con vigencia 2025: no se aplican a envíos de 2026 |
+| 5 | — | **Documentos de tarifa que faltan** (no es una decisión) | Precio automático de esos servicios | CES, GLO, T3, DOC, ENS/AMS, VGM, FAD, DEX, TRA, EUR1, inspecciones, almacén, TTE-FCL, THC-LCL, agentes | Reunir los PDF vigentes (lista en `fuentes.md`) y cargarlos | Cristina / operaciones | «Sin precio de proveedor» → «Añadir precio de proveedor» desde la oferta |
+| 6 | P01 · P02 | **Precio de venta**: ¿reglas por cliente (coste + %, margen)? ¿Margen mínimo y quién aprueba vender por debajo? | Venta automática | Todos los vendibles | El mecanismo existe (lista de precios del cliente con precio fijo, recargo sobre coste, margen sobre venta y margen mínimo). Falta decidir valores por cliente | Cristina (+ Ángel para el mínimo) | Venta pactada en la lista del cliente o tecleada; nunca una regla sin aprobar |
+| 7 | — | **Venta unificada de ALM** (aprobada como concepto, Cristina 08/10): valores | Venta automática de ALM | ALM | Fijar el importe o la regla en la lista general | Cristina | Venta tecleada |
+| 8 | P13 | **Parámetros derivados**: caución (CAU) y seguro (SEG): porcentajes, tasas por país y mínimos | Cálculo de CAU y SEG | CAU, SEG | Cargar cada valor como tarifa con su documento | Cristina + Ángel | Método porcentaje disponible; sin valores aprobados |
+| 9 | P16 | Servicios sin definición | Esos servicios | VET, GT3, DES, VAC, POS, IMO, DVD, GAV, DUM | Definir los de uso real (unidad, proveedor, documento) y retirar el resto | Cristina | «Pendiente de decisión», coste manual posible |
+| 10 | P18 | **Suplidos**: producto y tratamiento contable al facturar | Facturación (fase 2) | ARA, IVA, PLA, DUM | Venta = coste del DUA (práctica Odoo 17); confirmar cuenta e impuesto | Ángel | Importe manual a coste, clase NS |
+| 11 | P24 | Lista de países «Lejano Oriente» (FuelEU) y tráficos «short sea» de THC | FuelEU fuera de China | GLO-FUELEU, THC | Lista escrita por Cristina | Cristina | Muestra MSC limitada a origen China |
+| 12 | P11 | PAD bajo T3 o GLO; presentación «THC + gastos portuarios»; IVA de THC (todo EX o una parte NR) | Presentación e IVA de THC | THC, T3-PAD, GLO | Mantener T3-PAD; Ángel decide si se divide el IVA de THC | Cristina + Ángel | T3-PAD cotiza; IVA según la clase EX del servicio |
+| 13 | P10 | ETX (WFS punto 49): concepto y unidad | ETX | ETX | Compra por AWB máster, venta por expediente (Cristina 08/10); falta confirmar el concepto | Cristina | «Pendiente de decisión» |
+| 14 | P09 | DET: ¿código propio o dentro de DEM? | Detención facturada aparte | DET, DEM | Propio cuando el proveedor lo factura aparte | Cristina | DET «pendiente de decisión» |
+| 15 | P29 | Tramos de días WFS «hasta 7 / más de 7»: ¿por posición del día o toda la estancia? | Importe de ALM largo | ALM | Lectura literal (posicional) salvo que WFS diga otra cosa | Cristina | Posicional (configurable en cada precio). Ejemplo ilustrativo: 10 días a 10 €/20 € → 7×10 + 3×20 = 130 € o 10×20 = 200 € |
+| 16 | P12 | Servicios de coste (DEM, OCU, VGM, PFT, GLO): ¿se venden y cómo? | Venta de esos servicios | DEM, OCU, VGM, GLO, PFT | DEM/OCU/VGM/GLO vendibles con venta tecleada o pactada; PFT nunca se vende (Cristina 29/09) | Cristina | Así configurado |
+| 17 | P05 | ¿Enviar una oferta con un coste aún pendiente? | — | Todos | Aviso, sin bloqueo | Cristina | Se bloquean solo IVA pendiente y venta sin indicar |
+| 18 | P06 · P07 | Tarifa que cambia durante la validez; ¿quién recotiza una oferta aceptada? | — | Todos | Recotizar con motivo, solo gestor comercial (propuesta del propietario 26/08: cambios con motivo) | Cristina | Así implementado |
+| 19 | P14 | Factor de peso tasable cuando el documento no lo dice | Peso tasable sin AWB | Aéreo y terrestre | Peso tasable de la AWB o factor escrito en la tarifa | Cristina | Así implementado |
+| 20 | P20–P23 · P26 | Visibilidad de coste/margen, ofertas por ruta, alternativas, validez, fusiones de códigos | — | — | Estándar de Odoo hasta decidir | Cristina | Estándar de Odoo; códigos originales |

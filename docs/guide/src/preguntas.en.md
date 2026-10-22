@@ -1,34 +1,38 @@
-Business decisions that change a calculation or a behaviour and have no documented answer yet. Until they are decided,
-the system does what the last column says — never an invented value.
+Questions that change a calculation or a behaviour, reviewed on 22/10/2026 against the previous projects (Odoo 19
+decisions and minutes, the NEW ODOO folder, Odoo 17 production). While a question is open the system does what the
+last column says — never an invented value. Amounts are illustrative.
 
-| Id | Question | Who | Meanwhile in the system |
-|---|---|---|---|
-| P01 | May the system **propose** a sale price from a rule (markup % or margin %) that a person then confirms? | Cristina | Sale price typed or agreed in a pricelist; markup and margin shown separately |
-| P02 | Minimum margin; who approves selling below it; per unit, line or quotation? | Cristina + Ángel | Margin shown per line and quotation; no block |
-| P03 | **Exchange-rate** policy for USD costs and the bank-loss (QBR) rule | Ángel | No conversion: the line shows "other currency"; QBR pending |
-| P04 | Which date chooses the tariff version (ETA import / ETD export; supplier exceptions) | Ángel / Cristina | Planned date of the shipment |
-| P05 | May a quotation be sent/confirmed with a **cost** still pending? | Cristina | Warning only; only VAT pending and missing sale price block |
-| P06 | Tariff change during the quotation validity: keep the price or re-quote? | Cristina + Ángel | Accepted quotations never change by themselves; drafts with "Update costs" |
-| P07 | Who may **re-price** an accepted quotation? | Cristina | Sales administrators |
-| P08 | Container types with their own price (HC, reefer, OT/FR) | — | Size and type conditions on each price (supplier data) |
-| P09 | **DET**: own code or inside DEM? | Cristina | DET pending decision |
-| P10 | **ETX** (handler maintenance surcharge): concept, unit, scope | Cristina | ETX pending decision |
-| P11 | PAD under T3 or GLO; "THC + port charges" presentation; THC VAT split | Cristina + Ángel | T3-PAD priced; VAT from the service class |
-| P12 | Cost-only services in Odoo 19 but sold in Odoo 17 (DEM, OCU, VGM, PFT, GLO) | Cristina | They can be quoted; sale price typed |
-| P13 | Derived parameters (customs guarantee, insurance rates and minimums) | Cristina + Ángel | Percentage method available; no values loaded |
-| P14 | Chargeable-weight factors when the document gives none | Cristina | AWB chargeable weight or the factor written on the price |
-| P15 | Day counting: is the arrival day day 1? Calendar days or 24-hour periods? | Cristina | Days/periods estimated on the quotation |
-| P16 | Services without definition (VET, GT3, DES, VAC, POS, IMO, DVD, GAV, DUM) | Cristina | Pending decision; manual cost possible |
-| P17 | **VAT**: Odoo tax for NR / EX / NS; Ceuta and Melilla; chart of accounts | Ángel | VAT pending → the quotation cannot be sent or confirmed |
-| P18 | Amounts paid on behalf (duties, plastic tax, import VAT): accounting and VAT | Ángel | Manual amount |
-| P19 | Who approves tariffs? | Cristina | "Approver" group (administrator by default) |
-| P20 | Who sees cost and margin? | Cristina | All Sales users |
-| P21 | One quotation per shipment or rate offers per route? | Cristina | One quotation = one shipment |
-| P22 | Alternatives (several carriers) in one document | Cristina | Several quotations under one opportunity (standard) |
-| P23 | Default validity and expiry | Cristina | Standard Odoo validity |
-| P24 | "Far East" country list (FuelEU) and short-sea trades | Cristina | MSC sample limited to origin China |
-| P25 | AWB: master per file or house per AWB | Cristina | Per air waybill |
-| P26 | Proposed merges of codes (consignment fees, AMS/ENS, inspections) | Cristina | Original codes kept |
-| P27 | Company set-up in Odoo 20 (name, EUR, country, localisation) | Belal / Ángel | Not changed (needs authorisation) |
-| P28 | Are the 2025 ground-agent tariffs valid in 2026? Fuel surcharge rate and date | Cristina | Samples valid in 2025 only |
-| P29 | "Up to 7 days / more than 7 days" tiers: per day position or whole stay? | Cristina | Per day position (configurable per price) |
+## Closed with a documented answer
+
+| Id | Question | Answer | Source | In the system |
+|---|---|---|---|---|
+| P04 | Which date picks the tariff version? | Import ETA, export ETD | Ángel, meeting 16/10 | Planned date of the shipment; no supplier exception is written down |
+| P08 | Which container types have their own price? | It is data of each document, not a decision | MSC/Hapag/CMA documents | Size and type condition on each price |
+| P15 | How do WFS free days count? | Threshold: once exceeded, billed from day 1 | Cristina 08/09 and the WFS 2026 document | ALM in threshold mode, 24-hour periods; for carriers each document rules (see P29) |
+| P25 | Master or house AWB/BL? | Master per shipment file; houses are the exception (≈10 %) | Cristina 28/09 | BL and AWB once per shipment; DOC for the house |
+| P27 | Company data, currency, country, chart of accounts | Those of Odoo 17 production: Boss Continental S.L., EUR, Spain, PGC PYMEs 2008 | Odoo 17 company record | Configured on the server |
+
+## Open, by impact
+
+| # | Id | Question | What it blocks today | Services | Practical proposal | Who | Meanwhile |
+|---|---|---|---|---|---|---|---|
+| 1 | P17 | **VAT**: Odoo tax for each class NR / EX / NS; zone of Ceuta and Melilla | **Every quotation**: it cannot be sent or confirmed with VAT pending | All | Choose among the installed PGC PYMEs taxes (Odoo 17 uses «21% S», «0% EX S» and «0% EXEMPT NS») and give the exemption articles | Ángel | VAT «pending»; the class rules (Ángel, 31/08) already work |
+| 2 | P19 | **Approve** the sample/real tariffs after review | Automatic prices on the server (no tariff approved yet) | THC, T3-PAD, BL, GLO-CCC, GLO-FUELEU, DEM, OCU, ALM, HAN, AWB, X-R | Review each tariff with its PDF and examples, then click «Approve» | Cristina (or Belal) | Price «waiting for approval» |
+| 3 | P03 | **Exchange rate** for USD costs and the **QBR** rule | USD costs in EUR quotations | Freight in USD, any USD tariff, QBR | Odoo rate of the quotation date, frozen on acceptance; QBR when a USD offer is invoiced in EUR (Cristina's requirement) | Ángel | Line «Other currency, no policy»; QBR pending |
+| 4 | P28 | Are the **2025 ground-agent tariffs** valid in 2026? Fuel surcharge rate and date | Road transport and air handling of that agent in 2026 | TTE-CON, FS, SEG, HAN and X-R of that agent | Ask the agent for the 2026 tariff or a written confirmation | Cristina | 2025 samples are not applied to 2026 shipments |
+| 5 | — | **Missing tariff documents** (not a decision) | Automatic price of those services | CES, GLO, T3, DOC, ENS/AMS, VGM, FAD, DEX, TRA, EUR1, inspections, warehouse, TTE-FCL, THC-LCL, agents | Collect the current PDFs and enter them | Cristina / operations | «No supplier price» → «Add supplier price» from the quotation |
+| 6 | P01 · P02 | **Sale price**: rules per customer (cost + %, margin)? Minimum margin and who approves selling below it? | Automatic sale | All sellable services | The mechanism exists (customer pricelist with fixed price, surcharge on cost, margin on sale, minimum margin); the values per customer are to be decided | Cristina (+ Ángel for the minimum) | Sale agreed in the customer pricelist or typed; never an unapproved rule |
+| 7 | — | **Unified ALM sale** (approved as a concept, Cristina 08/10): values | Automatic sale of ALM | ALM | Set the amount or the rule in the general pricelist | Cristina | Typed sale |
+| 8 | P13 | **Derived parameters**: customs guarantee (CAU) and insurance (SEG) rates and minimums | CAU and SEG | CAU, SEG | Enter each value as a tariff with its document | Cristina + Ángel | Percentage method available; no approved values |
+| 9 | P16 | Services without definition | Those services | VET, GT3, DES, VAC, POS, IMO, DVD, GAV, DUM | Define the ones in real use (unit, supplier, document), retire the rest | Cristina | «Pending decision», manual cost possible |
+| 10 | P18 | **Paid on behalf** (ARA, IVA, PLA, DUM): invoicing product and accounting | Invoicing (phase 2) | ARA, IVA, PLA, DUM | Sale = declaration cost (Odoo 17 practice); confirm account and tax | Ángel | Manual amount at cost, class NS |
+| 11 | P24 | «Far East» country list (FuelEU) and «short sea» THC trades | FuelEU outside China | GLO-FUELEU, THC | Written list from Cristina | Cristina | MSC sample limited to China |
+| 12 | P11 | PAD under T3 or GLO; «THC + port charges» presentation; THC VAT (all EX or partly NR) | THC presentation and VAT | THC, T3-PAD, GLO | Keep T3-PAD; Ángel decides on splitting THC VAT | Cristina + Ángel | T3-PAD priced; VAT from the EX class |
+| 13 | P10 | ETX (WFS point 49): concept and unit | ETX | ETX | Purchase per master AWB, sale per shipment (Cristina 08/10); concept to confirm | Cristina | «Pending decision» |
+| 14 | P09 | DET: own code or inside DEM? | Detention billed separately | DET, DEM | Own code when the supplier bills it separately | Cristina | DET «pending decision» |
+| 15 | P29 | WFS day tiers «up to 7 / more than 7»: by day position or whole stay? | Long ALM stays | ALM | Literal (positional) unless WFS says otherwise | Cristina | Positional (configurable per price). Illustrative: 10 days at 10 €/20 € → 7×10 + 3×20 = 130 € or 10×20 = 200 € |
+| 16 | P12 | Cost services (DEM, OCU, VGM, PFT, GLO): sold, and how? | Their sale | DEM, OCU, VGM, GLO, PFT | DEM/OCU/VGM/GLO sellable (typed or agreed sale); PFT never sold (Cristina 29/09) | Cristina | Configured so |
+| 17 | P05 | Send a quotation with a cost still pending? | — | All | Warning, no block | Cristina | Only pending VAT and missing sale price block |
+| 18 | P06 · P07 | Tariff change during validity; who re-prices an accepted quotation? | — | All | Re-price with a reason, sales managers only | Cristina | Implemented so |
+| 19 | P14 | Chargeable-weight factor when the document is silent | Chargeable weight without AWB | Air and road | AWB chargeable weight or the factor written in the tariff | Cristina | Implemented so |
+| 20 | P20–P23 · P26 | Cost/margin visibility, route offers, alternatives, validity, code merges | — | — | Odoo standard until decided | Cristina | Odoo standard; original codes |

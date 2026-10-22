@@ -73,13 +73,6 @@ NOTES = {
 NOTES["PFT-FCL"] = NOTES["PFT-LCL"] = NOTES["PFT-AIR"]
 NOTES["CSA"] = NOTES["CST"] = NOTES["CSM"]
 
-PUBLIC_QUESTION_ES = {
-    "P11": "**PAD**: ¿bajo T3 o GLO? Presentación «THC + gastos portuarios» e IVA de THC (todo EX o una parte NR)",
-    "P13": "**Parámetros derivados**: caución (CAU) y seguro (SEG): porcentajes, tasas por país y mínimos",
-    "P24": "Lista de países «**Lejano Oriente**» (FuelEU) y tráficos «short sea» de THC",
-    "P28": "Tarifas **2025 del transportista terrestre**: ¿siguen vigentes en 2026? Porcentaje y fecha del recargo de combustible",
-}
-
 EXAMPLES = {  # illustrative amounts only
     ("per_unit", "container"): ("2 contenedores de 20' × 100,00 € = 200,00 €", "2 containers of 20' × 100.00 € = 200.00 €"),
     ("per_unit", "teu"): ("1 × 20' + 1 × 40' = 3 TEU × 10,00 € = 30,00 €", "1 × 20' + 1 × 40' = 3 TEU × 10.00 € = 30.00 €"),
@@ -204,10 +197,29 @@ def service_page(s, uom_name, by_xid):
                 "own": ("Sin coste de proveedor (justificado).", "No supplier cost (justified)."),
                 "pending": ("No se cotiza automáticamente hasta decidir la pregunta abierta; se puede escribir un coste manual.",
                             "Not priced automatically until the open question is decided; a manual cost can be typed.")}[s["mode"]]
-        sale = (("Precio indicado en la oferta o pactado en la lista de precios del cliente; nunca una fórmula sin aprobar ([venta e IVA](#/venta-iva)).",
-                 "Price typed on the quotation or agreed in the customer pricelist; never an unapproved formula ([sale and VAT](#/venta-iva)).")
-                if s["sale"] else ("No se vende como línea.", "Not sold as a line."))
-        body += [L(("## Compra (coste)", "## Purchase (cost)")), L(cost), "", L(("## Venta", "## Sale")), L(sale), ""]
+        import service_matrix as matrix  # noqa: PLC0415 (matrix imports this module)
+        sale = matrix.sale(s, i) + (" ([" + L(("venta e IVA", "sale and VAT")) + "](#/venta-iva))." if s["sale"] else ".")
+        body += [L(("## Compra (coste)", "## Purchase (cost)")), L(cost), "", L(("## Venta", "## Sale")), sale, ""]
+        status, evidence = matrix.status(s)
+        missing = {
+            "auto": ("Calculado y comprobado con el documento del proveedor; la tarifa debe aprobarla una persona antes de usarse.",
+                     "Computed and checked against the supplier document; a person must approve the tariff before use."),
+            "doc": ("Falta el **documento de tarifa** del proveedor: cuando llegue, se introduce y se aprueba (no hace falta programar nada).",
+                    "The supplier **tariff document** is missing: once received it is entered and approved (no programming needed)."),
+            "loaded": ("El documento existe; falta introducir la tarifa y aprobarla.", "The document exists; the tariff is still to be entered and approved."),
+            "2025": ("Comprobado con el documento de 2025; para envíos de 2026 hace falta la tarifa 2026 o una confirmación ([P28](#/preguntas)).",
+                     "Checked against the 2025 document; 2026 shipments need the 2026 tariff or a confirmation ([P28](#/preguntas))."),
+            "manual": ("Importe manual por naturaleza (oferta del proveedor o DUA).", "Manual amount by nature (supplier offer or customs declaration)."),
+            "own": ("Honorario propio, sin coste de proveedor.", "Own fee, no supplier cost."),
+            "decision": ("Depende de una [decisión de negocio](#/preguntas); hasta entonces, coste manual.",
+                         "Depends on a [business decision](#/preguntas); meanwhile a manual cost."),
+            "inactive": ("Retirado.", "Retired."),
+        }[status]
+        body += [L(("## Estado", "## Status")), f"**{matrix.LABELS[lang][status]}**. {L(missing)}",
+                 "", L(("Evidencia: ", "Evidence: ")) + evidence + "."]
+        if s["code"] in matrix.LIMITS:
+            body += ["", L(("Límite: ", "Limit: ")) + L(matrix.LIMITS[s["code"]]) + "."]
+        body += [""]
         body += [L(("## Ejemplo (importes ilustrativos)", "## Example (illustrative amounts)")), L(example) + ".", ""]
         if s["code"] in NOTES:
             body += [L(("## Condiciones de los proveedores y decisiones", "## Supplier conditions and decisions")), L(NOTES[s["code"]]), ""]
@@ -232,23 +244,14 @@ def main():
             src = GUIDE / "src" / f"{p['id']}.{lang}.md"
             body[lang] = src.read_text(encoding="utf-8") if src.is_file() else ""
         pages.append({**p, "body": body})
-    # Spanish decisions page from docs/preguntas-abiertas.md with the same columns as the English page; questions quoting
-    # supplier rates are reworded (public site).
-    lines = (ROOT / "docs" / "preguntas-abiertas.md").read_text(encoding="utf-8").splitlines()
-    rows = ["| Id | Pregunta | Quién | Mientras tanto en el sistema |", "|---|---|---|---|"]
-    for ln in lines:
-        if ln.startswith("| P"):
-            c = [x.strip() for x in ln.strip("|").split("|")]
-            meanwhile = re.sub(r"^[a-d]\):\s*", "", c[6])
-            meanwhile = meanwhile[:1].upper() + meanwhile[1:]
-            rows.append(f"| {c[0]} | {PUBLIC_QUESTION_ES.get(c[0], c[1])} | {c[5]} | {meanwhile} |")
-    intro = ("Decisiones de negocio que cambian un cálculo o un comportamiento y aún no tienen respuesta documentada. Mientras "
-             "no se deciden, el sistema hace lo que indica la última columna; nunca usa un valor inventado.")
-    body_es = intro + "\n\n" + "\n".join(rows)
-    leak = re.findall(r"\d+(?:[.,]\d+)? ?(?:%|€|USD)", body_es)
-    if leak:
-        sys.exit(f"preguntas.es quotes figures {leak}: add a public wording to PUBLIC_QUESTION_ES")
-    next(p for p in pages if p["id"] == "preguntas")["body"]["es"] = body_es
+    # Spanish decisions page = docs/preguntas-abiertas.md without its title and English summary lines.
+    lines = (ROOT / "docs" / "preguntas-abiertas.md").read_text(encoding="utf-8").splitlines()[1:]
+    start = next(i for i, ln in enumerate(lines) if ln.startswith("Questions that change"))
+    end = next(i for i in range(start, len(lines)) if not lines[i].strip())
+    next(p for p in pages if p["id"] == "preguntas")["body"]["es"] = "\n".join(lines[:start] + lines[end:]).strip()
+    import service_matrix as matrix  # noqa: PLC0415
+    for lang in ("es", "en"):
+        next(p for p in pages if p["id"] == "matriz")["body"][lang] = matrix.page(lang)
     srv, uom_name = services()
     by_xid = {s["xid"]: s for s in srv}
     service_pages = []

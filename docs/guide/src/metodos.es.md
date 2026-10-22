@@ -52,4 +52,12 @@ Ejemplo: 7 días libres, «5 días a 30 €, después 80 €», 15 días, 1 cont
 3 × 80 = 240 → **390 €**. Con umbral de 48 h, 500 kg por 100 kg a 10 €/día: 2 días → **0 €**; 3 días → 3 × 5 × 10 =
 **150 €**.
 
+- **Día de la semana de llegada** (fecha prevista), si el documento lo dice: llegada en **sábado** → libre hasta el
+  lunes incluido (en WFS, 3 periodos); llegada en **viernes** → un día libre más. WFS solo da las 72 h del viernes si la
+  mercancía sale el lunes, y la oferta no conoce el día de salida: en las tarifas de WFS esa opción no se marca y el
+  coste estimado puede ser algo mayor que el real.
+- **Horas libres** (48 h, 36 h…) cuentan como días completos en la oferta: 48 h = 2 periodos de 24 h.
+- Los días de la oferta se indican una vez en la pestaña Envío y valen para todos los servicios por tiempo (DEM, OCU,
+  ALM). Sin **días indicados** la línea dice «Faltan datos del envío»; 0 días indicados es una estimación válida.
+
 > En la oferta el resultado es una **estimación** con los días supuestos; el coste real se conoce al terminar el periodo.
