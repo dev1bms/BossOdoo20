@@ -114,7 +114,7 @@
                         <field name="on_request"/>
                     </group>
                     <group string="Applies to">
-                        <field name="scope_display" string="Tariff scope" invisible="not context.get('boss_ws')"/>
+                        <field name="scope_display" string="Tariff scope" widget="text" invisible="not context.get('boss_ws')"/>
                         <field name="container_size" placeholder="Any size"/>
                         <field name="container_type_ids" widget="many2many_tags" placeholder="Any type"/>
                         <field name="valid_from" invisible="not context.get('boss_ws')"/>
