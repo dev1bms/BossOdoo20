@@ -54,7 +54,9 @@ mín. 20 EUR», «hasta 5: 8; más: 20 (EUR por 100 kg … y día)». Inputs sho
 
 ## Widths (list columns, px)
 
-Code 64 · service 150 · supplier 110 · scope 170 · basis 90 · price 200 · until 76 · status 170 (readiness 190).
+Fixed widths only on short columns (code 64 · basis 90 · until 76 · status 150 · readiness 190); service, supplier,
+scope and price have no width so they share the free space (a `width` fixes the column in Odoo 20 and leaves
+empty space at 1920 px).
 Checked at 1366×768: quotation lines 1318/1318 px, no horizontal scroll.
 
 ## Decisions
