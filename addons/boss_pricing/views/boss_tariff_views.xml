@@ -16,12 +16,16 @@
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Demo" bg_color="text-bg-warning" invisible="not active or not is_demo"/>
                     <div class="alert alert-warning mb-2" role="alert" invisible="state != 'draft' or not ws_checklist">
                         <strong>Before sending for approval:</strong>
                         <field name="ws_checklist" class="d-block" style="white-space: pre-line"/>
                     </div>
-                    <div class="oe_title">
+                    <div class="oe_title mb-1">
                         <h1><field name="name" placeholder="e.g. MSC local charges import 2026"/></h1>
+                    </div>
+                    <div class="text-muted mb-3" title="Scope of every price of this tariff">
+                        <field name="scope_summary" class="d-inline"/>
                     </div>
                     <group>
                         <group string="Supplier and document">
@@ -31,52 +35,75 @@
                             <field name="document_reference" readonly="state != 'draft'"/>
                             <field name="currency_id" readonly="state != 'draft'"/>
                         </group>
-                        <group string="Validity">
+                        <group string="Version and validity">
                             <field name="valid_from" readonly="state != 'draft'"/>
-                            <field name="valid_to" readonly="state != 'draft'"/>
+                            <field name="valid_to" readonly="state != 'draft'" placeholder="Until a newer version"/>
                             <field name="version"/>
-                            <field name="priority"/>
-                            <field name="approved_by_id" invisible="state != 'approved'"/>
-                            <field name="approved_date" invisible="state != 'approved'"/>
+                            <field name="is_demo" readonly="state != 'draft'"/>
                             <field name="active" invisible="1"/>
                             <field name="company_id" invisible="1"/>
-                        </group>
-                    </group>
-                    <div class="text-muted small" invisible="not ws_open_scope">
-                        Left empty, so the prices apply to any: <field name="ws_open_scope" class="d-inline"/>.
-                        Fill a field only when the supplier document limits it.
-                    </div>
-                    <group string="Applies to (empty = any)">
-                        <group>
-                            <field name="direction" readonly="state != 'draft'"/>
-                            <field name="transport_mode" readonly="state != 'draft'"/>
-                            <field name="load_type" readonly="state != 'draft'"/>
-                        </group>
-                        <group>
-                            <field name="carrier_id" readonly="state != 'draft'"/>
-                            <field name="port_ids" widget="many2many_tags" readonly="state != 'draft'"/>
-                            <field name="country_ids" widget="many2many_tags" readonly="state != 'draft'"/>
-                            <field name="state_ids" widget="many2many_tags" readonly="state != 'draft'"/>
-                            <field name="customer_id" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Prices" name="prices">
                             <field name="line_ids" readonly="state != 'draft'">
-                                <list>
-                                    <field name="product_id"/>
-                                    <field name="uom_id"/>
-                                    <field name="container_size" optional="show"/>
-                                    <field name="container_type_ids" widget="many2many_tags" optional="show"/>
-                                    <field name="method"/>
-                                    <field name="basis" optional="show"/>
-                                    <field name="unit_price"/>
-                                    <field name="rate" optional="hide"/>
-                                    <field name="min_amount" optional="show"/>
-                                    <field name="on_request" optional="show"/>
-                                    <field name="document_page"/>
+                                <list decoration-danger="ws_is_empty">
+                                    <field name="product_id" string="Service" width="300px"/>
+                                    <field name="uom_id" string="Charge basis" width="130px"/>
+                                    <field name="container_size" string="Size" optional="show"/>
+                                    <field name="container_type_ids" widget="many2many_tags" string="Types" optional="show"/>
+                                    <field name="price_display"/>
+                                    <field name="ws_is_empty" column_invisible="1"/>
+                                    <field name="method" optional="hide"/>
+                                    <field name="on_request" optional="hide"/>
+                                    <field name="free_of_charge" optional="hide"/>
+                                    <field name="document_page" string="Page" optional="show"/>
                                 </list>
                             </field>
+                        </page>
+                        <page string="Applies to" name="scope">
+                            <p class="text-muted">
+                                Common to every price of the tariff. Fill a field only when the supplier document limits
+                                it: an empty field means the prices apply to any value.
+                            </p>
+                            <group>
+                                <group>
+                                    <field name="direction" readonly="state != 'draft'" placeholder="Import and export"/>
+                                    <field name="transport_mode" readonly="state != 'draft'" placeholder="Any mode"/>
+                                    <field name="load_type" readonly="state != 'draft'" placeholder="Any load"/>
+                                    <field name="carrier_id" readonly="state != 'draft'" placeholder="Any carrier"/>
+                                </group>
+                                <group>
+                                    <field name="port_ids" widget="many2many_tags" readonly="state != 'draft'" placeholder="Any port"/>
+                                    <field name="country_ids" widget="many2many_tags" readonly="state != 'draft'" placeholder="Any country"/>
+                                    <field name="state_ids" widget="many2many_tags" readonly="state != 'draft'" placeholder="Any province"/>
+                                    <field name="customer_id" readonly="state != 'draft'" placeholder="Any customer"/>
+                                </group>
+                            </group>
+                            <div class="text-muted small" invisible="not ws_open_scope">
+                                Empty, so the prices apply to any: <field name="ws_open_scope" class="d-inline"/>.
+                            </div>
+                            <group>
+                                <field name="scope_confirmed" readonly="state != 'draft'"/>
+                            </group>
+                        </page>
+                        <page string="Review and approval" name="review">
+                            <group>
+                                <group>
+                                    <field name="state" string="Status" readonly="1"/>
+                                    <field name="approved_by_id" invisible="state != 'approved'"/>
+                                    <field name="approved_date" invisible="state != 'approved'"/>
+                                    <field name="priority"/>
+                                </group>
+                                <group>
+                                    <field name="line_count"/>
+                                    <field name="lineage_id" invisible="version == 1"/>
+                                </group>
+                            </group>
+                            <p class="text-muted">
+                                Whoever enters the prices sends the tariff for approval; an approver checks them against
+                                the document and approves. Approved prices never change: a change is a new version.
+                            </p>
                         </page>
                         <page string="Notes" name="notes">
                             <field name="note"/>
@@ -95,23 +122,24 @@
             <form>
                 <sheet>
                 <field name="tariff_state" invisible="1"/>
+                <widget name="web_ribbon" title="Demo" bg_color="text-bg-warning" invisible="not is_demo"/>
                 <div class="alert alert-info mb-2" role="alert" invisible="not id or tariff_state in (False, 'draft')">
                     This price belongs to a tariff sent for approval or approved: it does not change. Open the
                     tariff and create a new version (or set it back to draft) to change it.
                 </div>
                 <group>
-                    <group string="Service, supplier and source">
+                    <group string="Service and source">
                         <field name="tariff_id" invisible="not context.get('boss_ws')" required="context.get('boss_ws')"
                                domain="[('state', '=', 'draft')]" readonly="id"
                                options="{'no_quick_create': True}"
                                help="Draft tariff of the supplier: document, currency, validity and scope are taken from it."/>
                         <field name="partner_id" invisible="not context.get('boss_ws')"/>
                         <field name="document_reference" invisible="not context.get('boss_ws')"/>
-                        <field name="product_id"/>
+                        <field name="product_id" string="Service" options="{'no_create': True}"
+                               help="An existing service of the catalogue. A supplier price never creates a new service."/>
                         <field name="allowed_uom_ids" invisible="1"/>
                         <field name="uom_id"/>
                         <field name="document_page"/>
-                        <field name="on_request"/>
                     </group>
                     <group string="Applies to">
                         <field name="scope_display" string="Tariff scope" widget="text" invisible="not context.get('boss_ws')"/>
@@ -120,31 +148,42 @@
                         <field name="valid_from" invisible="not context.get('boss_ws')"/>
                         <field name="valid_to" invisible="not context.get('boss_ws')" placeholder="Until a newer version"/>
                         <field name="validity_state" widget="badge" invisible="not context.get('boss_ws') or not id"/>
+                        <field name="is_demo" invisible="1"/>
                     </group>
                 </group>
-                <group>
-                    <group string="Calculation">
+                <group string="Calculation">
+                    <group>
                         <field name="method"/>
                         <field name="basis" invisible="method == 'percent'"/>
                         <field name="volumetric_factor" invisible="basis != 'chargeable_kg' and basis_2 != 'chargeable_kg'"/>
                         <field name="unit_size" invisible="method == 'percent'"/>
                         <field name="round_up" invisible="method == 'percent'"/>
-                        <field name="unit_price" invisible="method not in ('per_unit', 'max_of_bases')"/>
-                        <field name="min_amount"/>
-                        <field name="max_amount"/>
+                        <label for="unit_price" invisible="method not in ('per_unit', 'max_of_bases')"/>
+                        <div class="o_row" invisible="method not in ('per_unit', 'max_of_bases')">
+                            <field name="unit_price"/>
+                            <field name="ws_price_unit_label" class="text-muted text-nowrap"/>
+                        </div>
                         <field name="currency_id" invisible="1"/>
                     </group>
-                </group>
-                <group invisible="method != 'max_of_bases'" string="Second basis">
-                    <field name="basis_2"/>
-                    <field name="unit_price_2"/>
-                    <field name="b2_unit_size"/>
-                    <field name="b2_round_up"/>
-                </group>
-                <group invisible="method != 'percent'" string="Percentage">
-                    <field name="percent_base"/>
-                    <field name="rate"/>
-                    <field name="base_product_ids" widget="many2many_tags" invisible="percent_base != 'services'"/>
+                    <group invisible="method != 'max_of_bases'" string="Second basis (the larger amount is charged)">
+                        <field name="basis_2"/>
+                        <field name="b2_unit_size"/>
+                        <field name="b2_round_up"/>
+                        <label for="unit_price_2"/>
+                        <div class="o_row">
+                            <field name="unit_price_2"/>
+                            <field name="ws_price2_unit_label" class="text-muted text-nowrap"/>
+                        </div>
+                    </group>
+                    <group invisible="method != 'percent'" string="Percentage">
+                        <field name="percent_base"/>
+                        <label for="rate"/>
+                        <div class="o_row">
+                            <field name="rate"/>
+                            <span class="text-muted">% of the base above</span>
+                        </div>
+                        <field name="base_product_ids" widget="many2many_tags" invisible="percent_base != 'services'"/>
+                    </group>
                 </group>
                 <group invisible="method != 'time'" string="Free period">
                     <group>
@@ -170,6 +209,9 @@
                     Day tiers: «Up to» is a day number, read as chosen in «Tier mode» (day since the start, day after
                     the free period, or the whole stay).
                 </div>
+                <div class="small mb-1" invisible="method not in ('brackets', 'time')">
+                    <field name="ws_brackets_label" class="fw-semibold"/>
+                </div>
                 <field name="bracket_ids" invisible="method not in ('brackets', 'time')">
                     <list editable="bottom">
                         <field name="up_to"/>
@@ -177,8 +219,25 @@
                         <field name="unit_price"/>
                     </list>
                 </field>
+                <group string="Amount checks">
+                    <group>
+                        <field name="min_amount"/>
+                        <field name="max_amount"/>
+                        <div colspan="2" class="text-muted small">
+                            <field name="ws_bounds_label" class="d-inline"/>. 0 = no minimum / maximum.
+                        </div>
+                    </group>
+                    <group>
+                        <field name="on_request"/>
+                        <field name="free_of_charge"/>
+                        <field name="ws_is_empty" invisible="1"/>
+                        <div colspan="2" class="text-danger small" invisible="not ws_is_empty">
+                            No amount yet: it counts as a missing price, never as free.
+                        </div>
+                    </group>
+                </group>
                 <field name="note" placeholder="Conditions or remarks of the document"/>
-                <group string="Live example" invisible="not example_text">
+                <group string="Live example (computed by the pricing engine)" invisible="not example_text">
                     <field name="example_text" nolabel="1" colspan="2" class="text-muted" style="white-space: pre-line"/>
                 </group>
                 </sheet>

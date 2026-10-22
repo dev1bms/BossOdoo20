@@ -13,6 +13,18 @@ msgstr "%(basis)s %(raw)s -> %(qty)s unidades. "
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "%(cur)s on the cost of the whole quotation line (%(uom)s)"
+msgstr "%(cur)s sobre el coste de toda la línea de oferta (%(uom)s)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "%(cur)s per %(unit)s"
+msgstr "%(cur)s por %(unit)s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "%(cur)s per %(unit)s and day"
 msgstr "%(cur)s por %(unit)s y día"
 
@@ -50,6 +62,14 @@ msgstr "%s h libres"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"%s has no amount: enter it, or mark 'On request' or 'No cost (confirmed zero)'."
+msgstr ""
+"%s no tiene importe: introdúzcalo, o marque «A consultar» o «Sin coste (cero confirmado)»."
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "'%(uom)s' is not a charge basis of %(service)s."
 msgstr "'%(uom)s' no es una base de cobro de %(service)s."
@@ -59,6 +79,22 @@ msgstr "'%(uom)s' no es una base de cobro de %(service)s."
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "'%s' has no supplier document attached."
 msgstr "«%s» no tiene adjunto el documento del proveedor."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"'Up to' = day number (0 = no limit) · price in %(cur)s per %(unit)s and day"
+msgstr ""
+"«Hasta» = número de día (0 = sin límite) · precio en %(cur)s por %(unit)s y día"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"'Up to' in %(unit)s (0 = no limit) · fixed amount in %(cur)s for the bracket · unit price in %(cur)s per %(unit)s"
+msgstr ""
+"«Hasta» en %(unit)s (0 = sin límite) · importe fijo en %(cur)s por tramo · precio unitario en %(cur)s por %(unit)s"
 
 #. module: boss_pricing
 #. odoo-python
@@ -79,16 +115,25 @@ msgid ", document %(doc)s page %(page)s"
 msgstr ", documento %(doc)s página %(page)s"
 
 #. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
-msgid ""
-".\n"
-"                        Fill a field only when the supplier document limits it."
-msgstr ". Rellene un campo solo cuando el documento del proveedor lo limite."
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid ". 0 = no minimum / maximum."
+msgstr ". 0 = sin mínimo / máximo."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "<span class=\"text-muted\">% of the base above</span>"
+msgstr "<span class=\"text-muted\">% de la base indicada</span>"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "<strong>Before sending for approval:</strong>"
 msgstr "<strong>Antes de enviar a aprobación:</strong>"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid "A new supplier of this service is a new price, never a new product."
+msgstr ""
+"Un proveedor nuevo de este servicio es un precio nuevo, nunca un producto nuevo."
 
 #. module: boss_pricing
 #. odoo-python
@@ -126,6 +171,11 @@ msgid "Active"
 msgstr "Activo"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_list_ws
+msgid "Add a supplier price to this service"
+msgstr "Añadir un precio de proveedor a este servicio"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "Add at least one price before sending '%s'."
@@ -136,6 +186,11 @@ msgstr "Añada al menos un precio antes de enviar '%s'."
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "Add at least one price."
 msgstr "Añada al menos un precio."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid "Add supplier price"
+msgstr "Añadir precio de proveedor"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__air
@@ -169,9 +224,56 @@ msgid "Allowed Uom"
 msgstr "Unidades permitidas"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "Amount checks"
+msgstr "Controles del importe"
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_bracket__fixed_amount
 msgid "Amount of the bracket."
 msgstr "Importe del tramo."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid ""
+"An existing service of the catalogue. A supplier price never creates a new service."
+msgstr ""
+"Un servicio existente del catálogo. Un precio de proveedor nunca crea un servicio nuevo."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any carrier"
+msgstr "Cualquier transportista"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any country"
+msgstr "Cualquier país"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any customer"
+msgstr "Cualquier cliente"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any load"
+msgstr "Cualquier carga"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any mode"
+msgstr "Cualquier modo"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any port"
+msgstr "Cualquier puerto"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any province"
+msgstr "Cualquier provincia"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
@@ -184,15 +286,12 @@ msgid "Any type"
 msgstr "Cualquier tipo"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__scope_summary
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__scope_display
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Applies to"
 msgstr "Se aplica a"
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
-msgid "Applies to (empty = any)"
-msgstr "Se aplica a (vacío = cualquiera)"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__ws_open_scope
@@ -373,7 +472,13 @@ msgid "Brackets and day tiers need at least one row."
 msgstr "Los tramos necesitan al menos una fila."
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__ws_brackets_label
+msgid "Brackets in"
+msgstr "Tramos en"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__calc_display
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Calculation"
 msgstr "Cálculo"
@@ -399,6 +504,11 @@ msgid "Calculations"
 msgstr "Cálculos"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid "Calculations used"
+msgstr "Cálculos usados"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_port__canary_islands
 msgid "Canary Islands"
 msgstr "Canarias"
@@ -412,6 +522,8 @@ msgstr "Transportista / naviera"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__uom_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Charge basis"
 msgstr "Base de cobro"
 
@@ -447,6 +559,14 @@ msgstr "Peso tasable de la guía aérea"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
 msgid "Code"
 msgstr "Código"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid ""
+"Common to every price of the tariff. Fill a field only when the supplier document limits\n"
+"                                it: an empty field means the prices apply to any value."
+msgstr ""
+"Común a todos los precios de la tarifa. Rellene un campo solo cuando el documento del proveedor lo limite: un campo vacío significa que los precios valen para cualquier valor."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__company_id
@@ -524,6 +644,11 @@ msgid "Cost of other services of the same supplier"
 msgstr "Coste de otros servicios del mismo proveedor"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
+msgid "Cost source"
+msgstr "Origen del coste"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__country_ids
 msgid "Countries abroad"
 msgstr "Países en el extranjero"
@@ -582,6 +707,12 @@ msgid "Customs duties of the declaration"
 msgstr "Impuestos del DUA"
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "DEMO: demo customers only"
+msgstr "DEMO: solo clientes de demostración"
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__positional
 msgid "Day number since the start (\"day 5 to 7\")"
 msgstr "Número de día desde el inicio (\"del día 5 al 7\")"
@@ -604,6 +735,36 @@ msgstr "Días (estimación)"
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__relative
 msgid "Days after the free period (\"5 days at X, then Y\")"
 msgstr "Días tras el periodo libre (\"5 días a X, después Y\")"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__is_demo
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Demo"
+msgstr "Demo"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_partner__boss_demo
+#: model:ir.model.fields,field_description:boss_pricing.field_res_users__boss_demo
+msgid "Demo customer"
+msgstr "Cliente de demostración"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Demo or real customer"
+msgstr "Cliente de demostración o real"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__is_demo
+msgid "Demo tariff"
+msgstr "Tarifa de demostración"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
+msgid "Demo tariffs"
+msgstr "Tarifas de demostración"
 
 #. module: boss_pricing
 #. odoo-python
@@ -670,6 +831,11 @@ msgstr "P. ej. DV, HC, RF, OT, FR, TK."
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__name
 msgid "E.g. MSC local charges import 2026."
 msgstr "P. ej. MSC gastos locales importación 2026."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Empty, so the prices apply to any:"
+msgstr "Vacíos, así que los precios valen para cualquier:"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__load_type
@@ -770,12 +936,6 @@ msgstr "FCL"
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__fcl
 msgid "FCL (full container)"
 msgstr "FCL (contenedor completo)"
-
-#. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_pricing.py:0
-msgid "Fill in on the quotation: %s"
-msgstr "Complete en la oferta: %s"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__lineage_id
@@ -927,7 +1087,13 @@ msgid "Import"
 msgstr "Importación"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Import and export"
+msgstr "Importación y exportación"
+
+#. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "Import/export"
 msgstr "Importación/exportación"
@@ -1013,19 +1179,14 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
-msgid "Left empty, so the prices apply to any:"
-msgstr "Vacíos, así que los precios se aplican a cualquiera:"
-
-#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_bracket__line_id
 msgid "Line"
 msgstr "Línea"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid "Live example"
-msgstr "Ejemplo vivo"
+msgid "Live example (computed by the pricing engine)"
+msgstr "Ejemplo vivo (calculado por el motor de precios)"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__load_type
@@ -1060,6 +1221,11 @@ msgstr ""
 "Importe manual: indique el coste previsto de este envío (p. ej. la oferta de flete)."
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
+msgid "Manual, own fee or pending decision"
+msgstr "Manual, honorario propio o decisión pendiente"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__max_amount
 msgid "Maximum"
 msgstr "Máximo"
@@ -1090,6 +1256,11 @@ msgid "Minimum"
 msgstr "Mínimo"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__ws_bounds_label
+msgid "Minimum / maximum on"
+msgstr "Mínimo / máximo sobre"
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__min_amount
 msgid "Minimum of the line total (all units of this charge together)."
 msgstr ""
@@ -1105,8 +1276,20 @@ msgstr "Nombre"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
+#: code:addons/boss_pricing/models/workspace.py:0
 msgid "New supplier price"
 msgstr "Nuevo precio de proveedor"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/workspace.py:0
+msgid "New supplier tariff"
+msgstr "Nueva tarifa de proveedor"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
+msgid "New tariff"
+msgstr "Nueva tarifa"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
@@ -1119,6 +1302,16 @@ msgid "No"
 msgstr "No"
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__ws_is_empty
+msgid "No amount entered and not marked 'On request' or 'No cost'."
+msgstr "Sin importe y sin marcar «A consultar» ni «Sin coste»."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "No amount yet: it counts as a missing price, never as free."
+msgstr "Aún sin importe: cuenta como precio que falta, nunca como gratis."
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid ""
@@ -1127,7 +1320,13 @@ msgstr ""
 "Ningún precio aprobado de %(service)s por %(uom)s aplica a este envío."
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__free_of_charge
+msgid "No cost (confirmed zero)"
+msgstr "Sin coste (cero confirmado)"
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__product_template__boss_ws_readiness__no_price
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 msgid "No supplier price"
 msgstr "Sin precio de proveedor"
 
@@ -1188,6 +1387,11 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de entrega"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__line_count
+msgid "Number of prices"
+msgstr "Número de precios"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__on_request
 msgid "On Request"
 msgstr "A consultar"
@@ -1229,6 +1433,13 @@ msgstr "Solo un aprobador puede cambiar la prioridad de una tarifa enviada."
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/workspace.py:0
+msgid "Only a tariff approver can mark or unmark a demo customer."
+msgstr ""
+"Solo un aprobador de tarifas puede marcar o desmarcar un cliente de demostración."
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "Only an approved tariff gets new versions; edit the draft instead."
 msgstr "Solo una tarifa aprobada tiene nuevas versiones; edite el borrador."
@@ -1256,11 +1467,6 @@ msgid "Open the contact"
 msgstr "Abrir el contacto"
 
 #. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_list_ws
-msgid "Open the product"
-msgstr "Abrir el producto"
-
-#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
 msgid "Open the supplier document"
 msgstr "Abrir el documento del proveedor"
@@ -1285,6 +1491,7 @@ msgstr ""
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__document_page
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Page"
 msgstr "Página"
 
@@ -1367,6 +1574,11 @@ msgid "Price"
 msgstr "Precio"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__ws_price_unit_label
+msgid "Price per"
+msgstr "Precio por"
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__method__per_unit
 msgid "Price per unit"
 msgstr "Precio por unidad"
@@ -1384,8 +1596,14 @@ msgstr "Precio con su unidad (nunca el total del servicio)."
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__product_template__boss_ws_readiness__ready
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 msgid "Priced"
 msgstr "Con precio"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
+msgid "Priced from supplier tariffs"
+msgstr "Se calcula con tarifas de proveedor"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__basis
@@ -1415,6 +1633,7 @@ msgstr ""
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__product_template__boss_ws_readiness__outdated
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 msgid "Prices expired"
 msgstr "Precios vencidos"
 
@@ -1428,6 +1647,7 @@ msgstr "Precios por aprobar"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__product_template__boss_ws_readiness__pending
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 msgid "Prices waiting for approval"
 msgstr "Precios pendientes de aprobación"
 
@@ -1440,6 +1660,13 @@ msgstr "Prioridad"
 #: model:ir.model,name:boss_pricing.model_product_template
 msgid "Product"
 msgstr "Producto"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid ""
+"Proposed for new supplier prices of this service. Each supplier price can use another calculation (see 'Calculations used')."
+msgstr ""
+"Propuesto para los precios de proveedor nuevos de este servicio. Cada precio de proveedor puede usar otro cálculo (ver «Cálculos usados»)."
 
 #. module: boss_pricing
 #. odoo-python
@@ -1483,6 +1710,16 @@ msgid "Readiness"
 msgstr "Estado"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid "Ready to quote"
+msgstr "Listo para cotizar"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
+msgid "Real tariffs"
+msgstr "Tarifas reales"
+
+#. module: boss_pricing
 #: model:boss.container.type,name:boss_pricing.container_type_rf
 msgid "Reefer"
 msgstr "Reefer"
@@ -1504,6 +1741,26 @@ msgstr "Sustituida por una versión nueva"
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "Result: %s"
 msgstr "Resultado: %s"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Review and approval"
+msgstr "Revisión y aprobación"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Review the scope and tick 'Scope reviewed' (empty = applies to any)."
+msgstr ""
+"Revise el alcance y marque «Alcance revisado» (vacío = vale para cualquiera)."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"Review the scope of '%(tariff)s' and tick 'Scope reviewed': empty fields mean the prices apply to any %(fields)s."
+msgstr ""
+"Revise el alcance de «%(tariff)s» y marque «Alcance revisado»: los campos vacíos significan que los precios valen para cualquier %(fields)s."
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__road
@@ -1543,6 +1800,16 @@ msgstr ""
 "Alcance vacío: los precios se aplican a cualquier valor de estos campos."
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Scope of every price of this tariff"
+msgstr "Alcance de todos los precios de esta tarifa"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__scope_confirmed
+msgid "Scope reviewed"
+msgstr "Alcance revisado"
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__sea
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Sea"
@@ -1555,14 +1822,23 @@ msgstr "Puerto marítimo"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__basis_2
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Second basis"
 msgstr "Segunda base"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "Second basis (the larger amount is charged)"
+msgstr "Segunda base (se cobra el importe mayor)"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__b2_round_up
 msgid "Second basis or fraction"
 msgstr "Segunda base o fracción"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__ws_price2_unit_label
+msgid "Second price per"
+msgstr "Segundo precio por"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__unit_price_2
@@ -1588,21 +1864,24 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__product_id
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__service_name
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_list_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
 msgid "Service"
 msgstr "Servicio"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "Service and source"
+msgstr "Servicio y origen"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Service or code"
 msgstr "Servicio o código"
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid "Service, supplier and source"
-msgstr "Servicio, proveedor y origen"
 
 #. module: boss_pricing
 #: model:ir.actions.act_window,name:boss_pricing.boss_service_ws_action
@@ -1615,10 +1894,11 @@ msgstr "Servicios"
 #. module: boss_pricing
 #: model_terms:ir.actions.act_window,help:boss_pricing.boss_service_ws_action
 msgid ""
-"Services are the standard products of type service with a BOSS cost source.\n"
-"            Search before creating one: a service is never duplicated per supplier."
+"Services are the catalogue: one product per service, whatever the supplier. To price a service\n"
+"            from a new supplier, add a supplier price (button ⊕ of the row); create a service only when it does not\n"
+"            exist yet (Sales › Products)."
 msgstr ""
-"Los servicios son los productos estándar de tipo servicio con origen de coste BOSS. Busque antes de crear uno: un servicio nunca se duplica por proveedor."
+"Los servicios son el catálogo: un producto por servicio, sea cual sea el proveedor. Para cotizar un servicio con un proveedor nuevo, añada un precio de proveedor (botón ⊕ de la fila); cree un servicio solo cuando aún no exista (Ventas › Productos)."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__base_product_ids
@@ -1634,10 +1914,23 @@ msgstr ""
 "Aplican varios precios de proveedor: %s. Elija el transportista, acote el alcance de una tarifa o fije una prioridad."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Shipment data missing: %s. Fill it in (quotation 'Shipment' tab or test panel) to price this service."
+msgstr ""
+"Faltan datos del envío: %s. Complételos (pestaña «Envío» de la oferta o panel de prueba) para cotizar este servicio."
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__carrier_id
 msgid "Shipping line, airline or haulier the prices apply to. Empty: any."
 msgstr ""
 "Naviera, aerolínea o transportista al que aplican los precios. Vacío: cualquiera."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Size"
+msgstr "Tamaño"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__unit_size
@@ -1664,6 +1957,7 @@ msgid "State"
 msgstr "Estado"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_search
 msgid "Status"
 msgstr "Estado"
@@ -1871,11 +2165,42 @@ msgstr ""
 "El documento del proveedor dice 'a consultar' (%s): pregunte al proveedor."
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__free_of_charge
+msgid ""
+"The supplier document says this service costs nothing. Without it, a price without amount is 'missing', never 'free'."
+msgstr ""
+"El documento del proveedor dice que este servicio no cuesta nada. Sin esta marca, un precio sin importe es «falta precio», nunca «gratis»."
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__uom_id
 msgid ""
 "The unit of the quotation line this price serves: container, B/L, shipment, kg... There is no conversion between charge bases."
 msgstr ""
 "La unidad de la línea de oferta a la que sirve este precio: contenedor, BL, expediente, kg... No hay conversión entre bases de cobro."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"There are supplier prices of %(service)s per %(uom)s, but none is valid on %(date)s (expired or not started): ask the supplier for the current document, or check the planned date."
+msgstr ""
+"Hay precios de proveedor de %(service)s por %(uom)s, pero ninguno vigente el %(date)s (vencidos o aún no vigentes): pida al proveedor el documento actual o revise la fecha prevista."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"These prices have no amount: %s. Enter the amount from the document, mark 'On request', or tick 'No cost (confirmed zero)' if the supplier really charges nothing."
+msgstr ""
+"Estos precios no tienen importe: %s. Introduzca el importe del documento, marque «A consultar» o «Sin coste (cero confirmado)» si el proveedor de verdad no cobra nada."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"These values belong to another calculation method and were cleared: %s. Discard the changes to get them back."
+msgstr ""
+"Estos valores son de otra forma de cálculo y se han borrado: %s. Descarte los cambios para recuperarlos."
 
 #. module: boss_pricing
 #: model:ir.model.constraint,message:boss_pricing.constraint_boss_port_code_kind_unique
@@ -1894,6 +2219,13 @@ msgid ""
 "                    tariff and create a new version (or set it back to draft) to change it."
 msgstr ""
 "Este precio pertenece a una tarifa enviada a aprobación o aprobada: no cambia. Abra la tarifa y cree una versión nueva (o vuélvala a borrador) para cambiarlo."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__scope_confirmed
+msgid ""
+"Tick it once the scope matches the supplier document: the fields left empty then mean 'applies to any', not 'not filled in yet'. Required to send the tariff for approval."
+msgstr ""
+"Márquelo cuando el alcance coincida con el documento del proveedor: los campos vacíos significan entonces «vale para cualquiera», no «sin rellenar». Necesario para enviar la tarifa a aprobación."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__tier_mode
@@ -1915,6 +2247,22 @@ msgid "To approve"
 msgstr "Por aprobar"
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_partner__boss_demo
+#: model:ir.model.fields,help:boss_pricing.field_res_users__boss_demo
+msgid ""
+"Training or demonstration customer: only this kind of customer can be priced with demo tariffs. Real customers never are."
+msgstr ""
+"Cliente de formación o demostración: solo este tipo de cliente se cotiza con tarifas de demostración. Los clientes reales nunca."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__is_demo
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__is_demo
+msgid ""
+"Training or demonstration prices: they only price customers marked as demo customers, never a real customer (even when no other price exists)."
+msgstr ""
+"Precios de formación o demostración: solo cotizan clientes marcados como de demostración, nunca un cliente real (aunque no exista otro precio)."
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__transport_mode
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__transport_mode
 msgid "Transport Mode"
@@ -1933,6 +2281,11 @@ msgid ""
 "Two prices for %(svc)s with the same unit and container: they would conflict."
 msgstr ""
 "Dos precios de %(svc)s con la misma unidad y contenedor: darían conflicto."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Types"
+msgstr "Tipos"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_port__code
@@ -1957,6 +2310,7 @@ msgstr "Hasta"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Until a newer version"
 msgstr "Hasta una versión nueva"
 
@@ -1980,6 +2334,11 @@ msgstr ""
 #: model:res.groups,name:boss_pricing.group_tariff_user
 msgid "User: enter tariffs"
 msgstr "Usuario: introduce tarifas"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
+msgid "Usual calculation"
+msgstr "Cálculo habitual"
 
 #. module: boss_pricing
 #: model:boss.port,name:boss_pricing.port_esvlc
@@ -2018,15 +2377,25 @@ msgstr "Precios vigentes"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__validity_state
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Validity"
 msgstr "Vigencia"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "Values cleared"
+msgstr "Valores borrados"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__version
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__version
 msgid "Version"
 msgstr "Versión"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Version and validity"
+msgstr "Versión y vigencia"
 
 #. module: boss_pricing
 #: model:boss.port,name:boss_pricing.port_esvgo
@@ -2082,6 +2451,19 @@ msgid "Who invoices BOSS for these services."
 msgstr "Quién factura a BOSS estos servicios."
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid ""
+"Whoever enters the prices sends the tariff for approval; an approver checks them against\n"
+"                                the document and approves. Approved prices never change: a change is a new version."
+msgstr ""
+"Quien introduce los precios envía la tarifa a aprobación; un aprobador los comprueba con el documento y aprueba. Los precios aprobados no cambian nunca: un cambio es una versión nueva."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__ws_is_empty
+msgid "Without amount"
+msgstr "Sin importe"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "Write the document reference (title and edition)."
@@ -2089,14 +2471,32 @@ msgstr "Escriba la referencia del documento (título y edición)."
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "any customer"
+msgstr "cualquier cliente"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "any mode"
 msgstr "cualquier modo"
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "carrier %s"
+msgstr "transportista %s"
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "e.g. MSC local charges import 2026"
 msgstr "p. ej. MSC gastos locales importación 2026"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
+msgid "expired or expiring"
+msgstr "vencidos o por vencer"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__volumetric_factor
@@ -2141,6 +2541,7 @@ msgstr "no inferior al tramo anterior: %s"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "only %s"
 msgstr "solo %s"
@@ -2152,6 +2553,11 @@ msgid "tariff %(index)s (%(key)s)"
 msgstr "la tarifa %(index)s (%(key)s)"
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
+msgid "to approve ·"
+msgstr "por aprobar ·"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "up to %s"
@@ -2159,6 +2565,7 @@ msgstr "hasta %s"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
+#: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
 msgid "v."
 msgstr "v."
 

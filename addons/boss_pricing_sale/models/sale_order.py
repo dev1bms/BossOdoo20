@@ -63,6 +63,8 @@ class SaleOrder(models.Model):
             "country_id": self.boss_country_id.id,
             "state_id": self.boss_inland_state_id.id,
             "customer_id": self.partner_id.commercial_partner_id.id,
+            # always given: demo tariffs never price a real customer, not even "for lack of input"
+            "tariff_use": "demo" if self.partner_id.commercial_partner_id.boss_demo else "real",
             "containers": [{"size": c.size, "type_id": c.container_type_id.id, "quantity": c.quantity}
                            for c in self.boss_container_ids],
             "gross_kg": self.boss_gross_kg or None,

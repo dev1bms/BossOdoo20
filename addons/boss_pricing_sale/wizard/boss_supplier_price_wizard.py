@@ -116,6 +116,9 @@ class BossSupplierPriceWizard(models.TransientModel):
             "carrier_id": self.carrier_id.id, "port_ids": [(6, 0, self.port_ids.ids)],
             "country_ids": [(6, 0, self.country_ids.ids)],
             "customer_id": order.partner_id.commercial_partner_id.id if self.only_this_customer else False,
+            # the scope was shown and edited here (taken from the quotation): reviewed
+            "scope_confirmed": True,
+            "is_demo": order.partner_id.commercial_partner_id.boss_demo,
         }
 
     def action_save(self):

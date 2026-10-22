@@ -26,6 +26,7 @@ for source_name, name in SOURCES.items():
                                 "valid_to": date(2026, 12, 31), "document": DOC,
                                 "document_name": "demo-espacio.pdf",
                                 "document_reference": "[DEMO] tarifa ilustrativa espacio de trabajo",
+                                "is_demo": True,
                                 "note": "[DEMO] Importes ilustrativos (prueba del espacio de trabajo)."})
     print(tariff.id, tariff.name, tariff.state, tariff.partner_id.name, len(tariff.line_ids))
 

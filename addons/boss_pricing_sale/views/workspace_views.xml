@@ -51,6 +51,11 @@
                         <field name="line_qty" invisible="quantity_source != 'input'"/>
                     </group>
                 </group>
+                <field name="simulated" invisible="1"/>
+                <div class="alert alert-warning mb-2" role="status" invisible="not simulated">
+                    <strong>Simulation:</strong> the supplier price used is not approved yet. This cost is not usable in
+                    quotations until an approver approves the tariff.
+                </div>
                 <group string="Result">
                     <group>
                         <field name="status" widget="badge" decoration-success="status == 'ok'"

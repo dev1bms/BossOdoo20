@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 # Workspace «Tarifas y proveedores»: summaries on the standard service product and contact (no parallel
 # catalogue, no supplier model). Counts follow the record rules of the reader (company, access).
@@ -23,7 +24,16 @@ class ProductTemplate(models.Model):
     boss_ws_pending_count = fields.Integer("Prices to approve", compute="_compute_boss_ws")
     boss_ws_methods = fields.Char("Calculations", compute="_compute_boss_ws",
                                   help="Calculation used by each supplier (it can differ between suppliers).")
-    boss_ws_readiness = fields.Selection(READINESS, "Readiness", compute="_compute_boss_ws")
+    boss_ws_readiness = fields.Selection(READINESS, "Readiness", compute="_compute_boss_ws",
+                                         search="_search_boss_ws_readiness")
+
+    def _search_boss_ws_readiness(self, operator, value):
+        """Filter on the computed readiness (it depends on today's validity, so it is never stored)."""
+        if operator not in ("in", "="):
+            return NotImplemented
+        wanted = {value} if operator == "=" else set(value)
+        services = self.search([("boss_pricing_mode", "!=", False)])
+        return [("id", "in", services.filtered(lambda t: t.boss_ws_readiness in wanted).ids)]
 
     @api.depends_context("company", "lang")
     def _compute_boss_ws(self):
@@ -62,6 +72,14 @@ class ProductTemplate(models.Model):
         action["name"] = self.display_name
         return action
 
+    def action_boss_ws_new_price(self):
+        """Add a supplier price to this existing service (never a new product)."""
+        self.ensure_one()
+        return {"type": "ir.actions.act_window", "res_model": "boss.tariff.line", "view_mode": "form",
+                "views": [(self.env.ref("boss_pricing.boss_tariff_line_view_form").id, "form")], "target": "current",
+                "name": self.env._("New supplier price"),
+                "context": {"boss_ws": 1, "default_product_id": self.product_variant_id.id}}
+
     def action_boss_ws_open(self):
         self.ensure_one()
         return {"type": "ir.actions.act_window", "res_model": "product.template", "res_id": self.id,
@@ -77,11 +95,20 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     boss_tariff_ids = fields.One2many("boss.tariff", "partner_id", "Supplier tariffs")
+    boss_demo = fields.Boolean(
+        "Demo customer", help="Training or demonstration customer: only this kind of customer can be priced with "
+        "demo tariffs. Real customers never are.")
     boss_ws_tariff_count = fields.Integer("Tariffs", compute="_compute_boss_ws")
     boss_ws_price_count = fields.Integer("Supplier prices", compute="_compute_boss_ws")
     boss_ws_pending_count = fields.Integer("Prices to approve", compute="_compute_boss_ws")
     boss_ws_outdated_count = fields.Integer("Expired or expiring", compute="_compute_boss_ws")
     boss_ws_service_count = fields.Integer("Services", compute="_compute_boss_ws")
+
+    def write(self, vals):
+        # A demo customer can be priced with demo tariffs: only a tariff approver decides who is one.
+        if "boss_demo" in vals and not self.env.su and not self.env.user.has_group("boss_pricing.group_tariff_approver"):
+            raise UserError(self.env._("Only a tariff approver can mark or unmark a demo customer."))
+        return super().write(vals)
 
     @api.depends_context("company")
     def _compute_boss_ws(self):
@@ -107,6 +134,12 @@ class ResPartner(models.Model):
         action["context"] = {"search_default_ws_current": 1, "search_default_ws_pending": 1}
         action["name"] = self.display_name
         return action
+
+    def action_boss_ws_new_tariff(self):
+        self.ensure_one()
+        return {"type": "ir.actions.act_window", "res_model": "boss.tariff", "view_mode": "form",
+                "views": [(False, "form")], "target": "current", "name": self.env._("New supplier tariff"),
+                "context": {"default_partner_id": self.id}}
 
     def action_boss_ws_tariffs(self):
         self.ensure_one()

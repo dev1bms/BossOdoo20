@@ -57,6 +57,7 @@ class BossPricing(models.AbstractModel):
             "volumetric_factor": _("Volumetric factor of the tariff"),
             "base_services": _("Base services of the same supplier"),
             "base_services_currency": _("Base services in the tariff currency"),
+            "tariff_use": _("Demo or real customer"),
         }
 
     @api.model
@@ -164,10 +165,17 @@ class BossPricing(models.AbstractModel):
             return f"{text}\n{source}"
         if status == "missing_input":
             labels = self._input_labels()
-            return _("Fill in on the quotation: %s", ", ".join(labels.get(m, m) for m in missing))
+            return _("Shipment data missing: %s. Fill it in (quotation 'Shipment' tab or test panel) to price this "
+                     "service.", ", ".join(labels.get(m, m) for m in missing))
         if status == "no_tariff":
             if steps and steps[0][0] == "out_of_range":
                 return _("The quantity is outside the brackets of the supplier document: ask the supplier.")
+            if steps and steps[0][0] == "no_rule_on_date":
+                day = steps[0][1].get("date")
+                return _("There are supplier prices of %(service)s per %(uom)s, but none is valid on %(date)s "
+                         "(expired or not started): ask the supplier for the current document, or check the "
+                         "planned date.", service=product.display_name, uom=uom.name,
+                         date=format_date(self.env, day) if day else "-")
             return _("No approved supplier price of %(service)s per %(uom)s applies to this shipment.",
                      service=product.display_name, uom=uom.name)
         if status == "pending_approval":

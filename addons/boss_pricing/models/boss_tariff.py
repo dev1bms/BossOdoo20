@@ -7,8 +7,10 @@ SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_
                 "state_ids", "customer_id")
 # Approved = evidence: these fields never change; a change is a new version.
 GOVERNED_FIELDS = SCOPE_FIELDS + (
-    "partner_id", "currency_id", "valid_from", "valid_to", "document", "document_reference",
+    "partner_id", "currency_id", "valid_from", "valid_to", "document", "document_reference", "is_demo",
 )
+# Engine condition of demonstration tariffs: they price only demonstration customers (input `tariff_use`).
+DEMO_USE = "demo"
 # Only set by the workflow methods (never by create, import, RPC or a form).
 WORKFLOW_FIELDS = ("state", "approved_by_id", "approved_date", "version", "lineage_id")
 
@@ -65,10 +67,41 @@ class BossTariff(models.Model):
         help="Province of the pickup or delivery place in Spain (e.g. a haulier's zone). Empty: any.")
     customer_id = fields.Many2one("res.partner", "Customer", tracking=True,
                                   help="Prices agreed for this customer only. They win over general prices.")
+    is_demo = fields.Boolean(
+        "Demo tariff", tracking=True,
+        help="Training or demonstration prices: they only price customers marked as demo customers, never a "
+        "real customer (even when no other price exists).")
+    scope_confirmed = fields.Boolean(
+        "Scope reviewed",  # a new version keeps the reviewed scope it was copied from
+        help="Tick it once the scope matches the supplier document: the fields left empty then mean "
+        "'applies to any', not 'not filled in yet'. Required to send the tariff for approval.")
+    scope_summary = fields.Char("Applies to", compute="_compute_scope_summary")
     line_ids = fields.One2many("boss.tariff.line", "tariff_id", "Prices", copy=True)
+    line_count = fields.Integer("Number of prices", compute="_compute_scope_summary")
     approved_by_id = fields.Many2one("res.users", readonly=True, copy=False)
     approved_date = fields.Datetime(readonly=True, copy=False)
     note = fields.Text()
+
+    @api.depends(*SCOPE_FIELDS, "is_demo", "line_ids")
+    @api.depends_context("lang")
+    def _compute_scope_summary(self):
+        _ = self.env._
+        for tariff in self:
+            label = lambda name, t=tariff: dict(t._fields[name]._description_selection(self.env)).get(t[name])  # noqa: E731
+            parts = [label("direction") or _("Import/export"), label("transport_mode") or _("any mode")]
+            if tariff.load_type:
+                parts.append(label("load_type"))
+            for names in (tariff.port_ids.mapped("code"), tariff.country_ids.mapped("name"),
+                          tariff.state_ids.mapped("name")):
+                if names:
+                    parts.append(", ".join(names))
+            if tariff.carrier_id:
+                parts.append(_("carrier %s", tariff.carrier_id.name))
+            parts.append(_("only %s", tariff.customer_id.name) if tariff.customer_id else _("any customer"))
+            if tariff.is_demo:
+                parts.append(_("DEMO: demo customers only"))
+            tariff.scope_summary = " · ".join(parts)
+            tariff.line_count = len(tariff.line_ids)
 
     @api.constrains("valid_from", "valid_to")
     def _check_dates(self):
@@ -115,6 +148,16 @@ class BossTariff(models.Model):
                 raise UserError(self.env._(
                     "Attach the supplier document of '%s': every price must be traceable to it.",
                     tariff.name))
+            if not tariff.scope_confirmed:
+                raise UserError(self.env._(
+                    "Review the scope of '%(tariff)s' and tick 'Scope reviewed': empty fields mean the prices apply "
+                    "to any %(fields)s.", tariff=tariff.name, fields=tariff.ws_open_scope or "-"))
+            empty = tariff.line_ids.filtered("ws_is_empty")
+            if empty:
+                raise UserError(self.env._(
+                    "These prices have no amount: %s. Enter the amount from the document, mark 'On request', or "
+                    "tick 'No cost (confirmed zero)' if the supplier really charges nothing.",
+                    ", ".join(empty.mapped("display_name"))))
             tariff._workflow_write({"state": "to_approve"})
 
     def action_approve(self):
@@ -148,7 +191,8 @@ class BossTariff(models.Model):
                                 help="Scope left empty: the prices apply to every value of these fields.")
 
     @api.depends("line_ids", "line_ids.product_id", "line_ids.uom_id", "line_ids.container_size",
-                 "line_ids.container_type_ids", "document", "document_reference", *SCOPE_FIELDS)
+                 "line_ids.container_type_ids", "line_ids.ws_is_empty", "document", "document_reference",
+                 "scope_confirmed", *SCOPE_FIELDS)
     @api.depends_context("lang")
     def _compute_ws_checklist(self):
         _ = self.env._
@@ -160,6 +204,11 @@ class BossTariff(models.Model):
                 todo.append(_("Attach the supplier document."))
             if not tariff.document_reference:
                 todo.append(_("Write the document reference (title and edition)."))
+            if not tariff.scope_confirmed:
+                todo.append(_("Review the scope and tick 'Scope reviewed' (empty = applies to any)."))
+            for line in tariff.line_ids.filtered("ws_is_empty"):
+                todo.append(_("%s has no amount: enter it, or mark 'On request' or 'No cost (confirmed zero)'.",
+                              line.product_id.display_name))
             seen = {}
             for line in tariff.line_ids:
                 key = (line.product_id.id, line.uom_id.id, line.container_size, frozenset(line.container_type_ids.ids))
@@ -200,4 +249,6 @@ class BossTariff(models.Model):
             conditions["country_id"] = set(self.country_ids.ids)
         if self.state_ids:
             conditions["state_id"] = set(self.state_ids.ids)
+        if self.is_demo:
+            conditions["tariff_use"] = {DEMO_USE}
         return conditions

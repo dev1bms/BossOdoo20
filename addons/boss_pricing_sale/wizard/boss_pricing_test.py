@@ -70,6 +70,9 @@ class BossPricingTest(models.TransientModel):
     tariff_line_id = fields.Many2one("boss.tariff.line", "Supplier price used", compute="_compute_result")
     explanation = fields.Text(compute="_compute_result")
     choice = fields.Text("Why this price", compute="_compute_result")
+    simulated = fields.Boolean(compute="_compute_result",
+                               help="The price used is not approved: the result is a simulation, not usable in "
+                               "quotations until the tariff is approved.")
     sale_currency_id = fields.Many2one("res.currency", compute="_compute_result")
     sale_unit = fields.Monetary("Sale price per unit", currency_field="sale_currency_id", compute="_compute_result")
     sale_total = fields.Monetary("Sale", currency_field="sale_currency_id", compute="_compute_result")
@@ -155,7 +158,8 @@ class BossPricingTest(models.TransientModel):
         for test in self:
             test.update({"quantity": 0.0, "status": False, "cost_amount": 0.0, "cost_currency_id": False,
                          "tariff_line_id": False, "explanation": False, "choice": False, "sale_unit": 0.0,
-                         "sale_total": 0.0, "profit": 0.0, "sale_note": False, "sale_currency_id": False})
+                         "sale_total": 0.0, "profit": 0.0, "sale_note": False, "sale_currency_id": False,
+                         "simulated": False})
             if not test.product_id or not test.uom_id:
                 test.explanation = _("Choose a service and its charge basis.")
                 continue
@@ -168,6 +172,7 @@ class BossPricingTest(models.TransientModel):
             test.cost_amount = res.amount
             test.cost_currency_id = res.currency or res.line.currency_id
             test.tariff_line_id = res.line
+            test.simulated = bool(res.line) and res.line.tariff_id.state != "approved"
             test.explanation = pricing.explain(test.product_id, test.uom_id, res.status, res.amount, res.line,
                                                res.candidates, res.missing, res.steps)
             test.choice = test._choice_text(res)

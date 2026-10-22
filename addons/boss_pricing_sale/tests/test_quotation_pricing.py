@@ -39,6 +39,7 @@ class TestQuotationPricing(TransactionCase):
             "name": f"{carrier.name} {product.default_code}", "partner_id": carrier.id, "carrier_id": carrier.id,
             "currency_id": cls.cur.id, "valid_from": date(2026, 1, 1), "direction": "import",
             "transport_mode": "sea", "load_type": "fcl", "document": DOC, "document_reference": "Doc 2026",
+            "scope_confirmed": True,
             "line_ids": [Command.create({"product_id": product.id, "uom_id": product.uom_id.id,
                                          "container_size": size, "basis": "containers", "unit_price": price,
                                          "document_page": "4"}) for size, price in prices],
@@ -172,7 +173,7 @@ class TestQuotationPricing(TransactionCase):
         # Days per line: shipment days by default, an estimate of the line (0 deliberate) or the actual period.
         dem = self.env.ref("boss_services.service_dem").product_variant_id
         self._approved(self.env["boss.tariff"].create({
-            "name": "DEM dias", "partner_id": self.carrier_a.id, "carrier_id": self.carrier_a.id,
+            "name": "DEM dias", "partner_id": self.carrier_a.id, "carrier_id": self.carrier_a.id, "scope_confirmed": True,
             "currency_id": self.cur.id, "valid_from": date(2026, 1, 1), "document": DOC,
             "line_ids": [Command.create({"product_id": dem.id, "uom_id": dem.uom_id.id, "method": "time",
                                          "basis": "containers", "free_days": 4, "free_mode": "deduct",
@@ -188,7 +189,7 @@ class TestQuotationPricing(TransactionCase):
     def test_time_estimate(self):
         dem = self.env.ref("boss_services.service_dem").product_variant_id
         tariff = self.env["boss.tariff"].create({
-            "name": "DEM test", "partner_id": self.carrier_a.id, "carrier_id": self.carrier_a.id,
+            "name": "DEM test", "partner_id": self.carrier_a.id, "carrier_id": self.carrier_a.id, "scope_confirmed": True,
             "currency_id": self.cur.id, "valid_from": date(2026, 1, 1), "document": DOC,
             "line_ids": [Command.create({
                 "product_id": dem.id, "uom_id": dem.uom_id.id, "method": "time", "basis": "containers",
@@ -334,3 +335,26 @@ class TestQuotationPricing(TransactionCase):
         clerk = new_test_user(self.env, "boss_clerk", groups="base.group_user")
         with self.assertRaises(AccessError):
             self.env["boss.tariff.line"].with_user(clerk).search([]).mapped("unit_price")
+
+    def test_demo_tariffs_and_empty_prices_never_price_real_work(self):
+        cesp = self.env.ref("boss_services.service_ces").product_variant_id
+        demo = self._tariff(self.carrier_a, [("40", 99.0)], product=cesp, is_demo=True)
+        self._approved(demo)
+        # the only price of CES is a demo price: a real customer gets "no price", never the demo amount
+        real_line = self._line(self._order(services=cesp), "40", cesp)
+        self.assertEqual(real_line.boss_cost_status, "no_tariff")
+        with self.assertRaises(UserError):  # only an approver decides who is a demo customer
+            self.customer.with_user(self.salesman).boss_demo = True
+        self.customer.boss_demo = True
+        demo_line = self._line(self._order(services=cesp), "40", cesp)
+        self.assertEqual((demo_line.boss_cost_status, demo_line.boss_cost_amount), ("ok", 99.0))
+        # scope not reviewed, or a price without amount: not sent for approval
+        draft = self._tariff(self.carrier_b, [("40", 0.0)], scope_confirmed=False)
+        with self.assertRaises(UserError):
+            draft.action_submit()
+        draft.scope_confirmed = True
+        with self.assertRaises(UserError):  # 0 without "No cost (confirmed zero)" is a missing price
+            draft.action_submit()
+        draft.line_ids.free_of_charge = True
+        draft.action_submit()
+        self.assertEqual(draft.state, "to_approve")

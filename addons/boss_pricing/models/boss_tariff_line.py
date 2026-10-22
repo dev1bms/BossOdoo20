@@ -238,13 +238,56 @@ class BossTariffLineWorkspace(models.Model):
     calc_display = fields.Char("Calculation", compute="_compute_workspace_display")
     example_text = fields.Text("Example", compute="_compute_example_text",
                                help="Illustrative shipment computed with the engine and these values.")
+    is_demo = fields.Boolean(related="tariff_id.is_demo", store=True, string="Demo")
+    free_of_charge = fields.Boolean(
+        "No cost (confirmed zero)",
+        help="The supplier document says this service costs nothing. Without it, a price without amount is "
+        "'missing', never 'free'.")
+    ws_is_empty = fields.Boolean("Without amount", compute="_compute_ws_amount_labels",
+                                 help="No amount entered and not marked 'On request' or 'No cost'.")
+    ws_price_unit_label = fields.Char("Price per", compute="_compute_ws_amount_labels")
+    ws_price2_unit_label = fields.Char("Second price per", compute="_compute_ws_amount_labels")
+    ws_bounds_label = fields.Char("Minimum / maximum on", compute="_compute_ws_amount_labels")
+    ws_brackets_label = fields.Char("Brackets in", compute="_compute_ws_amount_labels")
+
+    @api.depends("method", "basis", "unit_size", "basis_2", "b2_unit_size", "uom_id", "currency_id",
+                 "percent_base", "unit_price", "unit_price_2", "rate", "bracket_ids.unit_price",
+                 "bracket_ids.fixed_amount", "on_request", "free_of_charge")
+    @api.depends_context("lang")
+    def _compute_ws_amount_labels(self):
+        """What each amount of the form is charged on, in words (from the line's own basis and unit)."""
+        _ = self.env._
+        for line in self:
+            cur = line.currency_id.name or ""
+            unit = line._ws_unit(line.basis, line.unit_size) if line.basis else ""
+            line.ws_price_unit_label = _("%(cur)s per %(unit)s", cur=cur, unit=unit)
+            line.ws_price2_unit_label = _("%(cur)s per %(unit)s", cur=cur,
+                                          unit=line._ws_unit(line.basis_2, line.b2_unit_size) if line.basis_2 else "")
+            line.ws_bounds_label = _("%(cur)s on the cost of the whole quotation line (%(uom)s)", cur=cur,
+                                     uom=line.uom_id.name or "-")
+            if line.method == "time":
+                line.ws_brackets_label = _("'Up to' = day number (0 = no limit) · price in %(cur)s per %(unit)s and day",
+                                           cur=cur, unit=unit)
+            else:
+                line.ws_brackets_label = _("'Up to' in %(unit)s (0 = no limit) · fixed amount in %(cur)s for the "
+                                           "bracket · unit price in %(cur)s per %(unit)s", cur=cur, unit=unit)
+            if line.on_request or line.free_of_charge:
+                empty = False
+            elif line.method in ("per_unit", "max_of_bases"):
+                empty = not (line.unit_price or line.unit_price_2)
+            elif line.method == "percent":
+                empty = not line.rate
+            else:
+                empty = not any(b.unit_price or b.fixed_amount for b in line.bracket_ids)
+            line.ws_is_empty = empty
 
     def _ws_label(self, fname, value, record=None):
         record = record or self
         return dict(record._fields[fname]._description_selection(self.env)).get(value, value or "")
 
     def _ws_unit(self, basis, unit_size):
-        unit = self.uom_id.name if basis == "line" else self._ws_label("basis", basis)
+        # per container the unit of the line says it best («Contenedor»); other bases name their measure
+        unit = self.uom_id.name if basis in ("line", "containers") else self._ws_label("basis", basis)
         size = unit_size if unit_size and unit_size != 1 else None
         return f"{self.env['boss.pricing']._num(size)} {unit}" if size else unit
 
@@ -382,19 +425,25 @@ class BossTariffLineWorkspace(models.Model):
 
     @api.onchange("method")
     def _onchange_method_clear(self):
+        """Values of another method never stay hidden in the calculation; the user is told what was cleared."""
+        cleared = []
         for method, names in METHOD_FIELDS.items():
             if self.method == method:
                 continue
             for name in names:
                 field = self._fields[name]
-                if field.type == "many2many":
-                    self[name] = [(5,)]
-                elif field.default:
-                    self[name] = field.default(self)
-                else:
-                    self[name] = False
-        if self.method not in ("brackets", "time"):
+                default = [(5,)] if field.type == "many2many" else (field.default(self) if field.default else False)
+                current = self[name]
+                if current and current != (field.default(self) if field.default else False):
+                    cleared.append(field.get_description(self.env)["string"])
+                self[name] = default
+        if self.method not in ("brackets", "time") and self.bracket_ids:
+            cleared.append(self._fields["bracket_ids"].get_description(self.env)["string"])
             self.bracket_ids = [(5,)]
+        if cleared:
+            return {"warning": {"title": self.env._("Values cleared"), "message": self.env._(
+                "These values belong to another calculation method and were cleared: %s. Discard the changes to "
+                "get them back.", ", ".join(cleared))}}
 
     def action_ws_open(self):
         self.ensure_one()

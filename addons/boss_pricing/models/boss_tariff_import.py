@@ -103,6 +103,8 @@ class BossTariff(models.Model):
                 "state_ids": [(6, 0, [self._boss_import_ref(
                     "res.country.state", [("country_id.code", "=", "ES"), ("code", "=", c)], c).id
                     for c in spec.get("states", [])])],
+                # the structured file states the scope explicitly (empty = any, on purpose): reviewed
+                "scope_confirmed": True,
                 "line_ids": [(0, 0, self._boss_import_line(line, f"{label}, line {n}"))
                              for n, line in enumerate(spec["lines"], start=1)],
             }

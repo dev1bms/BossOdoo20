@@ -7,14 +7,17 @@
         <field name="priority">30</field>
         <field name="arch" type="xml">
             <list decoration-muted="validity_state in ('expired', 'replaced')">
-                <field name="service_code" string="Code" width="70px"/>
-                <field name="service_name" width="150px"/>
-                <field name="partner_id" string="Supplier" width="120px"/>
-                <field name="scope_display" width="190px"/>
+                <field name="service_code" string="Code" width="64px"/>
+                <field name="service_name" width="190px"/>
+                <field name="partner_id" string="Supplier" width="110px"/>
+                <field name="scope_display" width="170px"/>
+                <field name="uom_id" string="Charge basis" width="90px" optional="show"/>
                 <field name="calc_display" optional="hide"/>
-                <field name="price_display" width="210px"/>
+                <field name="price_display" width="250px"/>
+                <field name="currency_id" optional="hide"/>
                 <field name="valid_from" optional="hide"/>
-                <field name="valid_to" string="Until" optional="show" width="80px"/>
+                <field name="valid_to" string="Until" optional="show" width="76px"/>
+                <field name="is_demo" string="Demo" optional="hide"/>
                 <field name="validity_state" widget="badge" width="150px"
                        decoration-success="validity_state == 'current'"
                        decoration-warning="validity_state in ('expiring', 'to_approve', 'future')"
@@ -65,6 +68,9 @@
                 <filter string="LCL" name="ws_lcl" domain="[('load_type', 'in', ('lcl', False))]"/>
                 <separator/>
                 <filter string="Archived tariffs" name="ws_archived" domain="[('tariff_active', '=', False)]"/>
+                <separator/>
+                <filter string="Real tariffs" name="ws_real" domain="[('is_demo', '=', False)]"/>
+                <filter string="Demo tariffs" name="ws_demo" domain="[('is_demo', '=', True)]"/>
                 <group>
                     <filter string="Supplier" name="ws_by_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Service" name="ws_by_product" context="{'group_by': 'product_id'}"/>
@@ -100,17 +106,40 @@
                 <field name="default_code" string="Code" width="70px"/>
                 <field name="name" string="Service"/>
                 <field name="boss_pricing_mode" optional="show"/>
-                <field name="boss_ws_methods" optional="show"/>
-                <field name="boss_ws_supplier_ids" widget="many2many_tags" optional="show"/>
-                <field name="boss_ws_current_count" string="Valid" optional="show"/>
-                <field name="boss_ws_pending_count" string="To approve" optional="show"/>
-                <field name="boss_ws_readiness" widget="badge"
+                <field name="boss_ws_methods" optional="show" width="150px"/>
+                <field name="boss_ws_supplier_ids" widget="many2many_tags" optional="show" width="170px"/>
+                <field name="boss_ws_current_count" string="Valid" optional="show" width="60px"/>
+                <field name="boss_ws_pending_count" string="To approve" optional="show" width="80px"/>
+                <field name="boss_ws_readiness" widget="badge" width="190px"
                        decoration-success="boss_ws_readiness == 'ready'"
                        decoration-warning="boss_ws_readiness in ('pending', 'outdated')"
                        decoration-danger="boss_ws_readiness == 'no_price'"/>
                 <button name="action_boss_ws_prices" type="object" icon="format_list_bulleted" title="Supplier prices of this service"/>
-                <button name="action_boss_ws_open" type="object" icon="open_in_new" title="Open the product"/>
+                <button name="action_boss_ws_new_price" type="object" icon="add_circle" title="Add a supplier price to this service"
+                        invisible="boss_pricing_mode != 'tariff'" groups="boss_pricing.group_tariff_user"/>
             </list>
+        </field>
+    </record>
+
+    <record id="boss_service_view_search_ws" model="ir.ui.view">
+        <field name="name">product.template.search.boss.workspace</field>
+        <field name="model">product.template</field>
+        <field name="priority">40</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Service or code" filter_domain="['|', ('name', 'ilike', self), ('default_code', 'ilike', self)]"/>
+                <filter string="Priced" name="ws_ready" domain="[('boss_ws_readiness', '=', 'ready')]"/>
+                <filter string="No supplier price" name="ws_no_price" domain="[('boss_ws_readiness', '=', 'no_price')]"/>
+                <filter string="Prices waiting for approval" name="ws_pending" domain="[('boss_ws_readiness', '=', 'pending')]"/>
+                <filter string="Prices expired" name="ws_outdated" domain="[('boss_ws_readiness', '=', 'outdated')]"/>
+                <separator/>
+                <filter string="Priced from supplier tariffs" name="ws_tariff" domain="[('boss_pricing_mode', '=', 'tariff')]"/>
+                <filter string="Manual, own fee or pending decision" name="ws_not_tariff" domain="[('boss_pricing_mode', '!=', 'tariff')]"/>
+                <group>
+                    <filter string="Cost source" name="ws_by_mode" context="{'group_by': 'boss_pricing_mode'}"/>
+                    <filter string="Calculation" name="ws_by_method" context="{'group_by': 'boss_cost_method'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -119,11 +148,13 @@
         <field name="res_model">product.template</field>
         <field name="view_mode">list,form</field>
         <field name="view_id" ref="boss_service_view_list_ws"/>
+        <field name="search_view_id" ref="boss_service_view_search_ws"/>
         <field name="domain">[('boss_pricing_mode', '!=', False)]</field>
         <field name="context">{'default_type': 'service'}</field>
         <field name="help" type="html">
-            <p>Services are the standard products of type service with a BOSS cost source.
-            Search before creating one: a service is never duplicated per supplier.</p>
+            <p>Services are the catalogue: one product per service, whatever the supplier. To price a service
+            from a new supplier, add a supplier price (button ⊕ of the row); create a service only when it does not
+            exist yet (Sales › Products).</p>
         </field>
     </record>
 
@@ -132,6 +163,30 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//page[@name='boss_pricing']//field[@name='boss_cost_method']" position="attributes">
+                <attribute name="string">Usual calculation</attribute>
+                <attribute name="help">Proposed for new supplier prices of this service. Each supplier price can use another calculation (see 'Calculations used').</attribute>
+            </xpath>
+            <xpath expr="//page[@name='boss_pricing']/group" position="before">
+                <group string="Ready to quote"
+                       invisible="boss_pricing_mode != 'tariff'">
+                    <group>
+                        <field name="boss_ws_readiness" widget="badge"
+                               decoration-success="boss_ws_readiness == 'ready'"
+                               decoration-warning="boss_ws_readiness in ('pending', 'outdated')"
+                               decoration-danger="boss_ws_readiness == 'no_price'"/>
+                        <field name="boss_ws_supplier_ids" widget="many2many_tags"/>
+                        <field name="boss_ws_methods" string="Calculations used"/>
+                    </group>
+                    <group>
+                        <button name="action_boss_ws_new_price" type="object" string="Add supplier price"
+                                class="btn-secondary" groups="boss_pricing.group_tariff_user" colspan="2"/>
+                        <div colspan="2" class="text-muted small">
+                            A new supplier of this service is a new price, never a new product.
+                        </div>
+                    </group>
+                </group>
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="payments"
                         invisible="boss_pricing_mode != 'tariff'" groups="boss_pricing.group_tariff_user">
@@ -191,6 +246,35 @@
                         invisible="not boss_ws_price_count" groups="boss_pricing.group_tariff_user">
                     <field name="boss_ws_price_count" widget="statinfo" string="Supplier prices"/>
                 </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Supplier tariffs" name="boss_tariffs" invisible="not boss_ws_tariff_count"
+                      groups="boss_pricing.group_tariff_user">
+                    <div class="d-flex gap-2 mb-2">
+                        <button name="action_boss_ws_prices" type="object" string="Supplier prices" class="btn-secondary"/>
+                        <button name="action_boss_ws_new_tariff" type="object" string="New tariff" class="btn-secondary"/>
+                        <span class="text-muted small align-self-center">
+                            <field name="boss_ws_pending_count" class="d-inline"/> to approve ·
+                            <field name="boss_ws_outdated_count" class="d-inline"/> expired or expiring
+                        </span>
+                    </div>
+                    <field name="boss_tariff_ids" readonly="1" context="{'active_test': False}">
+                        <list decoration-muted="state == 'draft' or not active" decoration-warning="state == 'to_approve'">
+                            <field name="name" width="260px"/>
+                            <field name="document_reference" width="200px"/>
+                            <field name="version" string="v."/>
+                            <field name="valid_from"/>
+                            <field name="valid_to"/>
+                            <field name="scope_summary" optional="show"/>
+                            <field name="active" column_invisible="1"/>
+                            <field name="state" widget="badge" decoration-success="state == 'approved'"
+                                   decoration-warning="state == 'to_approve'"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']//group[@name='sale']" position="inside">
+                <field name="boss_demo" groups="boss_pricing.group_tariff_approver"/>
             </xpath>
         </field>
     </record>

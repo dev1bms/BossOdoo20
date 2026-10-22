@@ -61,6 +61,7 @@ for old in env["boss.tariff"].search([("name", "=like", "[DEMO] Naviera Ejemplo%
 
 # 2. Customers: the [DEMO] EU customer is a business with a (fictitious, valid-format) VAT number.
 customer_es, customer_eu = xid("customer"), xid("customer_eu")
+(customer_es | customer_eu).write({"boss_demo": True})  # demo tariffs price demo customers only
 if not customer_eu.vat:
     from stdnum.de import vat as de_vat  # noqa: PLC0415
     customer_eu.vat = "DE" + next(str(n) for n in range(100000000, 100010000) if de_vat.is_valid(str(n)))
@@ -70,6 +71,7 @@ vlc = ref("boss_pricing.port_esvlc")
 mad = env["boss.port"].search([("code", "=", "MAD")], limit=1)
 madrid = env["res.country.state"].search([("country_id.code", "=", "ES"), ("code", "=", "M")], limit=1)
 common = {"currency_id": eur.id, "valid_from": date(2026, 1, 1), "valid_to": date(2026, 12, 31), "document": DOC,
+          "is_demo": True, "scope_confirmed": True,
           "document_name": "demo-tarifa.pdf", "note": "[DEMO] Importes ilustrativos para la demostración."}
 
 

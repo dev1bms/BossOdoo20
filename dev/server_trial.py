@@ -52,7 +52,7 @@ dv = env.ref("boss_pricing.container_type_dv")
 valencia, madrid_air = env.ref("boss_pricing.port_esvlc"), env["boss.port"].search([("code", "=", "MAD")], limit=1)
 
 sea_scope = {"direction": "import", "transport_mode": "sea", "load_type": "fcl", "currency_id": eur.id,
-             "valid_from": date(2026, 1, 1), "valid_to": date(2026, 12, 31), "document": DOC,
+             "valid_from": date(2026, 1, 1), "valid_to": date(2026, 12, 31), "document": DOC, "is_demo": True, "scope_confirmed": True,
              "document_name": "demo.pdf", "note": "[DEMO] Precios ficticios para la prueba guiada."}
 tariffs = record("tariff_sea", "boss.tariff", {
     **sea_scope, "name": "[DEMO] Naviera Ejemplo - gastos locales importación 2026", "partner_id": carrier.id,
@@ -81,6 +81,7 @@ tariffs |= record("tariff_road", "boss.tariff", {
 tariffs |= record("tariff_air", "boss.tariff", {
     "name": "[DEMO] Handler Aéreo Ejemplo - importación 2026", "partner_id": handler.id, "currency_id": eur.id,
     "valid_from": date(2026, 1, 1), "valid_to": date(2026, 12, 31), "document": DOC, "document_name": "demo.pdf",
+    "is_demo": True, "scope_confirmed": True,
     "document_reference": "[DEMO] Tarifa ficticia 2026", "direction": "import", "transport_mode": "air",
     "load_type": "air", "port_ids": [Command.set(madrid_air.ids)], "note": "[DEMO] Precios ficticios.",
     "line_ids": [

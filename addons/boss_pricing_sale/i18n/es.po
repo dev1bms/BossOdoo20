@@ -46,6 +46,14 @@ msgid "<strong>Pricing to complete: </strong>"
 msgstr "<strong>Precios por completar: </strong>"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
+msgid ""
+"<strong>Simulation:</strong> the supplier price used is not approved yet. This cost is not usable in\n"
+"                    quotations until an approver approves the tariff."
+msgstr ""
+"<strong>Simulación:</strong> el precio de proveedor usado aún no está aprobado. Este coste no se puede usar en ofertas hasta que un aprobador apruebe la tarifa."
+
+#. module: boss_pricing_sale
 #: model_terms:ir.actions.act_window,help:boss_pricing_sale.boss_vat_tax_action
 msgid ""
 "A VAT class (NS, EX, NR) and customer zone without a row keeps the quotation VAT pending."
@@ -1537,6 +1545,11 @@ msgid "Simulate drafts"
 msgstr "Simular borradores"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__simulated
+msgid "Simulated"
+msgstr "Simulado"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "Simulation: %s counted as approved in this test only."
@@ -1730,6 +1743,13 @@ msgid ""
 "The price is saved in a supplier tariff (never on the quotation) and is used once it is approved."
 msgstr ""
 "El precio se guarda en una tarifa de proveedor (nunca en la oferta) y se usa cuando se aprueba."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__simulated
+msgid ""
+"The price used is not approved: the result is a simulation, not usable in quotations until the tariff is approved."
+msgstr ""
+"El precio usado no está aprobado: el resultado es una simulación, no utilizable en ofertas hasta que se apruebe la tarifa."
 
 #. module: boss_pricing_sale
 #. odoo-python

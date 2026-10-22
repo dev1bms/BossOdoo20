@@ -31,6 +31,11 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
 - Tests at the strict minimum that protects the work: engine (`python -m unittest`), plus Odoo tests on a
   throw-away tmpfs DB via `dev/test.sh <modules>`. Never test on the server DB.
 
+## Interface
+- UI decisions (Odoo-standard patterns, units next to amounts, badges, widths, icon names): `.interface-design/system.md`.
+  Assistant skills (development aids, not Odoo modules) installed locally in `.claude/skills/` (not in Git); sources and
+  commits listed in `.interface-design/system.md`.
+
 ## Commands
 - Engine tests: `python -m unittest discover -s addons/boss_pricing/engine/tests -t addons/boss_pricing`
 - Odoo tests: `dev/test.sh boss_pricing_sale`
