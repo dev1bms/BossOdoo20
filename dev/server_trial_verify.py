@@ -139,6 +139,14 @@ try:
     check("ALM Saturday arrival, 3 periods", (alm.boss_cost_status, alm.boss_cost_amount), ("ok", 0.0))
     check("HAN from AWB weight (500 kg x 0.08)", (han.product_uom_qty, han.boss_cost_amount), (500.0, 40.0))
     check("HAN sale per kg: 0.08 + 15 % (kept with 3 decimals)", (han.price_unit, han.price_subtotal), (0.092, 46.0))
+    # VAT by customer zone on the same air quotation: third country -> 0% EX S; Canary Islands -> pending (P17).
+    Partner = env["res.partner"]
+    air.partner_id = Partner.create({"name": "VERIFY cliente EEUU", "country_id": ref("base.us").id})
+    check("third-country customer: ALM -> 0% EX S", (alm.boss_vat_class, alm.tax_ids),
+          ("EX", tpl("account_tax_template_s_iva_e")))
+    air.partner_id = Partner.create({"name": "VERIFY cliente Canarias", "country_id": ref("base.es").id,
+                                     "state_id": env["res.country.state"].search([("code", "=", "GC"), ("country_id.code", "=", "ES")]).id})
+    check("Canary customer: ALM pending (P17)", (alm.boss_vat_class, alm.boss_vat_status), ("EX", "pending"))
 except Exception as error:  # noqa: BLE001 (report what was checked before the failure)
     checks.append((f"stopped: {type(error).__name__}", False, str(error)[:300], "no exception"))
 finally:

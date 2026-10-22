@@ -6,17 +6,36 @@ precios están activadas: una **Tarifa general (EUR)** sin precios y, si se pact
 
 ## IVA de los servicios BOSS
 
-Ajustes › **Ventas** › bloque **Precio**: un impuesto de Odoo para cada clase que dan las reglas: **NR**, **EX**
-(exento) y **NS** (no sujeto).
+Dos pasos:
 
-![Ajustes de IVA y moneda](img/15-ajustes-iva.png)
+1. **Clase de IVA** de la línea, con las reglas de Ángel (31/08/2026): **NS** = no sujeto por naturaleza (nunca IVA),
+   **EX** = exento, **NR** = lleva IVA; un NR pasa a EX según origen/destino y según la zona del cliente
+   ([detalle](#/venta-iva)).
+2. **Impuesto de Odoo**: la **Tabla de IVA BOSS** (Ventas › Configuración › Tabla de IVA BOSS, o desde Ajustes) da el
+   impuesto de cada caso: clase × zona del cliente × suplido o no. Cada fila dice su **fuente**.
 
-Mientras un impuesto esté vacío, las líneas de esa clase tienen el IVA **pendiente** y la oferta no se puede enviar
-ni confirmar.
+![Tabla de IVA BOSS](img/20-tabla-iva.png)
 
-> **Decisión de Ángel (P17)**: qué impuesto del PGC corresponde a cada clase y con qué artículo de exención. Instalar la
-> localización no decide el tratamiento de cada servicio. Como referencia, Odoo 17 usa «21% S», «0% EX S» y
-> «0% EXEMPT NS». Ceuta y Melilla: zona pendiente.
+| Caso | Impuesto | Fuentes |
+|---|---|---|
+| NR (cliente de la península o Baleares) | 21% S | Ángel: NR lleva IVA · Odoo 17: NR = 21 % → «21% S» · casillas 303 [07]/[09] |
+| EX, cliente de la UE | 0% UE S | Ángel: cliente UE → EX · Odoo 17: cliente UE → «0% EU S» · no sujeta por localización, 303 [59] y 349 |
+| EX, cliente de un tercer país | 0% EX S | Ángel: cliente de tercer país → EX · Odoo 17: «0% EX S» · no sujeta por localización, 303 [120] |
+| NS de un suplido (ARA, IVA, PLA, DUM) | 0% Exent NS | Ángel: no sujeto por naturaleza · Odoo 17: factura de impuestos con «0% EXEMPT NS» · no se declara |
+
+«Odoo 17» es su asistente de facturación (acción «Create Invoice»), que elige el impuesto por clase, tipo de cliente
+y tipo de factura. Solo hay fila cuando las reglas de Ángel, Odoo 17 y la naturaleza legal del impuesto coinciden.
+
+### Casos que siguen pendientes (decisión de Ángel, P17)
+
+| Caso | Por qué | Ejemplo |
+|---|---|---|
+| EX de un cliente **español o canario** | Ángel lo llama exento; Odoo 17 usa «0% S», que la localización define como **sujeta al 0 %** (casilla 150), ni exenta ni no sujeta. Falta elegir el impuesto exento con su artículo o mantener la práctica de Odoo 17 | THC de una importación de China para un cliente de Valencia |
+| NS que **no es suplido** (CAU, QBR) | Odoo 17 los factura en factura normal con el 0 % según el cliente, no como no sujetos | Caución del aval aduanero |
+| Cliente de **Ceuta o Melilla** | Sin zona en las reglas | — |
+
+En esos casos la línea dice «IVA pendiente» con el motivo, y la oferta no se puede enviar ni confirmar. Las ofertas
+cuyos casos están decididos (por ejemplo, un cliente de la UE) llegan hasta la aceptación.
 
 ## Coste de proveedor en otra moneda
 

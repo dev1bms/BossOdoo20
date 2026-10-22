@@ -6,9 +6,9 @@ nadie.
 
 | Dato | Contenido |
 |---|---|
-| Cliente | [DEMO] Cliente Ejemplo, S.L. (Valencia), con su lista de precios «[DEMO] … acuerdo de precios»: THC pactado a 230 € por contenedor; DEM coste + 15 % con margen mínimo de 30 € por contenedor; resto coste + 15 % |
+| Clientes | [DEMO] Cliente Ejemplo, S.L. (Valencia) y [DEMO] Cliente UE Ejemplo GmbH (Hamburgo), con la lista de precios «[DEMO] … acuerdo de precios»: THC pactado a 230 € por contenedor; DEM coste + 15 % con margen mínimo de 30 € por contenedor; resto coste + 15 % |
 | Tarifas | [DEMO] Naviera Ejemplo (THC por contenedor, DEM por día), [DEMO] Transportista Ejemplo (transporte por contenedor y recargo de combustible del 8 %), [DEMO] Handler Aéreo Ejemplo (ALM con 48 h y regla del sábado, HAN por kg). **Enviadas a aprobación, sin aprobar** |
-| Oportunidades | «[DEMO] Importación 2x20' + 1x40'HC Shanghái - Valencia» y «[DEMO] Importación aérea 500 kg Shanghái - Madrid» |
+| Oportunidades | «[DEMO] Importación 2x20' + 1x40'HC Shanghái - Valencia», «[DEMO] Importación 1x40'HC Shanghái - Valencia para cliente UE» y «[DEMO] Importación aérea 500 kg Shanghái - Madrid» |
 | Sin precio a propósito | CES (cesión de contenedor): para probar «Añadir precio de proveedor» |
 
 ![Tarifas de prueba enviadas a aprobación](img/18-prueba-tarifas.png)
@@ -18,10 +18,12 @@ nadie.
 | Paso | Quién | Dónde |
 |---|---|---|
 | A. Aprobar las tres tarifas [DEMO] (revisar documento y precios) | **Belal** (aprobador) | Ventas › Productos › Tarifas de proveedor › abrir › [[Aprobar]] |
-| B. Elegir el impuesto de Odoo para NR, EX y NS | **Ángel** (decisión), lo introduce Belal | Ventas › Configuración › Ajustes › IVA de los servicios BOSS |
+| B. Decidir el impuesto de EX para clientes españoles (P17) | **Ángel** | Después, una fila en Ventas › Configuración › Tabla de IVA BOSS |
 | C. Aprobar el precio de CES añadido desde la oferta | **Belal** | Desde la línea (icono de revisar) o la lista de tarifas |
 
-Sin el paso B la oferta llega hasta el final pero **no se puede enviar ni confirmar** (IVA pendiente): es lo esperado.
+El IVA de NR, de clientes de la UE y de terceros países y de los suplidos ya está en la tabla. Sin el paso B, la oferta
+del **cliente español** se queda en «IVA pendiente» solo por THC (EX) y no se puede enviar ni confirmar: es lo esperado.
+La oferta del **cliente UE** llega hasta la aceptación.
 
 ## Recorrido marítimo (FCL)
 
@@ -35,8 +37,18 @@ Sin el paso B la oferta llega hasta el final pero **no se puede enviar ni confir
    aplica el margen mínimo de 30 € por contenedor.
 6. **CES**: icono [[Añadir precio de proveedor]] → 45 € por contenedor, página 3, adjuntar un PDF cualquiera de prueba →
    [[Guardar precio]] → «Pendiente de aprobación» → paso C → CES con coste y venta.
-7. [[Enviar]] o [[Confirmar]]: sin el paso B, mensaje con el IVA pendiente línea a línea. Con el paso B: **[[Confirmar]]**
-   (no use Enviar con clientes reales) → precios congelados, foto en **Historial de precios**, botón [[Recotizar]].
+7. **IVA**: DEM, transporte, FS y CES (NR, cliente de Valencia, importación de China) → 21% S; THC (EX, cliente
+   español) → **IVA pendiente** con el motivo. [[Enviar]] o [[Confirmar]] dicen que solo falta el IVA de THC.
+
+## Recorrido con cliente de la UE (hasta la aceptación)
+
+1. Oportunidad «[DEMO] Importación 1x40'HC … para cliente UE» › [[Nuevo presupuesto]] › Envío como el anterior con
+   1 × 40' HC y días 10.
+2. [[Añadir servicios]]: THC, DEM, TTE-FCL y FS. IVA de todas las líneas: **0% UE S** (EX por ser cliente de la UE).
+3. **[[Confirmar]]** (no use Enviar con clientes reales) → precios congelados, foto en **Historial de precios** con
+   el impuesto de cada línea, botón [[Recotizar]].
+
+![Oferta aceptada de un cliente de la UE](img/13-oferta-aceptada.png)
 
 ## Recorrido aéreo
 
@@ -52,5 +64,5 @@ Sin el paso B la oferta llega hasta el final pero **no se puede enviar ni confir
 ## Comprobado en el servidor
 
 El recorrido completo se ha ejecutado en el servidor con un comercial y un aprobador de prueba, dentro de una
-transacción que se deshace al final (la base no cambia): 20 comprobaciones correctas, incluida la aceptación con una
-asignación de IVA **temporal** solo para probarla.
+transacción que se deshace al final (la base no cambia): 28 comprobaciones correctas, incluida la aceptación de la
+oferta del cliente UE con la tabla de IVA real.

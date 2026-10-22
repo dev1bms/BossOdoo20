@@ -46,8 +46,10 @@ El IVA de cada línea sale de las **reglas de IVA de BOSS** (Ángel, 31/08/2026)
 3. Si sigue NR, según el **cliente**: PRO mantiene NR; CAN, COM y TER pasan a EX.
 4. Si falta una zona, el IVA queda **pendiente**.
 
-El impuesto de Odoo de cada clase se elige en **Ajustes › Ventas** (ver [IVA y monedas](#/iva-moneda)). Hasta que
-Ángel lo decida, todas las líneas tienen el IVA pendiente.
+El impuesto de Odoo sale de la **Tabla de IVA BOSS** según la clase y la zona del cliente (ver
+[IVA y monedas](#/iva-moneda)): NR → 21% S; EX de un cliente de la UE → 0% UE S; EX de un cliente de un tercer país →
+0% EX S; suplidos (NS) → 0% Exent NS. El detalle de la línea dice el porqué («base NR · TER→PRO: NR · cliente PRO:
+NR · 21% S (fuente)»). EX de clientes españoles o canarios, CAU, QBR y Ceuta/Melilla siguen **pendientes** (P17).
 
 ## La oferta no se envía ni se confirma si…
 

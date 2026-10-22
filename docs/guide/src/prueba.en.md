@@ -5,9 +5,9 @@ customer, carrier, haulier and handler, fictitious prices). The test customer ha
 
 | Data | Content |
 |---|---|
-| Customer | [DEMO] Cliente Ejemplo, S.L. (Valencia), with its pricelist «[DEMO] … acuerdo de precios»: THC agreed at 230 € per container; DEM cost + 15 % with a minimum margin of 30 € per container; the rest cost + 15 % |
+| Customers | [DEMO] Cliente Ejemplo, S.L. (Valencia) and [DEMO] Cliente UE Ejemplo GmbH (Hamburg), with the pricelist «[DEMO] … acuerdo de precios»: THC agreed at 230 € per container; DEM cost + 15 % with a minimum margin of 30 € per container; the rest cost + 15 % |
 | Tariffs | [DEMO] Naviera Ejemplo (THC per container, DEM per day), [DEMO] Transportista Ejemplo (transport per container and an 8 % fuel surcharge), [DEMO] Handler Aéreo Ejemplo (ALM with 48 h and the Saturday rule, HAN per kg). **Sent for approval, not approved** |
-| Opportunities | «[DEMO] Importación 2x20' + 1x40'HC Shanghái - Valencia» and «[DEMO] Importación aérea 500 kg Shanghái - Madrid» |
+| Opportunities | «[DEMO] Importación 2x20' + 1x40'HC Shanghái - Valencia», «[DEMO] Importación 1x40'HC Shanghái - Valencia para cliente UE» and «[DEMO] Importación aérea 500 kg Shanghái - Madrid» |
 | Missing on purpose | CES (container release): to try «Add supplier price» |
 
 ![Test tariffs sent for approval](img/18-prueba-tarifas.png)
@@ -17,10 +17,12 @@ customer, carrier, haulier and handler, fictitious prices). The test customer ha
 | Step | Who | Where |
 |---|---|---|
 | A. Approve the three [DEMO] tariffs (check document and prices) | **Belal** (approver) | Sales › Products › Supplier tariffs › open › [[Approve]] |
-| B. Choose the Odoo tax for NR, EX and NS | **Ángel** (decision), entered by Belal | Sales › Configuration › Settings › VAT of BOSS services |
+| B. Decide the tax of EX for Spanish customers (P17) | **Ángel** | Then one row in Sales › Configuration › BOSS VAT table |
 | C. Approve the CES price added from the quotation | **Belal** | From the line (review icon) or the tariff list |
 
-Without step B the quotation gets to the end but **cannot be sent or confirmed** (VAT pending): that is expected.
+The VAT of NR, of EU and third-country customers and of amounts paid on behalf is already in the table. Without step
+B, the **Spanish customer's** quotation stays «VAT pending» only because of THC (EX) and cannot be sent or confirmed:
+that is expected. The **EU customer's** quotation goes all the way to acceptance.
 
 ## Sea (FCL) walkthrough
 
@@ -34,8 +36,18 @@ Without step B the quotation gets to the end but **cannot be sent or confirmed**
    minimum margin of 30 € per container applies.
 6. **CES**: icon [[Add supplier price]] → 45 € per container, page 3, attach any test PDF → [[Save price]] → «Waiting for
    approval» → step C → CES with cost and sale.
-7. [[Send]] or [[Confirm]]: without step B, a message with the pending VAT line by line. With step B: **[[Confirm]]**
-   (do not use Send with real customers) → prices frozen, snapshot in **Pricing history**, [[Re-price]] button.
+7. **VAT**: DEM, transport, FS and CES (NR, customer in Valencia, import from China) → 21% S; THC (EX, Spanish
+   customer) → **VAT pending** with the reason. [[Send]] or [[Confirm]] say that only the THC VAT is missing.
+
+## EU customer walkthrough (to acceptance)
+
+1. Opportunity «[DEMO] Importación 1x40'HC … para cliente UE» › [[New quotation]] › Shipment as above with 1 × 40' HC
+   and days 10.
+2. [[Add services]]: THC, DEM, TTE-FCL and FS. VAT of every line: **0% EU S** (EX for an EU customer).
+3. **[[Confirm]]** (do not use Send with real customers) → prices frozen, snapshot in **Pricing history** with each
+   line's tax, [[Re-price]] button.
+
+![Accepted quotation of an EU customer](img/13-oferta-aceptada.png)
 
 ## Air walkthrough
 
@@ -51,5 +63,5 @@ Without step B the quotation gets to the end but **cannot be sent or confirmed**
 ## Checked on the server
 
 The whole walkthrough was run on the server as a test salesperson and a test approver, inside a transaction rolled
-back at the end (the database does not change): 20 checks passed, including acceptance with a **temporary** VAT mapping
-only to prove it.
+back at the end (the database does not change): 28 checks passed, including acceptance of the EU customer's quotation
+with the real VAT table.

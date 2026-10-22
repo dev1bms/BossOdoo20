@@ -44,8 +44,10 @@ Each line's VAT comes from the **BOSS VAT rules** (Ángel, 31/08/2026):
 3. If still NR, by **customer**: PRO keeps NR; CAN, COM and TER become EX.
 4. If a zone is missing, VAT is **pending**.
 
-The Odoo tax of each class is chosen in **Settings › Sales** (see [VAT and currencies](#/iva-moneda)). Until Ángel
-decides, every line has VAT pending.
+The Odoo tax comes from the **BOSS VAT table** by class and customer zone (see [VAT and currencies](#/iva-moneda)):
+NR → 21% S; EX of an EU customer → 0% EU S; EX of a third-country customer → 0% EX S; paid on behalf (NS) → 0% EXEMPT
+NS. The line details say why («base NR · TER→PRO: NR · customer PRO: NR · 21% S (source)»). EX of Spanish or Canary
+customers, CAU, QBR and Ceuta/Melilla stay **pending** (P17).
 
 ## The quotation is not sent or confirmed if…
 
