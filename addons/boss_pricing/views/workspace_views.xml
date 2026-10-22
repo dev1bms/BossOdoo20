@@ -15,7 +15,7 @@
                 <field name="price_display" width="210px"/>
                 <field name="valid_from" optional="hide"/>
                 <field name="valid_to" string="Until" optional="show" width="80px"/>
-                <field name="validity_state" widget="badge" width="100px"
+                <field name="validity_state" widget="badge" width="150px"
                        decoration-success="validity_state == 'current'"
                        decoration-warning="validity_state in ('expiring', 'to_approve', 'future')"
                        decoration-danger="validity_state == 'expired'"

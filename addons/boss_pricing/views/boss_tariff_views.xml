@@ -93,6 +93,7 @@
         <field name="model">boss.tariff.line</field>
         <field name="arch" type="xml">
             <form>
+                <sheet>
                 <field name="tariff_state" invisible="1"/>
                 <div class="alert alert-info mb-2" role="alert" invisible="not id or tariff_state in (False, 'draft')">
                     This price belongs to a tariff sent for approval or approved: it does not change. Open the
@@ -180,6 +181,7 @@
                 <group string="Live example" invisible="not example_text">
                     <field name="example_text" nolabel="1" colspan="2" class="text-muted" style="white-space: pre-line"/>
                 </group>
+                </sheet>
             </form>
         </field>
     </record>

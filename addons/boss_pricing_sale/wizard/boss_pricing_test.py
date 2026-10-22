@@ -111,7 +111,8 @@ class BossPricingTest(models.TransientModel):
 
     @api.onchange("storage_days")
     def _onchange_storage_days(self):
-        self.storage_days_known = True
+        if self.storage_days:  # 0 is a valid estimate too: then tick «Days known» by hand
+            self.storage_days_known = True
 
     @api.depends("customer_id")
     def _compute_pricelist_id(self):
@@ -161,7 +162,7 @@ class BossPricingTest(models.TransientModel):
             order = test._shipment()
             inputs = test._inputs(order)
             res = pricing.price_cost(test.product_id, test.uom_id, inputs, test.date, self.env.company,
-                                     simulate=test.simulate_tariff_ids)
+                                     simulate=test.simulate_tariff_ids._origin)  # real tariffs, also live
             test.quantity = inputs["line_qty"] or 0.0
             test.status = res.status
             test.cost_amount = res.amount

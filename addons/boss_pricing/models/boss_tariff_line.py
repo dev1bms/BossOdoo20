@@ -135,6 +135,9 @@ class BossTariffLine(models.Model):
     def _compute_display_name(self):
         for line in self:
             tariff = line.tariff_id
+            if not tariff or not line.product_id:
+                line.display_name = self.env._("New supplier price")
+                continue
             size = f" {line.container_size}'" if line.container_size else ""
             line.display_name = (f"{tariff.name} v{tariff.version} - {line.product_id.default_code} / "
                                  f"{line.uom_id.name}{size}")

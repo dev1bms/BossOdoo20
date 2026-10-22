@@ -97,6 +97,22 @@
         </field>
     </record>
 
+    <record id="boss_tariff_line_view_form_ws_test" model="ir.ui.view">
+        <field name="name">boss.tariff.line.form.workspace.test</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="inherit_id" ref="boss_pricing.boss_tariff_line_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header invisible="not id">
+                    <button name="action_ws_test" type="object" string="Test pricing" class="btn-secondary"/>
+                    <button name="action_ws_duplicate" type="object" string="Copy" invisible="tariff_state != 'draft'"
+                            groups="boss_pricing.group_tariff_user"/>
+                    <button name="action_ws_document" type="object" string="Document"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
     <record id="boss_tariff_view_form_ws_test" model="ir.ui.view">
         <field name="name">boss.tariff.form.workspace.test</field>
         <field name="model">boss.tariff</field>

@@ -1103,6 +1103,12 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "New supplier price"
+msgstr "Nuevo precio de proveedor"
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "New version"
 msgstr "Nueva versión"

@@ -386,6 +386,11 @@ msgid "Containers of this type only. Empty: all types."
 msgstr "Solo contenedores de este tipo. Vacío: todos."
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_line_view_form_ws_test
+msgid "Copy"
+msgstr "Copiar"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Cost"
 msgstr "Coste"
@@ -586,6 +591,7 @@ msgid "Do not convert: the cost stays pending"
 msgstr "No convertir: el coste queda pendiente"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_line_view_form_ws_test
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_view_form_ws_test
 msgid "Document"
 msgstr "Documento"
@@ -1676,6 +1682,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:boss_pricing_sale.boss_pricing_test_action
 #: model:ir.model,name:boss_pricing_sale.model_boss_pricing_test
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_test
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_line_view_form_ws_test
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_line_view_list_ws_test
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_tariff_view_form_ws_test
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing_ws

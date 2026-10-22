@@ -4,7 +4,7 @@ from datetime import date
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError
-from odoo.tests import TransactionCase, new_test_user, tagged
+from odoo.tests import Form, TransactionCase, new_test_user, tagged
 
 DOC = base64.b64encode(b"%PDF-1.4 fictitious supplier tariff").decode()
 
@@ -315,6 +315,13 @@ class TestQuotationPricing(TransactionCase):
         test.simulate_tariff_ids = draft
         self.assertEqual((test.status, test.cost_amount), ("ok", 250.0))
         self.assertIn("simulated", test.choice)
+        # the same in the live form (in-memory records, as in the browser)
+        live = Form(self.env["boss.pricing.test"].with_user(self.salesman).with_context(
+            default_sale_line_id=sale_line.id))
+        live.carrier_id, live.supplier_id = self.carrier_b, self.carrier_b
+        self.assertEqual(live.status, "pending_approval")
+        live.simulate_tariff_ids.add(draft)
+        self.assertEqual((live.status, live.cost_amount, live.uom_id), ("ok", 250.0, sale_line.product_uom_id))
         self.assertEqual(self._line(self._order(carrier=self.carrier_b), "40").boss_cost_status, "pending_approval")
         # Sale price and profit with the pricelist's own rule (cost + 20 %).
         pricelist = self.env["product.pricelist"].create({
