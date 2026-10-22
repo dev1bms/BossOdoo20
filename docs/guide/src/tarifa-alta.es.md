@@ -1,5 +1,5 @@
-Una **tarifa** = un documento del proveedor, su vigencia y a qué se aplica. Ventas › Productos ›
-**Tarifas de proveedor** › [[Nuevo]].
+Una **tarifa** = un documento del proveedor, su vigencia y a qué se aplica. Tarifas y proveedores ›
+**Tarifas y documentos** › [[Nuevo]].
 
 ![Tarifa de proveedor](img/07-tarifa.png)
 

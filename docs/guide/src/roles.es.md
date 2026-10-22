@@ -13,6 +13,8 @@ Reglas que el sistema aplica en el servidor (también en importaciones e integra
 - Los precios de una tarifa enviada o aprobada **no se pueden modificar**; un cambio es una **nueva versión**.
 - Solo se borran tarifas en borrador; las aprobadas se archivan.
 - Una línea de una oferta aceptada solo cambia con [[Recotizar]].
+- Tarifas y precios de proveedor (costes) solo los ven los usuarios de Ventas y de Tarifas de proveedor; el resto de
+  usuarios internos no los lee.
 
 > Quién aprueba tarifas y quién ve costes y márgenes son decisiones abiertas (P19, P20 en
 > [Decisiones pendientes](#/preguntas)). Por defecto el administrador es aprobador.

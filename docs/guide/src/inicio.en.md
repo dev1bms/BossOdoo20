@@ -32,8 +32,8 @@ and **Sales** screens; the BOSS parts are added there.
 |---|---|
 | Opportunities | CRM |
 | Quotations and orders | Sales › Orders |
-| Supplier tariffs | Sales › Products › Supplier tariffs |
-| Supplier prices (all lines) | Sales › Products › Supplier prices |
-| Services | Sales › Products › Products ("BOSS services" filter) |
+| Prices, tariffs, services and suppliers | **Pricing & Suppliers** (own app, see [Pricing & Suppliers](#/tarifa-listas)) |
+| Supplier tariffs | Pricing & Suppliers › Tariffs and documents (also Sales › Products) |
+| Test the calculation of a price | Pricing & Suppliers › Test pricing |
 | Ports and airports | Sales › Configuration › Ports and airports |
 | VAT of services and currency | Settings › Sales › Pricing |

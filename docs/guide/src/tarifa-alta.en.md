@@ -1,5 +1,5 @@
-A **tariff** = one supplier document, its validity and what it applies to. Sales › Products ›
-**Supplier tariffs** › [[Nuevo]].
+A **tariff** = one supplier document, its validity and what it applies to. Pricing & Suppliers ›
+**Tariffs and documents** › [[New]].
 
 ![Supplier tariff](img/07-tarifa.png)
 

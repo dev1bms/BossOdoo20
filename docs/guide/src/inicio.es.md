@@ -33,8 +33,8 @@ estándar de **CRM** y **Ventas**; lo propio de BOSS se añade en ellas.
 |---|---|
 | Oportunidades | CRM |
 | Ofertas y pedidos | Ventas › Pedidos |
-| Tarifas de proveedor | Ventas › Productos › Tarifas de proveedor |
-| Precios de proveedor (todas las líneas) | Ventas › Productos › Precios de proveedor |
-| Servicios | Ventas › Productos › Productos (filtro «Servicios BOSS») |
+| Precios, tarifas, servicios y proveedores | **Tarifas y proveedores** (app propia, ver [Tarifas y proveedores](#/tarifa-listas)) |
+| Tarifas de proveedor | Tarifas y proveedores › Tarifas y documentos (también Ventas › Productos) |
+| Probar el cálculo de un precio | Tarifas y proveedores › Probar tarifa |
 | Puertos y aeropuertos | Ventas › Configuración › Puertos y aeropuertos |
 | IVA de servicios y moneda | Ajustes › Ventas › Precio |

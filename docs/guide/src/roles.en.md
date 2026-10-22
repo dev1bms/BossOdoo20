@@ -13,6 +13,8 @@ Rules enforced on the server (also for imports and integrations):
 - Prices of a submitted or approved tariff **cannot change**; a change is a **new version**.
 - Only draft tariffs can be deleted; approved ones are archived.
 - A line of an accepted quotation only changes through [[Recotizar]].
+- Supplier tariffs and prices (costs) are only visible to Sales and Supplier tariffs users; other internal users
+  cannot read them.
 
 > Who approves tariffs and who sees costs and margins are open decisions (P19, P20 in
 > [Pending decisions](#/preguntas)). By default the administrator is an approver.

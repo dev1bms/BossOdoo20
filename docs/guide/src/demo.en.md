@@ -31,7 +31,7 @@ approval.
 
 ## 10–15 minute walkthrough
 
-1. **Tariff** (Sales › Products › Supplier tariffs): open MSC's: supplier, document, validity, scope (direction, mode,
+1. **Tariff** (Pricing & Suppliers › Tariffs and documents): open MSC's: supplier, document, validity, scope (direction, mode,
    port, customer) and prices by size and type; status **Approved** with user and date.
 2. **CRM**: open [Meeting with Ángel](https://system.bosscontinental.com/odoo/crm/9) › [[New quotation]].
 3. **Shipment**: Import · Sea · FCL · ESVLC · China · MSC · date 04/11/2026 · days 12 · containers 2 × 40' HC. Save.

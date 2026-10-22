@@ -30,7 +30,7 @@ a los clientes [DEMO]; no cotizan ofertas reales. Las tarifas [MUESTRA] (documen
 
 ## Recorrido de 10–15 minutos
 
-1. **Tarifa** (Ventas › Productos › Tarifas de proveedor): abrir la de MSC: proveedor, documento, vigencia, alcance
+1. **Tarifa** (Tarifas y proveedores › Tarifas y documentos): abrir la de MSC: proveedor, documento, vigencia, alcance
    (sentido, modo, puerto, cliente) y precios por tamaño y tipo; estado **Aprobada** con usuario y fecha.
 2. **CRM**: abrir [Reunión con Ángel](https://system.bosscontinental.com/odoo/crm/9) › [[Nuevo presupuesto]].
 3. **Envío**: Importación · Marítimo · FCL · ESVLC · China · MSC · fecha 04/11/2026 · días 12 · contenedores 2 × 40' HC.

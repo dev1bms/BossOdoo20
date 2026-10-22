@@ -203,6 +203,14 @@
    }
   },
   {
+   "id": "tarifa-listas",
+   "section": "tarifas",
+   "title": {
+    "es": "Tarifas y proveedores (espacio de trabajo)",
+    "en": "Pricing & Suppliers (workspace)"
+   }
+  },
+  {
    "id": "tarifa-alta",
    "section": "tarifas",
    "title": {
@@ -216,14 +224,6 @@
    "title": {
     "es": "Aprobación, versiones e historial",
     "en": "Approval, versions and history"
-   }
-  },
-  {
-   "id": "tarifa-listas",
-   "section": "tarifas",
-   "title": {
-    "es": "Buscar tarifas y precios",
-    "en": "Find tariffs and prices"
    }
   },
   {
