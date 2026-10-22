@@ -52,6 +52,16 @@ air = env["sale.order"].create({
     "boss_planned_date": date(2026, 11, 4), "boss_awb_kg": 500, "boss_storage_days": 4})
 env["boss.add.services"].create({"order_id": air.id, "product_ids": [Command.set(
     (product("ALM") | product("HAN")).ids)]}).action_add()
+eu_lead = trial("lead_eu")
+eu = env["sale.order"].create({
+    "partner_id": eu_lead.partner_id.id, "opportunity_id": eu_lead.id, "origin": eu_lead.name,
+    "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl",
+    "boss_carrier_id": trial("carrier").id, "boss_port_id": ref("boss_pricing.port_esvlc").id,
+    "boss_country_id": ref("base.cn").id, "boss_planned_date": date(2026, 11, 4), "boss_storage_days": 10,
+    "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_hc").id,
+                                           "quantity": 1})]})
+env["boss.add.services"].create({"order_id": eu.id, "product_ids": [Command.set(
+    (product("THC") | product("DEM") | product("TTE-FCL") | product("FS")).ids)]}).action_add()
 env.cr.commit()
-print("IDS", {"sea_draft": sea.id, "sea_priced": accepted.id, "air": air.id, "lead_sea": lead.id,
+print("IDS", {"eu": eu.id, "sea_draft": sea.id, "sea_priced": accepted.id, "air": air.id, "lead_sea": lead.id,
               "pricelist": trial("pricelist").id, "tariff_sea": trial("tariff_sea").id})

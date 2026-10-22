@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_vat_tax_view_list" model="ir.ui.view">
+        <field name="name">boss.vat.tax.list</field>
+        <field name="model">boss.vat.tax</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="vat_class"/>
+                <field name="customer_zone"/>
+                <field name="service_kind"/>
+                <field name="tax_id" options="{'no_create': True}"/>
+                <field name="source"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_vat_tax_action" model="ir.actions.act_window">
+        <field name="name">BOSS VAT table</field>
+        <field name="res_model">boss.vat.tax</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Odoo tax of each BOSS VAT case</p>
+            <p>A VAT class (NS, EX, NR) and customer zone without a row keeps the quotation VAT pending.</p>
+        </field>
+    </record>
+</odoo>

@@ -1428,6 +1428,7 @@
     <record id="service_ara" model="product.template">
         <field name="name">Import duty (paid on behalf)</field>
         <field name="default_code">ARA</field>
+        <field name="boss_paid_on_behalf" eval="True"/>
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
@@ -1448,6 +1449,7 @@
     <record id="service_pla" model="product.template">
         <field name="name">Plastic packaging tax (paid on behalf)</field>
         <field name="default_code">PLA</field>
+        <field name="boss_paid_on_behalf" eval="True"/>
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
@@ -1468,6 +1470,7 @@
     <record id="service_iva" model="product.template">
         <field name="name">Import VAT (paid on behalf)</field>
         <field name="default_code">IVA</field>
+        <field name="boss_paid_on_behalf" eval="True"/>
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
@@ -1488,6 +1491,7 @@
     <record id="service_dum" model="product.template">
         <field name="name">Anti-dumping duty (paid on behalf)</field>
         <field name="default_code">DUM</field>
+        <field name="boss_paid_on_behalf" eval="True"/>
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>

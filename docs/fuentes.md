@@ -42,6 +42,15 @@ guía por servicio, pricing center), `services.json`, `service_decisions.py`, `x
 código de cálculo (`boss_rates/tariff_line.py`, `boss_pricing/engine.py`, asistentes) y pruebas «golden».
 Hallazgo: varios valores «golden» de Odoo 19 usan la edición MSC de enero (caducada); ver `ejemplos-referencia.md`.
 
+## Odoo 17 producción (solo lectura, 22/10/2026)
+
+- Compañía (`res.company`): datos legales, EUR, plan `es_pymes`.
+- Acción de servidor 1232 «Create Invoice» (asistente de facturación): impuesto de cada línea según la clase de IVA, el
+  tipo de cliente (España / UE / tercer país) y el tipo de factura (NORMAL / TAX).
+- Conceptos (`x_concept`, exportados en Odoo 19 `data-src/x_concept_export.json`): tipo NORMAL/TAX/CREDITOR, IVA por
+  defecto, marca «IVA intracomunitario».
+- Impuestos usados por la acción 1232 y sus casillas del 303 (etiquetas de las líneas de reparto).
+
 ## Odoo 20 y trabajo previo
 
 `KICKOFF_PROMPT.md`, spike `boss_spike_adr002` (7 pruebas), borrador ADR y propuesta de catálogo de la sesión del

@@ -2,7 +2,8 @@
 
 Creates once (idempotent, xmlids in module `boss_trial`): a demo customer and suppliers, three demo supplier tariffs
 SENT FOR APPROVAL (never approved here: approving them is the trier's step), a demo customer pricelist (agreed THC
-price and a cost-based rule) and two opportunities (sea FCL and air). No quotation is created, no e-mail is sent.
+price and a cost-based rule) and three opportunities (sea FCL for a Spanish and an EU customer, air). No quotation
+is created, no e-mail is sent.
 CES is deliberately left without a supplier price (the 'missing price' step of the trial).
 """
 import base64
@@ -41,6 +42,9 @@ spain, china = env.ref("base.es"), env.ref("base.cn")
 customer = record("customer", "res.partner", {
     "name": "[DEMO] Cliente Ejemplo, S.L.", "is_company": True, "country_id": spain.id, "city": "Valencia",
     "state_id": env["res.country.state"].search([("country_id", "=", spain.id), ("code", "=", "V")]).id})
+customer_eu = record("customer_eu", "res.partner", {
+    "name": "[DEMO] Cliente UE Ejemplo GmbH", "is_company": True, "country_id": env.ref("base.de").id,
+    "city": "Hamburg"})
 carrier = record("carrier", "res.partner", {"name": "[DEMO] Naviera Ejemplo", "is_company": True})
 haulier = record("haulier", "res.partner", {"name": "[DEMO] Transportista Ejemplo", "is_company": True})
 handler = record("handler", "res.partner", {"name": "[DEMO] Handler Aéreo Ejemplo", "is_company": True})
@@ -104,7 +108,7 @@ pricelist = record("pricelist", "product.pricelist", {
         Command.create({"applied_on": "3_global", "compute_price": "markup", "base": "boss_line_cost",
                         "price_markup": 15.0}),
     ]})
-customer.property_product_pricelist = pricelist
+(customer | customer_eu).property_product_pricelist = pricelist
 salesperson = env.ref("base.user_admin")
 record("lead_sea", "crm.lead", {
     "name": "[DEMO] Importación 2x20' + 1x40'HC Shanghái - Valencia", "type": "opportunity",
@@ -112,6 +116,9 @@ record("lead_sea", "crm.lead", {
 record("lead_air", "crm.lead", {
     "name": "[DEMO] Importación aérea 500 kg Shanghái - Madrid", "type": "opportunity",
     "partner_id": customer.id, "user_id": salesperson.id, "expected_revenue": 600.0})
+record("lead_eu", "crm.lead", {
+    "name": "[DEMO] Importación 1x40'HC Shanghái - Valencia para cliente UE", "type": "opportunity",
+    "partner_id": customer_eu.id, "user_id": salesperson.id, "expected_revenue": 1200.0})
 env.cr.commit()
 print("TRIAL", {"customer": customer.id, "tariffs": [(t.name, t.state) for t in tariffs], "pricelist": pricelist.name,
                 "leads": env["crm.lead"].search([("name", "like", "[DEMO]")]).mapped("name")})

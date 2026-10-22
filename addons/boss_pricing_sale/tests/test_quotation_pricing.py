@@ -52,7 +52,8 @@ class TestQuotationPricing(TransactionCase):
         return tariff
 
     def _map_vat(self):
-        self.env.company.write({f"boss_tax_{k}_id": tax.id for k, tax in self.taxes.items()})
+        self.env["boss.vat.tax"].create([{"vat_class": cls, "tax_id": self.taxes[key].id}
+                                         for cls, key in (("NR", "nr"), ("EX", "ex"), ("NS", "ns"))])
 
     def _order(self, carrier=None, services=None, **vals):
         order = self.env["sale.order"].with_user(self.salesman).create({
@@ -125,6 +126,31 @@ class TestQuotationPricing(TransactionCase):
         self._map_vat()
         bl = self._order(services=self.env.ref("boss_services.service_bl").product_variant_id).order_line
         self.assertEqual((bl.boss_vat_class, bl.boss_vat_status, bl.tax_ids), ("NR", "ok", self.taxes["nr"]))
+
+    def test_vat_tax_by_class_and_customer_zone(self):
+        Tax, VatTax = self.env["account.tax"], self.env["boss.vat.tax"]
+        ex_eu, ex_ter = (Tax.create({"name": name, "amount": 0.0, "type_tax_use": "sale"})
+                         for name in ("TEST EX UE", "TEST EX TER"))
+        bl, ara, cau = (self.env.ref(f"boss_services.service_{code}").product_variant_id for code in ("bl", "ara", "cau"))
+        order = self._order(services=self.thc | bl | ara | cau)
+        VatTax.create([{"vat_class": "NR", "tax_id": self.taxes["nr"].id},
+                       {"vat_class": "EX", "customer_zone": "COM", "tax_id": ex_eu.id},
+                       {"vat_class": "EX", "customer_zone": "TER", "tax_id": ex_ter.id},
+                       {"vat_class": "NS", "service_kind": "paid_on_behalf", "tax_id": self.taxes["ns"].id}])
+        line = lambda product: order.order_line.filtered(lambda l: l.product_id == product)[:1]  # noqa: E731
+        # Spanish customer, import from China: NR carries VAT; EX for a Spanish customer has no decided tax
+        # (pending); duties paid on behalf are not subject; CAU (NS, not paid on behalf) stays pending.
+        self.assertEqual((line(bl).boss_vat_class, line(bl).tax_ids), ("NR", self.taxes["nr"]))
+        self.assertEqual((line(self.thc).boss_vat_status, line(self.thc).tax_ids), ("pending", Tax))
+        self.assertIn("decision pending", line(self.thc).boss_vat_trace)
+        self.assertEqual(line(ara).tax_ids, self.taxes["ns"])
+        self.assertEqual(line(cau).boss_vat_status, "pending")
+        # The same services for an EU customer and for a third-country customer: every case is decided.
+        Partner = self.env["res.partner"]
+        order.partner_id = Partner.create({"name": "CLIENTE UE (FICTICIO)", "country_id": self.env.ref("base.de").id})
+        self.assertEqual((line(bl).boss_vat_class, line(bl).tax_ids, line(self.thc).tax_ids), ("EX", ex_eu, ex_eu))
+        order.partner_id = Partner.create({"name": "CLIENTE EEUU (FICTICIO)", "country_id": self.env.ref("base.us").id})
+        self.assertEqual((line(bl).tax_ids, line(self.thc).tax_ids, line(ara).tax_ids), (ex_ter, ex_ter, self.taxes["ns"]))
 
     def test_time_estimate(self):
         dem = self.env.ref("boss_services.service_dem").product_variant_id

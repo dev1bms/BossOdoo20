@@ -6,4 +6,6 @@
               action="boss_pricing.boss_tariff_line_action" sequence="55"/>
     <menuitem id="menu_boss_ports" name="Ports and airports" parent="sale.menu_sale_config"
               action="boss_pricing.boss_port_action" sequence="60"/>
+    <menuitem id="menu_boss_vat_tax" name="BOSS VAT table" parent="sale.menu_sale_config"
+              action="boss_vat_tax_action" sequence="62"/>
 </odoo>

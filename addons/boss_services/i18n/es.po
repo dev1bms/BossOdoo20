@@ -50,6 +50,14 @@ msgid "Airport storage (per 100 kg or fraction and day)"
 msgstr "Almacenaje aéreo (por 100 kg o fracción y día)"
 
 #. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_paid_on_behalf
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_paid_on_behalf
+msgid ""
+"Amount paid in the customer's name (duties, import VAT...) and re-invoiced at cost. In Odoo 17 these concepts are of type TAX and go on a separate tax invoice; it decides the Odoo tax of their NS class."
+msgstr ""
+"Importe pagado en nombre del cliente (aranceles, IVA de importación...) y refacturado a coste. En Odoo 17 estos conceptos son de tipo TAX y van en una factura de impuestos aparte; decide el impuesto de Odoo de su clase NS."
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_dum
 msgid "Anti-dumping duty (paid on behalf)"
 msgstr "Antidumping (suplido)"
@@ -124,9 +132,9 @@ msgstr "Quebranto bancario (% sobre importes en USD)"
 #: model:ir.model.fields,help:boss_services.field_product_product__boss_vat_class
 #: model:ir.model.fields,help:boss_services.field_product_template__boss_vat_class
 msgid ""
-"Base VAT class of the service (Ángel's VAT rules, 31/08/2026). NS and EX never carry VAT; NR follows the origin/destination and customer rules. The Odoo tax used for each class is a company setting."
+"Base VAT class of the service (Ángel's VAT rules, 31/08/2026). NS and EX never carry VAT; NR follows the origin/destination and customer rules. The Odoo tax of each case is in the BOSS VAT table (Sales settings)."
 msgstr ""
-"Clase de IVA base del servicio (reglas de IVA de Ángel, 31/08/2026). NS y EX nunca llevan IVA; NR sigue las reglas de origen/destino y del cliente. El impuesto de Odoo de cada clase es un ajuste de la compañía."
+"Clase de IVA base del servicio (reglas de IVA de Ángel, 31/08/2026). NS y EX nunca llevan IVA; NR sigue las reglas de origen/destino y de cliente. El impuesto de Odoo de cada caso está en la tabla de IVA BOSS (ajustes de Ventas)."
 
 #. module: boss_services
 #: model:uom.uom,name:boss_services.uom_bl
@@ -823,6 +831,12 @@ msgstr "Otros gastos locales de llegada (importe del proveedor)"
 #: model_terms:product.template,description:boss_services.service_pos
 msgid "Overlaps with POT; to decide whether it stays a separate service."
 msgstr "Se solapa con POT; decidir si sigue siendo un servicio aparte."
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_paid_on_behalf
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_paid_on_behalf
+msgid "Paid on behalf"
+msgstr "Suplido"
 
 #. module: boss_services
 #: model:uom.uom,name:boss_services.uom_pallet

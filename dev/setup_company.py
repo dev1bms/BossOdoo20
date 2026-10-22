@@ -5,7 +5,7 @@ Data file /tmp/boss/company.json (private, outside Git): BOSS master data as con
 - company data, currency EUR, Spanish chart PGC PYMEs 2008 (only while no accounting entry exists);
 - pricelists enabled with one general EUR pricelist (no prices: sale prices are agreed per customer);
 - Spanish (main) and English (second) languages, Madrid time zone.
-NOT done here: which Odoo tax applies to each BOSS VAT class (NR/EX/NS) — Ángel's decision (P17); until then
+NOT done here: the BOSS VAT table (dev/setup_vat_mapping.py, only the cases the sources settle); until then
 quotations show 'VAT pending' and cannot be sent or confirmed. Idempotent.
 """
 import json
@@ -55,4 +55,4 @@ env.cr.commit()
 taxes = env["account.tax"].search([("company_id", "=", company.id), ("type_tax_use", "=", "sale")])
 print("COMPANY", company.name, company.vat, company.currency_id.name, company.country_id.code, company.chart_template,
       "| sale taxes:", len(taxes), "| pricelists:", env["product.pricelist"].search([]).mapped("name"),
-      "| VAT mapping NR/EX/NS:", company.boss_tax_nr_id.name, company.boss_tax_ex_id.name, company.boss_tax_ns_id.name)
+      "| BOSS VAT table rows:", env["boss.vat.tax"].search_count([("company_id", "=", company.id)]))

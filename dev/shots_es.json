@@ -100,6 +100,15 @@
   "js": "const s = document.getElementById('boss_vat_mapping') || Array.from(document.querySelectorAll('.o_setting_box, [id]')).find(e => e.innerText && e.innerText.includes('IVA de los servicios BOSS')); s && s.scrollIntoView({block: 'center'}); await sleep(800); return s ? 'ok' : 'not found';"
  },
  {
+  "name": "20-tabla-iva",
+  "url": "/odoo/action-boss_pricing_sale.boss_vat_tax_action",
+  "wait": 4,
+  "size": [
+   1600,
+   520
+  ]
+ },
+ {
   "name": "13-oferta-aceptada",
   "url": "/odoo/sale.order/17",
   "wait": 6,

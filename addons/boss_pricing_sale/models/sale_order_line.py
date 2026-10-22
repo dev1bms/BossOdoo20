@@ -85,6 +85,8 @@ class SaleOrderLine(models.Model):
                                        precompute=True)
     boss_vat_trace = fields.Char("Why this VAT", compute="_compute_boss_vat", store=True, copy=False,
                                  precompute=True)
+    boss_vat_tax_id = fields.Many2one("account.tax", "Odoo tax of the VAT case", compute="_compute_boss_vat",
+                                      store=True, copy=False, precompute=True)
 
     def _boss_skip(self):
         """Lines whose price is frozen (accepted) and not being re-priced on purpose."""
@@ -248,7 +250,7 @@ class SaleOrderLine(models.Model):
             lines._recompute_recordset([fname])
         lines.invalidate_recordset(["boss_sale_status", "boss_sale_explanation", "boss_markup"])
 
-    # --- VAT: Ángel's rules, Odoo tax from the company mapping (ADR-004) -----------------------------
+    # --- VAT: Ángel's rules give the class; the BOSS VAT table gives the Odoo tax (ADR-004) ------------------
 
     def _boss_zones(self):
         order = self.order_id
@@ -264,33 +266,44 @@ class SaleOrderLine(models.Model):
             return spain, abroad, cust_zone
         return None, None, cust_zone
 
-    @api.depends("product_id", "order_id.partner_id", "order_id.boss_direction", "order_id.boss_port_id",
-                 "order_id.boss_country_id")
+    @api.depends("product_id", "product_id.boss_paid_on_behalf", "order_id.partner_id", "order_id.boss_direction",
+                 "order_id.boss_port_id", "order_id.boss_country_id")
     def _compute_boss_vat(self):
         frozen = self._boss_skip()
-        frozen._boss_keep("boss_vat_class", "boss_vat_status", "boss_vat_trace")
+        frozen._boss_keep("boss_vat_class", "boss_vat_status", "boss_vat_trace", "boss_vat_tax_id")
+        VatTax = self.env["boss.vat.tax"]
         for line in self - frozen:
             if line.display_type or not line.product_id.boss_pricing_mode:
-                line.update({"boss_vat_class": False, "boss_vat_status": False, "boss_vat_trace": False})
+                line.update({"boss_vat_class": False, "boss_vat_status": False, "boss_vat_trace": False,
+                             "boss_vat_tax_id": False})
                 continue
-            vat_class, trace = vat_rules.vat_class(line.product_id.boss_vat_class, *line._boss_zones())
-            company = line.order_id.company_id or self.env.company
-            tax = vat_class and company[f"boss_tax_{vat_class.lower()}_id"]
-            if vat_class and not tax:
-                trace.append(self.env._("no Odoo tax set for class %s (Sales settings)", vat_class))
-            line.update({"boss_vat_class": vat_class, "boss_vat_status": "ok" if tax else "pending",
-                         "boss_vat_trace": " · ".join(trace)})
+            origin, destination, customer = line._boss_zones()
+            vat_class, trace = vat_rules.vat_class(line.product_id.boss_vat_class, origin, destination, customer)
+            row = vat_class and VatTax._boss_find(line.order_id.company_id or self.env.company, vat_class, customer,
+                                                  line.product_id.boss_paid_on_behalf)
+            if row:
+                trace.append(f"{row.tax_id.name} ({row.source})" if row.source else row.tax_id.name)
+            elif vat_class:
+                trace.append(self.env._(
+                    "no Odoo tax for class %(cls)s and customer zone %(zone)s in the BOSS VAT table (decision pending)",
+                    cls=vat_class, zone=customer or "?"))
+            line.update({"boss_vat_class": vat_class, "boss_vat_status": "ok" if row else "pending",
+                         "boss_vat_trace": " · ".join(trace), "boss_vat_tax_id": row.tax_id.id if row else False})
 
-    @api.depends("boss_vat_class", "boss_vat_status")
+    def _boss_recompute_vat(self):
+        lines = self._boss_lines()
+        for fname in ("boss_vat_status", "tax_ids"):
+            self.env.add_to_compute(self._fields[fname], lines)
+            lines._recompute_recordset([fname])
+
+    @api.depends("boss_vat_tax_id", "boss_vat_status")
     def _compute_tax_ids(self):
         boss = self._boss_lines()
         super(SaleOrderLine, self - boss)._compute_tax_ids()
         frozen = boss._boss_skip()
         frozen._boss_keep("tax_ids")
         for line in boss - frozen:
-            company = line.order_id.company_id or self.env.company
-            line.tax_ids = (line.boss_vat_status == "ok" and line.boss_vat_class
-                            and company[f"boss_tax_{line.boss_vat_class.lower()}_id"]) or False
+            line.tax_ids = line.boss_vat_tax_id if line.boss_vat_status == "ok" else False
 
     # --- sale price: standard prices, frozen once accepted -------------------------------------------
 

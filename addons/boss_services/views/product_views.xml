@@ -13,6 +13,7 @@
                             <field name="boss_cost_method"/>
                             <field name="boss_open_question" invisible="not boss_open_question"/>
                             <field name="boss_vat_class"/>
+                            <field name="boss_paid_on_behalf"/>
                         </group>
                         <group string="Traceability">
                             <field name="default_code" string="Service code"/>

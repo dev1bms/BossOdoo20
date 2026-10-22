@@ -3,8 +3,8 @@
 A salesperson (sales + tariff entry) and an approver (sales manager + tariff approver) are created inside the
 transaction. Steps: approve the [DEMO] tariffs -> quotation from the [DEMO] opportunity -> shipment data -> add
 services -> cost per line -> missing price added from the quotation and approved -> sale price from the customer
-agreement -> send blocked while VAT is pending -> (temporary VAT mapping, only to prove acceptance) -> accept ->
-frozen + snapshot. Air quotation: ALM threshold and Saturday rule, HAN from the AWB weight. No e-mail is sent.
+agreement -> VAT from the BOSS VAT table (Spanish customer: THC pending, the only blocker) -> EU customer quotation
+accepted -> frozen + snapshot. Air quotation: ALM threshold and Saturday rule, HAN from the AWB weight. No e-mail is sent.
 """
 import base64
 from datetime import date
@@ -78,23 +78,46 @@ try:
     check("CES after entry", line("CES", "20").boss_cost_status, "pending_approval")
     line("CES").boss_cost_candidate_ids.tariff_id.with_user(approver).action_approve()
     check("CES approved: cost and sale", (line("CES", "20").boss_cost_amount, line("CES", "20").price_unit), (90.0, 51.75))
+    # VAT from the BOSS VAT table (no temporary mapping): Spanish customer, import from China.
+    tpl = env["account.chart.template"].with_company(order.company_id).ref
+    t21, t_eu, t_ns = (tpl(f"account_tax_template_{x}") for x in ("s_iva21s", "s_iva0_sp_i", "s_iva0_ns"))
+    check("DEM (NR, Spanish customer): 21% S", (line("DEM", "20").boss_vat_class, line("DEM", "20").tax_ids), ("NR", t21))
+    check("THC (EX, Spanish customer): VAT pending, decision open",
+          (line("THC", "20").boss_vat_class, line("THC", "20").boss_vat_status), ("EX", "pending"))
+    ara = product("ARA")
+    with_sales(env["boss.add.services"]).create({"order_id": order.id, "product_ids": [Command.set(ara.ids)]}).action_add()
+    check("ARA (NS, paid on behalf): 0% EXEMPT NS", line("ARA").tax_ids, t_ns)
+    line("ARA").write({"boss_manual_cost": 120.0, "price_unit": 120.0})
     try:
         with_sales(order).action_quotation_send()
-        check("send blocked while VAT pending", "sent", "blocked")
+        check("send blocked only by THC (EX, Spanish customer)", "sent", "blocked")
     except UserError as error:
-        check("send blocked while VAT pending", order.order_line[:1].boss_vat_trace in str(error), True)
+        blocking = [ln for ln in str(error).splitlines() if ln.startswith("- ")]
+        check("send blocked only by THC (EX, Spanish customer)", all("[THC]" in ln for ln in blocking) and len(blocking) == 2, True)
         print("BLOCK MESSAGE:", " | ".join(str(error).splitlines())[:400])
-    # Temporary VAT mapping (rolled back): ONLY to prove that the path completes once Ángel maps the taxes.
-    sale_taxes = env["account.tax"].search([("type_tax_use", "=", "sale"), ("company_id", "=", order.company_id.id)], limit=3)
-    order.company_id.sudo().write({"boss_tax_nr_id": sale_taxes[0].id, "boss_tax_ex_id": sale_taxes[1].id,
-                            "boss_tax_ns_id": sale_taxes[2].id})
-    order.order_line._boss_recompute_cost()
-    env.add_to_compute(order.order_line._fields["boss_vat_status"], order.order_line)
-    order.order_line._recompute_recordset(["boss_vat_status", "tax_ids"])
-    with_sales(order).action_confirm()
-    check("accepted and frozen", (order.state, order.boss_pricing_frozen, len(order.boss_snapshot_ids)), ("sale", True, 1))
+
+    # --- EU customer: every VAT case is decided -> the quotation is accepted -------------------------------
+    lead_eu = trial("lead_eu")
+    lead_eu.user_id = sales
+    eu = with_sales(env["sale.order"]).create({
+        "partner_id": lead_eu.partner_id.id, "opportunity_id": lead_eu.id, "boss_direction": "import",
+        "boss_transport_mode": "sea", "boss_load_type": "fcl", "boss_carrier_id": trial("carrier").id,
+        "boss_port_id": ref("boss_pricing.port_esvlc").id, "boss_country_id": ref("base.cn").id,
+        "boss_planned_date": date(2026, 11, 4), "boss_storage_days": 10,
+        "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_hc").id,
+                                               "quantity": 1})]})
+    with_sales(env["boss.add.services"]).create({"order_id": eu.id, "product_ids": [Command.set(
+        (product("THC") | product("DEM") | product("TTE-FCL") | product("FS")).ids)]}).action_add()
+    check("EU customer: THC and NR services -> 0% EU S", (set(eu.order_line.mapped("boss_vat_status")),
+                                                        eu.order_line.tax_ids), ({"ok"}, t_eu))
+    check("EU customer: DEM is EX after the customer layer", eu.order_line.filtered(
+        lambda l: l.product_id.default_code == "DEM").boss_vat_class, "EX")
+    with_sales(eu).action_confirm()
+    check("EU quotation accepted and frozen", (eu.state, eu.boss_pricing_frozen, len(eu.boss_snapshot_ids)), ("sale", True, 1))
+    check("snapshot keeps the tax", sorted({t for v in eu.boss_snapshot_ids.data["lines"] for t in v["taxes"]}),
+          sorted(set(eu.order_line.tax_ids.mapped("name"))))
     try:
-        with_sales(line("THC", "40")).price_unit = 1.0
+        with_sales(eu.order_line[:1]).price_unit = 1.0
         check("accepted price locked", "changed", "locked")
     except UserError:
         check("accepted price locked", "locked", "locked")

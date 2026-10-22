@@ -44,8 +44,12 @@ class ProductTemplate(models.Model):
         [("NS", "NS - not subject"), ("EX", "EX - exempt"), ("NR", "NR - normal rules")],
         string="VAT class",
         help="Base VAT class of the service (Ángel's VAT rules, 31/08/2026). NS and EX never carry VAT; "
-        "NR follows the origin/destination and customer rules. The Odoo tax used for each class is a "
-        "company setting.")
+        "NR follows the origin/destination and customer rules. The Odoo tax of each case is in the BOSS "
+        "VAT table (Sales settings).")
+    boss_paid_on_behalf = fields.Boolean(
+        "Paid on behalf",
+        help="Amount paid in the customer's name (duties, import VAT...) and re-invoiced at cost. In Odoo 17 these "
+        "concepts are of type TAX and go on a separate tax invoice; it decides the Odoo tax of their NS class.")
     boss_legacy_codes = fields.Char("Former codes", help="Odoo 17 codes now priced as this service.")
     boss_replaced_by_id = fields.Many2one(
         "product.template", "Replaced by", help="Former service kept for history; quote the new one.")
