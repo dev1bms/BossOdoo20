@@ -110,7 +110,7 @@
  },
  {
   "name": "13-oferta-aceptada",
-  "url": "/odoo/sale.order/17",
+  "url": "/odoo/sale.order/19",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Líneas del pedido').click(); await sleep(800); return 'aceptada';",
   "size": [
@@ -120,7 +120,7 @@
  },
  {
   "name": "14-recotizar",
-  "url": "/odoo/sale.order/17",
+  "url": "/odoo/sale.order/19",
   "wait": 6,
   "js": "Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Recotizar').click(); await sleep(2000); return 'recotizar';"
  }
