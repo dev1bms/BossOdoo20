@@ -140,6 +140,50 @@ class BossTariff(models.Model):
         return {"type": "ir.actions.act_window", "res_model": "boss.tariff", "res_id": self.id,
                 "view_mode": "form", "views": [(False, "form")], "target": "current"}
 
+    # Load types that exist in each transport mode: changing the mode clears a load type of another mode.
+    MODE_LOADS = {"sea": ("fcl", "lcl"), "air": ("air",), "road": ("road",)}
+
+    ws_checklist = fields.Text("Before sending", compute="_compute_ws_checklist")
+    ws_open_scope = fields.Char("Applies to any", compute="_compute_ws_checklist",
+                                help="Scope left empty: the prices apply to every value of these fields.")
+
+    @api.depends("line_ids", "line_ids.product_id", "line_ids.uom_id", "line_ids.container_size",
+                 "line_ids.container_type_ids", "document", "document_reference", *SCOPE_FIELDS)
+    @api.depends_context("lang")
+    def _compute_ws_checklist(self):
+        _ = self.env._
+        for tariff in self:
+            todo = []
+            if not tariff.line_ids:
+                todo.append(_("Add at least one price."))
+            if not tariff.document:
+                todo.append(_("Attach the supplier document."))
+            if not tariff.document_reference:
+                todo.append(_("Write the document reference (title and edition)."))
+            seen = {}
+            for line in tariff.line_ids:
+                key = (line.product_id.id, line.uom_id.id, line.container_size, frozenset(line.container_type_ids.ids))
+                if key in seen:
+                    todo.append(_("Two prices for %(svc)s with the same unit and container: they would conflict.",
+                                  svc=line.product_id.display_name))
+                seen[key] = line
+            tariff.ws_checklist = "\n".join(todo) or False
+            tariff.ws_open_scope = ", ".join(
+                tariff._fields[name].get_description(self.env)["string"]
+                for name in SCOPE_FIELDS if not tariff[name]) or False
+
+    @api.onchange("transport_mode")
+    def _onchange_transport_mode_load(self):
+        if self.transport_mode and self.load_type and self.load_type not in self.MODE_LOADS[self.transport_mode]:
+            self.load_type = False
+
+    def action_ws_document(self):
+        self.ensure_one()
+        if not self.document:
+            raise UserError(self.env._("'%s' has no supplier document attached.", self.name))
+        return {"type": "ir.actions.act_url", "target": "new",
+                "url": f"/web/content/boss.tariff/{self.id}/document/{self.document_name or 'document.pdf'}"}
+
     def _engine_conditions(self):
         """Scope as engine conditions: name -> accepted values (only the scope that is set)."""
         self.ensure_one()

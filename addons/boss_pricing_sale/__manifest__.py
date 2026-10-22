@@ -1,7 +1,7 @@
 {
     "name": "BOSS Pricing on Quotations",
     "summary": "Shipment data, supplier cost and sale price per quotation line; frozen on acceptance",
-    "version": "20.0.1.3.0",
+    "version": "20.0.1.4.0",
     "category": "Sales/Sales",
     "author": "BiDATiA",
     "license": "LGPL-3",
@@ -17,6 +17,7 @@
         "views/boss_vat_tax_views.xml",
         "views/res_config_settings_views.xml",
         "views/menus.xml",
+        "views/workspace_views.xml",
     ],
     "installable": True,
 }

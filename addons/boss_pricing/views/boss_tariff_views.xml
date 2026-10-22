@@ -16,6 +16,10 @@
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="alert alert-warning mb-2" role="alert" invisible="state != 'draft' or not ws_checklist">
+                        <strong>Before sending for approval:</strong>
+                        <field name="ws_checklist" class="d-block" style="white-space: pre-line"/>
+                    </div>
                     <div class="oe_title">
                         <h1><field name="name" placeholder="e.g. MSC local charges import 2026"/></h1>
                     </div>
@@ -38,6 +42,10 @@
                             <field name="company_id" invisible="1"/>
                         </group>
                     </group>
+                    <div class="text-muted small" invisible="not ws_open_scope">
+                        Left empty, so the prices apply to any: <field name="ws_open_scope" class="d-inline"/>.
+                        Fill a field only when the supplier document limits it.
+                    </div>
                     <group string="Applies to (empty = any)">
                         <group>
                             <field name="direction" readonly="state != 'draft'"/>
@@ -85,16 +93,35 @@
         <field name="model">boss.tariff.line</field>
         <field name="arch" type="xml">
             <form>
+                <field name="tariff_state" invisible="1"/>
+                <div class="alert alert-info mb-2" role="alert" invisible="not id or tariff_state in (False, 'draft')">
+                    This price belongs to a tariff sent for approval or approved: it does not change. Open the
+                    tariff and create a new version (or set it back to draft) to change it.
+                </div>
                 <group>
-                    <group string="Service">
+                    <group string="Service, supplier and source">
+                        <field name="tariff_id" invisible="not context.get('boss_ws')" required="context.get('boss_ws')"
+                               domain="[('state', '=', 'draft')]" readonly="id"
+                               options="{'no_quick_create': True}"
+                               help="Draft tariff of the supplier: document, currency, validity and scope are taken from it."/>
+                        <field name="partner_id" invisible="not context.get('boss_ws')"/>
+                        <field name="document_reference" invisible="not context.get('boss_ws')"/>
                         <field name="product_id"/>
                         <field name="allowed_uom_ids" invisible="1"/>
                         <field name="uom_id"/>
-                        <field name="container_size"/>
-                        <field name="container_type_ids" widget="many2many_tags"/>
                         <field name="document_page"/>
                         <field name="on_request"/>
                     </group>
+                    <group string="Applies to">
+                        <field name="scope_display" string="Tariff scope" invisible="not context.get('boss_ws')"/>
+                        <field name="container_size" placeholder="Any size"/>
+                        <field name="container_type_ids" widget="many2many_tags" placeholder="Any type"/>
+                        <field name="valid_from" invisible="not context.get('boss_ws')"/>
+                        <field name="valid_to" invisible="not context.get('boss_ws')" placeholder="Until a newer version"/>
+                        <field name="validity_state" widget="badge" invisible="not context.get('boss_ws') or not id"/>
+                    </group>
+                </group>
+                <group>
                     <group string="Calculation">
                         <field name="method"/>
                         <field name="basis" invisible="method == 'percent'"/>
@@ -134,6 +161,14 @@
                     <field name="floor_previous"/>
                     <field name="per_container"/>
                 </group>
+                <div class="text-muted small mb-1" invisible="method != 'brackets'">
+                    The bracket that contains the whole quantity prices all of it (450 kg in «up to 500» = 450 × its
+                    price). Cumulative brackets (each part at its own price) are not supported.
+                </div>
+                <div class="text-muted small mb-1" invisible="method != 'time'">
+                    Day tiers: «Up to» is a day number, read as chosen in «Tier mode» (day since the start, day after
+                    the free period, or the whole stay).
+                </div>
                 <field name="bracket_ids" invisible="method not in ('brackets', 'time')">
                     <list editable="bottom">
                         <field name="up_to"/>
@@ -142,6 +177,9 @@
                     </list>
                 </field>
                 <field name="note" placeholder="Conditions or remarks of the document"/>
+                <group string="Live example" invisible="not example_text">
+                    <field name="example_text" nolabel="1" colspan="2" class="text-muted" style="white-space: pre-line"/>
+                </group>
             </form>
         </field>
     </record>

@@ -8,3 +8,8 @@ boss_reprice_wizard_line_manager,Re-price lines,boss.reprice.wizard.line,sales_t
 boss_vat_tax_read,BOSS VAT table: read,boss.vat.tax,base.group_user,r,
 boss_vat_tax_accountant,BOSS VAT table: maintain,boss.vat.tax,account.group_account_manager,crud,
 boss_vat_tax_comp_rule,BOSS VAT table multi-company,boss.vat.tax,,crud,"[('company_id', 'in', company_ids)]"
+boss_tariff_read_salesman,Tariffs: read (sales),boss.tariff,sales_team.group_sale_salesman,r,
+boss_tariff_line_read_salesman,Tariff lines: read (sales),boss.tariff.line,sales_team.group_sale_salesman,r,
+boss_tariff_bracket_read_salesman,Brackets: read (sales),boss.tariff.bracket,sales_team.group_sale_salesman,r,
+boss_pricing_test_salesman,Test pricing,boss.pricing.test,sales_team.group_sale_salesman,crud,
+boss_pricing_test_tariff_user,Test pricing (tariffs),boss.pricing.test,boss_pricing.group_tariff_user,crud,

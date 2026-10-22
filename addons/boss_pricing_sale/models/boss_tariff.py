@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import fields, models
 
 
 class BossTariff(models.Model):
@@ -30,3 +30,30 @@ class BossTariff(models.Model):
         res = super().action_approve()
         self._boss_refresh_quotations()
         return res
+
+    def action_ws_test(self):
+        """Test pricing with the first price of this tariff (simulated while it is not approved)."""
+        self.ensure_one()
+        return self.line_ids[:1].action_ws_test() if self.line_ids else self.env["boss.pricing.test"]._open({})
+
+
+class BossTariffLine(models.Model):
+    _inherit = "boss.tariff.line"
+
+    def action_ws_test(self):
+        """Test pricing pre-filled with this price and a shipment inside its scope."""
+        self.ensure_one()
+        tariff = self.tariff_id
+        today = fields.Date.context_today(self)
+        day = max(today, tariff.valid_from) if not tariff.valid_to or tariff.valid_to >= today else tariff.valid_to
+        values = {
+            "product_id": self.product_id.id, "uom_id": self.uom_id.id, "supplier_id": tariff.partner_id.id,
+            "date": day, "direction": tariff.direction, "transport_mode": tariff.transport_mode,
+            "load_type": tariff.load_type, "carrier_id": tariff.carrier_id.id, "port_id": tariff.port_ids[:1].id,
+            "country_id": tariff.country_ids[:1].id, "state_id": tariff.state_ids[:1].id,
+            "customer_id": tariff.customer_id.id, "container_size": self.container_size or False,
+            "container_type_id": self.container_type_ids[:1].id,
+        }
+        if tariff.state != "approved":
+            values["simulate_tariff_ids"] = [tariff.id]
+        return self.env["boss.pricing.test"]._open(values)

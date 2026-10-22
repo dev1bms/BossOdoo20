@@ -470,9 +470,11 @@ class SaleOrderLine(models.Model):
             return self._boss_dialog(self.env._("Add supplier price"), "boss.supplier.price.wizard",
                                      views=[(False, "form")], context={"default_sale_line_id": self.id})
         order = self.order_id
+        supplier = self.boss_supplier_id or order.boss_carrier_id
         context = {
-            "default_name": f"{order.boss_carrier_id.name or ''} {self.product_id.default_code}".strip(),
-            "default_partner_id": order.boss_carrier_id.id, "default_carrier_id": order.boss_carrier_id.id,
+            "default_name": f"{supplier.name or ''} {self.product_id.default_code}".strip(),
+            "default_partner_id": supplier.id,
+            "default_carrier_id": order.boss_carrier_id.id if supplier == order.boss_carrier_id else False,
             "default_valid_from": order.boss_planned_date or fields.Date.today(),
             "default_currency_id": order.currency_id.id, "default_direction": order.boss_direction,
             "default_transport_mode": order.boss_transport_mode, "default_load_type": order.boss_load_type,
@@ -483,6 +485,13 @@ class SaleOrderLine(models.Model):
         }
         return self._boss_dialog(self.env._("Add supplier price"), "boss.tariff", views=[(False, "form")],
                                  context=context)
+
+    def action_boss_test_pricing(self):
+        """Test pricing with this line's service, supplier and shipment (nothing changes on the quotation)."""
+        self.ensure_one()
+        action = self.env["boss.pricing.test"]._open({})
+        action["context"] = {"default_sale_line_id": self.id}
+        return action
 
     def action_boss_open_tariffs(self):
         """Pending approval or conflict: open the tariffs involved."""

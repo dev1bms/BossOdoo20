@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_pricing_test_view_form" model="ir.ui.view">
+        <field name="name">boss.pricing.test.form</field>
+        <field name="model">boss.pricing.test</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">Same calculation as a quotation line. Nothing is saved on quotations or tariffs.</p>
+                <field name="sale_line_id" invisible="1"/>
+                <group>
+                    <group string="Service">
+                        <field name="product_id" options="{'no_create': True}"/>
+                        <field name="allowed_uom_ids" invisible="1"/>
+                        <field name="uom_id" options="{'no_create': True}"/>
+                        <field name="supplier_id" options="{'no_create': True}"/>
+                        <field name="simulate_tariff_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="customer_id" options="{'no_create': True}"/>
+                        <field name="pricelist_id" options="{'no_create': True}"/>
+                    </group>
+                    <group string="Shipment">
+                        <field name="date"/>
+                        <field name="direction"/>
+                        <field name="transport_mode"/>
+                        <field name="load_type"/>
+                        <field name="port_id" options="{'no_create': True}"/>
+                        <field name="country_id" options="{'no_create': True}"/>
+                        <field name="state_id" options="{'no_create': True}"/>
+                        <field name="carrier_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+                <group string="Measures">
+                    <group>
+                        <label for="container_qty" string="Containers"/>
+                        <div class="o_row">
+                            <field name="container_qty" class="oe_inline"/> ×
+                            <field name="container_size" class="oe_inline" placeholder="Size"/>
+                            <field name="container_type_id" class="oe_inline" placeholder="Type" options="{'no_create': True}"/>
+                        </div>
+                        <field name="gross_kg"/>
+                        <field name="volume_m3"/>
+                        <field name="awb_kg"/>
+                        <field name="pallets"/>
+                    </group>
+                    <group>
+                        <field name="storage_days"/>
+                        <field name="storage_days_known"/>
+                        <field name="goods_value"/>
+                        <field name="duties_amount"/>
+                        <field name="base_amount"/>
+                        <field name="quantity_source" invisible="1"/>
+                        <field name="line_qty" invisible="quantity_source != 'input'"/>
+                    </group>
+                </group>
+                <group string="Result">
+                    <group>
+                        <field name="status" widget="badge" decoration-success="status == 'ok'"
+                               decoration-warning="status in ('missing_input', 'pending_approval', 'manual', 'not_ready', 'on_request')"
+                               decoration-danger="status in ('no_tariff', 'conflict')"/>
+                        <field name="quantity" string="Quantity of the line"/>
+                        <field name="cost_amount"/>
+                        <field name="cost_currency_id" invisible="1"/>
+                        <field name="tariff_line_id" invisible="not tariff_line_id"/>
+                    </group>
+                    <group>
+                        <field name="sale_currency_id" invisible="1"/>
+                        <field name="sale_note"/>
+                        <field name="sale_unit" invisible="not sale_currency_id"/>
+                        <field name="sale_total" invisible="not sale_currency_id"/>
+                        <field name="profit" invisible="not sale_currency_id"/>
+                    </group>
+                    <field name="explanation" nolabel="1" colspan="2" style="white-space: pre-line"/>
+                    <field name="choice" nolabel="1" colspan="2" class="text-muted" style="white-space: pre-line"/>
+                </group>
+                <footer>
+                    <button string="Close" special="cancel" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="boss_pricing_test_action" model="ir.actions.act_window">
+        <field name="name">Test pricing</field>
+        <field name="res_model">boss.pricing.test</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- «Test» on every price of the workspace list, on the tariff and on the pricing details of a line. -->
+    <record id="boss_tariff_line_view_list_ws_test" model="ir.ui.view">
+        <field name="name">boss.tariff.line.list.workspace.test</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="inherit_id" ref="boss_pricing.boss_tariff_line_view_list_ws"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_ws_document']" position="before">
+                <button name="action_ws_test" type="object" icon="fa-flask" title="Test pricing"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="boss_tariff_view_form_ws_test" model="ir.ui.view">
+        <field name="name">boss.tariff.form.workspace.test</field>
+        <field name="model">boss.tariff</field>
+        <field name="inherit_id" ref="boss_pricing.boss_tariff_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_new_version']" position="after">
+                <button name="action_ws_test" type="object" string="Test pricing" invisible="not line_ids"/>
+                <button name="action_ws_document" type="object" string="Document" invisible="not document"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_line_view_form_boss_pricing_ws" model="ir.ui.view">
+        <field name="name">sale.order.line.form.boss.pricing.workspace</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale_order_line_view_form_boss_pricing"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <field name="boss_pricing_mode" invisible="1"/>
+                    <button name="action_boss_test_pricing" type="object" string="Test pricing" class="btn-secondary"
+                            invisible="not boss_pricing_mode"/>
+                    <button name="action_boss_add_supplier_price" type="object" string="Add supplier price"
+                            invisible="boss_cost_status != 'no_tariff'" groups="boss_pricing.group_tariff_user"/>
+                    <button name="action_boss_open_tariffs" type="object" string="Review the supplier price"
+                            invisible="boss_cost_status not in ('pending_approval', 'conflict')"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- App «Pricing &amp; Suppliers»: one entry point for prices, services, suppliers and tests. -->
+    <menuitem id="menu_boss_ws_root" name="Pricing &amp; Suppliers" sequence="26"
+              web_icon="boss_pricing_sale,static/description/icon.svg"
+              groups="boss_pricing.group_tariff_user,sales_team.group_sale_salesman"/>
+    <menuitem id="menu_boss_ws_prices" name="Prices" parent="menu_boss_ws_root" sequence="10"
+              action="boss_pricing.boss_tariff_line_ws_action"/>
+    <menuitem id="menu_boss_ws_tariffs" name="Tariffs and documents" parent="menu_boss_ws_root" sequence="20"
+              action="boss_pricing.boss_tariff_action"/>
+    <menuitem id="menu_boss_ws_services" name="Services" parent="menu_boss_ws_root" sequence="30"
+              action="boss_pricing.boss_service_ws_action"/>
+    <menuitem id="menu_boss_ws_suppliers" name="Suppliers" parent="menu_boss_ws_root" sequence="40"
+              action="boss_pricing.boss_supplier_ws_action"/>
+    <menuitem id="menu_boss_ws_test" name="Test pricing" parent="menu_boss_ws_root" sequence="50"
+              action="boss_pricing_test_action"/>
+</odoo>

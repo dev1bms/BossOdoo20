@@ -60,13 +60,14 @@ class BossPricing(models.AbstractModel):
         }
 
     @api.model
-    def price_cost(self, product, uom, inputs, day, company=None):
+    def price_cost(self, product, uom, inputs, day, company=None, simulate=None):
         """Expected supplier cost of one quotation line.
 
         inputs: shipment inputs named like the tariff scope (direction, carrier_id, port_id, country_id...)
         plus line inputs (line_qty, container_size, container_type_id) and measures (containers,
         gross_kg, volume_m3, storage_days, related_costs...). `day` picks the tariff version.
         Only tariffs of `company` (default: current company) apply, whoever asks (also under sudo).
+        simulate: tariffs not approved yet that count as approved in this call only ("Test pricing").
         """
         Line = self.env["boss.tariff.line"]
         mode = product.boss_pricing_mode
@@ -84,7 +85,7 @@ class BossPricing(models.AbstractModel):
                             + ([("tariff_id.partner_id", "=", inputs["supplier_id"])] if inputs.get("supplier_id") else []))
         currencies = lines.tariff_id.currency_id
         decimals = currencies[:1].decimal_places if len(currencies) == 1 else 2
-        res = engine.price([ln._to_engine_rule() for ln in lines], inputs, day, decimals)
+        res = engine.price([ln._to_engine_rule(simulate) for ln in lines], inputs, day, decimals)
         line = Line.browse(res.rule.id) if res.rule else Line
         return CostResult(
             status=res.status.value,

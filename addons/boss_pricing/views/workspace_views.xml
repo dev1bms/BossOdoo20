@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workspace «Tarifas y proveedores»: the supplier prices (tariff lines) as the main list. -->
+    <record id="boss_tariff_line_view_list_ws" model="ir.ui.view">
+        <field name="name">boss.tariff.line.list.workspace</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="validity_state in ('expired', 'replaced')">
+                <field name="service_code" string="Code" width="70px"/>
+                <field name="product_id" string="Service" width="150px"/>
+                <field name="partner_id" string="Supplier" width="120px"/>
+                <field name="scope_display" width="190px"/>
+                <field name="calc_display" optional="hide"/>
+                <field name="price_display" width="210px"/>
+                <field name="valid_from" optional="hide"/>
+                <field name="valid_to" string="Until" optional="show" width="80px"/>
+                <field name="validity_state" widget="badge" width="100px"
+                       decoration-success="validity_state == 'current'"
+                       decoration-warning="validity_state in ('expiring', 'to_approve', 'future')"
+                       decoration-danger="validity_state == 'expired'"
+                       decoration-muted="validity_state in ('draft', 'replaced')"/>
+                <field name="document_reference" optional="hide"/>
+                <field name="version" string="v." optional="hide"/>
+                <field name="document_page" string="Page" optional="hide"/>
+                <field name="tariff_id" optional="hide"/>
+                <field name="tariff_state" column_invisible="1"/>
+                <button name="action_ws_document" type="object" icon="fa-file-pdf-o" title="Open the supplier document"/>
+                <button name="action_ws_duplicate" type="object" icon="fa-clone" title="Copy this price (draft tariff)"
+                        invisible="tariff_state != 'draft'" groups="boss_pricing.group_tariff_user"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_view_search_ws" model="ir.ui.view">
+        <field name="name">boss.tariff.line.search.workspace</field>
+        <field name="model">boss.tariff.line</field>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id" string="Service or code"/>
+                <field name="partner_id" string="Supplier"/>
+                <field name="tariff_id" string="Tariff or document"
+                       filter_domain="['|', ('tariff_id.name', 'ilike', self), ('tariff_id.document_reference', 'ilike', self)]"/>
+                <field name="tariff_id" string="Port / airport" filter_domain="[('tariff_id.port_ids', 'ilike', self)]"/>
+                <filter string="Valid" name="ws_current"
+                        domain="[('tariff_state', '=', 'approved'), ('tariff_active', '=', True), ('valid_from', '&lt;=', context_today().strftime('%Y-%m-%d')), '|', ('valid_to', '=', False), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Expiring (30 days)" name="ws_expiring"
+                        domain="[('tariff_state', '=', 'approved'), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d')), ('valid_to', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Expired" name="ws_expired"
+                        domain="[('valid_to', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Draft" name="ws_draft" domain="[('tariff_state', '=', 'draft')]"/>
+                <filter string="Waiting for approval" name="ws_pending" domain="[('tariff_state', '=', 'to_approve')]"/>
+                <filter string="Approved" name="ws_approved" domain="[('tariff_state', '=', 'approved')]"/>
+                <separator/>
+                <filter string="Import" name="ws_import" domain="[('direction', 'in', ('import', False))]"/>
+                <filter string="Export" name="ws_export" domain="[('direction', 'in', ('export', False))]"/>
+                <separator/>
+                <filter string="Sea" name="ws_sea" domain="[('transport_mode', 'in', ('sea', False))]"/>
+                <filter string="Air" name="ws_air" domain="[('transport_mode', 'in', ('air', False))]"/>
+                <filter string="Road" name="ws_road" domain="[('transport_mode', 'in', ('road', False))]"/>
+                <separator/>
+                <filter string="FCL" name="ws_fcl" domain="[('load_type', 'in', ('fcl', False))]"/>
+                <filter string="LCL" name="ws_lcl" domain="[('load_type', 'in', ('lcl', False))]"/>
+                <separator/>
+                <filter string="Archived tariffs" name="ws_archived" domain="[('tariff_active', '=', False)]"/>
+                <group>
+                    <filter string="Supplier" name="ws_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Service" name="ws_by_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Tariff" name="ws_by_tariff" context="{'group_by': 'tariff_id'}"/>
+                    <filter string="Approval" name="ws_by_state" context="{'group_by': 'tariff_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="boss_tariff_line_ws_action" model="ir.actions.act_window">
+        <field name="name">Supplier prices</field>
+        <field name="res_model">boss.tariff.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'list', 'view_id': ref('boss_tariff_line_view_list_ws')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('boss_tariff_line_view_form')})]"/>
+        <field name="search_view_id" ref="boss_tariff_line_view_search_ws"/>
+        <field name="context">{'boss_ws': 1, 'search_default_ws_current': 1, 'search_default_ws_pending': 1, 'search_default_ws_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No supplier price with these filters</p>
+            <p>Remove a filter, or add a price: a price always belongs to a supplier tariff (document, validity, scope).</p>
+        </field>
+    </record>
+
+    <!-- Services: the standard service products, with their supplier prices. -->
+    <record id="boss_service_view_list_ws" model="ir.ui.view">
+        <field name="name">product.template.list.boss.workspace</field>
+        <field name="model">product.template</field>
+        <field name="priority">40</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="default_code" string="Code" width="70px"/>
+                <field name="name" string="Service"/>
+                <field name="boss_pricing_mode" optional="show"/>
+                <field name="boss_ws_methods" optional="show"/>
+                <field name="boss_ws_supplier_ids" widget="many2many_tags" optional="show"/>
+                <field name="boss_ws_current_count" string="Valid" optional="show"/>
+                <field name="boss_ws_pending_count" string="To approve" optional="show"/>
+                <field name="boss_ws_readiness" widget="badge"
+                       decoration-success="boss_ws_readiness == 'ready'"
+                       decoration-warning="boss_ws_readiness in ('pending', 'outdated')"
+                       decoration-danger="boss_ws_readiness == 'no_price'"/>
+                <button name="action_boss_ws_prices" type="object" icon="fa-list" title="Supplier prices of this service"/>
+                <button name="action_boss_ws_open" type="object" icon="fa-external-link" title="Open the product"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_service_ws_action" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="boss_service_view_list_ws"/>
+        <field name="domain">[('boss_pricing_mode', '!=', False)]</field>
+        <field name="context">{'default_type': 'service'}</field>
+        <field name="help" type="html">
+            <p>Services are the standard products of type service with a BOSS cost source.
+            Search before creating one: a service is never duplicated per supplier.</p>
+        </field>
+    </record>
+
+    <record id="product_template_form_view_boss_ws" model="ir.ui.view">
+        <field name="name">product.template.form.boss.workspace</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="fa-money"
+                        invisible="boss_pricing_mode != 'tariff'" groups="boss_pricing.group_tariff_user">
+                    <field name="boss_ws_price_count" widget="statinfo" string="Supplier prices"/>
+                </button>
+                <button name="action_boss_ws_guide" type="object" class="oe_stat_button" icon="fa-book"
+                        invisible="not boss_pricing_mode" string="Guide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Suppliers: standard contacts that have supplier tariffs (carriers or not). -->
+    <record id="boss_supplier_view_list_ws" model="ir.ui.view">
+        <field name="name">res.partner.list.boss.workspace</field>
+        <field name="model">res.partner</field>
+        <field name="priority">40</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="name" string="Supplier"/>
+                <field name="vat" optional="show"/>
+                <field name="country_id" optional="show"/>
+                <field name="boss_ws_tariff_count" string="Tariffs"/>
+                <field name="boss_ws_service_count" string="Services"/>
+                <field name="boss_ws_price_count" string="Prices" optional="show"/>
+                <field name="boss_ws_pending_count" string="To approve" decoration-warning="boss_ws_pending_count"/>
+                <field name="boss_ws_outdated_count" string="Expired / expiring" decoration-danger="boss_ws_outdated_count"/>
+                <button name="action_boss_ws_prices" type="object" icon="fa-list" title="Supplier prices"/>
+                <button name="action_boss_ws_tariffs" type="object" icon="fa-file-text-o" title="Tariffs and documents"/>
+                <button name="action_boss_ws_open" type="object" icon="fa-external-link" title="Open the contact"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_supplier_ws_action" model="ir.actions.act_window">
+        <field name="name">Suppliers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="boss_supplier_view_list_ws"/>
+        <field name="domain">[('boss_tariff_ids', '!=', False)]</field>
+        <field name="help" type="html">
+            <p>Contacts with at least one supplier tariff. A new supplier is a standard contact: create its
+            first tariff from «Tariffs and documents».</p>
+        </field>
+    </record>
+
+    <record id="res_partner_form_view_boss_ws" model="ir.ui.view">
+        <field name="name">res.partner.form.boss.workspace</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_boss_ws_tariffs" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                        invisible="not boss_ws_tariff_count" groups="boss_pricing.group_tariff_user">
+                    <field name="boss_ws_tariff_count" widget="statinfo" string="Supplier tariffs"/>
+                </button>
+                <button name="action_boss_ws_prices" type="object" class="oe_stat_button" icon="fa-money"
+                        invisible="not boss_ws_price_count" groups="boss_pricing.group_tariff_user">
+                    <field name="boss_ws_price_count" widget="statinfo" string="Supplier prices"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

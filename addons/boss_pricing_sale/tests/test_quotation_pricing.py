@@ -294,3 +294,36 @@ class TestQuotationPricing(TransactionCase):
         wizard.action_apply()
         self.assertEqual((line.boss_cost_amount, line.price_unit), (270.0, 330.0))
         self.assertEqual(order.boss_snapshot_ids[0].kind, "repricing")
+
+    def test_workspace_list_test_panel_and_access(self):
+        line40 = self.tariff.line_ids.filtered(lambda l: l.container_size == "40")
+        self.assertIn("240", line40.price_display)
+        self.assertIn(" / ", line40.price_display)  # always with its unit
+        self.assertEqual(line40.validity_state, "current")
+        self.assertIn("480", line40.example_text)  # illustrative 2 containers x 240
+        # «Test pricing» from a quotation line: same service, supplier, shipment and result as the line.
+        order = self._order()
+        sale_line = self._line(order, "40")
+        test = self.env["boss.pricing.test"].with_user(self.salesman).with_context(
+            default_sale_line_id=sale_line.id).create({})
+        self.assertEqual((test.status, test.cost_amount, test.tariff_line_id), ("ok", 240.0, line40))
+        # A draft price is never used, except in an explicit simulation of the test panel.
+        draft = self._tariff(self.carrier_b, [("40", 250.0)])
+        draft.action_submit()
+        test.write({"carrier_id": self.carrier_b.id, "supplier_id": self.carrier_b.id})
+        self.assertEqual(test.status, "pending_approval")
+        test.simulate_tariff_ids = draft
+        self.assertEqual((test.status, test.cost_amount), ("ok", 250.0))
+        self.assertIn("simulated", test.choice)
+        self.assertEqual(self._line(self._order(carrier=self.carrier_b), "40").boss_cost_status, "pending_approval")
+        # Sale price and profit with the pricelist's own rule (cost + 20 %).
+        pricelist = self.env["product.pricelist"].create({
+            "name": "PRUEBA coste + 20 %", "currency_id": self.cur.id,
+            "item_ids": [Command.create({"applied_on": "1_product", "product_tmpl_id": self.thc.product_tmpl_id.id,
+                                         "compute_price": "markup", "base": "boss_line_cost", "price_markup": 20.0})]})
+        test.pricelist_id = pricelist
+        self.assertEqual((test.sale_unit, test.sale_total, test.profit), (300.0, 300.0, 50.0))
+        # Costs are not visible to internal users outside sales and tariffs.
+        clerk = new_test_user(self.env, "boss_clerk", groups="base.group_user")
+        with self.assertRaises(AccessError):
+            self.env["boss.tariff.line"].with_user(clerk).search([]).mapped("unit_price")
