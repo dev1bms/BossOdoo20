@@ -52,7 +52,10 @@ class SaleOrderLine(models.Model):
         "Days for this service", default="shipment", required=True,
         help="Time-based services: the days of the Shipment tab, an estimate for this line (e.g. port occupancy shorter "
         "than demurrage; 0 is a deliberate zero) or the actual period once it has ended.")
-    boss_days = fields.Integer("Days (line)", help="Days of this line when it does not use the days of the shipment.")
+    boss_days = fields.Integer(
+        "Days (line)", compute="_compute_boss_days", store=True, readonly=False, precompute=True,
+        help="Days priced on this line: the days of the shipment unless an estimate of the line or the actual period "
+        "is typed (typing a number makes it the estimate of this line).")
     boss_cost_status = fields.Selection(
         COST_STATUSES + [("currency", "Other currency, no conversion policy")], "Cost status",
         compute="_compute_boss_cost", store=True, copy=False, precompute=True)
@@ -98,6 +101,17 @@ class SaleOrderLine(models.Model):
                                  precompute=True)
     boss_vat_tax_id = fields.Many2one("account.tax", "Odoo tax of the VAT case", compute="_compute_boss_vat",
                                       store=True, copy=False, precompute=True)
+
+    @api.depends("boss_days_source", "order_id.boss_storage_days")
+    def _compute_boss_days(self):
+        for line in self:
+            if line.boss_days_source == "shipment":
+                line.boss_days = line.order_id.boss_storage_days
+
+    @api.onchange("boss_days")
+    def _onchange_boss_days(self):
+        if self.boss_days_source == "shipment" and self.boss_days != self.order_id.boss_storage_days:
+            self.boss_days_source = "estimate"
 
     def _boss_skip(self):
         """Lines whose price is frozen (accepted) and not being re-priced on purpose."""
@@ -420,6 +434,10 @@ class SaleOrderLine(models.Model):
             line.boss_markup = (line.price_subtotal - cost) / cost if cost else 0.0
 
     def write(self, vals):
+        if "boss_days" in vals and "boss_days_source" not in vals:
+            shipment_lines = self.filtered(lambda l: l.boss_days_source == "shipment")
+            if shipment_lines:  # typing days on the line makes them the estimate of this line
+                super(SaleOrderLine, shipment_lines).write({"boss_days_source": "estimate"})
         if FROZEN_FIELDS & set(vals) and self.filtered("boss_price_frozen"):
             # The context flag comes from the Re-price wizard; RPC callers cannot use it to bypass the rule.
             if not (self.env.context.get("boss_reprice") and self.env.user.has_group("sales_team.group_sale_manager")):
