@@ -20,7 +20,10 @@ nueva, Borrador, Pendiente de aprobación. Botones de la fila: probar, abrir el 
 - Al entrar se ven los precios **vigentes**, **borradores** y **pendientes**. Quitando filtros se ve todo; «Vencidas»
   y «Tarifas archivadas» dan el histórico.
 - Filtros de sentido, modo y carga incluyen los precios que valen para cualquiera (campo vacío en la tarifa).
+- «Tarifas reales» / «Tarifas de demostración» separan los precios de formación (columna opcional «Demo»).
 - Agrupar por proveedor, servicio, tarifa o aprobación.
+
+![Precios: base de cobro, precio con su unidad, vigencia y estado](img/21-precios-lista.png)
 
 [[Nuevo]] abre el formulario del precio por secciones: **servicio, proveedor y origen** (la tarifa en borrador da
 proveedor, documento, moneda, vigencia y alcance), **a qué se aplica**, **cálculo** (solo los campos de la forma
@@ -39,12 +42,23 @@ forma de carga de otro modo (p. ej. FCL al pasar a aéreo).
 
 **Servicios** muestra, por servicio: origen del coste, formas de cálculo usadas (pueden cambiar según el proveedor),
 proveedores, precios vigentes y por aprobar, y el estado: Con precio, Sin precio de proveedor, Por aprobar, Precios
-vencidos, No se calcula con tarifas. El producto tiene los botones **Precios de proveedor** y **Guía**. Un servicio
+vencidos, No se calcula con tarifas; con filtros por cada estado («Sin precio de proveedor» = qué falta cotizar). El producto tiene los botones **Precios de proveedor** y **Guía**. Un servicio
 nuevo es un producto nuevo: buscar antes de crearlo (no se duplica por proveedor).
+
+![Servicios: estado para cotizar con filtros](img/26-servicios-lista.png)
+
+En la ficha del servicio, pestaña **Precios BOSS** › **Listo para cotizar**: estado, proveedores, cálculos usados
+y [[Añadir precio de proveedor]] (precio nuevo de un servicio existente). «Cálculo habitual» es solo la propuesta
+para precios nuevos.
+
+![Servicio listo para cotizar](img/27-servicio-listo.png)
 
 **Proveedores** lista los contactos con tarifas: tarifas, servicios, precios por aprobar y vencidos o por vencer. En
 la ficha del contacto, los botones **Tarifas de proveedor** y **Precios de proveedor**. Un proveedor no es por fuerza
-el transportista: el transportista del envío solo cambia en la oferta.
+el transportista: el transportista del envío solo cambia en la oferta. En la ficha del contacto, la pestaña
+**Tarifas de proveedor** muestra sus documentos, versiones, vigencias, alcance y estado, con [[Nueva tarifa]].
+
+![Proveedor con sus tarifas](img/28-proveedor-tarifas.png)
 
 ## Probar tarifa
 

@@ -16,7 +16,8 @@ No new service is created and no zero is used.
 1. The form arrives with the **service, charge basis, container size and type**, the supplier (the quotation
    carrier), the scope (direction, mode, load type, port, country) and the planned date.
 2. Enter the **unit price**, minimum/maximum if any, the **page** of the document and attach the **supplier document**
-   (PDF). You can add it to an existing draft tariff or create a new one.
+   (PDF). You can add it to an existing draft tariff (which already has its PDF) or create a new one. With an
+   existing tariff its scope is shown on one line: tick **Tariff scope reviewed** if it matches the document.
 3. [[Guardar precio]] (Save price): the price is stored in the tariff (never on the quotation) and sent for approval.
    The line becomes "Price waiting for approval".
 4. An approver opens the tariff from the same line and clicks [[Aprobar]]. On closing, the quotation reloads and the
@@ -30,5 +31,8 @@ No new service is created and no zero is used.
   reference (offer number). It shows as a manual amount, not as a calculation.
 - **Time-based services** (DEM, OCU, ALM): on the quotation the cost is an **estimate** with the assumed days
   (Shipment tab). The actual cost is only known when the period ends, in the shipment file.
+- **Expired price**: the explanation says there are prices of the service but none valid on the planned date: ask
+  the supplier for the current document (new tariff version) or check the date.
+- **Only demo prices**: the explanation says so; a real customer is never priced with them.
 - **Conflict**: when two tariffs with the same scope apply, the line does not pick the cheapest; an approver sets the
   **priority** or a tariff is narrowed (e.g. by carrier or port).

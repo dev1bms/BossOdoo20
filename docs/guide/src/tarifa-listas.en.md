@@ -20,7 +20,10 @@ Draft, Waiting for approval. Row buttons: test, open the document, copy (draft o
 - It opens on **valid**, **draft** and **waiting** prices. Remove filters to see everything; «Expired» and
   «Archived tariffs» give the history.
 - Direction, mode and load filters include prices valid for any (empty field on the tariff).
+- «Real tariffs» / «Demo tariffs» separate training prices (optional «Demo» column).
 - Group by supplier, service, tariff or approval.
+
+![Prices: charge basis, price with its unit, validity and status](img/21-precios-lista.png)
 
 [[New]] opens the price form in sections: **service, supplier and source** (the draft tariff gives supplier,
 document, currency, validity and scope), **applies to**, **calculation** (only the fields of the chosen method;
@@ -39,12 +42,23 @@ switching to air).
 
 **Services** shows per service: cost source, calculations used (they may differ per supplier), suppliers, valid and
 waiting prices, and the readiness: Priced, No supplier price, Prices waiting for approval, Prices expired, Not priced
-from tariffs. The product has the **Supplier prices** and **Guide** buttons. A new service is a new product: search
+from tariffs, with a filter for each status («No supplier price» = what is left to price). The product has the **Supplier prices** and **Guide** buttons. A new service is a new product: search
 before creating it (never one per supplier).
+
+![Services: readiness with filters](img/26-servicios-lista.png)
+
+On the service, tab **BOSS pricing** › **Ready to quote**: readiness, suppliers, calculations used and
+[[Add supplier price]] (a new price of an existing service). «Usual calculation» is only the proposal for new
+prices.
+
+![Service ready to quote](img/27-servicio-listo.png)
 
 **Suppliers** lists contacts with tariffs: tariffs, services, prices waiting and expired or expiring. On the contact,
 the **Supplier tariffs** and **Supplier prices** buttons. A supplier is not necessarily the carrier: the shipment
-carrier only changes on the quotation.
+carrier only changes on the quotation. On the contact, the **Supplier tariffs** tab shows its documents, versions,
+validity, scope and status, with [[New tariff]].
+
+![Supplier with its tariffs](img/28-proveedor-tarifas.png)
 
 ## Test pricing
 

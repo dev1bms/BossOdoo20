@@ -1,6 +1,7 @@
 Demostración en **https://system.bosscontinental.com** con los tres proveedores del sistema (**MSC**, **WFS**, **IRENEO**).
 Tarifas, clientes y reglas de venta **[DEMO]**: importes ilustrativos, aprobados solo para esta demostración y limitados
-a los clientes [DEMO]; no cotizan ofertas reales. Las tarifas [MUESTRA] (documentos reales) siguen pendientes de aprobación.
+a los clientes [DEMO]; no cotizan ofertas reales: son **tarifas de demostración** (cinta «Demo») y el motor solo las
+aplica a **clientes de demostración**, aunque un cliente real no tenga otro precio. Las tarifas [MUESTRA] (documentos reales) siguen pendientes de aprobación.
 
 ## Registros
 

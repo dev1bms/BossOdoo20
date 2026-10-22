@@ -1,6 +1,7 @@
 Demonstration on **https://system.bosscontinental.com** with the three suppliers of the system (**MSC**, **WFS**,
 **IRENEO**). **[DEMO]** tariffs, customers and sale rules: illustrative amounts, approved only for this demonstration and
-limited to the [DEMO] customers; they never price real quotations. The [MUESTRA] tariffs (real documents) still wait for
+limited to the [DEMO] customers; they never price real quotations: they are **demo tariffs** («Demo» ribbon) and the
+engine applies them to **demo customers** only, even when a real customer has no other price. The [MUESTRA] tariffs (real documents) still wait for
 approval.
 
 ## Records
