@@ -9,8 +9,8 @@
             <list decoration-muted="validity_state in ('expired', 'replaced')">
                 <field name="service_code" string="Code" width="64px"/>
                 <field name="service_name"/>
-                <field name="partner_id" string="Supplier"/>
-                <field name="scope_display"/>
+                <field name="partner_id" string="Supplier" width="110px"/>
+                <field name="scope_display" width="200px"/>
                 <field name="uom_id" string="Charge basis" width="90px" optional="show"/>
                 <field name="calc_display" optional="hide"/>
                 <field name="price_display"/>
