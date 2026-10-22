@@ -1,13 +1,16 @@
 """Check the supplier reference examples on a database WITHOUT changing it (odoo shell).
 
 The sample tariffs are approved inside the transaction only to compute, and everything is rolled back.
-Data file: /tmp/samples.json (private, real prices). Prints one line per failure and a summary.
+Data file: samples.json (private, real prices), passed by dev/server_shell.sh. Prints one line per failure and a summary.
 """
 import json
+import os
 from datetime import date
 
 env = env  # noqa: F821 (odoo shell)
-data = json.load(open("/tmp/samples.json", encoding="utf-8"))
+# dev/server_shell.sh mounts the private file in /tmp/boss (older runs copied it to /tmp)
+path = next(p for p in ("/tmp/boss/samples.json", "/tmp/samples.json") if os.path.isfile(p))
+data = json.load(open(path, encoding="utf-8"))
 
 
 def rid(model, domain):
@@ -16,7 +19,7 @@ def rid(model, domain):
 
 def inputs_of(raw):
     inputs = {k: raw[k] for k in ("direction", "transport_mode", "load_type", "line_qty", "gross_kg", "volume_m3",
-                                  "awb_kg", "storage_days", "container_size") if k in raw}
+                                  "awb_kg", "storage_days", "container_size", "start_weekday") if k in raw}
     if "carrier" in raw:
         inputs["carrier_id"] = rid("res.partner", [("name", "=", f"{raw['carrier']} [MUESTRA]")])
     if "country" in raw:

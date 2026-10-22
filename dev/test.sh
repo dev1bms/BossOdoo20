@@ -4,6 +4,7 @@
 #   dev/test.sh run <modules> [tags]    fresh copy of the template, install modules, run tests
 #   dev/test.sh pot <module>            print the module's translation template (after a run)
 #   dev/test.sh shell <script>          run an odoo shell script from dev/ on boss_test
+#   dev/test.sh install <modules>       install modules on boss_test (e.g. the localization, like the server)
 #   dev/test.sh update <modules>        update modules (and translations) on boss_test
 #   dev/test.sh serve                   serve boss_test on http://localhost:8069 (UI checks)
 #   dev/test.sh down                    destroy containers, database and volumes
@@ -34,6 +35,10 @@ case "${1:-}" in
     ;;
   shell)
     $DC run --rm -T -v "$(pwd):/mnt/dev:ro" --entrypoint sh odoo -c "printf '[options]\ndb_host=db\ndb_user=odoo\ndb_password=odoo\naddons_path=/opt/odoo-src/odoo/addons,/mnt/extra-addons\ndata_dir=/var/lib/odoo\n' > /tmp/t.conf && python3 /opt/odoo-src/setup/odoo shell -c /tmp/t.conf -d boss_test --no-http < /mnt/dev/${2:?script}"
+    ;;
+  install)
+    docker rm -f boss20test-web >/dev/null 2>&1 || true
+    $DC run --rm -T odoo $ARGS -d boss_test -i "${2:?modules}" --stop-after-init --log-level=warn
     ;;
   update)
     docker rm -f boss20test-web >/dev/null 2>&1 || true
