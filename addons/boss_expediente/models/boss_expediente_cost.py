@@ -36,7 +36,7 @@ class BossExpedienteCost(models.Model):
 
     expediente_id = fields.Many2one("boss.expediente", "File", required=True, ondelete="cascade", index=True)
     company_id = fields.Many2one(related="expediente_id.company_id", store=True)
-    company_currency_id = fields.Many2one(related="company_id.currency_id")
+    company_currency_id = fields.Many2one(related="company_id.currency_id", string="Company currency")
     kind = fields.Selection([("sale", "Sold service"), ("extra", "Extra cost")], required=True, default="extra",
                             readonly=True)
     sale_line_id = fields.Many2one("sale.order.line", "Sale line", readonly=True, index="btree_not_null")
@@ -165,7 +165,8 @@ class BossExpedienteCost(models.Model):
         self.ensure_one()
         return self.quantity - sum(self._boss_active_lines().mapped("product_qty"))
 
-    @api.depends("closed", "partner_id", "quantity", "purchase_line_ids.state", "purchase_line_ids.product_qty",
+    @api.depends("closed", "partner_id", "quantity", "without_order", "purchase_line_ids.state",
+                 "purchase_line_ids.product_qty",
                  "purchase_line_ids.qty_received", "purchase_line_ids.qty_invoiced")
     def _compute_state(self):
         digits = self.env["decimal.precision"].precision_get("Product Unit")
@@ -409,7 +410,7 @@ class BossExpedienteCostRevision(models.Model):
     cost_id = fields.Many2one("boss.expediente.cost", "Service", required=True, ondelete="cascade", index=True)
     expediente_id = fields.Many2one(related="cost_id.expediente_id", store=True, index=True)
     company_id = fields.Many2one(related="cost_id.company_id", store=True)
-    product_id = fields.Many2one(related="cost_id.product_id")
+    product_id = fields.Many2one(related="cost_id.product_id", string="Product")
     date = fields.Datetime(default=fields.Datetime.now, required=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user)
     reason = fields.Char()
