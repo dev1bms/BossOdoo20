@@ -16,6 +16,8 @@ supplier bill arrives.
 
 ## Services to buy
 
+![Services and costs of file E260001 [DEMO]](img/31-expediente-servicios.png)
+
 On acceptance, each supplier service goes to the **Services and costs** tab of the file with its own **purchase
 basis**: supplier, quantity, unit and currency of the supplier tariff, and the expected cost. The sale is not touched and
 a basis is never converted into another (containers, kg, W/M…).
@@ -35,15 +37,34 @@ Order** on the purchase order.
 
 When the supplier has done the service, click the ✓ icon (**Mark as performed**) on the line: the received quantity
 becomes the ordered one. If the product's bill control is "received quantities", only performed services are billed
-(decision pending, Ángel A8).
+(decision pending, Ángel P32).
 
 ## Vendor bill
 
-It is created from the purchase order (**Create Bill**), with its analytic account. Before posting it:
+It is created from the purchase order (**Create Bill**), with its analytic account. Before posting it, each BOSS service line needs the
+**tax shown on the supplier invoice** (0 % included).
 
-- each BOSS service line needs the **tax shown on the supplier invoice** (0 % included);
-- the service must be **already invoiced to the customer** (Cristina's requirement), unless the extra cost is "covered
-  by the agreed price" or "BOSS bears it". An extra cost "needs customer approval" or "disputed" is decided first.
+**Order of work**: Cristina asks to invoice the customer before posting or paying the supplier bill (written
+requirement, pending confirmation: P30). For now the vendor bill shows a yellow notice ("Before posting or paying") when
+the service is not on a **posted** customer invoice, and the file lists it. In **Settings › Sales › Supplier bill before
+the customer invoice** the company can switch to "Block" (posting and payment). No notice: cost covered by the price or
+borne by BOSS; **Paid in advance** (freight paid to an agent: the sale line is enough).
 
 A cost without purchase order (expense, receipt) is entered with [[Cost without purchase order]]: the vendor bill goes
 to the file's analytic account.
+
+## Paid on behalf: duties and VAT of the customs declaration
+
+Amounts paid in the customer's name (ARA, IVA, PLA of the declaration) are not requested with an RFQ: the customs broker
+pays them and bills them at cost. The service is **Billed without purchase order**, with the file's customs broker as
+supplier and the state "Bill without order expected". Its bill is entered with [[Cost without purchase order]] and
+matched to the service by product and analytic account (never counted twice).
+
+## Partial, cancelled orders and supplier replacement
+
+- **Partial**: reduce the quantity on the RFQ before confirming it; the rest goes back to [[Create RFQs]].
+- **Cancelled**: the quantity of a cancelled order is to order again.
+- **Another supplier**: cancel the active order, change the supplier of the service and click
+  [[Recompute expected cost]]: the tariff of the new supplier applies.
+- **Another purchase basis**: before ordering, the purchase unit can differ from the sale unit (sold per shipment,
+  bought per kg): the sale does not change and a unit is never converted into another.

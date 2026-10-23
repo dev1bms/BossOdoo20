@@ -16,8 +16,15 @@ quedan por facturar para una segunda factura.
 
 Una factura de cliente no se contabiliza si:
 
-- una línea tiene el **IVA pendiente** (tabla de IVA BOSS) o no tiene impuesto;
-- al cliente le falta el **NIF** o la **dirección**.
+- una línea tiene el **IVA pendiente** (tabla de IVA BOSS; regla de Ángel: una zona que falta nunca se adivina) o no
+  tiene impuesto;
+- el cliente es de **España (o no tiene país)** y no tiene **NIF** ni otra identificación de la localización española
+  (pasaporte, NIE, certificado de residencia): práctica de Odoo 17, pendiente de confirmar por Ángel (P31). Un cliente
+  extranjero sin NIF no se bloquea aquí (un cliente UE empresa sin NIF-IVA ya deja el IVA pendiente). La dirección que
+  falta se muestra en el contacto, sin bloquear.
+
+Cada expediente factura **su parte** de una línea compartida: la factura lleva la cantidad y la cuenta analítica del
+expediente.
 
 ## Abonos
 

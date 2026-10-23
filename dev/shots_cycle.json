@@ -1,0 +1,16 @@
+[
+ {"name": "30-expediente-resumen", "url": "/odoo/action-boss_expediente.boss_expediente_action/15", "wait": 5, "size": [1366, 1250],
+  "js": "const r = e => Math.round(e.getBoundingClientRect().right); const b = [...document.querySelectorAll('.o_statusbar_buttons > *')].filter(x => x.offsetParent); return {buttonsRight: Math.max(...b.map(r)), statusLeft: Math.round(document.querySelector('.o_statusbar_status').getBoundingClientRect().left), overflow: document.documentElement.scrollWidth - innerWidth};"},
+ {"name": "31-expediente-servicios", "url": "/odoo/action-boss_expediente.boss_expediente_action/15", "wait": 5, "size": [1366, 900],
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Servicios y costes').click(); await sleep(900); document.querySelector('.o_notebook').scrollIntoView(); const t = document.querySelector('.tab-pane.active .o_list_table'); return {table: t.scrollWidth, visible: t.closest('.o_list_renderer').clientWidth};"},
+ {"name": "32-expediente-recalculos", "url": "/odoo/action-boss_expediente.boss_expediente_action/16", "wait": 5, "size": [1366, 900],
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Recálculos de coste').click(); await sleep(900); document.querySelector('.o_notebook').scrollIntoView(); return 'recalc';"},
+ {"name": "33-servicios-vendidos", "url": "/odoo/action-boss_expediente.boss_expediente_action/19", "wait": 5, "size": [1366, 900],
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Servicios vendidos').click(); await sleep(900); document.querySelector('.o_notebook').scrollIntoView(); return 'sold';"},
+ {"name": "34-mover-servicios", "url": "/odoo/action-boss_expediente.boss_expediente_action/19", "wait": 5, "size": [1366, 768],
+  "js": "Array.from(document.querySelectorAll('.o_statusbar_buttons button')).find(b => b.textContent.trim() === 'Mover servicios a otro expediente').click(); await sleep(1500); return 'split';"},
+ {"name": "35-anadir-servicio", "url": "/odoo/action-boss_expediente.boss_expediente_action/18", "wait": 5, "size": [1366, 768],
+  "js": "Array.from(document.querySelectorAll('.o_statusbar_buttons button')).find(b => b.textContent.trim() === 'Añadir un servicio').click(); await sleep(1500); return 'add';"},
+ {"name": "36-expediente-1920", "url": "/odoo/action-boss_expediente.boss_expediente_action/15", "wait": 5, "size": [1920, 1080],
+  "js": "Array.from(document.querySelectorAll('.nav-link')).find(a => a.textContent.trim() === 'Servicios y costes').click(); await sleep(900); const r = e => Math.round(e.getBoundingClientRect().right); const b = [...document.querySelectorAll('.o_statusbar_buttons > *')].filter(x => x.offsetParent); const t = document.querySelector('.tab-pane.active .o_list_table'); return {buttonsRight: Math.max(...b.map(r)), statusLeft: Math.round(document.querySelector('.o_statusbar_status').getBoundingClientRect().left), table: t.scrollWidth, visible: t.closest('.o_list_renderer').clientWidth};"}
+]

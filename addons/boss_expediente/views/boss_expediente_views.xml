@@ -42,17 +42,17 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_open_sale_orders" type="object" class="oe_stat_button" icon="fa-dollar">
+                        <button name="action_open_sale_orders" type="object" class="oe_stat_button" icon="attach_money">
                             <field name="sale_count" widget="statinfo" string="Sales"/>
                         </button>
                         <button name="action_open_purchase_orders" type="object" class="oe_stat_button"
-                                icon="fa-shopping-cart" groups="purchase.group_purchase_user">
+                                icon="shopping_cart" groups="purchase.group_purchase_user">
                             <field name="purchase_count" widget="statinfo" string="Purchases"/>
                         </button>
-                        <button name="action_open_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                        <button name="action_open_invoices" type="object" class="oe_stat_button" icon="edit_square">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
-                        <button name="action_open_bills" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                        <button name="action_open_bills" type="object" class="oe_stat_button" icon="receipt_long"
                                 groups="account.group_account_invoice,purchase.group_purchase_user">
                             <field name="bill_count" widget="statinfo" string="Bills"/>
                         </button>
@@ -158,19 +158,19 @@
                         <page string="Services and costs" name="costs">
                             <field name="cost_ids" context="{'default_expediente_id': id}">
                                 <list editable="bottom" decoration-muted="state == 'closed'"
-                                      decoration-danger="cost_unknown">
+                                      decoration-danger="cost_unknown" decoration-warning="po_to_review">
                                     <field name="kind" optional="hide"/>
                                     <field name="product_id" readonly="kind == 'sale'" options="{'no_create': True}"
-                                           width="190px"/>
+                                           width="150px"/>
                                     <field name="name" optional="hide"/>
                                     <field name="partner_id" options="{'no_create': True}"/>
                                     <field name="cost_method" column_invisible="1"/>
                                     <field name="days" optional="show" invisible="cost_method != 'time'" width="55px"/>
-                                    <field name="quantity" readonly="purchase_line_ids"/>
-                                    <field name="uom_id" readonly="purchase_line_ids" options="{'no_create': True}"/>
+                                    <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
+                                    <field name="uom_id" string="Unit" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
                                            options="{'no_create': True}"/>
-                                    <field name="expected_unit_cost"/>
+                                    <field name="expected_unit_cost" string="Unit cost"/>
                                     <field name="expected_amount" optional="show"/>
                                     <field name="accepted_amount_company" optional="hide"/>
                                     <field name="accepted_cost_kind" optional="hide"/>
@@ -183,31 +183,31 @@
                                     <field name="qty_ordered" optional="hide"/>
                                     <field name="qty_received" optional="hide"/>
                                     <field name="qty_billed" optional="hide"/>
-                                    <field name="billed_amount_company" optional="show"/>
+                                    <field name="billed_amount_company" string="Billed" optional="hide"/>
                                     <field name="variance_company" optional="hide"
                                            decoration-danger="variance_company &gt; 0"/>
                                     <field name="variance_to_review" column_invisible="1"/>
-                                    <field name="variance_reviewed" optional="show"
+                                    <field name="variance_reviewed" optional="hide"
                                            invisible="not variance_to_review and not variance_reviewed"/>
-                                    <field name="po_to_review" optional="show" widget="boolean_toggle" readonly="1"/>
+                                    <field name="po_to_review" optional="hide" readonly="1"/>
                                     <field name="variance_note" optional="hide"/>
                                     <field name="without_order" optional="hide"/>
                                     <field name="paid_in_advance" optional="hide"/>
-                                    <field name="closed" optional="show"/>
+                                    <field name="closed" optional="hide"/>
                                     <field name="cost_unknown" column_invisible="1"/>
                                     <field name="purchase_line_ids" column_invisible="1"/>
                                     <field name="rebill_line_id" optional="hide"/>
                                     <field name="company_currency_id" column_invisible="1"/>
-                                    <button name="action_mark_performed" type="object" icon="fa-check"
+                                    <button name="action_mark_performed" type="object" icon="check"
                                             title="Mark as performed" groups="purchase.group_purchase_user"
                                             invisible="state != 'ordered'"/>
-                                    <button name="action_rebill" type="object" icon="fa-share"
+                                    <button name="action_rebill" type="object" icon="share"
                                             title="Re-invoice to the customer" groups="sales_team.group_sale_manager"
                                             invisible="kind != 'extra' or rebill_line_id or state == 'closed'"/>
-                                    <button name="action_open_revisions" type="object" icon="fa-history"
+                                    <button name="action_open_revisions" type="object" icon="history"
                                             title="Recalculations" invisible="not revision_ids"/>
                                     <field name="revision_ids" column_invisible="1"/>
-                                    <button name="action_open_purchase_lines" type="object" icon="fa-shopping-cart"
+                                    <button name="action_open_purchase_lines" type="object" icon="shopping_cart"
                                             title="Purchase orders" invisible="not purchase_line_ids"
                                             groups="purchase.group_purchase_user"/>
                                 </list>

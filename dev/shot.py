@@ -119,6 +119,11 @@ def main(steps_file, out_dir):
                 sys.exit("login failed")
         for step in steps:
             width, height = step.get("size", (1440, 900))
+            try:  # the window itself too: the viewport override alone is sometimes ignored by the layout
+                window = cdp.call("Browser.getWindowForTarget")["windowId"]
+                cdp.call("Browser.setWindowBounds", windowId=window, bounds={"width": width, "height": height})
+            except RuntimeError:
+                pass
             cdp.call("Emulation.setDeviceMetricsOverride", width=width, height=height, deviceScaleFactor=1, mobile=False)
             cdp.call("Page.navigate", url=BASE + step["url"])
             for _ in range(120):  # wait until the Odoo view is rendered (assets may be rebuilding)

@@ -94,9 +94,9 @@ if not msc_file.booking_ref:
         row.number = f"{number} [DEMO]"
 rfqs(msc_file)
 if not msc_order.invoice_ids:
-    thc = msc_order.order_line.filtered(lambda l: l.product_id.default_code == "THC")
-    env["boss.invoice.services"].create({"expediente_id": msc_file.id, "order_ids": [Command.set(msc_order.ids)],
-                                         "line_ids": [Command.set(thc.ids)]}).action_create()
+    thc = msc_file.allocation_ids.filtered(lambda a: a.product_id.default_code == "THC")
+    env["boss.invoice.services"].create({"expediente_id": msc_file.id,
+                                         "allocation_ids": [Command.set(thc.ids)]}).action_create()
 extra = xid("demo_extra_msc")
 if not extra:
     msc = msc_order.boss_carrier_id

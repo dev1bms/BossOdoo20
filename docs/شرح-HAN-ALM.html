@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دورة حياة خدمتي المناولة الجوية والتخزين الجوي في نظام التسعير</title>
+<style>
+  :root { --c1:#714b67; --c2:#1f6f8b; --c3:#2e7d32; --c4:#b26a00; --line:#e3e3e8; --soft:#f7f4f6; --ink:#1f2933; }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 16px/1.85 "Segoe UI", Tahoma, "Noto Naskh Arabic", Arial, sans-serif; color:var(--ink); background:#fbfbfd; }
+  header { background:var(--c1); color:#fff; padding:28px 40px; }
+  header h1 { margin:0 0 6px; font-size:28px; }
+  header p { margin:0; opacity:.9; }
+  nav { background:#fff; border-bottom:1px solid var(--line); padding:10px 40px; position:sticky; top:0; z-index:5; }
+  nav a { color:var(--c1); text-decoration:none; margin-left:18px; font-size:14px; white-space:nowrap; }
+  main { max-width:1180px; margin:0 auto; padding:24px 32px 60px; }
+  section { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 28px; margin:22px 0; }
+  h2 { color:var(--c1); margin-top:0; border-bottom:2px solid var(--soft); padding-bottom:8px; }
+  h3 { color:var(--c2); margin-bottom:6px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; text-align:right; }
+  th { background:var(--soft); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .card { border:1px solid var(--line); border-radius:10px; padding:14px 18px; background:#fff; }
+  .han { border-top:5px solid var(--c2); }
+  .alm { border-top:5px solid var(--c4); }
+  .note { background:#eef6fb; border-right:5px solid var(--c2); padding:10px 14px; border-radius:8px; margin:12px 0; }
+  .warn { background:#fff6e5; border-right:5px solid var(--c4); padding:10px 14px; border-radius:8px; margin:12px 0; }
+  .ok { background:#edf7ee; border-right:5px solid var(--c3); padding:10px 14px; border-radius:8px; margin:12px 0; }
+  .formula { font-family: Consolas, "Courier New", monospace; direction:ltr; unicode-bidi:embed; background:#f4f4f7; padding:2px 6px; border-radius:4px; white-space:nowrap; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:10px; font-size:13px; color:#fff; }
+  .t-han { background:var(--c2); } .t-alm { background:var(--c4); } .t-ok { background:var(--c3); } .t-no { background:#9e9e9e; }
+  svg { width:100%; height:auto; display:block; }
+  .svgwrap { border:1px solid var(--line); border-radius:10px; padding:8px; background:#fff; overflow-x:auto; }
+  ol li, ul li { margin:4px 0; }
+  @media (max-width: 900px) { .grid { grid-template-columns:1fr; } main { padding:12px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>دورة حياة خدمتي <span>HAN</span> (المناولة في المطار) و<span>ALM</span> (التخزين الجوي)</h1>
+  <p>من تعريف الخدمة إلى التعرفة والتسعير وعرض البيع وفرصة CRM وتأكيد الشحنة، مع طريقة الحساب في الاستيراد والتصدير وحسب نوع الشحن.</p>
+</header>
+<nav>
+  <a href="#overview">الخلاصة</a><a href="#mindmap">المخطط الذهني</a><a href="#flow">الدورة الكاملة</a>
+  <a href="#definition">التعريف</a><a href="#han">حساب HAN</a><a href="#alm">حساب ALM</a>
+  <a href="#modes">الاستيراد والتصدير وأنواع الشحن</a><a href="#sale">البيع والضريبة</a><a href="#steps">الخطوات في النظام</a><a href="#limits">الحدود</a>
+</nav>
+<main>
+
+<section id="overview">
+  <h2>الخلاصة</h2>
+  <div class="grid">
+    <div class="card han">
+      <h3><span class="tag t-han">HAN</span> المناولة في المحطة الجوية</h3>
+      <ul>
+        <li><b>ما هي:</b> استلام البضاعة الجوية وتسليمها وتجهيزها في محطة المناول بالمطار (مثل WFS في مدريد وبرشلونة).</li>
+        <li><b>وحدة الاحتساب:</b> الكيلوغرام المحتسب (kg tasable). الكمية تُؤخذ تلقائياً من الوزن المحتسب في بوليصة الشحن الجوي AWB المسجّل في الشحنة.</li>
+        <li><b>طريقة الحساب:</b> سعر لكل كغ × الكمية، مع حد أدنى للبوليصة. عند بعض الموردين: وزن محتسب بمعامل حجمي، أو شرائح وزن.</li>
+        <li><b>لا تعتمد على الزمن:</b> تُحسب مرة واحدة للشحنة.</li>
+      </ul>
+    </div>
+    <div class="card alm">
+      <h3><span class="tag t-alm">ALM</span> التخزين الجوي</h3>
+      <ul>
+        <li><b>ما هي:</b> بقاء البضاعة في مستودع المناول بعد وصولها (استيراد) أو قبل إقلاعها (تصدير).</li>
+        <li><b>وحدة الاحتساب:</b> سطر واحد للشحنة (Expediente)، ويُحسب داخله على كل 100 كغ محتسبة لكل فترة 24 ساعة.</li>
+        <li><b>طريقة الحساب:</b> «حسب الأيام مع فترة مجانية»: 48 ساعة مجانية كعتبة؛ إن تجاوزتها يُحسب كل الوقت من اليوم الأول؛ شريحتا سعر (حتى 7 أيام / أكثر)؛ حد أدنى للشحنة.</li>
+        <li><b>تعتمد على الزمن:</b> النتيجة في العرض <b>تقدير</b> بعدد الأيام المفترض، والتكلفة الفعلية تُعرف بعد انتهاء الفترة.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">جميع الأرقام في هذا الملف <b>توضيحية</b> (هي أرقام تعرفات التجربة [DEMO])، وليست أسعار الموردين الحقيقية.</div>
+</section>
+
+<section id="mindmap">
+  <h2>المخطط الذهني</h2>
+  <div class="svgwrap">
+  <svg viewBox="0 0 1120 640" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Tahoma, Arial" font-size="14">
+    <defs>
+      <style>.l{stroke:#b9b9c6;stroke-width:2;fill:none}.n{rx:12;ry:12}</style>
+    </defs>
+    <!-- center -->
+    <rect x="455" y="285" width="210" height="70" class="n" fill="#714b67"/>
+    <text x="560" y="315" text-anchor="middle" fill="#fff" font-size="17" font-weight="bold">HAN و ALM</text>
+    <text x="560" y="338" text-anchor="middle" fill="#fff" font-size="13">خدمات الشحن الجوي</text>
+    <!-- branches lines -->
+    <path class="l" d="M455 300 C380 250 330 140 300 110"/>
+    <path class="l" d="M455 320 C370 320 330 320 300 320"/>
+    <path class="l" d="M455 340 C380 400 330 510 300 530"/>
+    <path class="l" d="M665 300 C740 250 790 140 820 110"/>
+    <path class="l" d="M665 320 C750 320 790 320 820 320"/>
+    <path class="l" d="M665 340 C740 400 790 510 820 530"/>
+    <!-- right side branches (RTL reading: start right) -->
+    <rect x="820" y="40" width="280" height="140" class="n" fill="#e7f1f5" stroke="#1f6f8b"/>
+    <text x="960" y="66" text-anchor="middle" font-weight="bold" fill="#1f6f8b">١. التعريف (الكتالوج)</text>
+    <text x="960" y="92" text-anchor="middle">HAN: وحدة «كغ محتسب جوي»</text>
+    <text x="960" y="114" text-anchor="middle">ALM: وحدة «شحنة»، طريقة «أيام»</text>
+    <text x="960" y="136" text-anchor="middle">فئة الضريبة: NR للاثنتين</text>
+    <text x="960" y="158" text-anchor="middle">مفهوم Odoo 17: HAN و ALM</text>
+
+    <rect x="820" y="250" width="280" height="140" class="n" fill="#fdf2e3" stroke="#b26a00"/>
+    <text x="960" y="276" text-anchor="middle" font-weight="bold" fill="#b26a00">٢. تعرفة المورد</text>
+    <text x="960" y="302" text-anchor="middle">المورد: WFS أو IRENEO</text>
+    <text x="960" y="324" text-anchor="middle">النطاق: جوي، استيراد/تصدير، المطار</text>
+    <text x="960" y="346" text-anchor="middle">المستند والصفحة والصلاحية</text>
+    <text x="960" y="368" text-anchor="middle">اعتماد بشري قبل الاستخدام</text>
+
+    <rect x="820" y="460" width="280" height="140" class="n" fill="#edf7ee" stroke="#2e7d32"/>
+    <text x="960" y="486" text-anchor="middle" font-weight="bold" fill="#2e7d32">٣. المحدِّدات</text>
+    <text x="960" y="512" text-anchor="middle">الوزن المحتسب في AWB</text>
+    <text x="960" y="534" text-anchor="middle">الوزن الإجمالي والحجم (معامل 333)</text>
+    <text x="960" y="556" text-anchor="middle">الأيام وتاريخ الوصول ويومه</text>
+    <text x="960" y="578" text-anchor="middle">المطار والاتجاه والمورد</text>
+
+    <!-- left side -->
+    <rect x="20" y="40" width="280" height="140" class="n" fill="#f7f4f6" stroke="#714b67"/>
+    <text x="160" y="66" text-anchor="middle" font-weight="bold" fill="#714b67">٤. التكلفة</text>
+    <text x="160" y="92" text-anchor="middle">HAN: كغ × سعر، حد أدنى للبوليصة</text>
+    <text x="160" y="114" text-anchor="middle">ALM: فترات × (100 كغ) × سعر اليوم</text>
+    <text x="160" y="136" text-anchor="middle">عتبة 48 ساعة، شرائح 7 أيام</text>
+    <text x="160" y="158" text-anchor="middle">شرح الحساب ومصدره في كل سطر</text>
+
+    <rect x="20" y="250" width="280" height="140" class="n" fill="#f7f4f6" stroke="#714b67"/>
+    <text x="160" y="276" text-anchor="middle" font-weight="bold" fill="#714b67">٥. البيع والضريبة</text>
+    <text x="160" y="302" text-anchor="middle">قائمة أسعار العميل أو يدوي</text>
+    <text x="160" y="324" text-anchor="middle">نسبة فوق التكلفة أو هامش على البيع</text>
+    <text x="160" y="346" text-anchor="middle">الضريبة حسب الاتجاه وموقع العميل</text>
+    <text x="160" y="368" text-anchor="middle">21% S أو 0% UE S أو 0% EX S</text>
+
+    <rect x="20" y="460" width="280" height="140" class="n" fill="#f7f4f6" stroke="#714b67"/>
+    <text x="160" y="486" text-anchor="middle" font-weight="bold" fill="#714b67">٦. CRM والعرض والشحنة</text>
+    <text x="160" y="512" text-anchor="middle">فرصة ← عرض ← بيانات الشحنة</text>
+    <text x="160" y="534" text-anchor="middle">إضافة الخدمات مع المورد</text>
+    <text x="160" y="556" text-anchor="middle">تأكيد ← تجميد الأسعار ← لقطة</text>
+    <text x="160" y="578" text-anchor="middle">الفترة الفعلية بدل التقدير لاحقاً</text>
+  </svg>
+  </div>
+</section>
+
+<section id="flow">
+  <h2>الدورة الكاملة في النظام</h2>
+  <div class="svgwrap">
+  <svg viewBox="0 0 1120 330" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Tahoma, Arial" font-size="14">
+    <defs><marker id="ar" markerWidth="7" markerHeight="7" refX="9" refY="5" orient="auto" markerUnits="strokeWidth" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#714b67"/></marker></defs>
+    <g>
+      <rect x="950" y="30" width="150" height="80" rx="10" fill="#e7f1f5" stroke="#1f6f8b"/>
+      <text x="1025" y="62" text-anchor="middle" font-weight="bold">١. تعريف الخدمة</text>
+      <text x="1025" y="86" text-anchor="middle" font-size="12">الكتالوج: HAN / ALM</text>
+      <rect x="770" y="30" width="150" height="80" rx="10" fill="#fdf2e3" stroke="#b26a00"/>
+      <text x="845" y="62" text-anchor="middle" font-weight="bold">٢. تعرفة المورد</text>
+      <text x="845" y="86" text-anchor="middle" font-size="12">إدخال ← إرسال ← اعتماد</text>
+      <rect x="590" y="30" width="150" height="80" rx="10" fill="#f7f4f6" stroke="#714b67"/>
+      <text x="665" y="62" text-anchor="middle" font-weight="bold">٣. فرصة CRM</text>
+      <text x="665" y="86" text-anchor="middle" font-size="12">العميل وطلبه</text>
+      <rect x="410" y="30" width="150" height="80" rx="10" fill="#f7f4f6" stroke="#714b67"/>
+      <text x="485" y="62" text-anchor="middle" font-weight="bold">٤. عرض السعر</text>
+      <text x="485" y="86" text-anchor="middle" font-size="12">تبويب الشحنة Envío</text>
+      <rect x="230" y="30" width="150" height="80" rx="10" fill="#f7f4f6" stroke="#714b67"/>
+      <text x="305" y="62" text-anchor="middle" font-weight="bold">٥. إضافة الخدمات</text>
+      <text x="305" y="86" text-anchor="middle" font-size="12">HAN و ALM مع المورد</text>
+      <rect x="50" y="30" width="150" height="80" rx="10" fill="#edf7ee" stroke="#2e7d32"/>
+      <text x="125" y="62" text-anchor="middle" font-weight="bold">٦. التكلفة</text>
+      <text x="125" y="86" text-anchor="middle" font-size="12">اختيار التعرفة والحساب</text>
+      <path d="M950 70 L926 70" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M770 70 L746 70" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M590 70 L566 70" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M410 70 L386 70" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M230 70 L206 70" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M125 110 L125 170 L200 170" stroke="#714b67" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <rect x="210" y="140" width="170" height="70" rx="10" fill="#fff6e5" stroke="#b26a00"/>
+      <text x="295" y="168" text-anchor="middle" font-weight="bold">لا يوجد سعر؟</text>
+      <text x="295" y="190" text-anchor="middle" font-size="12">«إضافة سعر مورد» من السطر</text>
+      <path d="M380 175 L406 175" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="410" y="140" width="170" height="70" rx="10" fill="#fdf2e3" stroke="#b26a00"/>
+      <text x="495" y="168" text-anchor="middle" font-weight="bold">اعتماد السعر</text>
+      <text x="495" y="190" text-anchor="middle" font-size="12">ثم يعود السطر مسعَّراً</text>
+      <path d="M580 175 L606 175" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="610" y="140" width="170" height="70" rx="10" fill="#f7f4f6" stroke="#714b67"/>
+      <text x="695" y="168" text-anchor="middle" font-weight="bold">٧. سعر البيع والضريبة</text>
+      <text x="695" y="190" text-anchor="middle" font-size="12">قائمة أسعار العميل / يدوي</text>
+      <path d="M780 175 L806 175" stroke="#714b67" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="810" y="140" width="170" height="70" rx="10" fill="#edf7ee" stroke="#2e7d32"/>
+      <text x="895" y="168" text-anchor="middle" font-weight="bold">٨. التأكيد</text>
+      <text x="895" y="190" text-anchor="middle" font-size="12">تجميد الأسعار + لقطة</text>
+      <path d="M895 210 L895 250 L820 250" stroke="#714b67" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <rect x="560" y="230" width="255" height="70" rx="10" fill="#e7f1f5" stroke="#1f6f8b"/>
+      <text x="688" y="258" text-anchor="middle" font-weight="bold">٩. الشحنة الفعلية (مرحلة لاحقة)</text>
+      <text x="688" y="280" text-anchor="middle" font-size="12">الفترة الفعلية لـ ALM، وإعادة التسعير بسبب</text>
+    </g>
+  </svg>
+  </div>
+  <div class="note">يبدأ المسار في الصف الأول من اليمين إلى اليسار، ثم ينزل من «التكلفة» ويكمل في الصف الثاني من اليسار إلى اليمين حتى التأكيد. المرحلة ٩ (إدارة الشحنة التشغيلية) ليست جزءاً من المرحلة الحالية: العرض المقبول ولقطته هما الأساس الذي ستبني عليه.</div>
+</section>
+
+<section id="definition">
+  <h2>١. التعريف في الكتالوج</h2>
+  <table>
+    <tr><th>البند</th><th>HAN</th><th>ALM</th></tr>
+    <tr><td>الاسم في النظام</td><td>Manipulación en terminal aérea (por kg tasable)</td><td>Almacenaje aéreo (por 100 kg o fracción y día)</td></tr>
+    <tr><td>مصدر التكلفة</td><td colspan="2">تعرفة مورد (حساب آلي)</td></tr>
+    <tr><td>وحدة الاحتساب على السطر</td><td>كغ محتسب جوي؛ الكمية = الوزن المحتسب في AWB من تبويب الشحنة، وإن كان فارغاً تُكتب على السطر</td><td>شحنة (1 لكل عرض)؛ الوزن والأيام يُقرآن من الشحنة والسطر</td></tr>
+    <tr><td>طريقة الحساب المعتادة</td><td>سعر للوحدة، مع حد أدنى</td><td>حسب الأيام مع فترة مجانية</td></tr>
+    <tr><td>فئة الضريبة الأساسية</td><td>NR (تحمل IVA ثم تتغير حسب الاتجاه والعميل)</td><td>NR</td></tr>
+    <tr><td>المطابقة مع Odoo 17</td><td>المفهوم HAN</td><td>المفهوم ALM</td></tr>
+    <tr><td>الموردون في البيانات</td><td>WFS (مطاري مدريد وبرشلونة)، IRENEO (مدريد)</td><td>WFS (القواعد معتمدة من كريستينا في 25/09)</td></tr>
+  </table>
+</section>
+
+<section id="han">
+  <h2>٢. حساب HAN</h2>
+  <h3>المحدِّدات</h3>
+  <ul>
+    <li><b>الوزن المحتسب في AWB</b> (حقل «Peso tasable (AWB)» في تبويب الشحنة): يصبح كمية السطر تلقائياً.</li>
+    <li>عند المورد الذي يحسب بالمعامل الحجمي: <span class="formula">max(الوزن الإجمالي , الحجم × 333)</span>.</li>
+    <li>المطار (MAD أو BCN…) واتجاه الشحنة (استيراد/تصدير) والمورد: تحدد التعرفة المطبقة.</li>
+    <li>تاريخ الشحنة المتوقع: يختار نسخة التعرفة السارية.</li>
+  </ul>
+  <h3>الصيغة</h3>
+  <p><span class="formula">التكلفة = max( الكغ المحتسب × سعر الكغ , الحد الأدنى للبوليصة )</span></p>
+  <table>
+    <tr><th>الحالة (أرقام توضيحية: 0.05 €/كغ، حد أدنى 20 €)</th><th>الحساب</th><th>النتيجة</th></tr>
+    <tr><td>500 كغ محتسب</td><td>500 × 0.05 = 25</td><td><b>25.00 €</b></td></tr>
+    <tr><td>300 كغ محتسب</td><td>300 × 0.05 = 15 &lt; 20</td><td><b>20.00 €</b> (الحد الأدنى)</td></tr>
+    <tr><td>وزن إجمالي 200 كغ وحجم 1.2 م³ (معامل 333)</td><td>max(200 , 1.2 × 333 = 399.6) = 399.6 كغ × 0.05 = 19.98</td><td><b>20.00 €</b> (الحد الأدنى)</td></tr>
+    <tr><td>تصدير بحزمة شرائح (مثل IRENEO)</td><td>الشريحة التي يقع فيها الوزن، مع خيار «لا يقل عن الشريحة السابقة»</td><td>حسب جدول الشرائح</td></tr>
+  </table>
+  <div class="ok">كل سطر يعرض شرح الحساب: الكمية × السعر، والتعرفة ونسختها، والمورد، والمستند والصفحة (أيقونة ⓘ).</div>
+</section>
+
+<section id="alm">
+  <h2>٣. حساب ALM</h2>
+  <h3>المحدِّدات</h3>
+  <ul>
+    <li><b>الوزن المحتسب في AWB</b>: يُحوَّل إلى وحدات من 100 كغ مع التقريب للأعلى (480 كغ = 5 وحدات).</li>
+    <li><b>عدد الأيام</b>، وله أربع حالات منفصلة:
+      <ol>
+        <li><b>غير محددة:</b> يظهر «بيانات الشحنة ناقصة»، ولا تُفترض تكلفة صفرية.</li>
+        <li><b>صفر مقصود:</b> يُكتب 0 وتُعلَّم «Días indicados»، أو يُكتب 0 على السطر نفسه.</li>
+        <li><b>مدة متوقعة للتسعير:</b> من تبويب الشحنة، أو تقدير خاص بسطر ALM (عمود «Días»).</li>
+        <li><b>فترة فعلية منتهية:</b> يُختار «Periodo real» على السطر، فلا تبقى النتيجة تقديراً.</li>
+      </ol>
+    </li>
+    <li><b>تاريخ الوصول ويومه</b>: الوصول يوم السبت مجاني حتى الاثنين ضمناً.</li>
+    <li><b>بداية العدّ</b>: من إشعار الوصول NOA في الاستيراد، ومن تسليم البضاعة للمستودع FOH في التصدير، بفترات 24 ساعة في مدريد وبرشلونة.</li>
+  </ul>
+  <h3>القواعد</h3>
+  <table>
+    <tr><th>القاعدة</th><th>طريقة تطبيقها في النظام</th></tr>
+    <tr><td>48 ساعة مجانية <b>كعتبة</b></td><td>إن لم تتجاوز المدة فترتين فالتكلفة صفر مبرَّر. وإن تجاوزتهما يُحسب كل الوقت من اليوم الأول.</td></tr>
+    <tr><td>شريحتا سعر: حتى 7 أيام / أكثر من 7</td><td>حسب ترتيب اليوم: الأيام 1–7 بسعر الشريحة الأولى، و8 فما فوق بسعر الشريحة الثانية.</td></tr>
+    <tr><td>حد أدنى للشحنة</td><td>يُطبَّق على إجمالي السطر حين يوجد تخزين محسوب.</td></tr>
+    <tr><td>الوصول يوم السبت</td><td>مجاني حتى الاثنين ضمناً، أي 3 فترات.</td></tr>
+    <tr><td>الوصول يوم الجمعة (72 ساعة إذا خرجت البضاعة يوم الاثنين)</td><td><b>لا تُطبَّق في العرض</b> لأن يوم الخروج غير معروف وقت التسعير، فالتقدير قد يكون أعلى من الفعلي.</td></tr>
+  </table>
+  <h3>الصيغة</h3>
+  <p><span class="formula">التكلفة = max( Σ سعر كل يوم محسوب × وحدات 100 كغ , الحد الأدنى )</span>، أو صفر داخل الفترة المجانية.</p>
+  <table>
+    <tr><th>الحالة (أرقام توضيحية: 10 € لـ 100 كغ/يوم حتى 7 أيام، 25 € بعدها، حد أدنى 40 €)</th><th>الحساب</th><th>النتيجة</th></tr>
+    <tr><td>500 كغ، يومان، وصول الأربعاء</td><td>2 ≤ 48 ساعة</td><td><b>0.00 €</b></td></tr>
+    <tr><td>500 كغ، 4 أيام، وصول الأربعاء</td><td>تجاوز العتبة: 4 × 5 × 10</td><td><b>200.00 €</b></td></tr>
+    <tr><td>500 كغ، 3 أيام، وصول السبت</td><td>مجاني حتى الاثنين ضمناً</td><td><b>0.00 €</b></td></tr>
+    <tr><td>500 كغ، 10 أيام</td><td>7 × 5 × 10 + 3 × 5 × 25 = 350 + 375</td><td><b>725.00 €</b></td></tr>
+    <tr><td>80 كغ، 3 أيام</td><td>1 × 3 × 10 = 30 &lt; 40</td><td><b>40.00 €</b> (الحد الأدنى)</td></tr>
+  </table>
+  <div class="warn">نتيجة ALM في العرض <b>تقدير</b>، وشرح السطر يذكر الأيام المفترضة ومصدرها (الشحنة أو تقدير السطر). تحديد طريقة احتساب الشرائح بترتيب اليوم أو بمجمل المدة ما زال سؤالاً مفتوحاً (P29)، والنظام يعمل حالياً بالقراءة الحرفية.</div>
+</section>
+
+<section id="modes">
+  <h2>٤. الاستيراد والتصدير وأنواع الشحن</h2>
+  <table>
+    <tr><th>الحالة</th><th>HAN</th><th>ALM</th><th>الضريبة المتوقعة (حسب قواعد أنخل وجدول IVA)</th></tr>
+    <tr><td><b>جوي – استيراد</b> (الصين → مدريد)</td><td>كغ محتسب من AWB × سعر الاستيراد، حد أدنى للبوليصة</td><td>من إشعار الوصول، عتبة 48 ساعة، قاعدة السبت</td><td>المسار TER→PRO = NR. عميل إسباني ← 21% S. عميل أوروبي برقم IVA ← 0% UE S. عميل من خارج الاتحاد ← 0% EX S</td></tr>
+    <tr><td><b>جوي – تصدير</b> (مدريد → الولايات المتحدة)</td><td>تعرفة التصدير (عند IRENEO حزمة بشرائح تشمل استلام البضاعة وأياماً مجانية)</td><td>من تسليم البضاعة للمستودع، بقواعد تعرفة التصدير</td><td>المسار PRO→TER يحوّل NR إلى EX. عميل إسباني ← <b>IVA pendiente</b> (قرار أنخل). عميل أوروبي ← 0% UE S. عميل من خارج الاتحاد ← 0% EX S</td></tr>
+    <tr><td>جوي – عميل في الكناري</td><td colspan="2">الحساب نفسه</td><td><b>IVA pendiente</b> (قرار أنخل)</td></tr>
+    <tr><td><b>بحري FCL / LCL</b></td><td colspan="2"><span class="tag t-no">لا ينطبق</span> تعرفة HAN وALM نطاقها «جوي»، فلا تنطبق على شحنة بحرية. المقابل البحري هو THC (المناولة في المحطة) وDEM وOCU (الأيام في الميناء)</td><td>—</td></tr>
+    <tr><td><b>بري</b></td><td colspan="2"><span class="tag t-no">لا ينطبق</span> النقل البري من المطار إلى الوجهة خدمة منفصلة (TTE-CON) بمورد آخر، ويمكن أن يكون في العرض نفسه</td><td>—</td></tr>
+  </table>
+  <div class="note">النظام لا يفترض أن الناقل هو مورد كل الخدمات: في العرض نفسه قد يكون HAN وALM من WFS، والنقل البري من IRENEO. لكل سطر حقل «Proveedor» يحدد التعرفات المسموح بها.</div>
+</section>
+
+<section id="sale">
+  <h2>٥. سعر البيع والضريبة</h2>
+  <table>
+    <tr><th>مصدر سعر البيع</th><th>مثال على HAN (تكلفة 0.05 €/كغ)</th><th>مثال على ALM (تكلفة 200 €)</th></tr>
+    <tr><td>سعر ثابت في قائمة أسعار العميل (لكل وحدة احتساب)</td><td>0.08 €/كغ متفق عليه</td><td>250 € للشحنة متفق عليه</td></tr>
+    <tr><td>نسبة فوق التكلفة (markup) 15%</td><td>0.0575 €/كغ، أي 28.75 € لـ 500 كغ (الكسور محفوظة، والإجمالي مقرَّب للسنت)</td><td>230 €</td></tr>
+    <tr><td>هامش على البيع (margin) 20%</td><td>0.0625 €/كغ</td><td>200 / 0.8 = 250 €</td></tr>
+    <tr><td>يكتبه موظف المبيعات</td><td colspan="2">يبقى كما هو، ويُعلَّم «أدخله شخص»</td></tr>
+  </table>
+  <div class="warn">الحد الأدنى للهامش في Odoo هو <b>لكل وحدة احتساب</b>: لا يناسب HAN لأن وحدته الكغ (15 € لكل كغ سيكون خطأ). الحد الأدنى على مستوى السطر أو العرض ما زال قراراً مفتوحاً (P02).</div>
+  <h3>الضريبة</h3>
+  <ol>
+    <li>فئة BOSS الداخلية: HAN وALM أساسهما <b>NR</b>.</li>
+    <li>الطبقة الأولى، الأصل → الوجهة: التصدير خارج إسبانيا يحوّلها إلى EX.</li>
+    <li>الطبقة الثانية، العميل: إن لم يكن من شبه الجزيرة أو البليار تتحوّل إلى EX. العميل الأوروبي يحتاج رقم IVA.</li>
+    <li>جدول IVA BOSS يحوّل الفئة إلى ضريبة Odoo فعلية، والحالات غير المحسومة تبقى «IVA pendiente» مع سببها، ويُمنع تأكيد العرض.</li>
+  </ol>
+</section>
+
+<section id="steps">
+  <h2>٦. الخطوات في النظام</h2>
+  <h3>أ. إدخال التعرفة (مرة واحدة لكل مستند مورد)</h3>
+  <ol>
+    <li>Ventas › Productos › Tarifas de proveedor › «Nuevo».</li>
+    <li>المورد (WFS)، المستند PDF ورقم الصفحة، العملة، الصلاحية «من / إلى».</li>
+    <li>النطاق: استيراد أو تصدير، «جوي»، المطار (MAD أو BCN).</li>
+    <li>سطر HAN: الوحدة «كغ محتسب جوي»، طريقة «سعر للوحدة»، السعر لكل كغ، الحد الأدنى.</li>
+    <li>سطر ALM: الوحدة «شحنة»، طريقة «حسب الأيام»، الأساس «الكغ المحتسب في AWB»، وحدة 100 كغ مع التقريب للأعلى، 48 ساعة مجانية بنمط «عتبة»، الشرائح حسب ترتيب اليوم (حتى 7 / بلا حد)، الحد الأدنى، و«وصول السبت مجاني حتى الاثنين».</li>
+    <li>«إرسال للاعتماد»، ثم يضغط المعتمِد «Aprobar». النسخ السابقة تبقى في السجل.</li>
+  </ol>
+  <h3>ب. من CRM إلى العرض المؤكد</h3>
+  <ol>
+    <li>CRM › الفرصة › «Nuevo presupuesto».</li>
+    <li>تبويب Envío: استيراد أو تصدير · جوي · Carga aérea · المطار · البلد في الخارج · التاريخ المتوقع · الوزن المحتسب في AWB · الأيام (أو تُترك لتقدير السطر).</li>
+    <li>«Añadir servicios»: HAN وALM، والمورد WFS.</li>
+    <li>عمود «Coste»: «Cotizado» أو «Sin precio» أو «Faltan datos»، وأيقونة ⓘ تعرض شرح الحساب.</li>
+    <li>إن لم يوجد سعر: الأيقونة ⊕ على السطر. HAN يفتح نموذجاً قصيراً، وALM يفتح نموذج التعرفة الكامل مسبق التعبئة. بعد الاعتماد يعود السطر مسعَّراً.</li>
+    <li>عمود «Días» على سطر ALM: لكتابة تقدير خاص به إن اختلف عن مدة الشحنة.</li>
+    <li>عمود «Venta»: مصدر سعر البيع («متفق عليه» أو «فوق التكلفة» أو «يدوي»)، ويُعرض الربح والهامش.</li>
+    <li>«Confirmar»: تتجمد الأسعار وتُحفظ لقطة تضم المدخلات والتعرفة والضريبة. أي تغيير لاحق يمر عبر «Recotizar» مع سبب ومن قِبل مدير مبيعات.</li>
+  </ol>
+  <h3>ج. بعد الشحن (المرحلة التالية)</h3>
+  <ul>
+    <li>تكلفة ALM الفعلية تُعرف عند انتهاء التخزين: تُختار «Periodo real» بعدد الأيام الحقيقي، فيصبح الحساب فعلياً لا تقديرياً.</li>
+    <li>الفرق بين التقدير والفعلي يُعالَج بإعادة التسعير مع سبب، دون تغيير صامت للعرض المقبول.</li>
+  </ul>
+</section>
+
+<section id="limits">
+  <h2>٧. الحدود الحالية والقرارات المفتوحة</h2>
+  <table>
+    <tr><th>البند</th><th>الحالة</th></tr>
+    <tr><td>تعرفات WFS وIRENEO الحقيقية [MUESTRA]</td><td>محمَّلة مع مستنداتها وتنتظر الاعتماد البشري. تعرفات IRENEO من 2025 لا تُطبَّق على شحنات 2026 (P28).</td></tr>
+    <tr><td>قاعدة الجمعة عند WFS</td><td>لا تُطبَّق في العرض (يوم الخروج غير معروف).</td></tr>
+    <tr><td>شرائح الأيام بترتيب اليوم أو بمجمل المدة</td><td>قرار كريستينا (P29). الحالي: القراءة الحرفية بترتيب اليوم.</td></tr>
+    <tr><td>معامل الوزن المحتسب حين لا يذكره المستند</td><td>P14. يُستعمل وزن AWB أو المعامل المكتوب في التعرفة.</td></tr>
+    <tr><td>ضريبة التصدير لعميل إسباني (EX)</td><td>قرار أنخل (P17). تبقى «IVA pendiente».</td></tr>
+    <tr><td>البيع الموحد لـ ALM</td><td>معتمد كفكرة (كريستينا 08/10)، وقيمه لم تُحدد بعد.</td></tr>
+  </table>
+</section>
+
+</main>
+</body>
+</html>

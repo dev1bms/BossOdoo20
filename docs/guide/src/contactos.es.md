@@ -26,5 +26,5 @@ de facturación es la de tipo **Factura** de Odoo.
 Se puede crear un contacto **preliminar** con solo el nombre y hacerle ofertas. Si es cliente o proveedor, la ficha
 muestra en amarillo **Falta para facturar**: NIF, dirección (calle, ciudad, país) y correo.
 
-La factura de cliente **no se contabiliza** sin NIF ni dirección del cliente (factura completa a empresas,
-RD 1619/2012, art. 6). En Odoo 20 «es empresa» significa «tiene NIF».
+La factura de un cliente de **España (o sin país)** no se contabiliza sin NIF u otra identificación de la localización
+española (práctica de Odoo 17; P31). La dirección que falta se avisa, sin bloquear.

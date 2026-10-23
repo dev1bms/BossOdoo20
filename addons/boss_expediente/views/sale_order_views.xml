@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="boss_pricing_sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_boss_open_file" type="object" class="oe_stat_button" icon="fa-folder-open"
+                <button name="action_boss_open_file" type="object" class="oe_stat_button" icon="folder_open"
                         invisible="not boss_expediente_count">
                     <div class="o_stat_info">
                         <span class="o_stat_text">File</span>

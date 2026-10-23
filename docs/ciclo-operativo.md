@@ -47,15 +47,67 @@ contabilidad, analítica y actividades; BOSS añade tarifas, datos del envío, e
 | 23/10 | Rentabilidad: venta acordada, coste aceptado, compras comprometidas, coste real, pendiente, previsto, margen en la aceptación y tras costes externos, facturado, cobrado, pagado, pendiente | `boss_expediente` | tests Odoo + navegador boss20 |
 | 23/10 | Ejemplos [DEMO] en boss20 (sin contabilizar ni confirmar compras): E260001 MSC marítimo (factura borrador solo THC, coste adicional OCU refacturado), E260002 WFS aéreo, E260004 IRENEO terrestre, E260003 solo servicio BOSS | `dev/demo_cycle.py` | salida del script en boss20 |
 | 23/10 | Corrección: un recargo en % creado junto a su servicio base (oferta repetida) se calcula sobre él | `boss_pricing_sale` | tests Odoo + IRENEO en boss20 |
+| 23/10 (2ª ronda) | Recalcular coste previsto con datos del expediente (contenedores, pesos, días por servicio, fechas reales, proveedor) con el mismo motor; historial de recálculos; venta y foto intactas; pedido confirmado marcado «a revisar» | `boss_expediente` 20.0.1.1.0 | test ALM 5→9 días (75→175 €) y 2º contenedor (THC 240→480 €); boss20 E260002 (AWB 500→620 kg, ALM +3 días) |
+| 23/10 (2ª ronda) | Añadir un servicio tras la aceptación (BOSS o proveedor), con motivo y foto; fuera del margen en la aceptación | `boss_pricing_sale` 20.0.1.7.0 | test + boss20 E260003 (CSA 45 €) |
+| 23/10 (2ª ronda) | Una oferta, varios expedientes (reparto de cantidades, nunca más de lo aceptado; facturación y analítica por expediente) | `boss_expediente` | test + boss20 E260009/E260010 |
+| 23/10 (2ª ronda) | Reglas al contabilizar revisadas con las fuentes (P30 aviso por defecto, P31 identificación según Odoo 17 y la localización); suplidos sin pedido de compra; acceso por rol y compañía; cifras con su origen | `boss_expediente` | tests (23 métodos: 0 fallos) |
+| 23/10 (2ª ronda) | Rendimiento medido en Chrome visible con sesión normal: 0,95–1,47 s hasta poder usar el formulario o la lista (5 cargas); una primera carga tras el despliegue 8,2 s (hueco de 4 s sin red ni tareas largas, no repetido). Las esperas de 20–50 s eran del panel de navegador interno oculto (`requestAnimationFrame` no se ejecuta). Descartado: el tour de bienvenida (comparación local con y sin tour, también con el paso 2 guardado) | — | `dev/perf_probe.py`, medidas en Chrome |
 
 ## Decisiones tomadas en esta fase (técnicas)
 - Expediente propio (no `project`), una cuenta analítica por expediente, necesidades de compra explícitas (ADR-005).
 - Pedido de compra: borrador por proveedor y moneda; confirmación y envío por una persona.
 - Control de facturas de proveedor de servicios BOSS «según cantidades recibidas» (servicio prestado), reversible en
-  el producto; pendiente de confirmar por Ángel (A8).
+  el producto; pendiente de confirmar por Ángel (P32).
+
+## Decisiones y requisitos citados
+
+### Factura de proveedor y facturación al cliente (P30)
+
+Texto de Cristina en «Nuevo Odoo.xlsx» (autora y última edición Cristina de Santisteban, 02/10/2026; la hoja no tiene
+columnas de prioridad, estado, responsable ni fecha: es un **requisito escrito**, no una decisión confirmada):
+
+- «Facturacion»!A3: «No permite pagar a proveedores o contabilizar facturas si eso no está facturado o como mínimo la
+  línea puesta en caso de que sea un flete que se pague por adelantado a un agente».
+- «Facturacion y costes»!A11: «no se puede soportar una factura ni pagar si no está facturado dicho concepto al cliente
+  (evitar que se paguen facturas sin haber facturado)».
+- Relacionado: «OPS- exptes»!A69 (cerrar contra previsiones y soportar después las facturas que cuadren sin reabrir),
+  «Incidencias»!B9 (único texto sobre un coste que asume BOSS).
+
+Práctica anterior: Odoo 17 casaba la factura de proveedor con las previsiones antes de contabilizarla (FactReader) y
+pagaba por remesas; no hay constancia de un bloqueo por falta de factura al cliente. Odoo 19 lo dejó en el plan
+(S5b) sin construir.
+
+Qué se distingue en Odoo 20:
+
+| Aspecto | Comportamiento |
+|---|---|
+| Orden de trabajo (facturar al cliente antes de soportar la del proveedor) | Aviso en la factura de proveedor («Antes de contabilizar o pagar») y en «Pendiente» del expediente |
+| Bloqueo de contabilización y de pago | Solo si la compañía elige «Bloquear» (Ajustes › Ventas); por defecto «Solo avisar» mientras P30 siga abierta |
+| «Facturado» | Factura de cliente **contabilizada** de esa línea (un borrador no cuenta); una factura parcial basta (concepto facturado) |
+| Coste que asume BOSS o cubierto por el precio | Sin aviso: no se espera factura al cliente |
+| Flete pagado por adelantado a un agente | Marcar «Pagado por adelantado» en el servicio: basta con la línea de venta (excepción de A3) |
+| Factura de proveedor que llega antes o mucho después | Se registra siempre; con «Bloquear» queda en borrador hasta facturar al cliente. La obligación de registrar las facturas recibidas en plazo es una cuestión contable para Ángel antes de activar el bloqueo |
+
+### Datos del cliente para contabilizar (P31)
+
+- Ángel, reglas de IVA (31/08, `iva_rules.md`): «Falta una zona ⇒ PENDIENTE ← nunca se adivina».
+- Odoo 17 (asistente de facturas, lectura de auditoría): bloquea «Any billable entity with country = Spain … or no
+  country and no VAT/NIF»; no bloquea clientes extranjeros sin NIF.
+- No hay decisión de Ángel sobre NIF de clientes UE (lo cubre el IVA pendiente), particulares, Ceuta/Melilla ni
+  dirección.
+- Odoo 20: bloquea el IVA pendiente y el cliente de España (o sin país) sin NIF ni otra identificación de la
+  localización española (pasaporte, NIE, certificado de residencia, otro); la dirección se muestra como dato que falta.
+
+### Una oferta, varios expedientes
+
+- Propietario, 26/08/2026 (actas de Odoo 19, sin nombre): «one accepted quotation MAY create multiple Expedientes …
+  Each creation allocates part (or all) of the accepted quantities/amounts; retries and concurrent users can never
+  duplicate an allocation or exceed the accepted totals».
+- Odoo 20: cada línea aceptada se reparte entre expedientes («Mover servicios a otro expediente»); la suma nunca supera
+  la cantidad aceptada, cada expediente factura su parte y la analítica se reparte en proporción.
 
 ## Bloqueos y decisiones de negocio abiertas
-Ver `docs/preguntas-abiertas.md` (Cristina C1–C7, Ángel A1–A8). No bloquean el desarrollo: las cuentas quedan como
+Ver `docs/preguntas-abiertas.md` (P30–P39 del ciclo). No bloquean el desarrollo: las cuentas quedan como
 están, el IVA de compra lo elige quien registra la factura según el documento del proveedor.
 
 Aplicadas y pendientes de confirmar:
@@ -63,11 +115,10 @@ Aplicadas y pendientes de confirmar:
   empresa). En Odoo 20 «es empresa» = tiene NIF.
 - Ángel / Cristina: la factura de proveedor de un servicio del expediente se contabiliza después de facturarlo al
   cliente (requisito de Cristina, «Nuevo Odoo», hoja Facturación A3), salvo coste «cubierto» o «lo asume BOSS».
-- Ángel (A8): control de facturas de proveedor por cantidades pedidas (estándar) o recibidas (servicio prestado):
+- Ángel (P32): control de facturas de proveedor por cantidades pedidas (estándar) o recibidas (servicio prestado):
   es un ajuste del producto, sin código.
 - Numeración E26xxxx: igual que Odoo 19; mantenerla o reiniciarla al arrancar sigue abierto (Q6).
 
-Pendiente técnico: recalcular el coste previsto del expediente con los datos reales (hoy se muestran las diferencias
-con la oferta y el coste se corrige en la línea del servicio a comprar o en el pedido).
+Pendiente técnico: ninguno conocido en el ciclo; el coste previsto se recalcula con los datos del expediente (ver registro).
 
 Último commit desplegado: ver `git log` (commits locales; no hay remoto configurado).

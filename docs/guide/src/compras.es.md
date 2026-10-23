@@ -16,6 +16,8 @@ desconocido hasta que llegue la factura del proveedor.
 
 ## Servicios a comprar
 
+![Servicios y costes del expediente E260001 [DEMO]](img/31-expediente-servicios.png)
+
 Al aceptar, cada servicio de proveedor pasa a la pestaña **Servicios y costes** del expediente con su propia **base de
 compra**: proveedor, cantidad, unidad y moneda de la tarifa del proveedor, y el coste previsto. La venta no se toca y
 nunca se convierte una base en otra (contenedores, kg, W/M…).
@@ -35,16 +37,36 @@ en el pedido de compra.
 
 Cuando el proveedor ha hecho el servicio, pulse el icono ✓ (**Marcar como prestado**) en la línea: la cantidad
 recibida pasa a ser la pedida. Si la política de control de facturas del producto es «cantidades recibidas», solo se
-factura lo prestado (decisión pendiente de Ángel, A8).
+factura lo prestado (decisión pendiente de Ángel, P32).
 
 ## Factura de proveedor
 
-Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica. Antes de contabilizarla:
+Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica. Antes de contabilizarla, cada línea de servicio BOSS
+necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
 
-- cada línea de servicio BOSS necesita el **impuesto que figura en la factura del proveedor** (también 0 %);
-- el servicio debe estar **ya facturado al cliente** (requisito de Cristina), salvo que el coste adicional esté
-  «cubierto por el precio acordado» o «lo asume BOSS». Un coste adicional «necesita aprobación del cliente» o «en
-  disputa» se decide antes.
+**Orden de trabajo**: Cristina pide facturar al cliente antes de contabilizar o pagar la factura del proveedor
+(requisito escrito, pendiente de confirmar: P30). Por ahora la factura de proveedor muestra un aviso amarillo
+(«Antes de contabilizar o pagar») si el servicio no está en una factura de cliente **contabilizada**, y el expediente lo
+lista. En **Ajustes › Ventas › Factura de proveedor antes de la de cliente** la compañía puede pasar a «Bloquear»
+(contabilizar y pagar). Sin aviso: coste cubierto por el precio o que asume BOSS; **Pagado por adelantado** (flete
+pagado a un agente: basta la línea de venta).
 
 Un coste sin pedido (gasto, tique) se registra con [[Coste sin pedido de compra]]: la factura de proveedor queda
 en la cuenta analítica del expediente.
+
+## Suplidos: derechos e IVA del DUA
+
+Los importes pagados en nombre del cliente (ARA, IVA, PLA del DUA) no se piden con solicitud de presupuesto: el agente
+de aduanas los paga y los factura al coste. El servicio queda **Facturado sin pedido de compra**, con el agente de
+aduanas del expediente como proveedor y el estado «Factura sin pedido esperada». Su factura se registra con
+[[Coste sin pedido de compra]] y se casa con el servicio por producto y cuenta analítica (sin contarse dos veces).
+
+## Pedidos parciales, cancelados y cambio de proveedor
+
+- **Parcial**: reduzca la cantidad en la solicitud antes de confirmarla; lo que falta vuelve a
+  [[Crear solicitudes de presupuesto]].
+- **Cancelado**: la cantidad de un pedido cancelado vuelve a estar por pedir.
+- **Otro proveedor**: cancele el pedido activo, cambie el proveedor del servicio y pulse [[Recalcular coste previsto]]:
+  se aplica la tarifa del nuevo proveedor.
+- **Otra base de compra**: antes de pedir, la unidad de compra del servicio puede ser distinta de la de venta (vendido
+  por envío, comprado por kg): la venta no cambia y nunca se convierte una unidad en otra.

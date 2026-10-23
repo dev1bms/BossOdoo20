@@ -407,6 +407,7 @@ msgstr "Factura sin pedido esperada"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__qty_billed
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__billed
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Billed"
 msgstr "Facturado"
 
@@ -575,6 +576,11 @@ msgid "Company"
 msgstr "Compañía"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_currency_id
+msgid "Company currency"
+msgstr "Moneda de la compañía"
+
+#. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_res_config_settings
 msgid "Config Settings"
 msgstr "Ajustes de configuración"
@@ -727,7 +733,6 @@ msgstr "Creado el"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__currency_id
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__currency_id
@@ -1959,6 +1964,7 @@ msgstr "Cotizado"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__product_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__product_id
 msgid "Product"
 msgstr "Producto"
@@ -2006,6 +2012,11 @@ msgstr "Unidad de compra"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Purchases"
 msgstr "Compras"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Qty"
+msgstr "Cant."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__new_quantity
@@ -2264,7 +2275,6 @@ msgstr "Secuencia"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__cost_id
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__product_id
 msgid "Service"
 msgstr "Servicio"
 
@@ -2569,11 +2579,13 @@ msgstr "Escriba la cantidad a mover de al menos un servicio."
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__uom_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__uom_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__uom_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Unit"
 msgstr "Unidad"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__new_unit_cost
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Unit cost"
 msgstr "Coste unitario"
 

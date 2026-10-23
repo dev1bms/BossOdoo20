@@ -25,5 +25,5 @@ Odoo's **Invoice** address type.
 A **preliminary** contact can be created with its name only and quoted. If it is a customer or supplier, the record shows
 **Missing for invoices** in yellow: tax ID, address (street, city, country) and email.
 
-A customer invoice is **not posted** without the customer's tax ID and address (complete invoice to a business,
-RD 1619/2012 art. 6). In Odoo 20 "is a company" means "has a tax ID".
+The invoice of a customer in **Spain (or without country)** is not posted without NIF or another identification of
+the Spanish localization (Odoo 17 practice; P31). A missing address is shown, not blocking.

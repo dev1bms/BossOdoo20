@@ -42,3 +42,22 @@ by impact. Amounts are illustrative.
 | 18 | P06 · P07 | Tarifa que cambia durante la validez; ¿quién recotiza una oferta aceptada? | — | Todos | Recotizar con motivo, solo gestor comercial (propuesta del propietario 26/08: cambios con motivo) | Cristina | Así implementado |
 | 19 | P14 | Factor de peso tasable cuando el documento no lo dice | Peso tasable sin AWB | Aéreo y terrestre | Peso tasable de la AWB o factor escrito en la tarifa | Cristina | Así implementado |
 | 20 | P20–P23 · P26 | Visibilidad de coste/margen, ofertas por ruta, alternativas, validez, fusiones de códigos | — | — | Estándar de Odoo hasta decidir | Cristina | Estándar de Odoo; códigos originales |
+
+## Ciclo operativo: expediente, compras y facturación · Operational cycle (23/10/2026)
+
+Textos y fuentes completos en `docs/ciclo-operativo.md` («Decisiones y requisitos citados»). Etiquetas: **A** decisión
+confirmada, **R** requisito escrito por Cristina en «Nuevo Odoo.xlsx» (sin fecha, prioridad ni estado), **C**
+práctica observada de Odoo 17/19, **B** abierta.
+
+| Id | Pregunta | Fuente y estado | Quién | Mientras tanto (en el sistema) |
+|---|---|---|---|---|
+| P30 | ¿Se impide **contabilizar o pagar** una factura de proveedor antes de facturar el servicio al cliente, o es solo el orden de trabajo? | R: «Facturacion» A3, «Facturacion y costes» A11 (con excepción: flete pagado por adelantado a un agente). Odoo 17/19 no lo bloqueaban (C) | Cristina + Ángel | Aviso en la factura de proveedor y en el expediente; bloqueo solo si la compañía elige «Bloquear» en Ajustes |
+| P31 | **Datos del cliente** obligatorios para contabilizar una factura | C: Odoo 17 bloqueaba clientes de España (o sin país) sin NIF; no bloqueaba extranjeros. A: zona que falta → IVA pendiente (Ángel 31/08). Sin decisión sobre dirección | Ángel | Bloqueo: IVA pendiente y cliente de España sin NIF u otra identificación de la localización; dirección solo se avisa |
+| P32 | Control de facturas de proveedor de servicios: ¿cantidades **pedidas o prestadas**? | B | Ángel | Estándar (pedidas); «Marcar como prestado» disponible; es un ajuste del producto |
+| P33 | ¿Qué costes van con **pedido de compra** y cuáles como previsión? | B10 (Cristina + Ángel), abierta | Cristina + Ángel | Pedido para servicios de proveedor; los suplidos (derechos e IVA del DUA) sin pedido, como en Odoo 17/19 (C) |
+| P34 | ¿Precio cerrado para **varios envíos** (tipo Leroy)? | B (acta 26/08, opción B). A?: una oferta aceptada puede abrir varios expedientes repartiendo sus cantidades (propietario, 26/08) | Cristina | Reparto de cantidades entre expedientes («Mover servicios a otro expediente»); un acuerdo de precios para envíos futuros no está decidido |
+| P35 | ¿Quién ve **costes, márgenes y facturas** del expediente? | R: «cada comercial ve solo sus clientes» (CRM A19); costes/márgenes sin decisión (P20) | Cristina | Estándar de Odoo por rol: comercial su expediente, la venta y el coste de la oferta; compras el lado proveedor; gestor comercial y contabilidad todo |
+| P36 | Numeración de expedientes al arrancar: ¿continuar Odoo 19 o nueva? | B (Q6) | Belal + Cristina | E26xxxx (formato de Odoo 19) |
+| P37 | Cuentas de ingreso y gasto por servicio; suplidos | B (P18) | Ángel | Las de la categoría de producto; nada inventado |
+| P38 | Coste interno de los servicios propios de BOSS | Sin decisión | Ángel | Margen «tras costes externos»: no es beneficio neto |
+| P39 | ¿Gastos de empleados (tiques, taxis) imputados a expedientes? | Sin requisito ni práctica documentada | Belal + Ángel | No instalado. Si se usa «Gastos» de Odoo, el gasto con la cuenta analítica del expediente cuenta como coste real (recibo `in_receipt`) |

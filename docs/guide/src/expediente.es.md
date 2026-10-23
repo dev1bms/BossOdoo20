@@ -9,9 +9,12 @@ rentabilidad. Está en la aplicación **Expedientes** (y en **Ventas → Pedidos
   **Expedientes**: queda como **preliminar**. Cuando se acepte la oferta, elija ese expediente en el campo
   **Expediente** de la oferta (pestaña **Envío**).
 - Un servicio vendido **después** va en una oferta nueva vinculada: botón [[Vender otro servicio]] del expediente.
-- Un acuerdo para varios envíos: cada envío es una oferta repetida (Duplicar) y por tanto su propio expediente.
+- Una oferta aceptada puede repartirse entre **varios expedientes** (por ejemplo, un contenedor en otro buque):
+  [[Mover servicios a otro expediente]] (ver más abajo).
 
 ## Qué contiene
+
+![Resumen del expediente E260001 [DEMO]](img/30-expediente-resumen.png)
 
 - **Quién**: cliente contratante, responsable, cargador, consignatario, agente, transportista; en **Referencias y
   fechas**, notify, transportista terrestre y agente de aduanas.
@@ -38,3 +41,41 @@ revisadas y nada en borrador. El aviso amarillo **Pendiente** dice qué falta.
 Cada expediente tiene su cuenta analítica (plan **Expedientes**). Se pone sola en las líneas de venta, en las de compra
 y, desde ellas, en las facturas. Así el coste y el ingreso de cada envío se leen de la contabilidad, sin importes
 escritos a mano.
+
+## Recalcular el coste previsto con los datos reales
+
+Cuando cambian los datos del envío (contenedores en **Carga**, peso, volumen, peso de la AWB, fechas reales ATA/ATD,
+proveedor) o los **días** de un servicio por tiempo (columna **Días** en **Servicios y costes**: almacenaje, demoras,
+ocupación), pulse [[Recalcular coste previsto]]. Se usa el mismo cálculo que en la oferta, ahora con los datos del
+expediente:
+
+- cada servicio a comprar toma la cantidad y el coste nuevos; la pestaña **Recálculos de coste** guarda antes/después,
+  usuario, fecha, datos usados y la explicación del cálculo;
+- la **venta aceptada y su foto no cambian** (para cobrar más está [[Añadir un servicio]] o Refacturar);
+- las solicitudes de presupuesto en borrador se actualizan; un pedido ya confirmado no se toca: el servicio queda con
+  **Pedido a revisar** y el coste final previsto usa el dato más reciente.
+
+Ejemplo: ALM cotizado con 5 días (2 libres, 25 €/día → 75 €); el contenedor se retira el día 9 → 175 €. Un segundo
+contenedor de 40' en **Carga** → THC 2 × 240 € = 480 €.
+
+![Recálculos de coste del expediente WFS [DEMO]: AWB 500 → 620 kg y almacenaje 3 días más](img/32-expediente-recalculos.png)
+
+## Una oferta, varios expedientes
+
+[[Mover servicios a otro expediente]] lleva una parte de las cantidades aceptadas a otro expediente del mismo cliente
+(nuevo o existente). La pestaña **Servicios vendidos** muestra la parte de cada línea en este expediente: la suma de
+todos los expedientes nunca supera lo aceptado, el precio no cambia, cada expediente factura su parte y la cuenta
+analítica de la línea se reparte en proporción. Un servicio ya pedido al proveedor se reduce antes en su pedido.
+
+![Servicios vendidos: parte de la oferta en este expediente](img/33-servicios-vendidos.png)
+
+![Mover servicios a otro expediente](img/34-mover-servicios.png)
+
+## Añadir un servicio después de aceptar
+
+[[Añadir un servicio]] (gestor comercial) añade al pedido aceptado un servicio nuevo con su precio y el motivo: hecho
+por **BOSS** (sin coste de proveedor) o por un **proveedor** (pasa a servicios a comprar). Las líneas aceptadas y su
+foto no cambian; queda otra foto «Servicio añadido tras la aceptación» y la línea no cuenta en el margen en la
+aceptación.
+
+![Añadir un servicio tras la aceptación](img/35-anadir-servicio.png)
