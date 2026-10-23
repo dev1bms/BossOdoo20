@@ -199,8 +199,8 @@ class BossPricing(models.AbstractModel):
                 "%d/%m/%Y %H:%M"), end=end.strftime("%d/%m/%Y %H:%M"), hours=self._num(v["hours"]), days=v["days"],
                 unit=unit)
         rule = {"saturday_until_monday": _("arrival on a Saturday and exit on Monday at the latest: free"),
-                "friday_monday": _("arrival on a Friday and exit on Monday: %s free", free),
-                "friday_extra_day": _("arrival on a Friday: %s free", free)}.get(v.get("rule"))
+                "friday_monday": _("arrival on a Friday and exit on Monday: %s", free),
+                "friday_extra_day": _("arrival on a Friday: %s", free)}.get(v.get("rule"))
         if v.get("open"):  # the amount depends on the readings listed next
             return head
         if v.get("rule") == "saturday_until_monday" or not v["charged_days"]:

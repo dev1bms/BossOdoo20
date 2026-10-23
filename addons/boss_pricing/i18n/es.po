@@ -2663,14 +2663,14 @@ msgstr "cualquier modo"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
-msgid "arrival on a Friday and exit on Monday: %s free"
-msgstr "llegada en viernes y salida el lunes: %s libres"
+msgid "arrival on a Friday and exit on Monday: %s"
+msgstr "llegada en viernes y salida el lunes: %s"
 
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
-msgid "arrival on a Friday: %s free"
-msgstr "llegada en viernes: %s libres"
+msgid "arrival on a Friday: %s"
+msgstr "llegada en viernes: %s"
 
 #. module: boss_pricing
 #. odoo-python
