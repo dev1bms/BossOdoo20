@@ -48,7 +48,7 @@ On the supplier price (Pricing & Suppliers → Prices), service ALM, charge basi
 Once Cristina decides a reading, that field is changed in a **new version** of the tariff and the calculation becomes
 automatic in every case.
 
-![Demo ALM price: free hours, Friday to Monday, Saturday until Monday and the three readings «not decided»](img/29-alm-precio.png)
+![Demo ALM price: free hours, Friday to Monday, Saturday until Monday and the three readings «not decided»](img/37-alm-precio.png)
 
 **What is shown and what is computed.** The quotation and file line is **1 Shipment** with the total storage amount;
 the internal calculation is «units of 100 kg × periods × price». The total is computed once and is not multiplied again
@@ -79,11 +79,11 @@ service with an unknown cost.
 assumed (they depend on the exit day) and the explanation says so. Example: planned arrival on a Saturday, 3 days →
 estimated as charged; with the actual period the exception applies if it leaves on Monday.
 
-![Quotation: estimate of 3 days from a Friday; the Friday exception is not assumed and it says so](img/30-alm-oferta-estimacion.png)
+![Quotation: estimate of 3 days from a Friday; the Friday exception is not assumed and it says so](img/38-alm-oferta-estimacion.png)
 
-![Quotation of 10 days: «Not priced automatically», one amount per reading that changes it (here, the tiers)](img/31-alm-sin-precio-automatico.png)
+![Quotation of 10 days: «Not priced automatically», one amount per reading that changes it (here, the tiers)](img/39-alm-sin-precio-automatico.png)
 
-![Test pricing with the actual period: Friday 09:00 → Monday 10:00 = 73 h, 72 h exceeded, 4 periods from the start](img/32-alm-probar-periodo-real.png)
+![Test pricing with the actual period: Friday 09:00 → Monday 10:00 = 73 h, 72 h exceeded, 4 periods from the start](img/40-alm-probar-periodo-real.png)
 
 ## 4. Sale
 
@@ -117,9 +117,9 @@ Steps:
    as borne by BOSS («Variance reviewed» and its note). Recomputing again creates no new costs, orders or repeated
    recalculations.
 
-![File: ALM line with the period start and end, counted days and expected cost](img/33-alm-expediente-periodo.png)
+![File: ALM line with the period start and end, counted days and expected cost](img/41-alm-expediente-periodo.png)
 
-![Cost recalculations: 150 → 0 (Friday to Monday, 71 h), 0 → 200 (73 h) and «no automatic calculation» when the stay goes on](img/34-alm-recalculos.png)
+![Cost recalculations: 150 → 0 (Friday to Monday, 71 h), 0 → 200 (73 h) and «no automatic calculation» when the stay goes on](img/42-alm-recalculos.png)
 
 Screenshots of the local test database with [DEMO] data (fictitious amounts; that database's currency is USD).
 

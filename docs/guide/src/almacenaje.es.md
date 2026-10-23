@@ -48,7 +48,7 @@ En el precio del proveedor (Tarifas y proveedores → Precios), servicio ALM, ba
 Cuando Cristina decida una lectura, se cambia ese campo en una **nueva versión** de la tarifa y el cálculo pasa a ser
 automático en todos los casos.
 
-![Precio ALM de demostración: horas libres, viernes a lunes, sábado hasta lunes y las tres lecturas «sin decidir»](img/29-alm-precio.png)
+![Precio ALM de demostración: horas libres, viernes a lunes, sábado hasta lunes y las tres lecturas «sin decidir»](img/37-alm-precio.png)
 
 **Qué se muestra y qué se calcula.** La línea de la oferta y del expediente es **1 Expediente** con el importe total del
 almacenaje; el cálculo interno es «unidades de 100 kg × periodos × precio». El total se calcula una vez y no se vuelve a
@@ -78,11 +78,11 @@ servicio de proveedor con coste desconocido.
 suponen (dependen del día de salida) y la explicación lo dice. Ejemplo: llegada prevista en sábado, 3 días → se estima
 cobrado; con el periodo real se aplicará la excepción si sale el lunes.
 
-![Oferta: estimación de 3 días desde un viernes; la excepción del viernes no se supone y se dice](img/30-alm-oferta-estimacion.png)
+![Oferta: estimación de 3 días desde un viernes; la excepción del viernes no se supone y se dice](img/38-alm-oferta-estimacion.png)
 
-![Oferta de 10 días: «No se cotiza automáticamente», un importe por lectura que lo cambia (aquí, los tramos)](img/31-alm-sin-precio-automatico.png)
+![Oferta de 10 días: «No se cotiza automáticamente», un importe por lectura que lo cambia (aquí, los tramos)](img/39-alm-sin-precio-automatico.png)
 
-![Probar tarifa con el periodo real: viernes 09:00 → lunes 10:00 = 73 h, 72 h superadas, 4 periodos desde el inicio](img/32-alm-probar-periodo-real.png)
+![Probar tarifa con el periodo real: viernes 09:00 → lunes 10:00 = 73 h, 72 h superadas, 4 periodos desde el inicio](img/40-alm-probar-periodo-real.png)
 
 ## 4. Venta
 
@@ -116,9 +116,9 @@ Pasos:
 6. **Diferencia**: si la factura es mayor por más días, «Refacturar al cliente» con motivo, o dejarla como asumida
    por BOSS («Diferencia revisada» y su nota). Recalcular otra vez no crea costes, pedidos ni recálculos repetidos.
 
-![Expediente: línea ALM con inicio y fin del periodo, días contados y coste previsto](img/33-alm-expediente-periodo.png)
+![Expediente: línea ALM con inicio y fin del periodo, días contados y coste previsto](img/41-alm-expediente-periodo.png)
 
-![Recálculos de coste: 150 → 0 (viernes a lunes, 71 h), 0 → 200 (73 h) y «sin cálculo automático» al alargarse la estancia](img/34-alm-recalculos.png)
+![Recálculos de coste: 150 → 0 (viernes a lunes, 71 h), 0 → 200 (73 h) y «sin cálculo automático» al alargarse la estancia](img/42-alm-recalculos.png)
 
 Capturas de la base de pruebas local con datos [DEMO] (importes ficticios; la moneda de esa base es USD).
 
