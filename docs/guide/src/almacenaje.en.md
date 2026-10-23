@@ -11,7 +11,7 @@ still waiting for a decision. **Illustrative** amounts (real supplier prices are
 | WFS cold room, dangerous, valuable goods, live animals | Items 2–6 (other free hours, prices and minimums) | No cargo-type condition | **Manual cost** (P44) |
 | IRENEO warehouse MAD/BCN | 2025 tariffs (per 100 kg or fraction and calendar day, 333 kg/m³) | No tariff | 2026 validity unconfirmed (P28) |
 | Warehouse outside the airport (pallet, m³, entry/exit) | — | Not ALM | Own code pending Cristina and Ángel (P44) |
-| Storage included in a package (e.g. IRENEO export: 3 calendar days inside the handling) | IRENEO p.4 | The package is HAN | Only the days after it are charged as ALM; never twice |
+| Storage included in a package (e.g. IRENEO export: 3 calendar days inside the handling) | IRENEO p.4 | The package is HAN | The included days are entered as the free period of that supplier's ALM tariff (as IRENEO writes it): only the days after are charged. Without that tariff there is no automatic check: do not add ALM for the package days |
 | Storage at the port (containers) | Carriers | DEM / OCU / DET | Not ALM |
 
 Sale: **no automatic rule**. Cristina (08/10) asked for one ALM sale price for every customer; the values are not

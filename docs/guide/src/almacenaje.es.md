@@ -11,7 +11,7 @@ pendiente de una decisión. Importes **ilustrativos** (los precios reales de pro
 | WFS frío, peligrosas, valiosas, animales vivos | Puntos 2–6 (otras horas libres, precios y mínimos) | Sin condición de tipo de carga | **Coste manual** (P44) |
 | IRENEO almacén MAD/BCN | Tarifas 2025 (por 100 kg o fracción y día natural, 333 kg/m³) | Sin tarifa | Vigencia 2026 sin confirmar (P28) |
 | Almacén fuera del aeropuerto (palé, m³, entrada/salida) | — | No es ALM | Código propio pendiente de Cristina y Ángel (P44) |
-| Almacenaje incluido en un paquete (p. ej. IRENEO exportación: 3 días naturales dentro del handling) | IRENEO p.4 | El paquete es HAN | Solo los días después se cobran como ALM; no se cobran dos veces |
+| Almacenaje incluido en un paquete (p. ej. IRENEO exportación: 3 días naturales dentro del handling) | IRENEO p.4 | El paquete es HAN | Los días incluidos se escriben como franquicia en la tarifa ALM de ese proveedor (así lo dice IRENEO): solo se cobran los días después. Sin esa tarifa no hay control automático: no añadir ALM por los días del paquete |
 | Almacenaje en puerto (contenedores) | Navieras | DEM / OCU / DET | No es ALM |
 
 Venta: **sin regla automática**. Cristina (08/10) pidió un precio de venta único de ALM para todos los clientes; los
