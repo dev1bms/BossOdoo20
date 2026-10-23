@@ -85,6 +85,8 @@ Installed by hand in `.claude/skills/` (development aids, never Odoo modules):
 | interface-design (+ `reference/`, commands in `.claude/commands/interface-design/`) | github.com/Dammyjay93/interface-design `.claude/skills/interface-design` | 2f9be3206855bcb2d1d0af262c8bae25cba6658d (2026-06-20) | MIT (LICENSE) |
 | odoo-20.0 | github.com/mart337i/odoo-skills `skills/odoo-20.0` | 634b2db69c0ffb9766a5d16cff09a81ff1df54f4 (2026-10-01) | MIT (package.json) |
 | odoo-code-review | github.com/mart337i/odoo-skills `skills/odoo-code-review` | 634b2db69c0ffb9766a5d16cff09a81ff1df54f4 (2026-10-01) | MIT (package.json) |
+| odoo-code-tracer | github.com/mart337i/odoo-skills `skills/odoo-code-tracer` | 634b2db69c0ffb9766a5d16cff09a81ff1df54f4 (2026-10-01) | MIT (package.json) |
+| verification-before-completion | github.com/obra/superpowers `skills/verification-before-completion` | 2ce8aa15d05bd57213e6f746f953aafb7ded7a8b (2026-10-21) | MIT (LICENSE) |
 | web-design-guidelines | github.com/vercel-labs/agent-skills `skills/web-design-guidelines` | 063bee94c3f4df8453406c830b0a7df0f2860278 (2026-08-28) | see upstream |
 
 Guidelines snapshot: vercel-labs/web-interface-guidelines `command.md` @ 434b7f91364665f2f733b310ec54809bf8f37937.

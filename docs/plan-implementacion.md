@@ -15,9 +15,7 @@
 3. **Zonas y precios por cliente**: tarifas de transportistas por zona (provincias) y listas de precios pactados
    por cliente (P01, P15).
 4. **Reglas de venta** si se aprueba P01: recargo/margen por servicio con confirmación humana.
-5. **Expediente (operaciones)**: abrir el expediente desde la oferta aceptada (foto = base comercial), fechas reales
-   y coste real de servicios por tiempo (DEM, OCU, ALM: estimado → real).
-6. **Facturación**: factura desde las líneas aceptadas, facturas parciales/múltiples, abonos, coste real por
-   facturas de proveedor y cuenta analítica por expediente.
-7. **Más métodos solo si un documento lo exige**: tramos de dos dimensiones (kg × km, IRENEO BCN), mínimo por
+5. **Expediente, compras y facturación**: en curso según el mandato del 23/10/2026. Plan, criterios de aceptación
+   y registro de progreso en [ciclo-operativo.md](ciclo-operativo.md); diseño en ADR-005.
+6. **Más métodos solo si un documento lo exige**: tramos de dos dimensiones (kg × km, IRENEO BCN), mínimo por
    contenedor, regla «viernes con retirada el lunes», condición de mercancía peligrosa.
