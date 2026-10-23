@@ -193,6 +193,11 @@ class SaleOrderLine(models.Model):
         # total, taxes): notify them like a write would, so nothing keeps the default quantity of 1.
         auto.modified(["product_uom_qty"])
         auto._boss_recompute_cost()
+        # A percentage of other services is precomputed before the lines created with it exist (repeat quotation,
+        # several services added at once): compute it again now that its base lines are there.
+        percent = lines.order_id.order_line.filtered(
+            lambda l: l.boss_cost_method == "percent" and not l.boss_price_frozen)
+        percent._boss_recompute_cost()
         return lines
 
     def _boss_check_addition(self, vals_list):
