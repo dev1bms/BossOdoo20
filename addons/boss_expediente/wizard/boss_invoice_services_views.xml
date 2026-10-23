@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_invoice_services_view_form" model="ir.ui.view">
+        <field name="name">boss.invoice.services.form</field>
+        <field name="model">boss.invoice.services</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">Choose the services to invoice now; the others stay to invoice. To invoice part of a
+                    quantity, change it on the draft invoice. Credit notes are made from the posted invoice.</p>
+                <field name="expediente_id" invisible="1"/>
+                <field name="order_ids" invisible="1"/>
+                <field name="line_ids">
+                    <list>
+                        <field name="order_id"/>
+                        <field name="product_id"/>
+                        <field name="qty_to_invoice"/>
+                        <field name="product_uom_id" string="Unit"/>
+                        <field name="price_unit"/>
+                        <field name="currency_id" column_invisible="1"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_create" type="object" string="Create draft invoice" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

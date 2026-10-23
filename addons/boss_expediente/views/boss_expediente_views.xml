@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_expediente_view_form" model="ir.ui.view">
+        <field name="name">boss.expediente.form</field>
+        <field name="model">boss.expediente</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_rfqs" type="object" string="Create RFQs" class="btn-primary"
+                            groups="purchase.group_purchase_user" invisible="state == 'cancel'"
+                            help="Draft requests for quotation for the services still to order, one per supplier and currency."/>
+                    <button name="action_invoice_services" type="object" string="Invoice services"
+                            invisible="state == 'cancel' or preliminary"/>
+                    <button name="action_new_quotation" type="object" string="Sell another service"
+                            invisible="state == 'cancel'"/>
+                    <button name="action_new_bill" type="object" string="Cost without purchase order"
+                            groups="account.group_account_invoice" invisible="state == 'cancel'"/>
+                    <button name="action_in_transit" type="object" string="In transit" invisible="state != 'open'"/>
+                    <button name="action_delivered" type="object" string="Delivered"
+                            invisible="state not in ('open', 'in_transit')"/>
+                    <button name="action_close_operations" type="object" string="Close operations"
+                            invisible="state != 'delivered'"/>
+                    <button name="action_reopen" type="object" string="Reopen"
+                            invisible="state not in ('closed', 'cancel') or financial_closed"/>
+                    <button name="action_close_financial" type="object" string="Close financially"
+                            groups="account.group_account_invoice" invisible="state != 'closed' or financial_closed"/>
+                    <button name="action_reopen_financial" type="object" string="Reopen financially"
+                            groups="account.group_account_manager" invisible="not financial_closed"/>
+                    <button name="action_cancel" type="object" string="Cancel file"
+                            invisible="state in ('closed', 'cancel')"
+                            confirm="Cancel this file? Confirmed purchases and posted invoices must be cancelled or credited first."/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,in_transit,delivered,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_sale_orders" type="object" class="oe_stat_button" icon="fa-dollar">
+                            <field name="sale_count" widget="statinfo" string="Sales"/>
+                        </button>
+                        <button name="action_open_purchase_orders" type="object" class="oe_stat_button"
+                                icon="fa-shopping-cart" groups="purchase.group_purchase_user">
+                            <field name="purchase_count" widget="statinfo" string="Purchases"/>
+                        </button>
+                        <button name="action_open_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                        <button name="action_open_bills" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                                groups="account.group_account_invoice,purchase.group_purchase_user">
+                            <field name="bill_count" widget="statinfo" string="Bills"/>
+                        </button>
+                    </div>
+                    <div class="alert alert-info mb-2" role="status" invisible="not preliminary or state == 'cancel'">
+                        Preliminary file: no accepted quotation yet. Link it from the quotation (field <strong>File</strong>).
+                    </div>
+                    <div class="alert alert-warning mb-2" role="status" invisible="not completeness or financial_closed">
+                        <strong>To do: </strong><field name="completeness" nolabel="1" class="d-inline"/>
+                    </div>
+                    <div class="alert alert-success mb-2" role="status" invisible="not financial_closed">
+                        Financially closed on <field name="financial_closed_date" class="d-inline"/> by
+                        <field name="financial_closed_by" class="d-inline"/>.
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Who">
+                            <field name="partner_id" readonly="sale_count" options="{'no_create': True}"/>
+                            <field name="user_id"/>
+                            <field name="shipper_id"/>
+                            <field name="consignee_id"/>
+                            <field name="agent_id"/>
+                            <field name="carrier_id"/>
+                            <field name="preliminary" invisible="1"/>
+                            <field name="financial_closed" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Route">
+                            <field name="direction"/>
+                            <field name="transport_mode"/>
+                            <field name="load_type"/>
+                            <field name="incoterm_id"/>
+                            <field name="origin_place"/>
+                            <field name="destination_place"/>
+                            <field name="port_id" options="{'no_create': True}"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                            <label for="scope_pickup" string="BOSS handles"/>
+                            <div class="d-flex flex-wrap gap-3">
+                                <span><field name="scope_pickup" nolabel="1"/> Pickup</span>
+                                <span><field name="scope_origin_customs" nolabel="1"/> Customs origin</span>
+                                <span><field name="scope_main" nolabel="1"/> Main carriage</span>
+                                <span><field name="scope_destination_customs" nolabel="1"/> Customs destination</span>
+                                <span><field name="scope_delivery" nolabel="1"/> Delivery</span>
+                            </div>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Summary" name="summary">
+                            <group>
+                                <group string="Sale">
+                                    <field name="amount_sale"/>
+                                    <field name="amount_sale_own" invisible="not amount_sale_own"/>
+                                    <field name="amount_on_behalf" invisible="not amount_on_behalf"/>
+                                    <field name="amount_invoiced"/>
+                                    <field name="amount_to_invoice"/>
+                                    <field name="amount_collected"/>
+                                </group>
+                                <group string="External cost">
+                                    <field name="amount_cost_accepted"/>
+                                    <field name="amount_committed"/>
+                                    <field name="amount_cost_actual"/>
+                                    <field name="amount_cost_pending"/>
+                                    <field name="amount_cost_forecast"/>
+                                    <field name="amount_paid"/>
+                                </group>
+                                <group string="Margin">
+                                    <field name="amount_margin_accepted"/>
+                                    <field name="amount_margin_forecast"/>
+                                    <field name="cost_complete"/>
+                                </group>
+                                <group string="Differences with the quotation" invisible="not quote_difference">
+                                    <field name="quote_difference" nolabel="1" colspan="2"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Services and costs" name="costs">
+                            <field name="cost_ids" context="{'default_expediente_id': id}">
+                                <list editable="bottom" decoration-muted="state == 'closed'"
+                                      decoration-danger="cost_unknown">
+                                    <field name="kind" optional="show"/>
+                                    <field name="product_id" readonly="kind == 'sale'" options="{'no_create': True}"/>
+                                    <field name="name" optional="hide"/>
+                                    <field name="partner_id" options="{'no_create': True}"/>
+                                    <field name="quantity" readonly="kind == 'sale' or purchase_line_ids"/>
+                                    <field name="uom_id" readonly="kind == 'sale' or purchase_line_ids"
+                                           options="{'no_create': True}"/>
+                                    <field name="currency_id" readonly="purchase_line_ids" optional="show"
+                                           options="{'no_create': True}"/>
+                                    <field name="expected_unit_cost"/>
+                                    <field name="expected_amount" optional="show"/>
+                                    <field name="accepted_amount_company" optional="hide"/>
+                                    <field name="accepted_cost_kind" optional="hide"/>
+                                    <field name="extra_class" invisible="kind != 'extra'"/>
+                                    <field name="reason" optional="hide"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state in ('performed', 'billed')"
+                                           decoration-info="state in ('rfq', 'ordered')"
+                                           decoration-warning="state in ('to_order', 'no_supplier')"/>
+                                    <field name="qty_ordered" optional="hide"/>
+                                    <field name="qty_received" optional="hide"/>
+                                    <field name="qty_billed" optional="hide"/>
+                                    <field name="billed_amount_company" optional="show"/>
+                                    <field name="variance_company" optional="show"
+                                           decoration-danger="variance_company &gt; 0"/>
+                                    <field name="variance_reviewed" optional="show" invisible="not variance_company"/>
+                                    <field name="variance_note" optional="hide"/>
+                                    <field name="closed" optional="show"/>
+                                    <field name="cost_unknown" column_invisible="1"/>
+                                    <field name="purchase_line_ids" column_invisible="1"/>
+                                    <field name="rebill_line_id" optional="hide"/>
+                                    <field name="company_currency_id" column_invisible="1"/>
+                                    <button name="action_mark_performed" type="object" icon="fa-check"
+                                            title="Mark as performed" groups="purchase.group_purchase_user"
+                                            invisible="state != 'ordered'"/>
+                                    <button name="action_rebill" type="object" icon="fa-share"
+                                            title="Re-invoice to the customer" groups="sales_team.group_sale_manager"
+                                            invisible="kind != 'extra' or rebill_line_id or state == 'closed'"/>
+                                    <button name="action_open_purchase_lines" type="object" icon="fa-shopping-cart"
+                                            title="Purchase orders" invisible="not purchase_line_ids"
+                                            groups="purchase.group_purchase_user"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cargo" name="cargo">
+                            <group>
+                                <group>
+                                    <field name="goods_description"/>
+                                    <field name="packages"/>
+                                    <field name="pallets"/>
+                                </group>
+                                <group>
+                                    <field name="gross_kg"/>
+                                    <field name="volume_m3"/>
+                                    <field name="awb_kg" invisible="transport_mode != 'air'"/>
+                                </group>
+                            </group>
+                            <field name="container_ids" invisible="load_type != 'fcl'">
+                                <list editable="bottom">
+                                    <field name="size"/>
+                                    <field name="container_type_id" options="{'no_create': True}"/>
+                                    <field name="number"/>
+                                    <field name="seal"/>
+                                    <field name="gross_kg" optional="show"/>
+                                    <field name="pickup_date" optional="show"/>
+                                    <field name="return_date" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="References and dates" name="references">
+                            <group>
+                                <group string="References">
+                                    <field name="booking_ref"/>
+                                    <field name="mbl_ref" invisible="transport_mode == 'air'"/>
+                                    <field name="hbl_ref" invisible="transport_mode == 'air'"/>
+                                    <field name="mawb_ref" invisible="transport_mode != 'air'"/>
+                                    <field name="hawb_ref" invisible="transport_mode != 'air'"/>
+                                    <field name="vessel"/>
+                                    <field name="voyage"/>
+                                    <field name="customs_ref"/>
+                                </group>
+                                <group string="Dates">
+                                    <field name="etd"/>
+                                    <field name="atd"/>
+                                    <field name="eta"/>
+                                    <field name="ata"/>
+                                    <field name="pickup_date"/>
+                                    <field name="delivery_date"/>
+                                </group>
+                                <group string="Other parties">
+                                    <field name="notify_id"/>
+                                    <field name="haulier_id"/>
+                                    <field name="customs_broker_id"/>
+                                    <field name="inland_state_id" options="{'no_create': True}"/>
+                                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Events" name="events">
+                            <field name="event_ids">
+                                <list editable="top">
+                                    <field name="date"/>
+                                    <field name="kind"/>
+                                    <field name="name"/>
+                                    <field name="note" optional="show"/>
+                                    <field name="user_id" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="boss_expediente_view_list" model="ir.ui.view">
+        <field name="name">boss.expediente.list</field>
+        <field name="model">boss.expediente</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="direction" optional="show"/>
+                <field name="transport_mode" optional="show"/>
+                <field name="load_type" optional="hide"/>
+                <field name="port_id" optional="show"/>
+                <field name="country_id" optional="show"/>
+                <field name="eta" optional="show"/>
+                <field name="etd" optional="hide"/>
+                <field name="booking_ref" optional="hide"/>
+                <field name="mbl_ref" optional="hide"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge" decoration-info="state in ('open', 'in_transit')"
+                       decoration-success="state == 'closed'" decoration-muted="state == 'cancel'"/>
+                <field name="financial_closed" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_expediente_view_search" model="ir.ui.view">
+        <field name="name">boss.expediente.search</field>
+        <field name="model">boss.expediente</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="booking_ref"/>
+                <field name="mbl_ref"/>
+                <field name="hbl_ref"/>
+                <field name="mawb_ref"/>
+                <field name="hawb_ref"/>
+                <field name="container_ids" string="Container number" filter_domain="[('container_ids.number', 'ilike', self)]"/>
+                <filter name="my" string="My files" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="active_files" string="In progress" domain="[('state', 'in', ('open', 'in_transit', 'delivered'))]"/>
+                <filter name="to_close" string="Operations closed, finance open"
+                        domain="[('state', '=', 'closed'), ('financial_closed', '=', False)]"/>
+                <separator/>
+                <filter name="import" string="Import" domain="[('direction', '=', 'import')]"/>
+                <filter name="export" string="Export" domain="[('direction', '=', 'export')]"/>
+                <group>
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="by_customer" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="by_mode" string="Transport mode" context="{'group_by': 'transport_mode'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="boss_expediente_action" model="ir.actions.act_window">
+        <field name="name">Shipment files</field>
+        <field name="res_model">boss.expediente</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active_files': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No shipment file yet</p>
+            <p>A file opens when a quotation is accepted. Create one here only when the shipment starts before the
+                quotation (pre-alert, documents received).</p>
+        </field>
+    </record>
+
+    <!-- Purchase needs of every file: what is still to order, ordered, performed or billed. -->
+    <record id="boss_expediente_cost_view_list" model="ir.ui.view">
+        <field name="name">boss.expediente.cost.list</field>
+        <field name="model">boss.expediente.cost</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-danger="cost_unknown">
+                <field name="expediente_id"/>
+                <field name="kind" optional="show"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="quantity"/>
+                <field name="uom_id"/>
+                <field name="expected_amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state in ('performed', 'billed')"
+                       decoration-info="state in ('rfq', 'ordered')" decoration-warning="state in ('to_order', 'no_supplier')"/>
+                <field name="billed_amount_company" optional="show"/>
+                <field name="variance_company" optional="show"/>
+                <field name="cost_unknown" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_expediente_cost_view_search" model="ir.ui.view">
+        <field name="name">boss.expediente.cost.search</field>
+        <field name="model">boss.expediente.cost</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="expediente_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <filter name="to_order" string="To order" domain="[('state', 'in', ('to_order', 'no_supplier'))]"/>
+                <filter name="open" string="Not billed" domain="[('state', 'not in', ('billed', 'closed'))]"/>
+                <filter name="extra" string="Extra costs" domain="[('kind', '=', 'extra')]"/>
+                <group>
+                    <filter name="by_supplier" string="Supplier" context="{'group_by': 'partner_id'}"/>
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="boss_expediente_cost_action" model="ir.actions.act_window">
+        <field name="name">Services to buy</field>
+        <field name="res_model">boss.expediente.cost</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+</odoo>

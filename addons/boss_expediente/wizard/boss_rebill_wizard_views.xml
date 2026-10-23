@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_rebill_wizard_view_form" model="ir.ui.view">
+        <field name="name">boss.rebill.wizard.form</field>
+        <field name="model">boss.rebill.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">Adds this extra cost as a service of the accepted order, with the sale price and
+                    the reason. It is recorded in the pricing history; the other prices do not change.</p>
+                <group>
+                    <field name="cost_id" readonly="1"/>
+                    <field name="expediente_id" invisible="1"/>
+                    <field name="order_id" options="{'no_create': True}"/>
+                    <field name="quantity" readonly="1"/>
+                    <field name="uom_id" readonly="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="price_unit"/>
+                    <field name="reason" placeholder="e.g. 4 extra storage days requested by the customer"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Add to the order" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

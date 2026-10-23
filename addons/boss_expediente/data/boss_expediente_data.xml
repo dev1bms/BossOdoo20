@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Same format as the Odoo 19 files (E260237); keeping or restarting the numbering at go-live is open (Q6). -->
+        <record id="sequence_expediente" model="ir.sequence">
+            <field name="name">Shipment files</field>
+            <field name="code">boss.expediente</field>
+            <field name="prefix">E%(y)s</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="analytic_plan_files" model="account.analytic.plan">
+            <field name="name">Shipment files</field>
+            <field name="default_applicability">optional</field>
+        </record>
+    </data>
+    <data>
+        <record id="role_shipper" model="boss.partner.role">
+            <field name="name">Shipper</field><field name="code">shipper</field><field name="sequence">10</field>
+        </record>
+        <record id="role_consignee" model="boss.partner.role">
+            <field name="name">Consignee</field><field name="code">consignee</field><field name="sequence">20</field>
+        </record>
+        <record id="role_notify" model="boss.partner.role">
+            <field name="name">Notify party</field><field name="code">notify</field><field name="sequence">30</field>
+        </record>
+        <record id="role_agent" model="boss.partner.role">
+            <field name="name">Agent abroad</field><field name="code">agent</field><field name="sequence">40</field>
+        </record>
+        <record id="role_carrier" model="boss.partner.role">
+            <field name="name">Carrier (shipping line / airline)</field><field name="code">carrier</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="role_haulier" model="boss.partner.role">
+            <field name="name">Haulier</field><field name="code">haulier</field><field name="sequence">60</field>
+        </record>
+        <record id="role_handler" model="boss.partner.role">
+            <field name="name">Air handler / terminal</field><field name="code">handler</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="role_customs_broker" model="boss.partner.role">
+            <field name="name">Customs broker</field><field name="code">customs_broker</field>
+            <field name="sequence">80</field>
+        </record>
+        <record id="role_warehouse" model="boss.partner.role">
+            <field name="name">Warehouse</field><field name="code">warehouse</field><field name="sequence">90</field>
+        </record>
+        <record id="role_insurer" model="boss.partner.role">
+            <field name="name">Insurer</field><field name="code">insurer</field><field name="sequence">100</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form" model="ir.ui.view">
+        <field name="name">crm.lead.form.boss.shipment</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Shipment" name="boss_shipment" invisible="type == 'lead'">
+                    <p class="text-muted">What the customer asks for. Fill in what is known; «New Quotation» takes it
+                        once to the quotation.</p>
+                    <group>
+                        <group string="Route">
+                            <field name="boss_direction"/>
+                            <field name="boss_transport_mode"/>
+                            <field name="boss_load_type"/>
+                            <field name="boss_incoterm_id"/>
+                            <field name="boss_origin_place"/>
+                            <field name="boss_destination_place"/>
+                            <field name="boss_port_id" options="{'no_create': True}"/>
+                            <field name="boss_country_id" options="{'no_create': True}"/>
+                            <field name="boss_inland_state_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Scope and parties">
+                            <field name="boss_scope_pickup"/>
+                            <field name="boss_scope_origin_customs"/>
+                            <field name="boss_scope_main"/>
+                            <field name="boss_scope_destination_customs"/>
+                            <field name="boss_scope_delivery"/>
+                            <field name="boss_shipper_id"/>
+                            <field name="boss_consignee_id"/>
+                            <field name="boss_carrier_id"/>
+                            <field name="boss_planned_date"/>
+                        </group>
+                        <group string="Cargo">
+                            <field name="boss_goods_description"/>
+                            <field name="boss_packages"/>
+                            <field name="boss_gross_kg"/>
+                            <field name="boss_volume_m3" invisible="boss_load_type == 'fcl'"/>
+                            <field name="boss_awb_kg" invisible="boss_transport_mode != 'air'"/>
+                            <field name="boss_pallets"/>
+                            <field name="boss_goods_value"/>
+                        </group>
+                        <group string="Requested services">
+                            <field name="boss_service_ids" widget="many2many_tags" nolabel="1" colspan="2"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <field name="boss_container_ids" invisible="boss_load_type != 'fcl'">
+                        <list editable="bottom">
+                            <field name="size"/>
+                            <field name="container_type_id" options="{'no_create': True}"/>
+                            <field name="quantity"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

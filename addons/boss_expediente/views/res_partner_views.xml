@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form.boss</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div[@name='button_box']" position="after">
+                <div class="alert alert-warning mb-2" role="status" invisible="not boss_missing_data">
+                    <strong>Missing for invoices: </strong><field name="boss_missing_data" nolabel="1" class="d-inline"/>
+                </div>
+            </xpath>
+            <xpath expr="//group[@name='sale']" position="inside">
+                <field name="boss_is_customer"/>
+            </xpath>
+            <xpath expr="//group[@name='purchase']" position="inside">
+                <field name="boss_is_supplier"/>
+            </xpath>
+            <xpath expr="//group[@name='misc']" position="inside">
+                <field name="boss_role_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                <field name="boss_eori"/>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='email']" position="before">
+                <field name="boss_contact_purpose"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter" model="ir.ui.view">
+        <field name="name">res.partner.search.boss</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="boss_role_ids"/>
+                <filter name="boss_customer_and_supplier" string="Customer and supplier"
+                        domain="[('customer_rank', '>', 0), ('supplier_rank', '>', 0)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="boss_partner_role_view_list" model="ir.ui.view">
+        <field name="name">boss.partner.role.list</field>
+        <field name="model">boss.partner.role</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="boss_partner_role_action" model="ir.actions.act_window">
+        <field name="name">Logistic roles</field>
+        <field name="res_model">boss.partner.role</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

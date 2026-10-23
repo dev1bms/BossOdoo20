@@ -1,0 +1,2093 @@
+# Translation of BOSS module boss_expediente: Spanish (es_ES).
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%(file)s cannot be closed financially:\n"
+"%(problems)s"
+msgstr ""
+"%(file)s no se puede cerrar económicamente:\n"
+"%(problems)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid ""
+"%(move)s cannot be posted:\n"
+"%(problems)s"
+msgstr ""
+"%(move)s no se puede contabilizar:\n"
+"%(problems)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/sale_order.py:0
+msgid "%(order)s and file %(file)s have different customers."
+msgstr "%(order)s y el expediente %(file)s tienen clientes distintos."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%(service)s: extra cost still '%(cls)s'"
+msgstr "%(service)s: coste adicional aún «%(cls)s»"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid ""
+"%s comes from the accepted sale or is ordered: close it instead of deleting it."
+msgstr ""
+"%s viene de la venta aceptada o está pedido: ciérrelo en lugar de borrarlo."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%s has confirmed purchases or posted invoices: cancel or credit them first."
+msgstr ""
+"%s tiene compras confirmadas o facturas contabilizadas: cancélelas o abónelas primero."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid ""
+"%s is already in a purchase order: cancel that order before changing supplier, currency or unit."
+msgstr ""
+"%s ya está en un pedido de compra: cancele ese pedido antes de cambiar proveedor, moneda o unidad."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/wizard/boss_rebill_wizard.py:0
+msgid "%s is already re-invoiced."
+msgstr "%s ya está refacturado."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s of cost not billed yet"
+msgstr "%s de coste aún sin factura de proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s to invoice"
+msgstr "%s por facturar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%s: VAT treatment pending (BOSS VAT table)"
+msgstr "%s: tratamiento de IVA pendiente (tabla de IVA BOSS)"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%s: choose the tax shown on the supplier invoice (0 %% included)"
+msgstr ""
+"%s: elija el impuesto que figura en la factura del proveedor (incluido 0 %%)"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%s: no tax"
+msgstr "%s: sin impuesto"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%s: not invoiced to the customer yet"
+msgstr "%s: aún no facturado al cliente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "<span class=\"o_stat_text\">File</span>"
+msgstr "<span class=\"o_stat_text\">Expediente</span>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_partner_form
+msgid "<strong>Missing for invoices: </strong>"
+msgstr "<strong>Falta para facturar: </strong>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "<strong>To do: </strong>"
+msgstr "<strong>Pendiente: </strong>"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_action
+msgid ""
+"A file opens when a quotation is accepted. Create one here only when the shipment starts before the\n"
+"                quotation (pre-alert, documents received)."
+msgstr ""
+"El expediente se abre al aceptar una oferta. Créelo aquí solo si el envío empieza antes de la oferta (prealerta, documentos recibidos)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__ata
+msgid "ATA (actual arrival)"
+msgstr "ATA (llegada real)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__atd
+msgid "ATD (actual departure)"
+msgstr "ATD (salida real)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__accounting
+msgid "Accounting"
+msgstr "Contabilidad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decoración de excepción de actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_plans_ids
+msgid "Activity Plans"
+msgstr "Planes de actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icono del tipo de actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_actual
+msgid "Actual cost"
+msgstr "Coste real"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_add_services
+msgid "Add BOSS services to a quotation"
+msgstr "Añadir servicios BOSS a una oferta"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
+msgid "Add to the order"
+msgstr "Añadir al pedido"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
+msgid ""
+"Adds this extra cost as a service of the accepted order, with the sale price and\n"
+"                    the reason. It is recorded in the pricing history; the other prices do not change."
+msgstr ""
+"Añade este coste adicional como servicio del pedido aceptado, con el precio de venta y el motivo. Queda en el historial de precios; los demás precios no cambian."
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_agent
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__agent_id
+msgid "Agent abroad"
+msgstr "Agente en el extranjero"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_sale
+msgid "Agreed sale"
+msgstr "Venta acordada"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_margin_forecast
+msgid ""
+"Agreed sale minus the forecast external cost. BOSS's own work (staff, office) is not a cost here: this is not the net profit."
+msgstr ""
+"Venta acordada menos el coste externo previsto. El trabajo propio de BOSS (personal, oficina) no es un coste aquí: no es el beneficio neto."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__air
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_transport_mode__air
+msgid "Air"
+msgstr "Aéreo"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__air
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_load_type__air
+msgid "Air cargo"
+msgstr "Carga aérea"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_handler
+msgid "Air handler / terminal"
+msgstr "Handling aéreo / terminal"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_on_behalf
+msgid "Amounts paid in the customer's name and re-invoiced at cost."
+msgstr ""
+"Importes pagados en nombre del cliente y refacturados al coste (suplidos)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__analytic_account_id
+msgid "Analytic account"
+msgstr "Cuenta analítica"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"Another user is ordering the services of this file. Try again in a moment."
+msgstr ""
+"Otro usuario está pidiendo los servicios de este expediente. Inténtelo de nuevo en un momento."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__zero
+msgid "Approved zero"
+msgstr "Cero aprobado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de adjuntos"
+
+#. module: boss_expediente
+#: model:ir.module.module,shortdesc:base.module_boss_expediente
+msgid "BOSS Shipment Files"
+msgstr "Expedientes BOSS"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__absorb
+msgid "BOSS bears it"
+msgstr "Lo asume BOSS"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "BOSS handles"
+msgstr "BOSS se encarga de"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__bill_count
+msgid "Bill Count"
+msgstr "Número de facturas de proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__qty_billed
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__billed
+msgid "Billed"
+msgstr "Facturado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__billed_amount_company
+msgid "Billed amount"
+msgstr "Importe facturado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__variance_company
+msgid "Billed minus ordered (or expected when nothing was ordered)."
+msgstr "Facturado menos pedido (o previsto si no se pidió nada)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Bills"
+msgstr "Facturas proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__booking_ref
+msgid "Booking"
+msgstr "Booking"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__partner_id
+msgid ""
+"Can be changed while nothing is ordered (cancel the purchase order first to replace the supplier)."
+msgstr ""
+"Se puede cambiar mientras no haya nada pedido (cancele antes el pedido de compra para cambiar de proveedor)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Cancel file"
+msgstr "Cancelar expediente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ""
+"Cancel this file? Confirmed purchases and posted invoices must be cancelled or credited first."
+msgstr ""
+"¿Cancelar este expediente? Las compras confirmadas y las facturas contabilizadas deben cancelarse o abonarse antes."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__cancel
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid "Cargo"
+msgstr "Carga"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__carrier_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_carrier_id
+msgid "Carrier"
+msgstr "Transportista"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_carrier
+msgid "Carrier (shipping line / airline)"
+msgstr "Transportista (naviera / aerolínea)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__awb_kg
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_awb_kg
+msgid "Chargeable weight (AWB, kg)"
+msgstr "Peso tasable (AWB, kg)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
+msgid ""
+"Choose the services to invoice now; the others stay to invoice. To invoice part of a\n"
+"                    quantity, change it on the draft invoice. Credit notes are made from the posted invoice."
+msgstr ""
+"Elija los servicios que se facturan ahora; los demás quedan por facturar. Para facturar parte de una cantidad, cámbiela en la factura en borrador. Los abonos se hacen desde la factura contabilizada."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Choose the supplier of: %s"
+msgstr "Elija el proveedor de: %s"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Close financially"
+msgstr "Cerrar económicamente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Close operations"
+msgstr "Cerrar operaciones"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__closed
+msgid "Closed"
+msgstr "Cerrado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__code
+msgid "Code"
+msgstr "Código"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_collected
+msgid "Collected (with taxes)"
+msgstr "Cobrado (con impuestos)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__commercial
+msgid "Commercial"
+msgstr "Comercial"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_committed
+msgid "Committed purchases"
+msgstr "Compras comprometidas"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__company_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_consignee
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__consignee_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_consignee_id
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_consignee_id
+msgid "Consignee"
+msgstr "Consignatario"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_contact_purpose
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_contact_purpose
+msgid "Contact for"
+msgstr "Contacto para"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__number
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Container number"
+msgstr "Número de contenedor"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente_container
+msgid "Container of a shipment file"
+msgstr "Contenedor de un expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__container_ids
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_container_ids
+msgid "Containers"
+msgstr "Contenedores"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Containers: %(agreed)s → %(actual)s"
+msgstr "Contenedores: %(agreed)s → %(actual)s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__partner_id
+msgid "Contracting customer: who orders the shipment and is invoiced."
+msgstr "Cliente contratante: quien encarga el envío y recibe la factura."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__cost_id
+msgid "Cost"
+msgstr "Coste"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__accepted_amount_company
+msgid "Cost at acceptance (company currency)"
+msgstr "Coste en la aceptación (moneda de la compañía)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__accepted_cost_kind
+msgid "Cost kind at acceptance"
+msgstr "Tipo de coste en la aceptación"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_pending
+msgid "Cost still expected"
+msgstr "Coste aún previsto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__cost_unknown
+msgid "Cost unknown"
+msgstr "Coste desconocido"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Cost without purchase order"
+msgstr "Coste sin pedido de compra"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__cost_complete
+msgid "Costs complete"
+msgstr "Costes completos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__country_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_country_id
+msgid "Country abroad"
+msgstr "País en el extranjero"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__covered
+msgid "Covered by the agreed price"
+msgstr "Cubierto por el precio acordado"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Create RFQs"
+msgstr "Crear solicitudes de presupuesto"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
+msgid "Create draft invoice"
+msgstr "Crear factura en borrador"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__currency_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_currency_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__currency_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__partner_id
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_customer
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_customer
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_res_partner_filter
+msgid "Customer and supplier"
+msgstr "Cliente y proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+#: code:addons/boss_expediente/wizard/boss_invoice_services.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__invoice_ids
+msgid "Customer invoices"
+msgstr "Facturas de cliente"
+
+#. module: boss_expediente
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_customers
+msgid "Customers"
+msgstr "Clientes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_destination_customs
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_destination_customs
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_destination_customs
+msgid "Customs at destination"
+msgstr "Aduana en destino"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_origin_customs
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_origin_customs
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_origin_customs
+msgid "Customs at origin"
+msgstr "Aduana en origen"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_customs_broker
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_broker_id
+msgid "Customs broker"
+msgstr "Agente de aduanas"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_ref
+msgid "Customs declaration (DUA)"
+msgstr "Declaración aduanera (DUA)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Customs destination"
+msgstr "Aduana destino"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Customs origin"
+msgstr "Aduana origen"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Date: planned %(planned)s, actual %(actual)s"
+msgstr "Fecha: prevista %(planned)s, real %(actual)s"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Dates"
+msgstr "Fechas"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__delivered
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Delivered"
+msgstr "Entregado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_delivery
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_delivery
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_delivery
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Delivery"
+msgstr "Entrega"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__delivery_date
+msgid "Delivery (actual)"
+msgstr "Entrega (real)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__destination_place
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_destination_place
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_destination_place
+msgid "Destination (place)"
+msgstr "Destino (lugar)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__quote_difference
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Differences with the quotation"
+msgstr "Diferencias con la oferta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__direction
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_direction
+msgid "Direction"
+msgstr "Sentido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_add_services__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order_line__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__disputed
+msgid "Disputed with the supplier"
+msgstr "En disputa con el proveedor"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ""
+"Draft requests for quotation for the services still to order, one per supplier and currency."
+msgstr ""
+"Solicitudes de presupuesto en borrador para los servicios aún por pedir, una por proveedor y moneda."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_eori
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_eori
+msgid "EORI"
+msgstr "EORI"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__eta
+msgid "ETA"
+msgstr "ETA"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_crm_lead__boss_planned_date
+msgid "ETA for imports, ETD for exports."
+msgstr "ETA en importación, ETD en exportación."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__etd
+msgid "ETD"
+msgstr "ETD"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_eori
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_eori
+msgid "Economic Operators Registration and Identification number (customs)."
+msgstr ""
+"Número de registro e identificación de operadores económicos (aduanas)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__return_date
+msgid "Empty return"
+msgstr "Devolución del vacío"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__estimate
+msgid "Estimate"
+msgstr "Estimado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__name
+msgid "Event"
+msgstr "Evento"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente_event
+msgid "Event of a shipment file"
+msgstr "Evento de un expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__event_ids
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Events"
+msgstr "Eventos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__cost_complete
+msgid "Every external cost is billed or closed: the margin is final."
+msgstr "Todo coste externo está facturado o cerrado: el margen es definitivo."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__boss
+msgid "Executed by BOSS (no external cost)"
+msgstr "Ejecutado por BOSS (sin coste externo)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__expected_amount
+msgid "Expected cost"
+msgstr "Coste previsto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_accepted
+msgid "Expected cost at acceptance"
+msgstr "Coste previsto en la aceptación"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__expected_unit_cost
+msgid "Expected unit cost"
+msgstr "Coste unitario previsto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__expediente_id
+msgid "Expediente"
+msgstr "Expediente"
+
+#. module: boss_expediente
+#: model:ir.module.module,summary:base.module_boss_expediente
+msgid ""
+"Expediente per accepted shipment: parties, route, cargo, references, purchase needs and RFQs, selective invoicing and profitability from Odoo documents"
+msgstr ""
+"Expediente por envío aceptado: partes, ruta, carga, referencias, compras y solicitudes de presupuesto, facturación por servicios y rentabilidad desde los documentos de Odoo"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__export
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_direction__export
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Export"
+msgstr "Exportación"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "External cost"
+msgstr "Coste externo"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__kind__extra
+msgid "Extra cost"
+msgstr "Coste adicional"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__extra_class
+msgid "Extra cost is"
+msgstr "El coste adicional"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+msgid "Extra costs"
+msgstr "Costes adicionales"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__fcl
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_load_type__fcl
+msgid "FCL (full container)"
+msgstr "FCL (contenedor completo)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__boss_expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_expediente_id
+msgid "File"
+msgstr "Expediente"
+
+#. module: boss_expediente
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files
+msgid "Files"
+msgstr "Expedientes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__financial_closed_by
+msgid "Financial Closed By"
+msgstr "Cerrado económicamente por"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__financial_closed_date
+msgid "Financial Closed Date"
+msgstr "Fecha de cierre económico"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__financial_closed
+msgid "Financially closed"
+msgstr "Cerrado económicamente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Financially closed on"
+msgstr "Cerrado económicamente el"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (contactos)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_forecast
+msgid "Forecast final cost"
+msgstr "Coste final previsto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__pickup_date
+msgid "Full pickup"
+msgstr "Recogida del lleno"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__goods_description
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_goods_description
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_goods_description
+msgid "Goods"
+msgstr "Mercancía"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_goods_value
+msgid "Goods value"
+msgstr "Valor de la mercancía"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__gross_kg
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__gross_kg
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_gross_kg
+msgid "Gross weight (kg)"
+msgstr "Peso bruto (kg)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_haulier
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__haulier_id
+msgid "Haulier"
+msgstr "Transportista terrestre"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__hawb_ref
+msgid "House AWB"
+msgstr "House AWB"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__hbl_ref
+msgid "House BL"
+msgstr "House BL"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move__id
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move_line__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_add_services__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__id
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__id
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order_line__id
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__id
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__id
+msgid "ID"
+msgstr "ID"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icono que indica una actividad de excepción."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, hay mensajes nuevos que requieren su atención."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_has_error
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__import
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_direction__import
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Import"
+msgstr "Importación"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "In progress"
+msgstr "En curso"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__in_transit
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "In transit"
+msgstr "En tránsito"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__incident
+msgid "Incident"
+msgstr "Incidencia"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__incoterm_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_incoterm_id
+msgid "Incoterm"
+msgstr "Incoterm"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__inland_state_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_inland_state_id
+msgid "Inland province"
+msgstr "Provincia interior"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_insurer
+msgid "Insurer"
+msgstr "Aseguradora"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__invoice_count
+msgid "Invoice Count"
+msgstr "Número de facturas"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_invoice_services
+msgid "Invoice selected services"
+msgstr "Facturar los servicios elegidos"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Invoice services"
+msgstr "Facturar servicios"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_invoiced
+msgid "Invoiced"
+msgstr "Facturado"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Invoices"
+msgstr "Facturas"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__kind
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__kind
+msgid "Kind"
+msgstr "Tipo"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__known
+msgid "Known"
+msgstr "Conocido"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__lcl
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_load_type__lcl
+msgid "LCL (groupage)"
+msgstr "LCL (grupaje)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_crm_lead
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__lead_id
+msgid "Lead"
+msgstr "Oportunidad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_is_customer
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_is_customer
+msgid "Listed in Customers. Set automatically by its first sale or invoice."
+msgstr "Aparece en Clientes. Se marca solo con su primera venta o factura."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_is_supplier
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_is_supplier
+msgid "Listed in Vendors. Set automatically by its first purchase or bill."
+msgstr ""
+"Aparece en Proveedores. Se marca solo con su primera compra o factura de proveedor."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__load_type
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_load_type
+msgid "Load type"
+msgstr "Tipo de carga"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_partner_role
+msgid "Logistic role of a contact"
+msgstr "Rol logístico de un contacto"
+
+#. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_partner_role_action
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_role_ids
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_role_ids
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_roles
+msgid "Logistic roles"
+msgstr "Roles logísticos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_main
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_main
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_main
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Main carriage"
+msgstr "Transporte principal"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Margin"
+msgstr "Margen"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_margin_forecast
+msgid "Margin after external costs"
+msgstr "Margen tras costes externos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_margin_accepted
+msgid "Margin at acceptance"
+msgstr "Margen en la aceptación"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Mark as performed"
+msgstr "Marcar como prestado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__mawb_ref
+msgid "Master AWB"
+msgstr "Master AWB"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__mbl_ref
+msgid "Master BL"
+msgstr "Master BL"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__activity_type_icon
+msgid "Material Symbols icon e.g. checklist"
+msgstr "Icono de Material Symbols, p. ej. checklist"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega del mensaje"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__milestone
+msgid "Milestone"
+msgstr "Hito"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_missing_data
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_missing_data
+msgid "Missing data"
+msgstr "Datos que faltan"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Vencimiento de mi actividad"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "My files"
+msgstr "Mis expedientes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__approval
+msgid "Needs customer approval"
+msgstr "Necesita aprobación del cliente"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "New quotation"
+msgstr "Nueva oferta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Evento de calendario de la siguiente actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Vencimiento de la siguiente actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la siguiente actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de la siguiente actividad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__closed
+msgid "No more cost expected"
+msgstr "No se espera más coste"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_action
+msgid "No shipment file yet"
+msgstr "Aún no hay expedientes"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+msgid "Not billed"
+msgstr "Sin facturar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Not ordered, supplier missing: %s"
+msgstr "Sin pedir, falta el proveedor: %s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__note
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__note
+msgid "Note"
+msgstr "Nota"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__closed
+msgid ""
+"Nothing more will be ordered or billed (service cancelled, supplier replaced, cost not incurred)."
+msgstr ""
+"No se pedirá ni facturará nada más (servicio cancelado, proveedor sustituido, coste no incurrido)."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Nothing to order."
+msgstr "No hay nada que pedir."
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_notify
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__notify_id
+msgid "Notify party"
+msgstr "Notify"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/wizard/boss_rebill_wizard.py:0
+msgid "Only a sales manager can add a service to an accepted order."
+msgstr ""
+"Solo un responsable de ventas puede añadir un servicio a un pedido aceptado."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__open
+msgid "Open"
+msgstr "Abierto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__preliminary
+msgid ""
+"Opened before an accepted quotation (pre-alert, documents received). Link the quotation when it is accepted."
+msgstr ""
+"Abierto antes de una oferta aceptada (prealerta, documentos recibidos). Vincule la oferta cuando se acepte."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__operations
+msgid "Operations"
+msgstr "Operaciones"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__closed
+msgid "Operations closed"
+msgstr "Operaciones cerradas"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Operations closed, finance open"
+msgstr "Operaciones cerradas, economía abierta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__order_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__order_id
+msgid "Order"
+msgstr "Pedido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__qty_ordered
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__ordered
+msgid "Ordered"
+msgstr "Pedido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__ordered_amount_company
+msgid "Ordered amount"
+msgstr "Importe pedido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_cost_pending
+msgid "Ordered or expected costs not billed yet."
+msgstr "Costes pedidos o previstos aún sin factura de proveedor."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__order_ids
+msgid "Orders"
+msgstr "Pedidos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__origin_place
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_origin_place
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_origin_place
+msgid "Origin (place)"
+msgstr "Origen (lugar)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Other parties"
+msgstr "Otras partes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__packages
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_packages
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_packages
+msgid "Packages"
+msgstr "Bultos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_paid
+msgid "Paid to suppliers (with taxes)"
+msgstr "Pagado a proveedores (con impuestos)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__pallets
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_pallets
+msgid "Pallets"
+msgstr "Palés"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Parties and goods"
+msgstr "Partes y mercancía"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__qty_received
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__performed
+msgid "Performed"
+msgstr "Prestado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_pickup
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_pickup
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_pickup
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Pickup"
+msgstr "Recogida"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__pickup_date
+msgid "Pickup (actual)"
+msgstr "Recogida (real)"
+
+#. module: boss_expediente
+#: model:ir.model.constraint,message:boss_expediente.constraint_boss_shipment_container_order_or_lead
+msgid "Planned containers belong to a quotation or an opportunity."
+msgstr ""
+"Los contenedores previstos pertenecen a una oferta o a una oportunidad."
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_shipment_container
+msgid "Planned containers of a quotation"
+msgstr "Contenedores previstos de una oferta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_planned_date
+msgid "Planned date"
+msgstr "Fecha prevista"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__billed_amount_company
+msgid "Posted bills minus credit notes."
+msgstr "Facturas de proveedor contabilizadas menos abonos."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_invoiced
+msgid "Posted customer invoices minus credit notes, untaxed."
+msgstr "Facturas de cliente contabilizadas menos abonos, sin impuestos."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_cost_actual
+msgid "Posted vendor bills minus vendor credit notes on the file."
+msgstr ""
+"Facturas de proveedor contabilizadas menos abonos de proveedor del expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__preliminary
+msgid "Preliminary"
+msgstr "Preliminar"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ""
+"Preliminary file: no accepted quotation yet. Link it from the quotation (field <strong>File</strong>)."
+msgstr ""
+"Expediente preliminar: aún sin oferta aceptada. Vincúlelo desde la oferta (campo <strong>Expediente</strong>)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__purchase_count
+msgid "Purchase Count"
+msgstr "Número de compras"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de pedido de compra"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__purchase_line_ids
+msgid "Purchase lines"
+msgstr "Líneas de compra"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__purchase_order_ids
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Purchase orders"
+msgstr "Pedidos de compra"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__quantity
+msgid "Purchase quantity"
+msgstr "Cantidad de compra"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__uom_id
+msgid "Purchase unit"
+msgstr "Unidad de compra"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Purchases"
+msgstr "Compras"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__quantity
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__sale_order_ids
+msgid "Quotations and orders"
+msgstr "Ofertas y pedidos"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__rfq
+msgid "RFQ"
+msgstr "Solicitud de presupuesto"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "RFQs to confirm"
+msgstr "solicitudes de presupuesto por confirmar"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_rebill_wizard
+msgid "Re-invoice an extra cost"
+msgstr "Refacturar un coste adicional"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__rebill
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Re-invoice to the customer"
+msgstr "Refacturar al cliente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__rebill_line_id
+msgid "Re-invoiced in"
+msgstr "Refacturado en"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__reason
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__reason
+msgid "Reason"
+msgstr "Motivo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__name
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "References"
+msgstr "Referencias"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "References and dates"
+msgstr "Referencias y fechas"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Reopen"
+msgstr "Reabrir"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Reopen financially"
+msgstr "Reabrir económicamente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_service_ids
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_requested_service_ids
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid "Requested services"
+msgstr "Servicios solicitados"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Requests for quotation"
+msgstr "Solicitudes de presupuesto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__user_id
+msgid "Responsible"
+msgstr "Responsable"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__road
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_transport_mode__road
+msgid "Road"
+msgstr "Terrestre"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__road
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_load_type__road
+msgid "Road cargo"
+msgstr "Carga terrestre"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_role_ids
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_role_ids
+msgid ""
+"Roles this party plays in shipments (shipper, consignee, agent, carrier, haulier...)."
+msgstr ""
+"Roles de este contacto en los envíos (cargador, consignatario, agente, transportista...)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid "Route"
+msgstr "Ruta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega del SMS"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Sale"
+msgstr "Venta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__sale_count
+msgid "Sale Count"
+msgstr "Número de ventas"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__sale_line_id
+msgid "Sale line"
+msgstr "Línea de venta"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__price_unit
+msgid "Sale price per unit"
+msgstr "Precio de venta por unidad"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Sales"
+msgstr "Ventas"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Scope"
+msgstr "Alcance"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid "Scope and parties"
+msgstr "Alcance y partes"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__sea
+#: model:ir.model.fields.selection,name:boss_expediente.selection__crm_lead__boss_transport_mode__sea
+msgid "Sea"
+msgstr "Marítimo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__seal
+msgid "Seal"
+msgstr "Precinto"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Sell another service"
+msgstr "Vender otro servicio"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__product_id
+msgid "Service"
+msgstr "Servicio"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/wizard/boss_rebill_wizard.py:0
+msgid "Service %(service)s added after acceptance. Reason: %(reason)s"
+msgstr "Servicio %(service)s añadido tras la aceptación. Motivo: %(reason)s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_purchase_order_line__boss_cost_id
+msgid "Service of the file"
+msgstr "Servicio del expediente"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente_cost
+msgid "Service to buy or extra cost of a shipment file"
+msgstr "Servicio a comprar o coste adicional de un expediente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Services and costs"
+msgstr "Servicios y costes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_sale_order__boss_requested_service_ids
+msgid ""
+"Services the customer asked for (from the opportunity); proposed by 'Add services'."
+msgstr ""
+"Servicios que pidió el cliente (de la oportunidad); los propone «Añadir servicios»."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_crm_lead__boss_service_ids
+msgid ""
+"Services the customer asks for; proposed when services are added to the quotation."
+msgstr ""
+"Servicios que pide el cliente; se proponen al añadir servicios a la oferta."
+
+#. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_expediente_cost_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_costs
+msgid "Services to buy"
+msgstr "Servicios a comprar"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__cost_ids
+msgid "Services to buy and extra costs"
+msgstr "Servicios a comprar y costes adicionales"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__line_ids
+msgid "Services to invoice"
+msgstr "Servicios a facturar"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid "Shipment"
+msgstr "Envío"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente
+msgid "Shipment file (expediente)"
+msgstr "Expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_sale_order__boss_expediente_id
+msgid ""
+"Shipment file of this order. Empty: opened when the quotation is accepted. Choose a file to add a service sold later or to link a file opened before the quotation (pre-alert)."
+msgstr ""
+"Expediente de este pedido. Vacío: se abre al aceptar la oferta. Elija un expediente para añadir un servicio vendido después o para vincular un expediente abierto antes de la oferta (prealerta)."
+
+#. module: boss_expediente
+#: model:account.analytic.plan,name:boss_expediente.analytic_plan_files
+#: model:ir.actions.act_window,name:boss_expediente.boss_expediente_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_root
+#: model:ir.ui.menu,name:boss_expediente.menu_sale_boss_files
+msgid "Shipment files"
+msgstr "Expedientes"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_shipper
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__shipper_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_shipper_id
+#: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_shipper_id
+msgid "Shipper"
+msgstr "Cargador"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__carrier_id
+msgid "Shipping line, airline or haulier."
+msgstr "Naviera, aerolínea o transportista terrestre."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__size
+msgid "Size"
+msgstr "Tamaño"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__kind__sale
+msgid "Sold service"
+msgstr "Servicio vendido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__port_id
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_port_id
+msgid "Spanish port / airport"
+msgstr "Puerto / aeropuerto español"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__state
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__state
+msgid "State"
+msgstr "Estado"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Status"
+msgstr "Estado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado según las actividades. Vencida: la fecha ya ha pasado. Hoy: la actividad es hoy. Planificada: actividades futuras."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__pending_amount_company
+msgid "Still expected"
+msgstr "Aún previsto"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Summary"
+msgstr "Resumen"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__partner_id
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_supplier
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_supplier
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__no_supplier
+msgid "Supplier missing"
+msgstr "Falta proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__tariff_line_id
+msgid "Supplier price"
+msgstr "Precio de proveedor"
+
+#. module: boss_expediente
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_suppliers
+msgid "Suppliers"
+msgstr "Proveedores"
+
+#. module: boss_expediente
+#: model:ir.model.constraint,message:boss_expediente.constraint_boss_partner_role_code_unique
+msgid "The code of a logistic role must be unique."
+msgstr "El código de un rol logístico debe ser único."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__completeness
+msgid "To do"
+msgstr "Pendiente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_to_invoice
+msgid "To invoice"
+msgstr "Por facturar"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__to_order
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+msgid "To order"
+msgstr "Por pedir"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__transport_mode
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_transport_mode
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Transport mode"
+msgstr "Modo de transporte"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__container_type_id
+msgid "Type"
+msgstr "Tipo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de la actividad de excepción del registro."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__uom_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__accepted_unit_cost
+msgid "Unit cost at acceptance"
+msgstr "Coste unitario en la aceptación"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__unknown
+msgid "Unknown"
+msgstr "Desconocido"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_committed
+msgid "Untaxed total of the confirmed purchase orders of the file."
+msgstr ""
+"Total sin impuestos de los pedidos de compra confirmados del expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_sale
+msgid "Untaxed total of the confirmed sales of the file."
+msgstr "Total sin impuestos de las ventas confirmadas del expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__user_id
+msgid "User"
+msgstr "Usuario"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__variance_company
+msgid "Variance"
+msgstr "Diferencia"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__variance_to_review
+msgid "Variance To Review"
+msgstr "Diferencia por revisar"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__variance_note
+msgid "Variance note"
+msgstr "Nota de la diferencia"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__variance_reviewed
+msgid "Variance reviewed"
+msgstr "Diferencia revisada"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Vendor bill"
+msgstr "Factura de proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__bill_ids
+msgid "Vendor bills"
+msgstr "Facturas de proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__vessel
+msgid "Vessel / flight"
+msgstr "Buque / vuelo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__volume_m3
+#: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_volume_m3
+msgid "Volume (m³)"
+msgstr "Volumen (m³)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__voyage
+msgid "Voyage"
+msgstr "Viaje"
+
+#. module: boss_expediente
+#: model:boss.partner.role,name:boss_expediente.role_warehouse
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
+msgid ""
+"What the customer asks for. Fill in what is known; «New Quotation» takes it\n"
+"                        once to the quotation."
+msgstr ""
+"Lo que pide el cliente. Rellene lo que se sepa; «Nuevo presupuesto» lo pasa una vez a la oferta."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_contact_purpose
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_contact_purpose
+msgid "What this person is contacted for."
+msgstr "Para qué se contacta a esta persona."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Who"
+msgstr "Quién"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__extra_class
+msgid "Who bears an extra cost found after acceptance."
+msgstr "Quién asume un coste adicional surgido tras la aceptación."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/res_partner.py:0
+msgid "address (street, city, country)"
+msgstr "dirección (calle, ciudad, país)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "by"
+msgstr "por"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "cost variances to review"
+msgstr "diferencias de coste por revisar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "customer %(partner)s: %(missing)s missing"
+msgstr "cliente %(partner)s: falta %(missing)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "draft invoices or bills"
+msgstr "facturas en borrador (cliente o proveedor)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
+msgid "e.g. 4 extra storage days requested by the customer"
+msgstr "p. ej. 4 días más de almacenaje pedidos por el cliente"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/res_partner.py:0
+msgid "email"
+msgstr "correo electrónico"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "extra costs to decide"
+msgstr "costes adicionales por decidir"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_sale_own
+msgid "of which BOSS services"
+msgstr "de ello, servicios BOSS"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_on_behalf
+msgid "of which paid on behalf"
+msgstr "de ello, suplidos"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "operations are not closed"
+msgstr "las operaciones no están cerradas"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "services to order (RFQ)"
+msgstr "servicios por pedir (solicitud de presupuesto)"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "services with unknown cost"
+msgstr "servicios con coste desconocido"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "services without supplier"
+msgstr "servicios sin proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/res_partner.py:0
+msgid "tax ID"
+msgstr "NIF"

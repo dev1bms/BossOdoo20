@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- App «Shipment files»: operations of accepted shipments, next to «Pricing & Suppliers». -->
+    <menuitem id="menu_boss_files_root" name="Shipment files" sequence="25"
+              web_icon="boss_expediente,static/description/icon.svg"
+              groups="sales_team.group_sale_salesman,purchase.group_purchase_user,account.group_account_invoice"/>
+    <menuitem id="menu_boss_files" name="Files" parent="menu_boss_files_root" sequence="10"
+              action="boss_expediente_action"/>
+    <menuitem id="menu_boss_files_costs" name="Services to buy" parent="menu_boss_files_root" sequence="20"
+              action="boss_expediente_cost_action"/>
+    <menuitem id="menu_boss_files_customers" name="Customers" parent="menu_boss_files_root" sequence="30"
+              action="account.res_partner_action_customer"/>
+    <menuitem id="menu_boss_files_suppliers" name="Suppliers" parent="menu_boss_files_root" sequence="40"
+              action="account.res_partner_action_supplier"/>
+    <menuitem id="menu_boss_files_roles" name="Logistic roles" parent="menu_boss_files_root" sequence="90"
+              action="boss_partner_role_action" groups="sales_team.group_sale_manager"/>
+    <menuitem id="menu_sale_boss_files" name="Shipment files" parent="sale.sale_order_menu" sequence="30"
+              action="boss_expediente_action"/>
+</odoo>
