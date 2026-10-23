@@ -17,6 +17,7 @@ class Status(str, Enum):
     PENDING_APPROVAL = "pending_approval"  # a matching price exists but is not approved yet
     ON_REQUEST = "on_request"  # the supplier document says "on request": no amount
     CONFLICT = "conflict"  # several prices apply and nothing decides between them
+    NOT_READY = "not_ready"  # the price reads two ways with different amounts: pending a business decision
 
 
 class Match(Enum):

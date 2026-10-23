@@ -14,6 +14,15 @@ class OutOfRange(Exception):
     """The quantity is outside what the supplier document prices (e.g. above the last bracket)."""
 
 
+class Undecided(Exception):
+    """The document can be read two ways and the readings give different amounts here: a business decision is
+    pending, so nothing is priced automatically. `steps` show both amounts."""
+
+    def __init__(self, steps):
+        super().__init__("undecided")
+        self.steps = steps
+
+
 def dec(value):
     return value if isinstance(value, Decimal) else Decimal(str(value))
 

@@ -14,7 +14,8 @@ ORDER_FIELDS = {
     "storage_days_known": "boss_storage_days_known", "customer_id": "partner_id",
 }
 INPUT_FIELDS = (*ORDER_FIELDS, "product_id", "uom_id", "supplier_id", "simulate_tariff_ids", "container_size",
-                "container_type_id", "container_qty", "line_qty", "base_amount", "pricelist_id")
+                "container_type_id", "container_qty", "line_qty", "base_amount", "pricelist_id", "storage_start",
+                "storage_end")
 
 
 class BossPricingTest(models.TransientModel):
@@ -58,6 +59,11 @@ class BossPricingTest(models.TransientModel):
     duties_amount = fields.Float("Customs duties")
     storage_days = fields.Integer("Days")
     storage_days_known = fields.Boolean("Days known", help="Unticked: the days are not known yet (not zero).")
+    storage_start = fields.Datetime(
+        "Period start", help="Actual start of a time-based service (storage: arrival notice NOA or freight on hand "
+        "FOH; demurrage: the carrier's event). With the end, it replaces the days: exact hours and weekdays.")
+    storage_end = fields.Datetime("Period end", help="Actual end (pickup / exit of the goods, return of the "
+                                  "container).")
     line_qty = fields.Float("Quantity typed on the line", default=1.0,
                             help="Used when the charge basis is not taken from the shipment (e.g. km, hours).")
     base_amount = fields.Float("Cost of the base services",
@@ -144,6 +150,7 @@ class BossPricingTest(models.TransientModel):
                        "container_size": self.container_size or None,
                        "container_type_id": self.container_type_id.id or None,
                        "supplier_id": self.supplier_id.id or None})
+        inputs.update(self.env["boss.pricing"]._warehouse_period(self.storage_start, self.storage_end, self.port_id))
         if self.base_amount:
             lines = self.env["boss.tariff.line"].search([("product_id", "=", self.product_id.id),
                                                          ("uom_id", "=", self.uom_id.id), ("method", "=", "percent")])
