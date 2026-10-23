@@ -171,8 +171,22 @@ class SaleOrder(models.Model):
             "context": {"default_order_id": self.id},
         }
 
+    def _boss_check_costs(self):
+        """Acceptance needs the cost of every service bought from a supplier (Odoo 19 decision B22), unless a sales
+        manager recorded why it is accepted without it."""
+        for order in self:
+            unknown = order.order_line.filtered(
+                lambda l: l.boss_cost_kind == "unknown" and not l.boss_unknown_cost_reason)
+            if unknown:
+                raise UserError(self.env._(
+                    "%(order)s cannot be accepted: the supplier cost of these services is unknown:\n%(lines)s\n"
+                    "Complete the cost (supplier price or manual cost), mark the service as executed by BOSS, or "
+                    "ask a sales manager to record why it is accepted without it.", order=order.name,
+                    lines="\n".join(f"- {line.product_id.display_name}" for line in unknown)))
+
     def action_confirm(self):
         self._boss_check_ready()
+        self._boss_check_costs()
         res = super().action_confirm()
         # Acceptance = evidence: finish pending computations, then freeze every line and keep a
         # snapshot (ADR-003). Nothing is recomputed from tariffs here: what was quoted is accepted.

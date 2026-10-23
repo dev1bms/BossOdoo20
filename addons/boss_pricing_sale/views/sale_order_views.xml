@@ -68,8 +68,10 @@
                 <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen" width="50px"/>
                 <field name="boss_container_type_id" optional="hide" string="Type" readonly="boss_price_frozen"
                        options="{'no_create': True}"/>
+                <field name="boss_execution" optional="show" string="By" readonly="boss_price_frozen" width="80px"
+                       invisible="not boss_pricing_mode"/>
                 <field name="boss_supplier_id" optional="show" readonly="boss_price_frozen" width="95px"
-                       options="{'no_create': True}"/>
+                       options="{'no_create': True}" invisible="boss_execution == 'boss'"/>
                 <field name="boss_cost_method" column_invisible="1"/>
                 <field name="boss_days_source" optional="hide" string="Days from" readonly="boss_price_frozen"
                        invisible="boss_cost_method != 'time'"/>
@@ -98,6 +100,10 @@
                        decoration-danger="boss_sale_status == 'missing'"/>
                 <field name="boss_sale_free" optional="hide" readonly="boss_price_frozen"/>
                 <field name="boss_cost_is_estimate" optional="hide" string="Estimate"/>
+                <field name="boss_cost_kind" optional="hide" widget="badge"
+                       decoration-danger="boss_cost_kind == 'unknown'" decoration-warning="boss_cost_kind == 'estimate'"/>
+                <field name="boss_unknown_cost_reason" optional="hide" groups="sales_team.group_sale_manager"
+                       invisible="boss_cost_kind != 'unknown'" readonly="boss_price_frozen"/>
                 <field name="boss_vat_status" string="VAT" widget="badge" optional="hide"
                        decoration-success="boss_vat_status == 'ok'" decoration-danger="boss_vat_status == 'pending'"/>
             </xpath>
@@ -157,7 +163,8 @@
                             <field name="product_uom_qty" readonly="1"/>
                             <field name="boss_container_size" readonly="1" invisible="not boss_container_size"/>
                             <field name="boss_container_type_id" readonly="1" invisible="not boss_container_type_id"/>
-                            <field name="boss_supplier_id" readonly="1"/>
+                            <field name="boss_execution" readonly="1"/>
+                            <field name="boss_supplier_id" readonly="1" invisible="boss_execution == 'boss'"/>
                             <field name="boss_days_source" readonly="1" invisible="boss_cost_method != 'time'"/>
                             <field name="boss_days" readonly="1" invisible="boss_cost_method != 'time' or boss_days_source == 'shipment'"/>
                             <field name="boss_cost_method" invisible="1"/>
@@ -165,6 +172,8 @@
                         </group>
                         <group string="Result">
                             <field name="boss_cost_status"/>
+                            <field name="boss_cost_kind"/>
+                            <field name="boss_unknown_cost_reason" invisible="not boss_unknown_cost_reason"/>
                             <field name="boss_cost_amount"/>
                             <field name="boss_cost_currency_id" invisible="1"/>
                             <field name="purchase_price" string="Unit cost (quotation currency)"/>

@@ -16,9 +16,18 @@ SALE_STATUSES = [
     ("free", "Free of charge (confirmed)"),
 ]
 VAT_STATUSES = [("ok", "Determined"), ("pending", "Pending")]
+EXECUTIONS = [("boss", "BOSS"), ("supplier", "Supplier")]
+COST_KINDS = [
+    ("boss", "Executed by BOSS (no external cost)"),
+    ("known", "Known"),
+    ("estimate", "Estimate"),
+    ("zero", "Approved zero"),
+    ("unknown", "Unknown"),
+]
 # Changing these on an accepted line is a re-pricing: only through the Re-price wizard (ADR-003).
 FROZEN_FIELDS = {"product_id", "product_uom_id", "product_uom_qty", "price_unit", "discount", "purchase_price",
-                 "boss_manual_cost", "boss_sale_free", "tax_ids", "boss_container_size", "boss_container_type_id"}
+                 "boss_manual_cost", "boss_sale_free", "tax_ids", "boss_container_size", "boss_container_type_id",
+                 "boss_execution"}
 COST_FIELDS = ("boss_cost_status", "boss_cost_amount", "boss_cost_currency_id", "boss_tariff_line_id",
                "boss_cost_candidate_ids", "boss_cost_missing", "boss_cost_steps", "boss_cost_is_estimate")
 SHIPMENT_DEPENDS = (
@@ -47,6 +56,20 @@ class SaleOrderLine(models.Model):
         help="Supplier of this service. Only its tariffs price the line (handling, storage or road transport often "
         "come from another supplier than the carrier). Empty: any supplier whose tariff fits the shipment.")
     boss_cost_method = fields.Selection(related="product_id.boss_cost_method")
+    boss_execution = fields.Selection(
+        EXECUTIONS, "Executed by", compute="_compute_boss_execution", store=True, readonly=False, precompute=True,
+        copy=True,
+        help="BOSS: done by BOSS itself, no supplier cost and nothing to buy. Supplier: bought from a supplier (cost "
+        "from its tariff or typed). The service gives the default; a mixed service can be changed per line (ADR-005).")
+    boss_cost_kind = fields.Selection(
+        COST_KINDS, "Cost kind", compute="_compute_boss_cost_kind", store=True,
+        help="Known: approved supplier price or typed cost. Estimate: time-based cost with assumed days. Approved "
+        "zero: the supplier price is 0. Unknown: no cost yet; a supplier service with an unknown cost blocks the "
+        "acceptance unless the reason is recorded.")
+    boss_unknown_cost_reason = fields.Char(
+        "Accepted without cost because", copy=False,
+        help="Documented exception (sales manager only): accept this supplier service with its cost still unknown. "
+        "The file shows its cost as missing until the supplier bill arrives.")
     boss_days_source = fields.Selection(
         [("shipment", "Days of the shipment"), ("estimate", "Estimate of this line"), ("actual", "Actual period (ended)")],
         "Days for this service", default="shipment", required=True,
@@ -102,6 +125,34 @@ class SaleOrderLine(models.Model):
     boss_vat_tax_id = fields.Many2one("account.tax", "Odoo tax of the VAT case", compute="_compute_boss_vat",
                                       store=True, copy=False, precompute=True)
 
+    @api.depends("product_id")
+    def _compute_boss_execution(self):
+        frozen = self._boss_skip()
+        frozen._boss_keep("boss_execution")
+        for line in self - frozen:
+            if line.display_type or not line.product_id.boss_pricing_mode:
+                line.boss_execution = False
+            else:
+                line.boss_execution = "boss" if line.product_id.boss_pricing_mode == "own" else "supplier"
+
+    @api.depends("boss_execution", "boss_cost_status", "boss_cost_amount", "boss_tariff_line_id",
+                 "boss_cost_is_estimate", "boss_manual_cost")
+    def _compute_boss_cost_kind(self):
+        for line in self:
+            currency = line.boss_cost_currency_id or line.currency_id or line.company_id.currency_id
+            if line.display_type or not line.product_id.boss_pricing_mode:
+                kind = False
+            elif line.boss_execution == "boss":
+                kind = "boss"
+            elif line.boss_cost_status == "ok" and line.boss_tariff_line_id:
+                kind = ("zero" if currency.is_zero(line.boss_cost_amount)
+                        else "estimate" if line.boss_cost_is_estimate else "known")
+            elif line.boss_cost_status in ("manual", "not_ready") and line.boss_manual_cost:
+                kind = "known"
+            else:
+                kind = "unknown"
+            line.boss_cost_kind = kind
+
     @api.depends("boss_days_source", "order_id.boss_storage_days")
     def _compute_boss_days(self):
         for line in self:
@@ -131,6 +182,7 @@ class SaleOrderLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        self._boss_check_addition(vals_list)
         # The field default (1.0) wins over the compute on create: count the shipment explicitly.
         counted = [i for i, vals in enumerate(vals_list) if "product_uom_qty" not in vals]
         lines = super().create(vals_list)
@@ -142,6 +194,19 @@ class SaleOrderLine(models.Model):
         auto.modified(["product_uom_qty"])
         auto._boss_recompute_cost()
         return lines
+
+    def _boss_check_addition(self, vals_list):
+        """A service added to an accepted quotation changes the agreement: only through an explicit action with a
+        reason (context flag set by that action, sales manager only). Notes, sections and down payments are free."""
+        if self.env.context.get("boss_addition") and self.env.user.has_group("sales_team.group_sale_manager"):
+            return
+        order_ids = {vals.get("order_id") for vals in vals_list
+                     if not vals.get("display_type") and not vals.get("is_downpayment")}
+        frozen = self.env["sale.order"].browse([i for i in order_ids if i]).filtered("boss_pricing_frozen")
+        if frozen:
+            raise UserError(self.env._(
+                "%s is accepted: a service sold later is added from its file ('Re-invoice' of an extra cost) or in a "
+                "new quotation linked to the file.", ", ".join(frozen.mapped("name"))))
 
     # --- quantity: charge bases counted from the shipment -------------------------------------------
 
@@ -195,15 +260,26 @@ class SaleOrderLine(models.Model):
         return related
 
     @api.depends("product_id", "product_uom_id", "product_uom_qty", "currency_id", "boss_container_size",
-                 "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source", *SHIPMENT_DEPENDS)
+                 "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source", "boss_execution",
+                 *SHIPMENT_DEPENDS)
     def _compute_boss_cost(self):
         frozen = self._boss_skip()
         frozen._boss_keep(*COST_FIELDS)
+        empty = {"boss_cost_status": False, "boss_cost_amount": 0.0, "boss_cost_currency_id": False,
+                 "boss_tariff_line_id": False, "boss_cost_candidate_ids": False, "boss_cost_missing": False,
+                 "boss_cost_steps": False, "boss_cost_is_estimate": False}
         for line in self - frozen:
             if line.display_type or not line.product_id.boss_pricing_mode or not line.order_id:
-                line.update({"boss_cost_status": False, "boss_cost_amount": 0.0, "boss_cost_currency_id": False,
-                             "boss_tariff_line_id": False, "boss_cost_candidate_ids": False,
-                             "boss_cost_missing": False, "boss_cost_steps": False, "boss_cost_is_estimate": False})
+                line.update(empty)
+                continue
+            own = line.product_id.boss_pricing_mode == "own"
+            if line.boss_execution == "boss" and not own:
+                # a bought service done by BOSS this time (own truck, own customs agent): no supplier cost
+                line.update(dict(empty, boss_cost_status="ok", boss_cost_currency_id=line.currency_id.id))
+                continue
+            if line.boss_execution == "supplier" and own:
+                # a BOSS service bought from a supplier this time: its cost is typed (BOSS fees have no tariff)
+                line.update(dict(empty, boss_cost_status="manual", boss_cost_currency_id=line.currency_id.id))
                 continue
             percent = line.product_id.boss_cost_method == "percent"
             res = line._boss_price(line._boss_related_costs() if percent else None)
@@ -229,6 +305,9 @@ class SaleOrderLine(models.Model):
         for line in self:
             if not line.boss_cost_status:
                 line.boss_cost_explanation = False
+                continue
+            if line.boss_execution == "boss" and line.product_id.boss_pricing_mode != "own":
+                line.boss_cost_explanation = self.env._("Executed by BOSS: no supplier cost.")
                 continue
             text = pricing.explain(
                 line.product_id, line.product_uom_id, line.boss_cost_status, line.boss_cost_amount,
@@ -443,6 +522,8 @@ class SaleOrderLine(models.Model):
             shipment_lines = self.filtered(lambda l: l.boss_days_source == "shipment")
             if shipment_lines:  # typing days on the line makes them the estimate of this line
                 super(SaleOrderLine, shipment_lines).write({"boss_days_source": "estimate"})
+        if "boss_unknown_cost_reason" in vals and not self.env.user.has_group("sales_team.group_sale_manager"):
+            raise UserError(self.env._("Only a sales manager can accept a service with an unknown cost."))
         if FROZEN_FIELDS & set(vals) and self.filtered("boss_price_frozen"):
             # The context flag comes from the Re-price wizard; RPC callers cannot use it to bypass the rule.
             if not (self.env.context.get("boss_reprice") and self.env.user.has_group("sales_team.group_sale_manager")):
@@ -532,4 +613,18 @@ class SaleOrderLine(models.Model):
             "vat_class": self.boss_vat_class or "", "vat_trace": self.boss_vat_trace or "",
             "taxes": self.tax_ids.mapped("name"),
             "explanation": self.boss_cost_explanation or "",
+            # purchase side, kept apart from the sale side: basis of the supplier price, never converted
+            "execution": self.boss_execution or "", "cost_kind": self.boss_cost_kind or "",
+            "unknown_cost_reason": self.boss_unknown_cost_reason or "",
+            "supplier_id": self._boss_purchase_partner().id,
+            "supplier": self._boss_purchase_partner().name or "",
+            "purchase_uom": (tariff_line.uom_id or self.product_uom_id).name,
+            "purchase_quantity": self.product_uom_qty if self.boss_execution == "supplier" else 0.0,
         }
+
+    def _boss_purchase_partner(self):
+        """Supplier the service is bought from: the one of its supplier price, else the one chosen on the line."""
+        self.ensure_one()
+        if self.boss_execution != "supplier":
+            return self.env["res.partner"]
+        return self.boss_tariff_line_id.partner_id or self.boss_supplier_id

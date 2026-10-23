@@ -15,6 +15,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid ""
+"%(order)s cannot be accepted: the supplier cost of these services is unknown:\n"
+"%(lines)s\n"
+"Complete the cost (supplier price or manual cost), mark the service as executed by BOSS, or ask a sales manager to record why it is accepted without it."
+msgstr ""
+"%(order)s no se puede aceptar: el coste de proveedor de estos servicios es desconocido:\n"
+"%(lines)s\n"
+"Complete el coste (precio de proveedor o coste manual), marque el servicio como ejecutado por BOSS o pida a un responsable de ventas que anote por qué se acepta sin él."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
 "%(order)s is not ready to send or accept:\n"
 "%(details)s"
 msgstr ""
@@ -26,6 +38,14 @@ msgstr ""
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "%(price)s · %(tariff)s v%(version)s · %(state)s"
 msgstr "%(price)s · %(tariff)s v%(version)s · %(state)s"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"%s is accepted: a service sold later is added from its file ('Re-invoice' of an extra cost) or in a new quotation linked to the file."
+msgstr ""
+"%s está aceptada: un servicio vendido después se añade desde su expediente («Refacturar» un coste adicional) o en una oferta nueva vinculada al expediente."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_markup
@@ -103,6 +123,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__current_cost
 msgid "Accepted unit cost"
 msgstr "Coste unitario aceptado"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_unknown_cost_reason
+msgid "Accepted without cost because"
+msgstr "Aceptado sin coste porque"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_days_source__actual
@@ -197,11 +222,21 @@ msgid "Applies to: %s"
 msgstr "Se aplica a: %s"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__zero
+msgid "Approved zero"
+msgstr "Cero aprobado"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "Attach the supplier document to send the price for approval."
 msgstr ""
 "Adjunte el documento del proveedor para enviar el precio a aprobación."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_execution__boss
+msgid "BOSS"
+msgstr "BOSS"
 
 #. module: boss_pricing_sale
 #: model:ir.module.module,shortdesc:base.module_boss_pricing_sale
@@ -219,6 +254,13 @@ msgstr "Tabla de IVA BOSS"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__quantity_source
 msgid "BOSS quantity"
 msgstr "Cantidad BOSS"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_execution
+msgid ""
+"BOSS: done by BOSS itself, no supplier cost and nothing to buy. Supplier: bought from a supplier (cost from its tariff or typed). The service gives the default; a mixed service can be changed per line (ADR-005)."
+msgstr ""
+"BOSS: lo hace BOSS, sin coste de proveedor ni nada que comprar. Proveedor: se compra a un proveedor (coste de su tarifa o escrito). El servicio da el valor por defecto; un servicio mixto se cambia por línea (ADR-005)."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_product_pricelist_item__base
@@ -248,6 +290,11 @@ msgstr "Moneda del coste"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_pricing_alert
 msgid "Boss Pricing Alert"
 msgstr "Aviso de precios"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "By"
+msgstr "Por"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_vat_tax__customer_zone__can
@@ -415,6 +462,11 @@ msgid ""
 "Cost in %(cur)s and quotation in %(order)s: no conversion policy yet (company setting)."
 msgstr ""
 "Coste en %(cur)s y oferta en %(order)s: aún no hay política de conversión (ajuste de la compañía)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_kind
+msgid "Cost kind"
+msgstr "Tipo de coste"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__base_amount
@@ -615,6 +667,13 @@ msgid "Document Reference"
 msgstr "Referencia del documento"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_unknown_cost_reason
+msgid ""
+"Documented exception (sales manager only): accept this supplier service with its cost still unknown. The file shows its cost as missing until the supplier bill arrives."
+msgstr ""
+"Excepción documentada (solo responsable de ventas): aceptar este servicio de proveedor con el coste aún desconocido. El expediente muestra el coste como pendiente hasta que llegue la factura del proveedor."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_duties_amount
 msgid "Duties and taxes of the customs declaration, for the guarantee fee."
 msgstr "Aranceles e impuestos del DUA, para la caución."
@@ -679,6 +738,7 @@ msgstr "Indicado por una persona"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_is_estimate
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__estimate
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Estimate"
 msgstr "Estimación"
@@ -692,6 +752,22 @@ msgstr "Estimación de esta línea"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Estimates"
 msgstr "Estimaciones"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_execution
+msgid "Executed by"
+msgstr "Ejecutado por"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__boss
+msgid "Executed by BOSS (no external cost)"
+msgstr "Ejecutado por BOSS (sin coste externo)"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Executed by BOSS: no supplier cost."
+msgstr "Ejecutado por BOSS: sin coste de proveedor."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__cost_amount
@@ -846,6 +922,18 @@ msgstr "Provincia interior"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__kind
 msgid "Kind"
 msgstr "Tipo"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__known
+msgid "Known"
+msgstr "Conocido"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_kind
+msgid ""
+"Known: approved supplier price or typed cost. Estimate: time-based cost with assumed days. Approved zero: the supplier price is 0. Unknown: no cost yet; a supplier service with an unknown cost blocks the acceptance unless the reason is recorded."
+msgstr ""
+"Conocido: precio de proveedor aprobado o coste escrito. Estimado: coste por tiempo con días supuestos. Cero aprobado: el precio del proveedor es 0. Desconocido: aún sin coste; un servicio de proveedor con coste desconocido bloquea la aceptación salvo que se anote el motivo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__load_type__lcl
@@ -1080,6 +1168,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__only_this_customer
 msgid "Only This Customer"
 msgstr "Solo este cliente"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Only a sales manager can accept a service with an unknown cost."
+msgstr ""
+"Solo un responsable de ventas puede aceptar un servicio con coste desconocido."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__price_by_container_type
@@ -1495,6 +1590,11 @@ msgid "Service"
 msgstr "Servicio"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_snapshot__kind__addition
+msgid "Service added after acceptance"
+msgstr "Servicio añadido tras la aceptación"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__product_ids
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__service_kind
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_services
@@ -1593,6 +1693,7 @@ msgstr "Resumen"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__supplier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__partner_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_supplier_id
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_execution__supplier
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -1853,6 +1954,11 @@ msgstr "Coste ud."
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
 msgid "Unit cost (quotation currency)"
 msgstr "Coste unitario (moneda de la oferta)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__unknown
+msgid "Unknown"
+msgstr "Desconocido"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__storage_days_known
