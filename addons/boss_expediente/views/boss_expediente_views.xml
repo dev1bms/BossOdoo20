@@ -9,6 +9,15 @@
                     <button name="action_create_rfqs" type="object" string="Create RFQs" class="btn-primary"
                             groups="purchase.group_purchase_user" invisible="state == 'cancel'"
                             help="Draft requests for quotation for the services still to order, one per supplier and currency."/>
+                    <button name="action_recompute_costs" type="object" string="Recompute expected cost"
+                            invisible="state == 'cancel' or financial_closed or preliminary"
+                            help="Expected cost of the services to buy again, with the file's current data (containers, weights, days, dates, supplier). Sale prices do not change."/>
+                    <button name="action_split" type="object" string="Move services to another file"
+                            invisible="state in ('closed', 'cancel') or preliminary or financial_closed"
+                            help="Part of the accepted quantities goes to another file (e.g. a container on another vessel)."/>
+                    <button name="action_add_service" type="object" string="Add a service"
+                            groups="sales_team.group_sale_manager" invisible="state == 'cancel' or preliminary"
+                            help="Service sold after acceptance (executed by BOSS or a supplier), with price and reason."/>
                     <button name="action_invoice_services" type="object" string="Invoice services"
                             invisible="state == 'cancel' or preliminary"/>
                     <button name="action_new_quotation" type="object" string="Sell another service"
@@ -98,11 +107,14 @@
                             <group>
                                 <group string="Sale">
                                     <field name="amount_sale"/>
+                                    <field name="amount_sale_accepted" invisible="not amount_sale_added"/>
+                                    <field name="amount_sale_added" invisible="not amount_sale_added"/>
                                     <field name="amount_sale_own" invisible="not amount_sale_own"/>
                                     <field name="amount_on_behalf" invisible="not amount_on_behalf"/>
                                     <field name="amount_invoiced"/>
                                     <field name="amount_to_invoice"/>
                                     <field name="amount_collected"/>
+                                    <field name="amount_draft_invoices"/>
                                 </group>
                                 <group string="External cost">
                                     <field name="amount_cost_accepted"/>
@@ -111,16 +123,37 @@
                                     <field name="amount_cost_pending"/>
                                     <field name="amount_cost_forecast"/>
                                     <field name="amount_paid"/>
+                                    <field name="amount_draft_rfqs"/>
+                                    <field name="amount_draft_bills"/>
                                 </group>
                                 <group string="Margin">
                                     <field name="amount_margin_accepted"/>
-                                    <field name="amount_margin_forecast"/>
+                                    <field name="amount_margin_forecast" invisible="cost_complete"/>
+                                    <field name="amount_margin_final" invisible="not cost_complete"/>
                                     <field name="cost_complete"/>
                                 </group>
                                 <group string="Differences with the quotation" invisible="not quote_difference">
                                     <field name="quote_difference" nolabel="1" colspan="2"/>
                                 </group>
                             </group>
+                            <group string="Where the figures come from" groups="sales_team.group_sale_manager,account.group_account_invoice,account.group_account_readonly">
+                                <field name="profit_explanation" nolabel="1" colspan="2"/>
+                            </group>
+                        </page>
+                        <page string="Sold services" name="allocations">
+                            <field name="allocation_ids" readonly="1">
+                                <list>
+                                    <field name="order_id"/>
+                                    <field name="product_id"/>
+                                    <field name="accepted_quantity" optional="hide"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount"/>
+                                    <field name="invoiced_quantity"/>
+                                    <field name="to_invoice_quantity"/>
+                                </list>
+                            </field>
                         </page>
                         <page string="Services and costs" name="costs">
                             <field name="cost_ids" context="{'default_expediente_id': id}">
@@ -131,9 +164,10 @@
                                            width="190px"/>
                                     <field name="name" optional="hide"/>
                                     <field name="partner_id" options="{'no_create': True}"/>
-                                    <field name="quantity" readonly="kind == 'sale' or purchase_line_ids"/>
-                                    <field name="uom_id" readonly="kind == 'sale' or purchase_line_ids"
-                                           options="{'no_create': True}"/>
+                                    <field name="cost_method" column_invisible="1"/>
+                                    <field name="days" optional="show" invisible="cost_method != 'time'" width="55px"/>
+                                    <field name="quantity" readonly="purchase_line_ids"/>
+                                    <field name="uom_id" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
                                            options="{'no_create': True}"/>
                                     <field name="expected_unit_cost"/>
@@ -145,15 +179,20 @@
                                     <field name="state" widget="badge"
                                            decoration-success="state in ('performed', 'billed')"
                                            decoration-info="state in ('rfq', 'ordered')"
-                                           decoration-warning="state in ('to_order', 'no_supplier')"/>
+                                           decoration-warning="state in ('to_order', 'no_supplier', 'awaiting_bill')"/>
                                     <field name="qty_ordered" optional="hide"/>
                                     <field name="qty_received" optional="hide"/>
                                     <field name="qty_billed" optional="hide"/>
                                     <field name="billed_amount_company" optional="show"/>
                                     <field name="variance_company" optional="hide"
                                            decoration-danger="variance_company &gt; 0"/>
-                                    <field name="variance_reviewed" optional="show" invisible="not variance_company"/>
+                                    <field name="variance_to_review" column_invisible="1"/>
+                                    <field name="variance_reviewed" optional="show"
+                                           invisible="not variance_to_review and not variance_reviewed"/>
+                                    <field name="po_to_review" optional="show" widget="boolean_toggle" readonly="1"/>
                                     <field name="variance_note" optional="hide"/>
+                                    <field name="without_order" optional="hide"/>
+                                    <field name="paid_in_advance" optional="hide"/>
                                     <field name="closed" optional="show"/>
                                     <field name="cost_unknown" column_invisible="1"/>
                                     <field name="purchase_line_ids" column_invisible="1"/>
@@ -165,9 +204,30 @@
                                     <button name="action_rebill" type="object" icon="fa-share"
                                             title="Re-invoice to the customer" groups="sales_team.group_sale_manager"
                                             invisible="kind != 'extra' or rebill_line_id or state == 'closed'"/>
+                                    <button name="action_open_revisions" type="object" icon="fa-history"
+                                            title="Recalculations" invisible="not revision_ids"/>
+                                    <field name="revision_ids" column_invisible="1"/>
                                     <button name="action_open_purchase_lines" type="object" icon="fa-shopping-cart"
                                             title="Purchase orders" invisible="not purchase_line_ids"
                                             groups="purchase.group_purchase_user"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cost recalculations" name="revisions" invisible="not revision_ids">
+                            <field name="revision_ids">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="date"/>
+                                    <field name="cost_id"/>
+                                    <field name="status" widget="badge" decoration-success="status in ('ok', 'manual')"
+                                           decoration-warning="status not in ('ok', 'manual')"/>
+                                    <field name="old_quantity"/>
+                                    <field name="new_quantity"/>
+                                    <field name="old_currency_id" column_invisible="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="old_amount"/>
+                                    <field name="new_amount"/>
+                                    <field name="explanation" optional="hide"/>
+                                    <field name="user_id" optional="show"/>
                                 </list>
                             </field>
                         </page>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_expediente_split_view_form" model="ir.ui.view">
+        <field name="name">boss.expediente.split.form</field>
+        <field name="model">boss.expediente.split</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">One accepted quotation can feed several files (e.g. containers shipped on
+                    different vessels). Type the quantity of each service that goes to the other file: the accepted
+                    totals and the sale prices do not change, and a service already ordered must be reduced first.</p>
+                <group>
+                    <field name="expediente_id" readonly="1"/>
+                    <field name="target_id" options="{'no_create': True}" placeholder="New file"/>
+                </group>
+                <field name="line_ids">
+                    <list editable="bottom" create="0" delete="0">
+                        <field name="order_id"/>
+                        <field name="product_id"/>
+                        <field name="available"/>
+                        <field name="uom_id"/>
+                        <field name="quantity"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_split" type="object" string="Move" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

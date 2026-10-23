@@ -10,8 +10,9 @@ from odoo.tests import TransactionCase, new_test_user, tagged
 DOC = base64.b64encode(b"%PDF-1.4 fictitious supplier tariff").decode()
 
 
-@tagged("post_install", "-at_install")
-class TestShipmentCycle(TransactionCase):
+class CycleCommon(TransactionCase):
+    """Fictitious users, partners, tariffs and taxes shared by the file tests."""
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -79,6 +80,9 @@ class TestShipmentCycle(TransactionCase):
     def _line(self, order, product):
         return order.order_line.filtered(lambda l: l.product_id == product)[:1]
 
+
+@tagged("post_install", "-at_install")
+class TestShipmentCycle(CycleCommon):
     def test_opportunity_to_quotation_and_repeat(self):
         lead = self.env["crm.lead"].with_user(self.sales).create({
             "name": "Importación China (prueba)", "type": "opportunity", "partner_id": self.customer.id,
@@ -131,7 +135,7 @@ class TestShipmentCycle(TransactionCase):
         order.with_user(self.sales).action_confirm()
 
         # one file, opened once, with an analytic account and a purchase need per bought service
-        file = order.boss_expediente_id
+        file = order.boss_expediente_id.with_env(self.env)  # figures read as administrator
         self.assertTrue(file.name.startswith("E"))
         order._boss_open_files()
         self.assertEqual(len(self.env["boss.expediente"].search([("sale_order_ids", "in", order.ids)])), 1)
@@ -175,13 +179,17 @@ class TestShipmentCycle(TransactionCase):
         with self.assertRaises(UserError):
             bill.with_user(self.accountant).action_post()
         bill.invoice_line_ids.tax_ids = self.purchase_tax
+        # Cristina's requirement (customer invoiced first) is a pending decision: a warning by default, a block only
+        # when the company chooses it.
+        self.assertIn("not invoiced to the customer yet", bill.boss_bill_warning)
+        self.env.company.boss_bill_before_invoice = "block"
         with self.assertRaises(UserError):
             bill.with_user(self.accountant).action_post()
 
         # customer invoice of the THC only (milestone), then the rest
+        thc_part = file.allocation_ids.filtered(lambda a: a.product_id == self.thc)
         wizard = self.env["boss.invoice.services"].with_user(self.sales).create({
-            "expediente_id": file.id, "order_ids": [Command.set(order.ids)],
-            "line_ids": [Command.set(self._line(order, self.thc).ids)]})
+            "expediente_id": file.id, "allocation_ids": [Command.set(thc_part.ids)]})
         invoice = self.env["account.move"].browse(wizard.action_create()["res_id"])
         self.assertEqual(invoice.invoice_line_ids.product_id, self.thc)
         self.assertIn(key, invoice.invoice_line_ids.analytic_distribution)
@@ -198,7 +206,7 @@ class TestShipmentCycle(TransactionCase):
 
         rest = self.env["boss.invoice.services"].with_user(self.sales).with_context(
             default_expediente_id=file.id).create({})
-        self.assertEqual(rest.line_ids, order.order_line - self._line(order, self.thc))
+        self.assertEqual(rest.allocation_ids.sale_line_id, order.order_line - self._line(order, self.thc))
         second = self.env["account.move"].browse(rest.action_create()["res_id"])
         second.with_user(self.accountant).action_post()
         file.invalidate_recordset()

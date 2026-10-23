@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form.boss.expediente</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning mb-0" role="alert" invisible="not boss_bill_warning">
+                    <strong>Before posting or paying: </strong><field name="boss_bill_warning" nolabel="1" class="d-inline"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.boss.expediente</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="boss_pricing_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <setting id="boss_vat_mapping" position="after">
+                <setting id="boss_bill_before_invoice" string="Supplier bill before the customer invoice"
+                         help="A supplier bill of a file service before that service is invoiced to the customer. Requirement written by Cristina, pending confirmation: warn by default.">
+                    <field name="boss_bill_before_invoice"/>
+                </setting>
+            </setting>
+        </field>
+    </record>
+</odoo>

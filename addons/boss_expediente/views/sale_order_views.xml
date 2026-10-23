@@ -7,10 +7,11 @@
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_boss_open_file" type="object" class="oe_stat_button" icon="fa-folder-open"
-                        invisible="not boss_expediente_id">
+                        invisible="not boss_expediente_count">
                     <div class="o_stat_info">
                         <span class="o_stat_text">File</span>
-                        <span class="o_stat_value"><field name="boss_expediente_id" readonly="1" options="{'no_open': True}"/></span>
+                        <span class="o_stat_value" invisible="boss_expediente_count != 1"><field name="boss_expediente_id" readonly="1" options="{'no_open': True}"/></span>
+                        <span class="o_stat_value" invisible="boss_expediente_count == 1"><field name="boss_expediente_count"/></span>
                     </div>
                 </button>
             </xpath>

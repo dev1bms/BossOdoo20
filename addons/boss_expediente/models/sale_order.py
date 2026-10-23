@@ -1,7 +1,7 @@
 from odoo import Command, api, fields, models
 from odoo.exceptions import ValidationError
 
-from .boss_expediente import FROM_ORDER
+from .boss_expediente import FROM_ORDER, with_accounts
 
 
 class SaleOrder(models.Model):
@@ -28,6 +28,9 @@ class SaleOrder(models.Model):
         domain="[('state', '!=', 'cancel'), ('financial_closed', '=', False)]",
         help="Shipment file of this order. Empty: opened when the quotation is accepted. Choose a file to add a "
         "service sold later or to link a file opened before the quotation (pre-alert).")
+    boss_expediente_ids = fields.Many2many("boss.expediente", string="Files", compute="_compute_boss_expediente_ids",
+                                           help="Every file with part of the accepted services of this order.")
+    boss_expediente_count = fields.Integer(compute="_compute_boss_expediente_ids")
 
     @api.constrains("boss_expediente_id", "partner_id")
     def _check_boss_expediente_customer(self):
@@ -68,10 +71,21 @@ class SaleOrder(models.Model):
         self._boss_open_files()
         return res
 
+    @api.depends("order_line.boss_allocation_ids.expediente_id", "boss_expediente_id")
+    def _compute_boss_expediente_ids(self):
+        for order in self:
+            order.boss_expediente_ids = order.boss_expediente_id | order.order_line.boss_allocation_ids.expediente_id
+            order.boss_expediente_count = len(order.boss_expediente_ids)
+
     def action_boss_open_file(self):
         self.ensure_one()
-        return {"type": "ir.actions.act_window", "res_model": "boss.expediente", "view_mode": "form",
-                "views": [(False, "form")], "res_id": self.boss_expediente_id.id}
+        files = self.boss_expediente_ids
+        if len(files) == 1:
+            return {"type": "ir.actions.act_window", "res_model": "boss.expediente", "view_mode": "form",
+                    "views": [(False, "form")], "res_id": files.id}
+        return {"type": "ir.actions.act_window", "res_model": "boss.expediente", "view_mode": "list,form",
+                "views": [(False, "list"), (False, "form")], "domain": [("id", "in", files.ids)],
+                "name": self.env._("Files of %s", self.name)}
 
     def _get_invoiceable_lines(self, final=False):
         """Invoice selected services only (milestones, partial invoicing): the selection comes from the 'Invoice
@@ -81,6 +95,49 @@ class SaleOrder(models.Model):
         if selected is None:
             return lines
         return lines.filtered(lambda l: l.id in selected)
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    boss_allocation_ids = fields.One2many("boss.expediente.allocation", "sale_line_id", "Files", copy=False)
+
+    def _boss_posted_invoiced_qty(self):
+        """Quantity invoiced to the customer on posted invoices, minus posted credit notes (drafts do not count)."""
+        self.ensure_one()
+        return sum(-l.quantity if l.move_id.move_type == "out_refund" else l.quantity
+                   for l in self.invoice_lines.filtered(lambda l: l.parent_state == "posted"))
+
+    def _boss_sync_file_analytic(self):
+        """Analytic distribution of each line = its shares in the files (accepted quantity of each file), the
+        accounts of other plans kept."""
+        Account = self.env["account.analytic.account"]
+        plan = self.env.ref("boss_expediente.analytic_plan_files")
+        for line in self.filtered("boss_allocation_ids"):
+            allocated = sum(line.boss_allocation_ids.mapped("quantity"))
+            if not allocated:
+                continue
+            shares = {}
+            for allocation in line.boss_allocation_ids:
+                account = allocation.expediente_id.analytic_account_id
+                shares[account.id] = shares.get(account.id, 0.0) + allocation.quantity * 100.0 / allocated
+            present = Account.browse({int(key) for combination in (line.analytic_distribution or {})
+                                      for key in combination.split(",") if key.strip()}).exists()
+            plan_accounts = present.filtered(lambda a: a.plan_id == plan) | Account.browse(list(shares))
+            distribution = with_accounts(line.analytic_distribution, shares, plan_accounts)
+            if distribution != line.analytic_distribution:
+                line.analytic_distribution = distribution
+
+
+class BossAddServiceWizard(models.TransientModel):
+    _inherit = "boss.add.service.wizard"
+
+    def action_apply(self):
+        res = super().action_apply()
+        file = self.order_id.boss_expediente_id
+        if file:
+            file._boss_link_orders(self.order_id)  # analytic account and, for a supplier, the service to buy
+        return res
 
 
 class BossAddServices(models.TransientModel):

@@ -66,14 +66,26 @@ class ResPartner(models.Model):
         positive = (operator == "=") == bool(value)
         return [("supplier_rank", ">" if positive else "=", 0)]
 
+    def _boss_has_invoice_identification(self):
+        """A customer in Spain (or without country) is identified by its NIF or another identification document, as
+        the Spanish localization reads it; Odoo 17 refused to invoice such a customer without NIF. Foreign customers
+        are not checked here: an EU business customer without VAT number already leaves the VAT pending."""
+        self.ensure_one()
+        partner = self.commercial_partner_id
+        if partner.country_id and partner.country_id.code != "ES":
+            return True
+        if hasattr(partner, "_l10n_es_has_identification"):
+            return partner._l10n_es_has_identification()
+        return bool(partner.vat)
+
     def _boss_invoice_missing(self):
-        """Recipient data a complete Spanish invoice to a business needs (RD 1619/2012, art. 6): tax ID and address.
-        BOSS invoices businesses; a preliminary contact may lack them until its first invoice is posted."""
+        """What a complete invoice to this customer lacks: identification (blocks posting in Spain) and address
+        (shown, not blocking: no decision requires it)."""
         self.ensure_one()
         partner = self.commercial_partner_id
         _ = self.env._
         missing = []
-        if not partner.vat:
+        if not partner._boss_has_invoice_identification():
             missing.append(_("tax ID"))
         if not (partner.street and partner.city and partner.country_id):
             missing.append(_("address (street, city, country)"))
