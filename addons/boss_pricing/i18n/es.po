@@ -157,6 +157,12 @@ msgid ". 0 = no minimum / maximum."
 msgstr ". 0 = sin mínimo / máximo."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "24-hour periods or calendar days, not decided"
+msgstr "periodos de 24 h o días naturales, sin decidir"
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "<span class=\"text-muted\">% of the base above</span>"
 msgstr "<span class=\"text-muted\">% de la base indicada</span>"
@@ -956,8 +962,8 @@ msgstr ""
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
-msgid "Estimate: %(days)s days (%(unit)s)"
-msgstr "Estimación: %(days)s días (%(unit)s)"
+msgid "Estimate: %(days)s days"
+msgstr "Estimación: %(days)s días"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__whole_stay
@@ -2767,6 +2773,12 @@ msgstr "solo %s"
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "or fraction"
 msgstr "o fracción"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "other readings"
+msgstr "otras lecturas"
 
 #. module: boss_pricing
 #. odoo-python

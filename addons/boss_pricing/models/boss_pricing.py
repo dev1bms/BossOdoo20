@@ -176,8 +176,17 @@ class BossPricing(models.AbstractModel):
                   ("tier_mode", "positional"): _("tiers day by day"),
                   ("tier_mode", "whole_stay"): _("whole stay at the tier reached"),
                   ("round_up", False): _("pro rata per 100 kg"), ("round_up", True): _("per 100 kg or fraction")}
-        rows = ["· " + ", ".join(labels.get((k, val), f"{k} {val}") for k, val in reading.items() if k != "amount")
-                + f": {money(reading['amount'])}" for reading in v["readings"]]
+        # one row per amount, naming only the readings that set it (the others give the same amount either way)
+        groups = {}
+        for reading in v["readings"]:
+            groups.setdefault(reading["amount"], []).append(reading)
+        names = [k for k in v["readings"][0] if k != "amount"]
+        rows = []
+        for amount, readings in sorted(groups.items()):
+            fixed = [k for k in names if len({r[k] for r in readings}) == 1
+                     and len({r[k] for r in v["readings"]}) > 1]
+            label = ", ".join(labels.get((k, readings[0][k]), f"{k} {readings[0][k]}") for k in fixed)
+            rows.append(f"· {label or _('other readings')}: {money(amount)}")
         return "\n".join([_("Not priced automatically: the supplier document can be read in ways the business has not "
                             "decided yet, and they give different amounts for this shipment (from %(low)s to "
                             "%(high)s). Enter the cost by hand (supplier bill or written quote) until it is decided "
@@ -191,8 +200,10 @@ class BossPricing(models.AbstractModel):
         else:
             free = _("%s days free", v.get("free_days") or 0)
         unit = _("periods of 24 h") if v.get("period_unit") == "24h" else _("calendar days")
+        if "period_unit" in (v.get("open") or v.get("agreed") or []):
+            unit = _("24-hour periods or calendar days, not decided")
         if v.get("estimate", True):
-            head = _("Estimate: %(days)s days (%(unit)s)", days=v["days"], unit=unit)
+            head = _("Estimate: %(days)s days", days=v["days"])
         else:
             start, end = (datetime.fromisoformat(v[k]) for k in ("start", "end"))  # warehouse local time
             head = _("Actual period %(start)s → %(end)s (%(hours)s h): %(days)s %(unit)s", start=start.strftime(
@@ -215,7 +226,7 @@ class BossPricing(models.AbstractModel):
                      head=head, rule=rule or free, charged=v["charged_days"], qty=self._num(v["quantity"]),
                      amount=money(v["amount"]))
         for name in v.get("not_assumed") or []:
-            text += " " + {
+            text = text.rstrip(".") + ". " + {
                 "friday_monday": _("Arrival on a Friday: the supplier's longer free period for a Monday exit is not "
                                    "assumed in an estimate; it is applied with the actual exit."),
                 "saturday_until_monday": _("Arrival on a Saturday: free until Monday if collected by then; not "

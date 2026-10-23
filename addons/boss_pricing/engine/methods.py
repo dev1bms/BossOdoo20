@@ -211,7 +211,8 @@ def time_based(params, inputs):
     amounts = {amount for _reading, amount, _steps in results}
     if len(amounts) == 1:
         reading, amount, steps = results[0]
-        return amount, steps + [("readings_agree", {"open": sorted(open_)})]
+        code, values = steps[0]
+        return amount, [(code, dict(values, agreed=sorted(open_)))] + steps[1:] + [("readings_agree", {"open": sorted(open_)})]
     code, values = results[0][2][0]
     raise Undecided([(code, dict(values, open=sorted(open_))), ("readings_undecided", {
         "readings": [dict(reading, amount=amount) for reading, amount, _steps in results],
