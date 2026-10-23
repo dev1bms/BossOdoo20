@@ -150,7 +150,7 @@
                                     <field name="qty_received" optional="hide"/>
                                     <field name="qty_billed" optional="hide"/>
                                     <field name="billed_amount_company" optional="show"/>
-                                    <field name="variance_company" optional="show"
+                                    <field name="variance_company" optional="hide"
                                            decoration-danger="variance_company &gt; 0"/>
                                     <field name="variance_reviewed" optional="show" invisible="not variance_company"/>
                                     <field name="variance_note" optional="hide"/>
