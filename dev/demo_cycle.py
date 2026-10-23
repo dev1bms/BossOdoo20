@@ -169,6 +169,11 @@ if first and not xid("demo_file_split_b"):
         remember("demo_file_split_b", second)
         second.write({"vessel": "[DEMO] MSC SEGUNDO", "booking_ref": "[DEMO] BKG-0002"})
 
+# repair of the first run (23/10, fixed in the split wizard): services copied to the second file came closed
+for need in (xid("demo_file_split_b") or env["boss.expediente"]).cost_ids.filtered(
+        lambda n: n.closed and n.quantity > 0 and not n.purchase_line_ids):
+    need.closed = False
+
 for name in ("demo_file_msc", "demo_file_wfs", "demo_file_ireneo", "demo_file_own", "demo_file_split_a",
              "demo_file_split_b"):
     file = xid(name)

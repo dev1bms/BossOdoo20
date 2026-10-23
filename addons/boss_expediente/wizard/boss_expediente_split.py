@@ -80,6 +80,7 @@ class BossExpedienteSplit(models.TransientModel):
                                 "accepted_amount_company": twin.accepted_amount_company + accepted})
                 else:
                     need.copy({"expediente_id": target.id, "quantity": moved, "accepted_amount_company": accepted,
+                               "closed": False,
                                "accepted_unit_cost": need.accepted_unit_cost,
                                "accepted_cost_kind": need.accepted_cost_kind, "tariff_line_id": need.tariff_line_id.id,
                                "expected_date": need.expected_date})

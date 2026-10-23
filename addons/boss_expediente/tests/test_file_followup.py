@@ -96,6 +96,7 @@ class TestFileFollowUp(CycleCommon):
             default_expediente_id=file.id).create({})
         split.line_ids.quantity = 1  # the second container travels on another vessel
         second = self.env["boss.expediente"].browse(split.action_split()["res_id"])
+        self.assertFalse(self._need(second, self.thc).closed)
         self.assertNotEqual(second, file)
         self.assertEqual((file.allocation_ids.quantity, second.allocation_ids.quantity), (1.0, 1.0))
         self.assertEqual((self._need(file, self.thc).quantity, self._need(second, self.thc).quantity), (1.0, 1.0))
@@ -117,14 +118,15 @@ class TestFileFollowUp(CycleCommon):
         (file | second).invalidate_recordset()
         self.assertEqual((file.amount_sale, second.amount_sale), (300.0, 300.0))
         self.assertEqual((file.amount_cost_accepted, second.amount_cost_accepted), (240.0, 240.0))
-        # Moving everything that is left: the part of the first file disappears, the second gets both containers.
-        split = self.env["boss.expediente.split"].with_context(default_expediente_id=file.id).create(
-            {"target_id": second.id})
+        # Moving everything that is left to a new file: the first file keeps no part and its service is closed.
+        split = self.env["boss.expediente.split"].with_context(default_expediente_id=file.id).create({})
         split.line_ids.quantity = 1
-        split.action_split()
-        self.assertEqual((len(file.allocation_ids), second.allocation_ids.quantity), (0, 2.0))
-        self.assertEqual((self._need(file, self.thc).closed, self._need(second, self.thc).quantity), (True, 2.0))
-        self.assertEqual(line.analytic_distribution, {str(second.analytic_account_id.id): 100.0})
+        third = self.env["boss.expediente"].browse(split.action_split()["res_id"])
+        self.assertEqual((len(file.allocation_ids), third.allocation_ids.quantity), (0, 1.0))
+        self.assertEqual((self._need(file, self.thc).closed, self._need(third, self.thc).closed,
+                          self._need(third, self.thc).quantity), (True, False, 1.0))
+        self.assertEqual(line.analytic_distribution, {str(second.analytic_account_id.id): 50.0,
+                                                      str(third.analytic_account_id.id): 50.0})
 
     def test_partial_purchase_cancel_replace_and_purchase_basis(self):
         carrier_b = self.env["res.partner"].create({"name": "NAVIERA B CICLO (FICTICIA)", "boss_is_supplier": True})
