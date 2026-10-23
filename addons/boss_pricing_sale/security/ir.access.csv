@@ -13,3 +13,4 @@ boss_tariff_line_read_salesman,Tariff lines: read (sales),boss.tariff.line,sales
 boss_tariff_bracket_read_salesman,Brackets: read (sales),boss.tariff.bracket,sales_team.group_sale_salesman,r,
 boss_pricing_test_salesman,Test pricing,boss.pricing.test,sales_team.group_sale_salesman,crud,
 boss_pricing_test_tariff_user,Test pricing (tariffs),boss.pricing.test,boss_pricing.group_tariff_user,crud,
+boss_add_service_wizard_manager,Add a service after acceptance,boss.add.service.wizard,sales_team.group_sale_manager,crud,

@@ -3,7 +3,7 @@ from odoo.exceptions import UserError
 
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 
-from .boss_shipment_container import TEU
+from .boss_shipment_container import shipment_quantity
 
 
 class SaleOrder(models.Model):
@@ -96,20 +96,9 @@ class SaleOrder(models.Model):
     def _boss_quantity(self, source, size=False, ctype=False):
         """Quantity of a charge basis taken from the shipment, or None when entered on the line."""
         self.ensure_one()
-        rows = self.boss_container_ids.filtered(
-            lambda c: (not size or c.size == size) and (not ctype or c.container_type_id == ctype))
-        values = {
-            "shipment": 1.0,
-            "container": float(sum(rows.mapped("quantity"))),
-            "teu": float(sum(c.quantity * TEU[c.size] for c in rows)),
-            "gross_kg": self.boss_gross_kg,
-            "gross_ton": self.boss_gross_kg / 1000,
-            "volume_m3": self.boss_volume_m3,
-            "wm": max(self.boss_gross_kg / 1000, self.boss_volume_m3),
-            "pallets": float(self.boss_pallets),
-            "awb_kg": self.boss_awb_kg or None,  # empty: the quantity stays the one typed on the line
-        }
-        return values.get(source)
+        return shipment_quantity(
+            source, [(c.size, c.container_type_id, c.quantity) for c in self.boss_container_ids], self.boss_gross_kg,
+            self.boss_volume_m3, self.boss_pallets, self.boss_awb_kg, size, ctype)
 
     @api.depends("order_line.boss_cost_status", "order_line.boss_sale_status", "order_line.boss_vat_status",
                  "order_line.boss_manual_cost")
@@ -162,6 +151,14 @@ class SaleOrder(models.Model):
 
     def action_boss_update_costs(self):
         self.order_line.filtered(lambda l: not l.boss_price_frozen)._boss_recompute_cost()
+
+    def action_boss_add_service(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window", "res_model": "boss.add.service.wizard", "view_mode": "form",
+            "views": [(False, "form")], "target": "new", "name": self.env._("Add a service after acceptance"),
+            "context": {"default_order_id": self.id},
+        }
 
     def action_boss_reprice(self):
         self.ensure_one()

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_add_service_wizard_view_form" model="ir.ui.view">
+        <field name="name">boss.add.service.wizard.form</field>
+        <field name="model">boss.add.service.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">A service sold after acceptance: one new line with its price and the reason. The
+                    accepted lines and their snapshot do not change; a new snapshot records the addition.</p>
+                <group>
+                    <group>
+                        <field name="order_id" readonly="1"/>
+                        <field name="product_id" options="{'no_create': True}"/>
+                        <field name="allowed_uom_ids" invisible="1"/>
+                        <field name="uom_id" options="{'no_create': True}"/>
+                        <field name="quantity"/>
+                    </group>
+                    <group>
+                        <field name="execution" widget="radio"/>
+                        <field name="supplier_id" invisible="execution != 'supplier'" options="{'no_create': True}"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="manual_cost" invisible="execution != 'supplier'"/>
+                        <field name="price_unit"/>
+                    </group>
+                </group>
+                <field name="reason" placeholder="e.g. customer asks for delivery to a second address (mail 24/10)"/>
+                <footer>
+                    <button name="action_apply" type="object" string="Add to the order" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
