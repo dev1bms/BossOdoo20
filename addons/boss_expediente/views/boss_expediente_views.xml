@@ -128,7 +128,7 @@
                                       decoration-danger="cost_unknown">
                                     <field name="kind" optional="hide"/>
                                     <field name="product_id" readonly="kind == 'sale'" options="{'no_create': True}"
-                                           width="220px"/>
+                                           width="190px"/>
                                     <field name="name" optional="hide"/>
                                     <field name="partner_id" options="{'no_create': True}"/>
                                     <field name="quantity" readonly="kind == 'sale' or purchase_line_ids"/>
