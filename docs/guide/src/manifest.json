@@ -15,6 +15,13 @@
    }
   },
   {
+   "id": "operaciones",
+   "title": {
+    "es": "Expediente, compras y facturación",
+    "en": "File, purchases and invoicing"
+   }
+  },
+  {
    "id": "tarifas",
    "title": {
     "es": "Tarifas de proveedor",
@@ -200,6 +207,54 @@
    "title": {
     "es": "7. Enviar, aceptar y recotizar",
     "en": "7. Send, accept and re-price"
+   }
+  },
+  {
+   "id": "contactos",
+   "section": "operaciones",
+   "title": {
+    "es": "Clientes, proveedores y contactos",
+    "en": "Customers, suppliers and contacts"
+   }
+  },
+  {
+   "id": "expediente",
+   "section": "operaciones",
+   "title": {
+    "es": "El expediente",
+    "en": "The shipment file"
+   }
+  },
+  {
+   "id": "compras",
+   "section": "operaciones",
+   "title": {
+    "es": "Compras a proveedores",
+    "en": "Purchases from suppliers"
+   }
+  },
+  {
+   "id": "facturacion",
+   "section": "operaciones",
+   "title": {
+    "es": "Facturas, abonos y costes adicionales",
+    "en": "Invoices, credit notes and extra costs"
+   }
+  },
+  {
+   "id": "rentabilidad",
+   "section": "operaciones",
+   "title": {
+    "es": "Coste y rentabilidad",
+    "en": "Cost and profitability"
+   }
+  },
+  {
+   "id": "demo-ciclo",
+   "section": "operaciones",
+   "title": {
+    "es": "Ejemplos [DEMO] del ciclo",
+    "en": "[DEMO] examples of the cycle"
    }
   },
   {

@@ -32,6 +32,8 @@ and **Sales** screens; the BOSS parts are added there.
 |---|---|
 | Opportunities | CRM |
 | Quotations and orders | Sales › Orders |
+| Shipment files, services to buy, customers and suppliers | **Shipment files** (own app, see [The shipment file](#/expediente)) |
+| Purchase orders and vendor bills | Purchase; Accounting › Vendors |
 | Prices, tariffs, services and suppliers | **Pricing & Suppliers** (own app, see [Pricing & Suppliers](#/tarifa-listas)) |
 | Supplier tariffs | Pricing & Suppliers › Tariffs and documents (also Sales › Products) |
 | Test the calculation of a price | Pricing & Suppliers › Test pricing |

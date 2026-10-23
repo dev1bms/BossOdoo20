@@ -22,8 +22,10 @@ queda en el historial del pedido.
 
 ![Recotizar una oferta aceptada](img/14-recotizar.png)
 
-## Después (fases siguientes)
+## Después
 
-La foto aceptada es la base comercial del **expediente** (operaciones) y de la **factura**: el coste previsto de cada
-línea se comparará con las facturas de proveedor (coste real). Los servicios por tiempo pasan de estimación a coste real
-con las fechas del expediente.
+Al aceptar se abre el **expediente** del envío (ver «El expediente»). La foto aceptada es su base comercial: cada
+servicio de proveedor pasa a **Servicios y costes** con su coste previsto, para pedirlo al proveedor y compararlo con su
+factura (coste real). Un servicio de proveedor con coste **desconocido** impide aceptar, salvo motivo escrito por un
+responsable de ventas. Un servicio añadido después de aceptar solo entra con **Refacturar al cliente** (motivo y foto) o
+en una oferta nueva vinculada al expediente.

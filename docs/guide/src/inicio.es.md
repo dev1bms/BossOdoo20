@@ -33,6 +33,8 @@ estándar de **CRM** y **Ventas**; lo propio de BOSS se añade en ellas.
 |---|---|
 | Oportunidades | CRM |
 | Ofertas y pedidos | Ventas › Pedidos |
+| Expedientes, servicios a comprar, clientes y proveedores | **Expedientes** (app propia, ver [El expediente](#/expediente)) |
+| Pedidos de compra y facturas de proveedor | Compras; Contabilidad › Proveedores |
 | Precios, tarifas, servicios y proveedores | **Tarifas y proveedores** (app propia, ver [Tarifas y proveedores](#/tarifa-listas)) |
 | Tarifas de proveedor | Tarifas y proveedores › Tarifas y documentos (también Ventas › Productos) |
 | Probar el cálculo de un precio | Tarifas y proveedores › Probar tarifa |

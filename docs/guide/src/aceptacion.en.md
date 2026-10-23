@@ -21,8 +21,10 @@ type new sale prices. Another snapshot keeps the previous values, date and user,
 
 ![Re-price an accepted quotation](img/14-recotizar.png)
 
-## Afterwards (next phases)
+## Afterwards
 
-The accepted snapshot is the commercial baseline of the **shipment file** (operations) and of the **invoice**: the
-expected cost of each line will be compared with supplier invoices (actual cost). Time-based services move from estimate
-to actual cost with the file dates.
+Accepting opens the **shipment file** (see "The shipment file"). The accepted snapshot is its commercial baseline: each
+supplier service goes to **Services and costs** with its expected cost, to be ordered from the supplier and compared
+with its bill (actual cost). A supplier service with an **unknown** cost prevents acceptance, unless a sales manager
+writes the reason. A service added after acceptance only enters through **Re-invoice to the customer** (reason and
+snapshot) or a new quotation linked to the file.

@@ -10,3 +10,14 @@ esperado, etapa y actividades.
 
 > Las etapas del flujo y los motivos de pérdida son los estándar. Validez de la oferta y alternativas en un mismo
 > documento son decisiones abiertas (P22, P23).
+
+## Datos del envío en la oportunidad
+
+En la pestaña **Envío** de la oportunidad anote lo que el cliente pide, aunque falten datos: sentido, modo, incoterm,
+origen y destino, puerto y país, lo que hace BOSS (recogida, aduanas, transporte principal, entrega), cargador y
+consignatario, mercancía, bultos, peso, volumen, contenedores y **servicios solicitados**. [[Nuevo presupuesto]] lo pasa
+**una vez** a la oferta; [[Añadir servicios]] propone los servicios solicitados. Después cada documento guarda lo suyo.
+
+Sin oportunidad también se puede empezar por **Ventas → Nuevo**. Para un cliente que repite, **Duplicar** una oferta
+anterior copia ruta y servicios y vuelve a buscar precios de hoy: nunca copia precios aceptados, fotos, expediente,
+BL/AWB, facturas ni compras.
