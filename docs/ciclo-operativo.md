@@ -121,4 +121,6 @@ Aplicadas y pendientes de confirmar:
 
 Pendiente técnico: ninguno conocido en el ciclo; el coste previsto se recalcula con los datos del expediente (ver registro).
 
-Último commit desplegado: ver `git log` (commits locales; no hay remoto configurado).
+Último commit desplegado: `fdb4cbd` (main con la revisión ALM fusionada; boss_expediente 20.0.1.2.0, boss_pricing 20.0.1.5.0, boss_pricing_sale 20.0.1.7.0), 23/10/2026. Guía publicada desde `b388a67` (`?v=20261023f`). Commits locales: no hay remoto.
+
+Pruebas en `fdb4cbd`: motor 21/21; Odoo 27 métodos (boss_expediente 13, boss_pricing_sale 13, boss_pricing 1 de referencias con las muestras privadas actualizadas): 0 fallos.
