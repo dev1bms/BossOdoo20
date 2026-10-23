@@ -17,7 +17,7 @@ Prueba: `addons/boss_pricing/tests/test_references.py`; en el servidor sin cambi
 | R11, R12 | MSC p.17 | OCU | Tramos por número de día (posicionales), por puerto (Valencia, Barcelona) |
 | R16 | Hapag import p.1 | DEM | 3 tramos relativos; día 23 añade un día del último tramo |
 | R18 | CMA p.1 | DEM | Tramos posicionales |
-| R01–R04 | WFS 2026 p.5 | ALM | Franquicia 48 h como umbral (48 h = 0; 49 h = desde el día 1), por 100 kg, mínimo, tramo de 7 días |
+| R01–R05 | WFS 2026 p.5 | ALM | Periodo real con horas: 48 h 00 = 0; 48 h 01 y 49 h = desde el NOA; mínimo (80 kg); viernes→lunes 71 h = 0 y 73 h cobrado; viernes→domingo y viernes→martes cobrados; sábado→lunes = 0; sábado→martes cobrado. Sin precio automático cuando las lecturas sin decidir difieren (240 h, 96 h, 450 kg: P29, P40, P41). Estimaciones E1–E4 (la del sábado no supone la excepción) |
 | R06 | WFS p.6 | HAN | € por kg tasable de la AWB con mínimo |
 | R09a | WFS p.6 | AWB | Fijo por AWB |
 | R10c | WFS p.7 | X-R | Tramos por peso sobre toda la cantidad, mínimo y máximo |

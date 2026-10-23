@@ -5,7 +5,8 @@ Data file: samples.json (private, real prices), passed by dev/server_shell.sh. P
 """
 import json
 import os
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 env = env  # noqa: F821 (odoo shell)
 # dev/server_shell.sh mounts the private file in /tmp/boss (older runs copied it to /tmp)
@@ -20,6 +21,11 @@ def rid(model, domain):
 def inputs_of(raw):
     inputs = {k: raw[k] for k in ("direction", "transport_mode", "load_type", "line_qty", "gross_kg", "volume_m3",
                                   "awb_kg", "storage_days", "container_size", "start_weekday") if k in raw}
+    # as a real quotation: always a real customer (never a demo or another customer's price) and its port
+    inputs.update(tariff_use="real", customer_id=-1, port_id=-1)
+    for key in ("storage_start", "storage_end"):  # warehouse local times (Madrid) of an actual period
+        if key in raw:
+            inputs[key] = datetime.fromisoformat(raw[key]).replace(tzinfo=ZoneInfo("Europe/Madrid"))
     if "carrier" in raw:
         inputs["carrier_id"] = rid("res.partner", [("name", "=", f"{raw['carrier']} [MUESTRA]")])
     if "country" in raw:

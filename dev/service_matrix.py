@@ -18,8 +18,13 @@ VERIFIED = {
     "THC": "R1 (MSC 09/2026). Solo MSC: de Hapag y CMA no hay documento de gastos locales",
     "T3-PAD": "R2 (MSC). Solo MSC", "GLO-FUELEU": "R3 (MSC). Solo MSC",
     "BL": "R4 (MSC). Solo MSC: de Hapag y CMA no hay documento de gastos locales", "GLO-CCC": "R5 (MSC). Solo MSC", "DEM": "R8, R9 (MSC); R16 (Hapag, documento D&D); R18 (CMA, documento D&D)", "OCU": "R11, R12 (MSC VLC/BCN)",
-    "ALM": "R01–R05 (WFS 2026: 48 h, mínimo, tramo de 7 días, periodos de 24 h, sábado, viernes > 72 h)",
     "HAN": "R06 (WFS 2026); R07, R08 (IRENEO 2025)", "AWB": "R09a (WFS 2026)", "X-R": "R10c (WFS 2026); R10a (IRENEO 2025)",
+}
+# Automatic only where the readings not decided agree (docs/preguntas-abiertas.md P29, P40, P41).
+PARTIAL = {
+    "ALM": "R01–R05 con fechas y horas reales (WFS 2026 importación MAD: 48 h 00/01, mínimo, viernes→lunes 71/73 h, "
+           "viernes→domingo/martes, sábado→lunes/martes; 240 h y 96 h sin precio automático) y estimaciones E1–E4. "
+           "Exportación: X01–X02 (muestra pendiente de aprobar)",
 }
 DOC_NOT_LOADED = {"GLO-LOG": "Documento MSC 09/2026 (solo exportación): sin muestra cargada"}
 ONLY_2025 = {"TTE-CON": "R12 (IRENEO 2025, zona por provincia)", "SEG": "SEG (IRENEO 2025)",
@@ -38,27 +43,34 @@ SALE = {
     "own": ("Honorario BOSS: lista de precios del cliente o tecleado", "BOSS fee: customer pricelist or typed"),
     "suplido": ("A coste del DUA (práctica Odoo 17), tecleado; P18", "At the customs-declaration cost (Odoo 17 practice), typed; P18"),
     "pft": ("No se vende", "Not sold"),
-    "alm": ("Venta unificada aprobada como concepto (Cristina 08/10), valores pendientes: lista del cliente o tecleada",
-            "Unified sale approved as a concept (Cristina 08/10), values pending: customer pricelist or typed"),
+    "alm": ("Precio de venta único de ALM para todos los clientes (Cristina 08/10, transmitido por Belal): sin valores "
+            "aprobados, no implementado. Mientras tanto, venta tecleada (o lista del cliente). «Mayor coste + %» es solo una "
+            "propuesta",
+            "One ALM sale price for every customer (Cristina 08/10, relayed by Belal): no approved values, not implemented. "
+            "Meanwhile the sale is typed (or the customer pricelist). «Highest cost + %» is only a proposal"),
     "client": ("Según cliente (Cristina 08/10): lista del cliente (fija o sobre coste) o tecleada",
                "Per customer (Cristina 08/10): customer pricelist (fixed or on cost) or typed"),
     "default": ("Lista de precios del cliente (fija o sobre coste) o tecleada",
                 "Customer pricelist (fixed or on cost) or typed"),
 }
 LIMITS = {
-    "ALM": ("Viernes 72 h solo si sale el lunes: no se aplica en la oferta (día de salida desconocido)",
-            "Friday 72 h only with a Monday exit: not applied on the quotation (exit day unknown)"),
+    "ALM": ("Oferta: estimación en días sin suponer las excepciones de viernes y sábado; coste con NOA/FOH y retirada/ETD "
+            "reales en el expediente. Solo carga general",
+            "Quotation: estimate in days without assuming the Friday and Saturday exceptions; cost with the actual NOA/FOH "
+            "and pickup/ETD on the file. General cargo only"),
     "DEM": ("Una estimación de días por oferta, común a DEM/OCU/ALM", "One days estimate per quotation, shared by DEM/OCU/ALM"),
     "OCU": ("Una estimación de días por oferta, común a DEM/OCU/ALM", "One days estimate per quotation, shared by DEM/OCU/ALM"),
     "THC": ("IVA dividido (parte EX, resto NR) sin decidir (P11)", "Split VAT (part EX, rest NR) not decided (P11)"),
     "QBR": ("Necesita además la política de moneda", "Also needs the currency policy"),
 }
 LABELS = {
-    "es": {"auto": "Automática verificada (falta aprobar la tarifa)", "doc": "Automática: falta documento de tarifa",
+    "es": {"auto": "Automática verificada (falta aprobar la tarifa)",
+           "partial": "Automática en parte: lecturas pendientes de decisión", "doc": "Automática: falta documento de tarifa",
            "2025": "Automática: documento 2025, vigencia 2026 sin confirmar (P28)",
            "loaded": "Automática: documento disponible, falta cargar la tarifa", "manual": "Lista con importe manual",
            "own": "Lista: honorario sin coste", "decision": "Bloqueada por decisión", "inactive": "Retirada"},
-    "en": {"auto": "Automatic, verified (tariff approval pending)", "doc": "Automatic: tariff document missing",
+    "en": {"auto": "Automatic, verified (tariff approval pending)",
+           "partial": "Partly automatic: readings pending a decision", "doc": "Automatic: tariff document missing",
            "2025": "Automatic: 2025 document, 2026 validity unconfirmed (P28)",
            "loaded": "Automatic: document available, tariff not entered yet", "manual": "Ready with a manual amount",
            "own": "Ready: fee without cost", "decision": "Blocked by a decision", "inactive": "Retired"},
@@ -81,6 +93,8 @@ def status(s):
         return "own", "Sin coste de proveedor"
     if s["code"] in VERIFIED:
         return "auto", VERIFIED[s["code"]]
+    if s["code"] in PARTIAL:
+        return "partial", PARTIAL[s["code"]]
     if s["code"] in DOC_NOT_LOADED:
         return "loaded", DOC_NOT_LOADED[s["code"]]
     if s["code"] in ONLY_2025:
