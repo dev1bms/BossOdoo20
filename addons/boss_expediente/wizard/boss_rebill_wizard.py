@@ -40,6 +40,7 @@ class BossRebillWizard(models.TransientModel):
             "order_id": order.id, "product_id": need.product_id.id, "product_uom_id": need.uom_id.id,
             "product_uom_qty": need.quantity, "price_unit": self.price_unit, "boss_execution": "supplier",
             "boss_supplier_id": need.partner_id.id, "name": need.name or need.product_id.display_name,
+            "boss_added_after_acceptance": True,
         })
         line.boss_price_frozen = True
         need.write({"rebill_line_id": line.id, "extra_class": "rebill"})

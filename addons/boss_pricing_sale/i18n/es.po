@@ -48,6 +48,12 @@ msgstr ""
 "%s está aceptada: un servicio vendido después se añade desde su expediente («Refacturar» un coste adicional) o en una oferta nueva vinculada al expediente."
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_add_service_wizard.py:0
+msgid "%s is not an accepted order: add the service to the quotation."
+msgstr "%s no es un pedido aceptado: añada el servicio a la oferta."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_markup
 msgid ""
 "(Sale - cost) / cost. The margin shown by Odoo is (sale - cost) / sale."
@@ -94,6 +100,14 @@ msgstr ""
 msgid "A price of %s must say its charge basis (container 40', B/L, kg...)."
 msgstr ""
 "Un precio de %s debe indicar su base de cobro (contenedor 40', BL, kg...)."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_service_wizard_view_form
+msgid ""
+"A service sold after acceptance: one new line with its price and the reason. The\n"
+"                    accepted lines and their snapshot do not change; a new snapshot records the addition."
+msgstr ""
+"Un servicio vendido tras la aceptación: una línea nueva con su precio y el motivo. Las líneas aceptadas y su foto no cambian; una foto nueva registra el añadido."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -158,6 +172,22 @@ msgid "Add BOSS services to a quotation"
 msgstr "Añadir servicios BOSS a una oferta"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Add a service"
+msgstr "Añadir un servicio"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "Add a service after acceptance"
+msgstr "Añadir un servicio tras la aceptación"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_add_service_wizard
+msgid "Add a service to an accepted order"
+msgstr "Añadir un servicio a un pedido aceptado"
+
+#. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_boss_supplier_price_wizard
 msgid "Add a supplier price from a quotation"
 msgstr "Añadir un precio de proveedor desde una oferta"
@@ -181,6 +211,16 @@ msgstr "Añadir precio de proveedor"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
 msgid "Add to draft tariff"
 msgstr "Añadir a tarifa en borrador"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_service_wizard_view_form
+msgid "Add to the order"
+msgstr "Añadir al pedido"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_added_after_acceptance
+msgid "Added after acceptance"
+msgstr "Añadido tras la aceptación"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_sale_status__agreed
@@ -209,6 +249,7 @@ msgid "Air cargo"
 msgstr "Carga aérea"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__allowed_uom_ids
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__allowed_uom_ids
 msgid "Allowed Uom"
 msgstr "Unidades permitidas"
@@ -247,6 +288,7 @@ msgstr ""
 "Adjunte el documento del proveedor para enviar el precio a aprobación."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_add_service_wizard__execution__boss
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_execution__boss
 msgid "BOSS"
 msgstr "BOSS"
@@ -330,6 +372,7 @@ msgid "Calculation steps"
 msgstr "Pasos del cálculo"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_service_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
@@ -354,6 +397,7 @@ msgid "Carrier and date"
 msgstr "Transportista y fecha"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__uom_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__uom_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__uom_id
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
@@ -513,6 +557,7 @@ msgid "Country abroad"
 msgstr "País en el extranjero"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_uid
@@ -525,6 +570,7 @@ msgid "Created by"
 msgstr "Creado por"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_date
@@ -537,6 +583,7 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__currency_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__currency_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__currency_id
 msgid "Currency"
@@ -640,6 +687,7 @@ msgid "Direction"
 msgstr "Sentido"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__display_name
@@ -767,6 +815,7 @@ msgid "Estimates"
 msgstr "Estimaciones"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__execution
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_execution
 msgid "Executed by"
 msgstr "Ejecutado por"
@@ -811,6 +860,11 @@ msgstr ""
 msgid "Expected supplier cost of the whole line, in the tariff currency."
 msgstr ""
 "Coste de proveedor previsto de toda la línea, en la moneda de la tarifa."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__manual_cost
+msgid "Expected unit cost"
+msgstr "Coste unitario previsto"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__explanation
@@ -901,6 +955,7 @@ msgid "How the sale price is set"
 msgstr "Cómo se fija el precio de venta"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__id
@@ -956,6 +1011,7 @@ msgid "LCL (groupage)"
 msgstr "LCL (grupaje)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_uid
@@ -968,6 +1024,7 @@ msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_date
@@ -1190,6 +1247,20 @@ msgstr ""
 "Solo un responsable de ventas puede aceptar un servicio con coste desconocido."
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_add_service_wizard.py:0
+msgid "Only a sales manager can add a service to an accepted order."
+msgstr ""
+"Solo un responsable de ventas puede añadir un servicio a un pedido aceptado."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_add_service_wizard__manual_cost
+msgid ""
+"Only for a service without supplier tariff (typed cost, e.g. supplier offer)."
+msgstr ""
+"Solo para un servicio sin tarifa de proveedor (coste escrito, p. ej. oferta del proveedor)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__price_by_container_type
 msgid "Only for this container type"
 msgstr "Solo para este tipo de contenedor"
@@ -1211,6 +1282,7 @@ msgid "Optional: shows the sale price and the profit."
 msgstr "Opcional: muestra el precio de venta y el beneficio."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__order_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__order_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__order_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__order_id
@@ -1438,6 +1510,7 @@ msgstr ""
 "Provincia del lugar de recogida (exportación) o entrega (importación) en España; los transportistas cotizan por zona."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__quantity
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__quantity
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__quantity
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__quantity
@@ -1477,6 +1550,7 @@ msgid "Re-pricing"
 msgstr "Recotización"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__reason
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__reason
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__reason
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_snapshot_view_form
@@ -1558,6 +1632,7 @@ msgid "Sale price missing"
 msgstr "Falta precio de venta"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__price_unit
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__sale_unit
 msgid "Sale price per unit"
 msgstr "Precio de venta por unidad"
@@ -1607,15 +1682,36 @@ msgid "Send for approval now"
 msgstr "Enviar a aprobación ahora"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__product_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__product_id
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
 msgid "Service"
 msgstr "Servicio"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_add_service_wizard.py:0
+msgid "Service %(service)s added after acceptance. Reason: %(reason)s"
+msgstr "Servicio %(service)s añadido tras la aceptación. Motivo: %(reason)s"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_snapshot__kind__addition
 msgid "Service added after acceptance"
 msgstr "Servicio añadido tras la aceptación"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_added_after_acceptance
+msgid ""
+"Service added to the accepted order by an explicit commercial change (reason and snapshot); it is not part of the original agreement."
+msgstr ""
+"Servicio añadido al pedido aceptado por un cambio comercial explícito (motivo y foto); no forma parte del acuerdo original."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid ""
+"Service sold after acceptance: new line with price and reason; accepted lines do not change."
+msgstr ""
+"Servicio vendido tras la aceptación: línea nueva con precio y motivo; las líneas aceptadas no cambian."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__product_ids
@@ -1712,10 +1808,12 @@ msgid "Summary"
 msgstr "Resumen"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__supplier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__supplier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__supplier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__partner_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_supplier_id
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_add_service_wizard__execution__supplier
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_execution__supplier
 msgid "Supplier"
 msgstr "Proveedor"
@@ -2119,6 +2217,12 @@ msgstr "moneda"
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid "days of the shipment"
 msgstr "días del envío"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_service_wizard_view_form
+msgid "e.g. customer asks for delivery to a second address (mail 24/10)"
+msgstr ""
+"p. ej. el cliente pide la entrega en una segunda dirección (correo 24/10)"
 
 #. module: boss_pricing_sale
 #. odoo-python

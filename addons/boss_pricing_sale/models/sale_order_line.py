@@ -108,6 +108,10 @@ class SaleOrderLine(models.Model):
         "(freight offer, amount paid on behalf of the customer...).")
     boss_manual_cost_note = fields.Char("Cost reference", copy=False, help="E.g. supplier offer number.")
     boss_price_frozen = fields.Boolean("Accepted price", readonly=True, copy=False)
+    boss_added_after_acceptance = fields.Boolean(
+        "Added after acceptance", readonly=True, copy=False,
+        help="Service added to the accepted order by an explicit commercial change (reason and snapshot); it is not "
+        "part of the original agreement.")
     boss_sale_free = fields.Boolean(
         "Free of charge", copy=False,
         help="Confirms that a zero sale price is intended. Without it a zero price means 'missing'.")

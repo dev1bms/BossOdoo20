@@ -1,17 +1,34 @@
 id,name,model_id,group_id/id,operation,domain
-boss_expediente_salesman,Shipment files,boss.expediente,sales_team.group_sale_salesman,cru,
+boss_expediente_salesman,Shipment files: own,boss.expediente,sales_team.group_sale_salesman,cru,"['|', '|', '|', ('user_id', '=', user.id), ('user_id', '=', False), ('order_link_ids.user_id', '=', user.id), ('allocation_ids.order_id.user_id', '=', user.id)]"
+boss_expediente_salesman_all,Shipment files: all,boss.expediente,sales_team.group_sale_salesman_all_leads,cru,
 boss_expediente_purchase,Shipment files (purchase),boss.expediente,purchase.group_purchase_user,ru,
 boss_expediente_invoice,Shipment files (accounting),boss.expediente,account.group_account_invoice,ru,
+boss_expediente_readonly,Shipment files (accounting read),boss.expediente,account.group_account_readonly,r,
 boss_expediente_manager,Shipment files: delete,boss.expediente,sales_team.group_sale_manager,crud,
 boss_expediente_comp_rule,Shipment files multi-company,boss.expediente,,crud,"[('company_id', 'in', company_ids)]"
-boss_expediente_container_salesman,File containers,boss.expediente.container,sales_team.group_sale_salesman,crud,
+boss_expediente_container_salesman,File containers,boss.expediente.container,sales_team.group_sale_salesman,crud,"[('expediente_id', 'access', 'read')]"
 boss_expediente_container_purchase,File containers (purchase),boss.expediente.container,purchase.group_purchase_user,r,
-boss_expediente_event_salesman,File events,boss.expediente.event,sales_team.group_sale_salesman,crud,
+boss_expediente_container_account,File containers (accounting),boss.expediente.container,account.group_account_readonly,r,
+boss_expediente_event_salesman,File events,boss.expediente.event,sales_team.group_sale_salesman,crud,"[('expediente_id', 'access', 'read')]"
 boss_expediente_event_purchase,File events (purchase),boss.expediente.event,purchase.group_purchase_user,cru,
-boss_expediente_cost_salesman,File costs,boss.expediente.cost,sales_team.group_sale_salesman,crud,
+boss_expediente_event_account,File events (accounting),boss.expediente.event,account.group_account_readonly,r,
+boss_expediente_cost_salesman,File costs,boss.expediente.cost,sales_team.group_sale_salesman,crud,"[('expediente_id', 'access', 'read')]"
 boss_expediente_cost_purchase,File costs (purchase),boss.expediente.cost,purchase.group_purchase_user,crud,
 boss_expediente_cost_invoice,File costs (accounting),boss.expediente.cost,account.group_account_invoice,ru,
+boss_expediente_cost_readonly,File costs (accounting read),boss.expediente.cost,account.group_account_readonly,r,
+boss_expediente_cost_comp_rule,File costs multi-company,boss.expediente.cost,,crud,"[('company_id', 'in', company_ids)]"
+boss_expediente_revision_salesman,Cost recalculations,boss.expediente.cost.revision,sales_team.group_sale_salesman,cr,"[('expediente_id', 'access', 'read')]"
+boss_expediente_revision_purchase,Cost recalculations (purchase),boss.expediente.cost.revision,purchase.group_purchase_user,cr,
+boss_expediente_revision_account,Cost recalculations (accounting),boss.expediente.cost.revision,account.group_account_readonly,r,
+boss_expediente_revision_comp_rule,Cost recalculations multi-company,boss.expediente.cost.revision,,crud,"[('company_id', 'in', company_ids)]"
 boss_partner_role_read,Logistic roles: read,boss.partner.role,base.group_user,r,
 boss_partner_role_manager,Logistic roles: maintain,boss.partner.role,sales_team.group_sale_manager,crud,
 boss_invoice_services_salesman,Invoice services,boss.invoice.services,sales_team.group_sale_salesman,crud,
 boss_rebill_wizard_manager,Re-invoice an extra cost,boss.rebill.wizard,sales_team.group_sale_manager,crud,
+boss_expediente_allocation_salesman,File parts of sale lines,boss.expediente.allocation,sales_team.group_sale_salesman,cru,"[('expediente_id', 'access', 'read')]"
+boss_expediente_allocation_manager,File parts of sale lines: delete,boss.expediente.allocation,sales_team.group_sale_manager,crud,
+boss_expediente_allocation_purchase,File parts of sale lines (purchase),boss.expediente.allocation,purchase.group_purchase_user,r,
+boss_expediente_allocation_account,File parts of sale lines (accounting),boss.expediente.allocation,account.group_account_readonly,r,
+boss_expediente_allocation_comp_rule,File parts multi-company,boss.expediente.allocation,,crud,"[('company_id', 'in', company_ids)]"
+boss_expediente_split_salesman,Move services to another file,boss.expediente.split,sales_team.group_sale_salesman,crud,
+boss_expediente_split_line_salesman,Move services to another file (lines),boss.expediente.split.line,sales_team.group_sale_salesman,crud,
