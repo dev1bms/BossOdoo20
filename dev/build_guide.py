@@ -51,8 +51,8 @@ NOTES = {
             "MSC: free days then «5 days at X, then Y» per size (Dry, Special, IMO). Hapag: demurrage and detention combined, periods after free days. CMA: calendar days, tiers by day number. Start and end events per carrier (e.g. vessel arrival → empty return)."),
     "OCU": ("MSC: por grupo de puertos, tramos por número de día («del día 5 al 7»), columnas 20'DV y 40'DV.",
             "MSC: per port group, tiers by day number («day 5 to 7»), 20'DV and 40'DV columns."),
-    "ALM": ("WFS MAD/BCN: por 100 kg de peso tasable de la AWB y periodo de 24 h desde el aviso de llegada; 48 h libres como umbral; llegada en sábado libre hasta el lunes; viernes 72 h solo si se retira el lunes (no automatizado); tramos hasta 7 días / más; mínimo. Eventos aprobados por Cristina (25/09).",
-            "WFS MAD/BCN: per 100 kg of AWB chargeable weight and 24-hour period from the arrival notice; 48 h free as a threshold; Saturday arrival free until Monday; Friday 72 h only with Monday pickup (not automated); tiers up to 7 days / more; minimum. Events approved by Cristina (25/09)."),
+    "ALM": ('WFS MAD/BCN, carga general (V 2026-02 desde 01/06/2026, p.5 punto 1): por 100 kg del peso cargable de la AWB y por 24 horas, desde el NOA (importación) o el FOH (exportación) hasta la retirada (importación) o la ETD (exportación; eventos de Cristina 25/09). 48 h libres en horas reales; superadas, se cobra desde el NOA/FOH incluido (Cristina 08/09, B20). Viernes con salida el lunes: 72 h; sábado: libre hasta el lunes incluido (con las fechas reales; la estimación de la oferta no las supone). Mínimo propio de importación y de exportación, por estancia (el documento no imprime la unidad, P42). **Sin decidir:** periodos de 24 h o días naturales (P40), precio de «más de 7 días» en los días siguientes o en toda la estancia (P29), «por 100 kg» con o sin fracción (P41): si dan importes distintos no hay coste automático y se muestran todos. Solo carga general: frío, peligrosas, valiosas y animales vivos (puntos 2–6) tienen otros periodos y precios: coste manual. La franquicia exige el handling básico pagado. IRENEO 2025 (por 100 kg o fracción y día natural, cuentan entrada y salida): vigencia 2026 sin confirmar (P28), no cargada. Almacén fuera del aeropuerto (palé, m³, entrada/salida): código propio pendiente de Cristina y Ángel, no se cotiza con ALM. Guía: [ALM paso a paso](#/almacenaje).',
+            'WFS MAD/BCN, general cargo (V 2026-02 from 01/06/2026, p.5 item 1): per 100 kg of the AWB chargeable weight and per 24 hours, from the NOA (import) or FOH (export) to the pickup (import) or the ETD (export; events from Cristina 25/09). 48 h free in real hours; once exceeded, charged from the NOA/FOH included (Cristina 08/09, B20). Friday with a Monday exit: 72 h; Saturday: free until Monday included (with the actual dates; the quotation estimate does not assume them). Own minimum for import and for export, per stay (the document prints no unit, P42). **Not decided:** 24-hour periods or calendar days (P40), the «more than 7 days» price on the following days or on the whole stay (P29), «per 100 kg» with or without fraction (P41): when they give different amounts there is no automatic cost and all of them are shown. General cargo only: cold room, dangerous, valuable goods and live animals (items 2–6) have other periods and prices: manual cost. The free period requires the basic handling paid. IRENEO 2025 (per 100 kg or fraction and calendar day, entry and exit days counted): 2026 validity unconfirmed (P28), not entered. Warehouse storage outside the airport (pallet, m³, entry/exit): its own code is pending Cristina and Ángel, not quoted with ALM. Guide: [ALM step by step](#/almacenaje).'),
     "HAN": ("WFS: por kg tasable de la AWB con mínimo por AWB. IRENEO: por kg tasable (factor 333) con mínimo; paquete de exportación por tramos con «no inferior al tramo anterior».",
             "WFS: per AWB chargeable kg with a minimum per AWB. IRENEO: per chargeable kg (factor 333) with a minimum; export package by brackets with «not below the previous bracket»."),
     "AWB": ("WFS: por AWB en importación (gestión DATA/DOCS).", "WFS: per AWB on imports (DATA/DOCS handling)."),
@@ -88,8 +88,10 @@ EXAMPLES = {  # illustrative amounts only
                          "1,200 kg in the «up to 1,500» bracket: 1,200 × 0.18 € = 216.00 € (never below the previous bracket when the document says so)"),
     ("time", "container"): ("15 días, 7 libres, «5 días a 30 €, después 80 €»: 390,00 € por contenedor (estimación)",
                             "15 days, 7 free, «5 days at 30 €, then 80 €»: 390.00 € per container (estimate)"),
-    ("time", None): ("500 kg, 3 días, umbral 48 h, 10 € por 100 kg y día: 3 × 5 × 10 = 150,00 € (estimación)",
-                     "500 kg, 3 days, 48 h threshold, 10 € per 100 kg and day: 3 × 5 × 10 = 150.00 € (estimate)"),
+    ("time", None): ("500 kg, umbral 48 h, 10 € por 100 kg y periodo de 24 h: NOA lunes 10:00 → retirada miércoles 10:00 "
+                     "(48 h) = 0,00 €; miércoles 10:01 (48 h 01 min) = 3 × 5 × 10 = 150,00 €, desde el NOA",
+                     "500 kg, 48 h threshold, 10 € per 100 kg and 24-hour period: NOA Monday 10:00 → pickup Wednesday 10:00 "
+                     "(48 h) = 0.00 €; Wednesday 10:01 (48 h 01 min) = 3 × 5 × 10 = 150.00 €, from the NOA"),
     ("percent", None): ("5 % de 300,00 € = 15,00 €", "5 % of 300.00 € = 15.00 €"),
     ("manual", None): ("Coste de la oferta del proveedor: 1.000,00 € (con su referencia)", "Cost of the supplier offer: 1,000.00 € (with its reference)"),
     ("none", None): ("Sin coste; venta según el honorario de BOSS", "No cost; sale per BOSS fee"),
@@ -115,9 +117,11 @@ INPUTS = {"container": ("Contenedores (tamaño, tipo, cantidad), naviera, puerto
           "pallet": ("Palés, fecha prevista", "Pallets, planned date"), "hour": ("Horas en la línea", "Hours on the line")}
 METHOD_INPUTS = {
     "time": ("Días de estancia estimados (pestaña Envío, Estimaciones), contenedores o peso tasable de la AWB, proveedor y fecha prevista; "
-             "en la oferta el resultado es una estimación",
+             "en la oferta el resultado es una estimación. Con el inicio y el fin reales del periodo (expediente o «Probar tarifa») se "
+             "calcula el periodo real",
              "Estimated days of stay (Shipment tab, Estimates), containers or AWB chargeable weight, supplier and planned date; "
-             "on the quotation the result is an estimate"),
+             "on the quotation the result is an estimate. With the actual start and end of the period (file or «Test pricing») the "
+             "actual period is computed"),
     "percent": ("La base del porcentaje: valor de la mercancía, impuestos del DUA o coste de otros servicios del mismo proveedor en la oferta",
                 "The percentage base: goods value, declaration duties or cost of other services of the same supplier on the quotation"),
     "max_of_bases": ("Peso bruto y volumen, proveedor y fecha prevista", "Gross weight and volume, supplier and planned date"),
@@ -204,6 +208,12 @@ def service_page(s, uom_name, by_xid):
         missing = {
             "auto": ("Calculado y comprobado con el documento del proveedor; la tarifa debe aprobarla una persona antes de usarse.",
                      "Computed and checked against the supplier document; a person must approve the tariff before use."),
+            "partial": ("Automático solo cuando las lecturas del documento sin decidir dan el mismo importe (estancias libres, "
+                        "hasta 7 periodos, peso en cientos de kg o mínimo); si no, coste manual con todos los importes a la "
+                        "vista hasta que Cristina decida. La tarifa debe aprobarla una persona.",
+                        "Automatic only when the document readings not decided give the same amount (free stays, up to 7 "
+                        "periods, weight in hundreds of kg or the minimum); otherwise a manual cost with every amount shown "
+                        "until Cristina decides. A person must approve the tariff."),
             "doc": ("Falta el **documento de tarifa** del proveedor: cuando llegue, se introduce y se aprueba (no hace falta programar nada).",
                     "The supplier **tariff document** is missing: once received it is entered and approved (no programming needed)."),
             "loaded": ("El documento existe; falta introducir la tarifa y aprobarla.", "The document exists; the tariff is still to be entered and approved."),

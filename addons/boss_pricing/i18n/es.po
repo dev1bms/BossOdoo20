@@ -30,11 +30,34 @@ msgstr "%(cur)s por %(unit)s y día"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "%(cur)s per charged day (minimum) · whole quotation line (maximum)"
+msgstr ""
+"%(cur)s por día cobrado (mínimo) · toda la línea de la oferta (máximo)"
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid ""
-"%(days)s days, %(free)s free, %(charged)s charged x %(qty)s = %(amount)s"
+"%(head)s; %(rule)s deducted → %(charged)s days charged x %(qty)s units = %(amount)s"
 msgstr ""
-"%(days)s días, %(free)s libres, %(charged)s cobrados x %(qty)s = %(amount)s"
+"%(head)s; %(rule)s descontados → %(charged)s días cobrados x %(qty)s unidades = %(amount)s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"%(head)s; %(rule)s exceeded → charged from the start: %(charged)s days x %(qty)s units = %(amount)s"
+msgstr ""
+"%(head)s; %(rule)s superadas → se cobra desde el inicio: %(charged)s días x %(qty)s unidades = %(amount)s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"%(head)s; %(rule)s → nothing charged (inside the free period, no minimum)."
+msgstr ""
+"%(head)s; %(rule)s → no se cobra nada (dentro del periodo libre, sin mínimo)."
 
 #. module: boss_pricing
 #. odoo-python
@@ -50,12 +73,14 @@ msgstr "%(rate)s%% de %(base_kind)s %(base)s = %(amount)s"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "%s days free"
 msgstr "%s días libres"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "%s h free"
 msgstr "%s h libres"
@@ -111,6 +136,18 @@ msgstr "(se aplica el mínimo: %s)"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "(minimum of %s applied to each charged day)"
+msgstr "(mínimo de %s aplicado a cada día cobrado)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "(the readings not decided yet give the same amount for this shipment)"
+msgstr "(las lecturas aún sin decidir dan el mismo importe para este envío)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid ", document %(doc)s page %(page)s"
 msgstr ", documento %(doc)s página %(page)s"
 
@@ -118,6 +155,12 @@ msgstr ", documento %(doc)s página %(page)s"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid ". 0 = no minimum / maximum."
 msgstr ". 0 = sin mínimo / máximo."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "24-hour periods or calendar days, not decided"
+msgstr "periodos de 24 h o días naturales, sin decidir"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
@@ -169,6 +212,12 @@ msgstr "Acción requerida"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__tariff_active
 msgid "Active"
 msgstr "Activo"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Actual period %(start)s → %(end)s (%(hours)s h): %(days)s %(unit)s"
+msgstr "Periodo real %(start)s → %(end)s (%(hours)s h): %(days)s %(unit)s"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_list_ws
@@ -359,6 +408,22 @@ msgstr "Tarifas archivadas"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Arrival on a Friday: the supplier's longer free period for a Monday exit is not assumed in an estimate; it is applied with the actual exit."
+msgstr ""
+"Llegada en viernes: el periodo libre más largo del proveedor si sale el lunes no se supone en una estimación; se aplica con la salida real."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Arrival on a Saturday: free until Monday if collected by then; not assumed in an estimate, applied with the actual exit."
+msgstr ""
+"Llegada en sábado: libre hasta el lunes si se retira antes; no se supone en una estimación, se aplica con la salida real."
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid ""
 "Attach the supplier document of '%s': every price must be traceable to it."
@@ -507,6 +572,11 @@ msgstr "Cálculos"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.product_template_form_view_boss_ws
 msgid "Calculations used"
 msgstr "Cálculos usados"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_unit__calendar
+msgid "Calendar days (entry and exit days counted)"
+msgstr "Días naturales (cuentan el día de entrada y el de salida)"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_port__canary_islands
@@ -737,6 +807,11 @@ msgid "Days after the free period (\"5 days at X, then Y\")"
 msgstr "Días tras el periodo libre (\"5 días a X, después Y\")"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_unit
+msgid "Days counted as"
+msgstr "Días contados como"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__is_demo
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
@@ -868,6 +943,12 @@ msgid "Empty: valid until a newer version starts."
 msgstr "Vacío: válida hasta que empiece una versión más nueva."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "End of the period after its start (exit date and time)"
+msgstr "Fin del periodo posterior a su inicio (fecha y hora de salida)"
+
+#. module: boss_pricing
 #: model_terms:ir.actions.act_window,help:boss_pricing.boss_tariff_action
 msgid "Enter a supplier tariff"
 msgstr "Introduzca una tarifa de proveedor"
@@ -877,6 +958,12 @@ msgstr "Introduzca una tarifa de proveedor"
 msgid "Enters supplier tariffs and sends them for approval. Never approves."
 msgstr ""
 "Introduce tarifas de proveedor y las envía a aprobación. Nunca aprueba."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Estimate: %(days)s days"
+msgstr "Estimación: %(days)s días"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__whole_stay
@@ -983,26 +1070,45 @@ msgid "Free days are deducted"
 msgstr "Los días libres se descuentan"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__friday_monday_free
+msgid "Free if Friday to Monday"
+msgstr "Libre si viernes a lunes"
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Free period"
 msgstr "Periodo libre"
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__friday_monday_free
+msgid ""
+"Free period (in the unit of the franchise: hours, or days) when the period starts on a Friday and ends on the following Monday, e.g. 72 h. It needs the actual exit date: never assumed in an estimate."
+msgstr ""
+"Periodo libre (en la unidad de la franquicia: horas o días) cuando el periodo empieza en viernes y termina el lunes siguiente, p. ej. 72 h. Necesita la fecha real de salida: nunca se supone en una estimación."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__free_days
+msgid "Free period in calendar days."
+msgstr "Periodo libre en días naturales."
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__free_hours
 msgid ""
-"Free period in hours. In a quotation (days only) it counts as whole days."
+"Free period in hours, compared with the exact hours of the actual period. An estimate in days is free only when its whole days fit (48 h: up to 2 days; 36 h: 1 day)."
 msgstr ""
-"Periodo libre en horas. En una oferta (solo días) cuenta como días completos."
+"Periodo libre en horas, comparado con las horas exactas del periodo real. Una estimación en días es libre solo si sus días completos caben (48 h: hasta 2 días; 36 h: 1 día)."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__saturday_until_monday
-msgid "Free until Monday when the period starts on a Saturday."
-msgstr "Libre hasta el lunes cuando el periodo empieza en sábado."
+msgid ""
+"Free until the following Monday included when the period starts on a Saturday, whatever the hours. It needs the actual exit date: never assumed in an estimate."
+msgstr ""
+"Libre hasta el lunes siguiente incluido cuando el periodo empieza en sábado, sean cuantas sean las horas. Necesita la fecha real de salida: nunca se supone en una estimación."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__friday_extra_day
-msgid "Friday Extra Day"
-msgstr "Día extra en viernes"
+msgid "Friday +1 free day"
+msgstr "Viernes +1 día libre"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1041,8 +1147,17 @@ msgstr "Tiene mensaje"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__tier_mode
-msgid "How the 'Up to' of the day tiers is read."
-msgstr "Cómo se lee el 'Hasta' de los tramos de días."
+msgid ""
+"How the 'Up to' of the day tiers is read. 'Not decided' when the document does not say: stays where both readings give the same amount are priced, longer ones show both amounts and need a manual cost until the business decides."
+msgstr ""
+"Cómo se lee el «Hasta» de los tramos de días. «Sin decidir» cuando el documento no lo dice: las estancias en que las dos lecturas dan el mismo importe se calculan; las más largas muestran los dos importes y necesitan un coste manual hasta que el negocio decida."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_unit
+msgid ""
+"How the actual period is counted. «Por 24 horas»: every started period of 24 hours from the start event (a part counts as a whole period). «Por día» / «días naturales»: calendar days from the entry date to the exit date, both included. 'Not decided' while the business has not confirmed the reading."
+msgstr ""
+"Cómo se cuenta el periodo real. «Por 24 horas»: cada periodo de 24 horas empezado desde el evento de inicio (una parte cuenta como periodo entero). «Por día» / «días naturales»: días del calendario desde la fecha de entrada hasta la de salida, ambas incluidas. «Sin decidir» mientras el negocio no confirme la lectura."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_container_type__id
@@ -1071,6 +1186,14 @@ msgstr "Si está marcado, algunos mensajes tienen un error de envío."
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__example_text
 msgid "Illustrative shipment computed with the engine and these values."
 msgstr "Envío ilustrativo calculado con el motor y estos valores."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"Illustrative shipment of 500 kg and 10 days: the readings not decided give between %(low)s and %(high)s, so such a stay is not priced automatically."
+msgstr ""
+"Envío ilustrativo de 500 kg y 10 días: las lecturas sin decidir dan entre %(low)s y %(high)s, así que esa estancia no se calcula automáticamente."
 
 #. module: boss_pricing
 #. odoo-python
@@ -1267,6 +1390,11 @@ msgstr ""
 "Mínimo del total de la línea (todas las unidades de este cargo juntas)."
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__min_per_day
+msgid "Minimum per day"
+msgstr "Mínimo por día"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_container_type__name
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_port__name
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__name
@@ -1346,6 +1474,24 @@ msgid "Not below the previous bracket"
 msgstr "No inferior al tramo anterior"
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_unit__undecided
+msgid "Not decided (24 h or calendar days)"
+msgstr "Sin decidir (24 h o días naturales)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__undecided
+msgid "Not decided (day by day or whole stay)"
+msgstr "Sin decidir (día a día o toda la estancia)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Not priced automatically: the supplier document can be read in ways the business has not decided yet, and they give different amounts for this shipment (from %(low)s to %(high)s). Enter the cost by hand (supplier bill or written quote) until it is decided (questions P29, P40, P41)."
+msgstr ""
+"No se calcula automáticamente: el documento del proveedor admite lecturas que el negocio aún no ha decidido y dan importes distintos para este envío (de %(low)s a %(high)s). Escriba el coste a mano (factura o presupuesto escrito del proveedor) hasta que se decida (preguntas P29, P40, P41)."
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__product_template__boss_ws_readiness__not_priced
 msgid "Not priced from tariffs"
 msgstr "No se calcula con tarifas"
@@ -1409,8 +1555,10 @@ msgstr "Superado, se cobra cada día desde el día 1"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__friday_extra_day
-msgid "One more free day when the period starts on a Friday."
-msgstr "Un día libre más cuando el periodo empieza en viernes."
+msgid ""
+"One more free day (or 24 h) whenever the period starts on a Friday, whatever the exit day."
+msgstr ""
+"Un día libre más (o 24 h) siempre que el periodo empiece en viernes, sea cual sea el día de salida."
 
 #. module: boss_pricing
 #: model_terms:ir.actions.act_window,help:boss_pricing.boss_tariff_action
@@ -1490,6 +1638,11 @@ msgid "Or fraction"
 msgstr "O fracción"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__round_undecided
+msgid "Or fraction not decided"
+msgstr "O fracción sin decidir"
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__country_ids
 msgid ""
 "Origin country of an import or destination country of an export. Empty: any."
@@ -1543,6 +1696,11 @@ msgstr "Porcentaje"
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__method__percent
 msgid "Percentage of a base"
 msgstr "Porcentaje de una base"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_unit__24h
+msgid "Periods of 24 hours from the start"
+msgstr "Periodos de 24 horas desde el inicio"
 
 #. module: boss_pricing
 #. odoo-python
@@ -2152,6 +2310,13 @@ msgid "The maximum is lower than the minimum."
 msgstr "El máximo es menor que el mínimo."
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__min_per_day
+msgid ""
+"The minimum applies to each charged day or period (document: «mínimo … AWB/día», «/expedición/día»), not to the whole stay."
+msgstr ""
+"El mínimo se aplica a cada día o periodo cobrado (documento: «mínimo … AWB/día», «/expedición/día»), no a toda la estancia."
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "The quantity is outside the brackets of the supplier document."
@@ -2239,6 +2404,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__tier_mode
 msgid "Tier Mode"
 msgstr "Lectura de los tramos"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__round_undecided
+msgid ""
+"Time-based prices: the document says «per 100 kg» without «or fraction» and the business has not decided: both readings are computed and the price is automatic only when they agree."
+msgstr ""
+"Precios por tiempo: el documento dice «por 100 kg» sin «o fracción» y el negocio no lo ha decidido: se calculan las dos lecturas y el precio es automático solo si coinciden."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__document_reference
@@ -2492,9 +2664,39 @@ msgstr "cualquier modo"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "arrival on a Friday and exit on Monday: %s"
+msgstr "llegada en viernes y salida el lunes: %s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "arrival on a Friday: %s"
+msgstr "llegada en viernes: %s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "arrival on a Saturday and exit on Monday at the latest: free"
+msgstr "llegada en sábado y salida el lunes como tarde: libre"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "calendar days"
+msgstr "días naturales"
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid "carrier %s"
 msgstr "transportista %s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "day count"
+msgstr "cuenta de días"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
@@ -2532,6 +2734,12 @@ msgstr "mín. %s"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "min. %s per day"
+msgstr "mín. %s por día"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "more"
 msgstr "más"
 
@@ -2549,6 +2757,12 @@ msgstr "no inferior al tramo anterior: %s"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "not decided: %s"
+msgstr "sin decidir: %s"
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "only %s"
@@ -2556,9 +2770,69 @@ msgstr "solo %s"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "or fraction"
+msgstr "o fracción"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "other readings"
+msgstr "otras lecturas"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "per 100 kg or fraction"
+msgstr "por 100 kg o fracción"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "period_unit"
+msgstr ""
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "periods of 24 h"
+msgstr "periodos de 24 h"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "pro rata per 100 kg"
+msgstr "proporcional por 100 kg"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "round_up"
+msgstr ""
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_import.py:0
 msgid "tariff %(index)s (%(key)s)"
 msgstr "la tarifa %(index)s (%(key)s)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "tier_mode"
+msgstr ""
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "tiers"
+msgstr "tramos"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "tiers day by day"
+msgstr "tramos día a día"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
@@ -2576,6 +2850,12 @@ msgstr "hasta %s"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.res_partner_form_view_boss_ws
 msgid "v."
 msgstr "v."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "whole stay at the tier reached"
+msgstr "toda la estancia al tramo alcanzado"
 
 #. module: boss_pricing
 #. odoo-python

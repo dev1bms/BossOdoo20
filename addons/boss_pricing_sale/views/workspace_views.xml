@@ -44,6 +44,8 @@
                     <group>
                         <field name="storage_days"/>
                         <field name="storage_days_known"/>
+                        <field name="storage_start"/>
+                        <field name="storage_end"/>
                         <field name="goods_value"/>
                         <field name="duties_amount"/>
                         <field name="base_amount"/>

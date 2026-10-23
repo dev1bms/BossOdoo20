@@ -4,8 +4,12 @@ and services are parameters read from the supplier document.
 Signature: method(params, inputs) -> (amount before rounding, steps). `steps` explain the result.
 Raise MissingInput when an input is empty and OutOfRange when the document does not price it.
 """
+import itertools
+import math
+from datetime import UTC
+
 from .measures import measure
-from .methods_base import MissingInput, OutOfRange, bounded, dec
+from .methods_base import MissingInput, OutOfRange, Undecided, bounded, dec
 
 
 def per_unit(params, inputs):
@@ -89,51 +93,163 @@ def percent(params, inputs):
     return bounded(amount, params, steps), steps
 
 
-def _free_days(params, inputs):
-    """Free period in days. Free hours become whole days when only days are known (quotation)."""
-    free = int(params.get("free_days") or 0)
-    if params.get("free_hours"):
-        free = -(-int(params["free_hours"]) // 24)  # ceil
-    weekday = inputs.get("start_weekday")  # 0 = Monday
-    if weekday == 4 and params.get("friday_extra_day"):
-        free += 1
-    if weekday == 5 and params.get("saturday_until_monday"):
-        free = max(free, 3)
-    return free
+FRIDAY, SATURDAY, MONDAY = 4, 5, 0
+
+
+def _actual_period(params, inputs):
+    """Actual stay from its start and end events (timezone-aware datetimes of the warehouse), or None.
+
+    Hours are exact (UTC difference, daylight-saving safe); weekdays and calendar days are the warehouse's.
+    period_unit '24h': started periods of 24 hours from the start («por 24 horas»); 'calendar': calendar
+    days, the entry day and the exit day both counted («se contabiliza el día de entrada y el día de salida»).
+    """
+    start, end = inputs.get("storage_start"), inputs.get("storage_end")
+    if not start or not end:
+        return None
+    if end < start:
+        raise MissingInput("storage_end")  # an exit before the start is a typing error: never priced
+    hours = dec((end.astimezone(UTC) - start.astimezone(UTC)).total_seconds()) / 3600
+    gap = (end.date() - start.date()).days  # calendar days between the two dates
+    periods = math.ceil(hours / 24) if params.get("period_unit") == "24h" else gap + 1
+    return {"start": start, "end": end, "hours": hours, "gap": gap, "periods": periods}
+
+
+def _franchise(params, actual, start_weekday):
+    """Free limit as (hours or None, periods or None) and the supplier exception that set it.
+
+    Free hours are compared with the exact hours of an actual stay; an estimate (days only) is free only when
+    its whole days fit in the free hours. Supplier exceptions that depend on the exit day (Friday with a
+    Monday exit, Saturday until Monday included) need the actual dates: an estimate never assumes them.
+    """
+    free_hours, free_days = int(params.get("free_hours") or 0), int(params.get("free_days") or 0)
+    rule = None
+    if params.get("friday_extra_day") and start_weekday == FRIDAY:  # any Friday start, whatever the exit day
+        if free_hours:
+            free_hours += 24
+        else:
+            free_days += 1
+        rule = "friday_extra_day"
+    if actual:
+        start, end = actual["start"], actual["end"]
+        if (params.get("friday_monday_free") and start.weekday() == FRIDAY and end.weekday() == MONDAY
+                and actual["gap"] == 3):
+            limit = int(params["friday_monday_free"])  # same unit as the franchise: hours, or days
+            free_hours, free_days, rule = (limit, 0, "friday_monday") if free_hours else (0, limit, "friday_monday")
+        if params.get("saturday_until_monday") and start.weekday() == SATURDAY and actual["gap"] <= 2:
+            return None, None, "saturday_until_monday"  # free whatever the hours: exit on Monday at the latest
+    return free_hours or None, free_days if not free_hours else None, rule
+
+
+def _charged_positions(params, inputs, days, actual):
+    """Positions (1 = first period) of the charged periods, the free limit and the rule applied."""
+    free_hours, free_days, rule = _franchise(params, actual, inputs.get("start_weekday"))
+    if rule == "saturday_until_monday":
+        return range(0), {"rule": rule}
+    if free_hours is not None:
+        within = actual["hours"] <= free_hours if actual else days * 24 <= free_hours
+        free_periods = free_hours // 24  # deduct: whole free periods (an estimate never rounds a free part up)
+    else:
+        within = days <= (free_days or 0)
+        free_periods = free_days or 0
+    free = {"rule": rule, "free_hours": free_hours, "free_days": free_days}
+    if params.get("free_mode") == "threshold":
+        return (range(0) if within else range(1, days + 1)), free
+    if actual and free_hours is not None:  # deduct exact hours: periods started after the free hours
+        count = math.ceil(max(actual["hours"] - free_hours, 0) / 24)
+        return range(days - count + 1, days + 1), free
+    return range(free_periods + 1, days + 1), free
+
+
+def _day_prices(tiers, mode, days, charged):
+    if mode == "whole_stay":
+        return [dec(_bracket(tiers, dec(days))["unit_price"])] * len(charged)
+    first = charged[0] if charged else 1
+    position = (lambda day: day) if mode == "positional" else (lambda day: day - first + 1)
+    return [dec(_bracket(tiers, dec(position(day)))["unit_price"]) for day in charged]
+
+
+def _time_amount(prices, quantity, params, steps):
+    """Total of the charged periods. The minimum applies to the stay (line total) or, when the document says so
+    («mínimo … AWB/día», «/expedición/día»), to each charged period."""
+    if params.get("min_per_day") and params.get("min_amount"):
+        minimum = dec(params["min_amount"])
+        days = [max(price * quantity, minimum) for price in prices]
+        amount = sum(days, dec(0))
+        if any(price * quantity < minimum for price in prices):
+            steps.append(("minimum_per_day", {"amount": minimum}))
+        return bounded(amount, {"max_amount": params.get("max_amount")}, steps)
+    return bounded(sum(prices, dec(0)) * quantity, params, steps)
+
+
+# Readings of a time-based price that a document may leave open: each one is set on the price, or 'undecided'.
+READINGS = {"period_unit": ("24h", "calendar"), "tier_mode": ("positional", "whole_stay"), "round_up": (False, True)}
 
 
 def time_based(params, inputs):
-    """Storage / demurrage / port occupancy: quantity per day x price of each charged day.
+    """Storage / demurrage / port occupancy: quantity per period x price of each charged period.
 
-    free_mode 'deduct': only the days after the free period are paid; 'threshold': once the free
-    period is exceeded every day from day 1 is paid. Day tiers apply by the day's position since the
-    start ('positional', e.g. «día 5 hasta el 7»), by the position after the free period ('relative',
-    e.g. «5 días a 40, a partir de ahí 95») or, with 'whole_stay', the tier reached by the whole stay.
+    The stay is the actual one (storage_start/storage_end) when both events are known, else the estimate
+    in days (storage_days; 0 is a deliberate estimate, empty is missing). free_mode 'deduct': only the
+    periods after the free period are paid; 'threshold': once the free period is exceeded every period from
+    the first is paid. Day tiers apply by the period's position since the start ('positional', «día 5 hasta
+    el 7»), by the position after the free period ('relative', «5 días a 40, a partir de ahí 95») or with
+    'whole_stay' the tier reached by the whole stay.
+
+    A reading the document leaves open (day count, tiers, «por 100 kg» with or without «o fracción») is
+    'undecided' on the price: every reading is computed; when they give the same amount it is priced, when
+    they differ nothing is priced (Undecided) and the steps show each reading's amount.
     """
-    days = inputs.get("storage_days")
-    if days is None or days == "":  # not indicated; 0 days indicated is a valid estimate
-        raise MissingInput("storage_days")
-    days = int(days)
-    free = _free_days(params, inputs)
-    if params.get("free_mode") == "threshold":
-        charged = range(1, days + 1) if days > free else range(0)
+    open_ = {name: values for name, values in READINGS.items()
+             if (params.get("round_undecided") if name == "round_up" else params.get(name) == "undecided")}
+    if not open_:
+        return _time_once(params, inputs)
+    results = []
+    for combination in itertools.product(*open_.values()):
+        reading = dict(zip(open_, combination))
+        amount, steps = _time_once({**params, **reading}, inputs)
+        results.append((reading, amount, steps))
+    amounts = {amount for _reading, amount, _steps in results}
+    if len(amounts) == 1:
+        reading, amount, steps = results[0]
+        code, values = steps[0]
+        return amount, [(code, dict(values, agreed=sorted(open_)))] + steps[1:] + [("readings_agree", {"open": sorted(open_)})]
+    code, values = results[0][2][0]
+    raise Undecided([(code, dict(values, open=sorted(open_))), ("readings_undecided", {
+        "readings": [dict(reading, amount=amount) for reading, amount, _steps in results],
+        "low": min(amounts), "high": max(amounts)})])
+
+
+def _time_once(params, inputs):
+    """time_based with every reading decided."""
+    actual = _actual_period(params, inputs)
+    if actual:
+        days = actual["periods"]
     else:
-        charged = range(free + 1, days + 1)
+        days = inputs.get("storage_days")
+        if days is None or days == "":  # not indicated; 0 days indicated is a valid estimate
+            raise MissingInput("storage_days")
+        days = int(days)
+    charged, free = _charged_positions(params, inputs, days, actual)
     quantity, raw = measure(params.get("basis") or "containers", inputs, params)
     tiers = params.get("brackets") or []
     mode = params.get("tier_mode") or "positional"
-    if mode == "whole_stay":
-        prices = [dec(_bracket(tiers, dec(days))["unit_price"])] * len(charged)
+    values = {"days": days, "estimate": not actual, "charged_days": len(charged), "quantity": quantity, "raw": raw,
+              "period_unit": params.get("period_unit") or "calendar", "free_mode": params.get("free_mode") or "deduct",
+              **free}
+    if actual:
+        values.update(start=actual["start"].isoformat(timespec="minutes"),
+                      end=actual["end"].isoformat(timespec="minutes"), hours=actual["hours"])
     else:
-        first = charged[0] if charged else 1
-        position = (lambda day: day) if mode == "positional" else (lambda day: day - first + 1)
-        prices = [dec(_bracket(tiers, dec(position(day)))["unit_price"]) for day in charged]
-    amount = sum(prices, dec(0)) * quantity
-    steps = [("time", {"days": days, "free": free, "charged_days": len(charged), "quantity": quantity,
-                       "raw": raw, "day_prices": prices, "amount": amount})]
+        weekday = inputs.get("start_weekday")
+        values["start_weekday"] = weekday
+        # exceptions that depend on the exit day: named so that the estimate says it did not assume them
+        values["not_assumed"] = [name for name, day in (("friday_monday", FRIDAY), ("saturday_until_monday", SATURDAY))
+                                 if weekday == day and params.get("friday_monday_free" if day == FRIDAY else name)]
+    prices = _day_prices(tiers, mode, days, charged)
+    steps = [("time", dict(values, day_prices=prices, amount=sum(prices, dec(0)) * quantity))]
     if not charged:
-        return amount, steps  # inside the free period: a justified zero, minimum not applied
-    return bounded(amount, params, steps), steps
+        return dec(0), steps  # inside the free period: a justified zero, minimum not applied
+    return _time_amount(prices, quantity, params, steps), steps
 
 
 METHODS = {

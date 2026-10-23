@@ -15,8 +15,9 @@ TARIFF_REQUIRED = ("key", "name", "supplier", "valid_from", "lines")
 LINE_REQUIRED = ("service", "uom")
 LINE_KEYS = ("container_size", "method", "basis", "volumetric_factor", "unit_size", "round_up", "unit_price",
              "basis_2", "unit_price_2", "b2_unit_size", "b2_round_up", "floor_previous", "per_container",
-             "percent_base", "rate", "free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day",
-             "saturday_until_monday", "min_amount", "max_amount", "on_request", "note")
+             "percent_base", "rate", "free_days", "free_hours", "free_mode", "period_unit", "tier_mode",
+             "friday_extra_day", "friday_monday_free", "saturday_until_monday", "min_amount", "min_per_day",
+             "max_amount", "round_undecided", "on_request", "note")
 
 
 class BossTariff(models.Model):

@@ -1,5 +1,5 @@
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare
 
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
@@ -92,11 +92,26 @@ class BossExpedienteCost(models.Model):
     cost_method = fields.Selection(related="product_id.boss_cost_method")
     days = fields.Integer(
         "Days", help="Time-based services (storage, demurrage, port occupancy): days of the period. At acceptance, the "
-        "days quoted; type the actual days and recompute the expected cost.")
+        "days quoted; while the period is not over, type the expected days. With the period start and end, the "
+        "recalculation counts them from the actual times.")
+    period_start = fields.Datetime(
+        "Period start", copy=False,
+        help="Actual start of a time-based service. Airport storage: import NOA (arrival notice), export FOH (freight "
+        "on hand at the warehouse). Demurrage / port occupancy: the carrier's start event.")
+    period_end = fields.Datetime(
+        "Period end", copy=False,
+        help="Actual end. Airport storage: import pickup of the goods, export ETD (Cristina 25/09). With the start, "
+        "'Recompute expected cost' prices the actual period: exact hours, weekdays and the supplier's exceptions.")
     expected_date = fields.Datetime("Expected cost set on", readonly=True, copy=False)
     revision_ids = fields.One2many("boss.expediente.cost.revision", "cost_id", "Recalculations", readonly=True)
     variance_reviewed = fields.Boolean("Variance reviewed", copy=False)
     variance_note = fields.Char("Variance note")
+
+    @api.constrains("period_start", "period_end")
+    def _check_period(self):
+        for need in self:
+            if need.period_start and need.period_end and need.period_end < need.period_start:
+                raise ValidationError(self.env._("%s: the period ends before it starts.", need.display_name))
 
     @api.depends("product_id")
     def _compute_without_order(self):
@@ -161,25 +176,44 @@ class BossExpedienteCost(models.Model):
             ("move_id.move_type", "in", ("in_invoice", "in_refund", "in_receipt")),
             ("distribution_analytic_account_ids", "in", account.ids)])
 
+    def _boss_posted_billing(self):
+        """(billed quantity, net quantity, net amount) of the POSTED vendor bills of this service, through its purchase
+        lines or billed without order. Drafts never count (Odoo's qty_invoiced counts them). A credit note lowers the
+        amount and the net quantity, not the billed quantity: a price-only credit note leaves the service billed; a
+        credit note of everything (net amount 0) leaves it to bill again."""
+        self.ensure_one()
+        items = self._boss_active_lines().invoice_lines.filtered(
+            lambda l: l.parent_state == "posted" and l.display_type == "product") | self._boss_direct_bill_items()
+        billed = net = amount = 0.0
+        for item in items:
+            line = item.purchase_line_id
+            quantity = item.product_uom_id._compute_quantity(item.quantity, line.uom_id) if line else item.quantity
+            if item.move_id.move_type == "in_refund":
+                net -= quantity
+            else:
+                billed += quantity
+                net += quantity
+            amount += item.balance
+        return billed, net, amount
+
     def _boss_remaining_qty(self):
         self.ensure_one()
         return self.quantity - sum(self._boss_active_lines().mapped("product_qty"))
 
     @api.depends("closed", "partner_id", "quantity", "without_order", "purchase_line_ids.state",
-                 "purchase_line_ids.product_qty",
-                 "purchase_line_ids.qty_received", "purchase_line_ids.qty_invoiced")
+                 "purchase_line_ids.product_qty", "purchase_line_ids.qty_received", "purchase_line_ids.qty_invoiced",
+                 "purchase_line_ids.invoice_lines.parent_state", "purchase_line_ids.invoice_lines.balance")
     def _compute_state(self):
         digits = self.env["decimal.precision"].precision_get("Product Unit")
         for need in self:
             lines = need._boss_active_lines()
             confirmed = lines.filtered(lambda l: l.state == "purchase")
             ordered = sum(confirmed.mapped("product_qty"))
-            billed = sum(lines.mapped("qty_invoiced"))
-            direct = need._boss_direct_bill_items()
-            billed += sum(-l.quantity if l.move_id.move_type == "in_refund" else l.quantity for l in direct)
+            billed, _net, amount = need._boss_posted_billing()
             if need.closed:
                 state = "closed"
-            elif billed > 0 and float_compare(billed, need.quantity, precision_digits=digits) >= 0:
+            elif (billed > 0 and float_compare(billed, need.quantity, precision_digits=digits) >= 0
+                  and not need.company_id.currency_id.is_zero(amount)):
                 state = "billed"
             elif confirmed and float_compare(sum(confirmed.mapped("qty_received")), ordered,
                                              precision_digits=digits) >= 0:
@@ -201,7 +235,7 @@ class BossExpedienteCost(models.Model):
             confirmed = need._boss_active_lines().filtered(lambda l: l.state == "purchase")
             need.qty_ordered = sum(confirmed.mapped("product_qty"))
             need.qty_received = sum(confirmed.mapped("qty_received"))
-            need.qty_billed = sum(need._boss_active_lines().mapped("qty_invoiced"))
+            need.qty_billed = need._boss_posted_billing()[1]
 
     @api.model
     def _boss_billed_by_purchase_line(self, purchase_lines):
@@ -338,7 +372,8 @@ class BossExpedienteCost(models.Model):
         inputs = dict(file._boss_inputs(), line_qty=quantity, container_size=size or None,
                       container_type_id=ctype.id or None, supplier_id=self.partner_id.id or None)
         if self.product_id.boss_cost_method == "time":
-            inputs["storage_days"] = self.days
+            inputs["storage_days"] = self.days  # estimate while the period has not ended
+            inputs.update(self.env["boss.pricing"]._warehouse_period(self.period_start, self.period_end, file.port_id))
         if related_costs is not None:
             inputs["related_costs"] = related_costs
         res = self.env["boss.pricing"].price_cost(self.product_id, self.uom_id, inputs, file._boss_pricing_date(),
@@ -356,13 +391,16 @@ class BossExpedienteCost(models.Model):
             else:
                 values = {"quantity": quantity, "expected_unit_cost": res.amount / quantity if quantity else 0.0,
                           "currency_id": currency.id, "tariff_line_id": res.line.id}
-        elif status == "manual" or not self.tariff_line_id:
+        elif status == "manual" or (not self.tariff_line_id and not (status == "not_ready" and res.line)):
             status, values = "manual", {"quantity": quantity}  # typed cost per unit kept, quantity from the file
         currency = self.env["res.currency"].browse(values.get("currency_id")) or self.currency_id
         changed = bool(values) and bool(
             float_compare(values["quantity"], before["quantity"], precision_digits=6)
             or currency != before["currency"]
             or currency.compare_amounts(values.get("expected_unit_cost", before["unit"]), before["unit"]))
+        actual = dict(res.steps or []).get("time", {})
+        if status == "ok" and actual and not actual.get("estimate", True) and actual["days"] != self.days:
+            super(BossExpedienteCost, self).write({"days": actual["days"]})  # counted from the actual period
         if not changed and status in ("ok", "manual"):
             return self.env["boss.expediente.cost.revision"]
         if changed:
@@ -370,6 +408,9 @@ class BossExpedienteCost(models.Model):
             self._boss_update_draft_rfqs()
         explanation = self.env["boss.pricing"].explain(
             self.product_id, self.uom_id, res.status, res.amount, res.line, res.candidates, res.missing, res.steps)
+        last = self.revision_ids.sorted(lambda r: (r.date, r.id))[-1:]
+        if not changed and last and (last.status, last.explanation) == (status, explanation):
+            return self.env["boss.expediente.cost.revision"]  # the same result again: history is not repeated
         return self.env["boss.expediente.cost.revision"].create({
             "cost_id": self.id, "reason": reason, "status": status, "applied": changed,
             "old_quantity": before["quantity"], "new_quantity": self.quantity,

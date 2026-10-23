@@ -154,6 +154,12 @@ msgid "%s: not invoiced to the customer yet"
 msgstr "%s: aún no facturado al cliente"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "%s: the period ends before it starts."
+msgstr "%s: el periodo termina antes de empezar."
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
 msgid "<span class=\"o_stat_text\">File</span>"
 msgstr "<span class=\"o_stat_text\">Expediente</span>"
@@ -267,6 +273,20 @@ msgstr "Coste real"
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_cost_forecast
 msgid "Actual cost + cost still expected."
 msgstr "Coste real + coste aún previsto."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__period_end
+msgid ""
+"Actual end. Airport storage: import pickup of the goods, export ETD (Cristina 25/09). With the start, 'Recompute expected cost' prices the actual period: exact hours, weekdays and the supplier's exceptions."
+msgstr ""
+"Fin real. Almacenaje aéreo: importación, retirada de la mercancía; exportación, ETD (Cristina 25/09). Con el inicio, «Recalcular coste previsto» calcula el periodo real: horas exactas, días de la semana y excepciones del proveedor."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__period_start
+msgid ""
+"Actual start of a time-based service. Airport storage: import NOA (arrival notice), export FOH (freight on hand at the warehouse). Demurrage / port occupancy: the carrier's start event."
+msgstr ""
+"Inicio real de un servicio por tiempo. Almacenaje aéreo: importación, NOA (aviso de llegada); exportación, FOH (mercancía recibida en el almacén). Demora / ocupación: el evento de inicio de la naviera."
 
 #. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_boss_add_services
@@ -1895,6 +1915,16 @@ msgid "Performed"
 msgstr "Prestado"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__period_end
+msgid "Period end"
+msgstr "Fin del periodo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__period_start
+msgid "Period start"
+msgstr "Inicio del periodo"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_pickup
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_pickup
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_pickup
@@ -2517,9 +2547,9 @@ msgstr "La cantidad de un expediente debe ser positiva."
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__days
 msgid ""
-"Time-based services (storage, demurrage, port occupancy): days of the period. At acceptance, the days quoted; type the actual days and recompute the expected cost."
+"Time-based services (storage, demurrage, port occupancy): days of the period. At acceptance, the days quoted; while the period is not over, type the expected days. With the period start and end, the recalculation counts them from the actual times."
 msgstr ""
-"Servicios por tiempo (almacenaje, demoras, ocupación): días del periodo. Al aceptar, los días cotizados; escriba los días reales y recalcule el coste previsto."
+"Servicios por tiempo (almacenaje, demora, ocupación): días del periodo. Al aceptar, los días de la oferta; mientras el periodo no termine, escriba los días previstos. Con el inicio y el fin del periodo, el recálculo los cuenta con las horas reales."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__completeness

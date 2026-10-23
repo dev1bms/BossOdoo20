@@ -55,6 +55,9 @@ class BossTariffLine(models.Model):
     volumetric_factor = fields.Float(help="kg per m³ stated by the supplier document (e.g. 167 air).")
     unit_size = fields.Float(default=1.0, help="Size of one priced unit, e.g. 100 for 'per 100 kg'.")
     round_up = fields.Boolean("Or fraction", help="Round up to whole units ('per 100 kg or fraction').")
+    round_undecided = fields.Boolean(
+        "Or fraction not decided", help="Time-based prices: the document says «per 100 kg» without «or fraction» and "
+        "the business has not decided: both readings are computed and the price is automatic only when they agree.")
     unit_price = fields.Float(min_display_digits="Product Price")
     basis_2 = fields.Selection(BASES, "Second basis")
     unit_price_2 = fields.Float("Second unit price", min_display_digits="Product Price")
@@ -68,20 +71,44 @@ class BossTariffLine(models.Model):
     rate = fields.Float("Rate (%)", digits=(12, 4))
     base_product_ids = fields.Many2many("product.product", string="Base services",
                                         help="Services of the same supplier the percentage applies to.")
-    free_days = fields.Integer()
-    free_hours = fields.Integer(help="Free period in hours. In a quotation (days only) it counts as whole days.")
+    free_days = fields.Integer(help="Free period in calendar days.")
+    free_hours = fields.Integer(
+        help="Free period in hours, compared with the exact hours of the actual period. An estimate in days is "
+        "free only when its whole days fit (48 h: up to 2 days; 36 h: 1 day).")
     free_mode = fields.Selection([("deduct", "Free days are deducted"),
                                   ("threshold", "Once exceeded, every day is charged from day 1")],
                                  default="deduct")
+    period_unit = fields.Selection(
+        [("24h", "Periods of 24 hours from the start"),
+         ("calendar", "Calendar days (entry and exit days counted)"),
+         ("undecided", "Not decided (24 h or calendar days)")],
+        "Days counted as", default="calendar", required=True,
+        help="How the actual period is counted. «Por 24 horas»: every started period of 24 hours from the start "
+        "event (a part counts as a whole period). «Por día» / «días naturales»: calendar days from the entry date "
+        "to the exit date, both included. 'Not decided' while the business has not confirmed the reading.")
     tier_mode = fields.Selection([("positional", "Day number since the start (\"day 5 to 7\")"),
                                   ("relative", "Days after the free period (\"5 days at X, then Y\")"),
-                                  ("whole_stay", "Every day at the tier reached by the whole stay")],
+                                  ("whole_stay", "Every day at the tier reached by the whole stay"),
+                                  ("undecided", "Not decided (day by day or whole stay)")],
                                  default="positional",
-                                 help="How the 'Up to' of the day tiers is read.")
-    friday_extra_day = fields.Boolean(help="One more free day when the period starts on a Friday.")
-    saturday_until_monday = fields.Boolean(help="Free until Monday when the period starts on a Saturday.")
+                                 help="How the 'Up to' of the day tiers is read. 'Not decided' when the document "
+                                 "does not say: stays where both readings give the same amount are priced, longer "
+                                 "ones show both amounts and need a manual cost until the business decides.")
+    friday_extra_day = fields.Boolean(
+        "Friday +1 free day", help="One more free day (or 24 h) whenever the period starts on a Friday, whatever "
+        "the exit day.")
+    friday_monday_free = fields.Integer(
+        "Free if Friday to Monday",
+        help="Free period (in the unit of the franchise: hours, or days) when the period starts on a Friday and "
+        "ends on the following Monday, e.g. 72 h. It needs the actual exit date: never assumed in an estimate.")
+    saturday_until_monday = fields.Boolean(
+        help="Free until the following Monday included when the period starts on a Saturday, whatever the hours. "
+        "It needs the actual exit date: never assumed in an estimate.")
     min_amount = fields.Float("Minimum", min_display_digits="Product Price",
                               help="Minimum of the line total (all units of this charge together).")
+    min_per_day = fields.Boolean(
+        "Minimum per day", help="The minimum applies to each charged day or period (document: «mínimo … AWB/día», "
+        "«/expedición/día»), not to the whole stay.")
     max_amount = fields.Float("Maximum", min_display_digits="Product Price",
                               help="Maximum of the line total. Empty: no maximum.")
     on_request = fields.Boolean(
@@ -147,8 +174,9 @@ class BossTariffLine(models.Model):
         params = {name: self[name] for name in (
             "basis", "volumetric_factor", "unit_size", "round_up", "unit_price", "basis_2", "unit_price_2",
             "b2_unit_size", "b2_round_up", "floor_previous", "per_container", "percent_base", "rate",
-            "free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day", "saturday_until_monday",
-            "min_amount", "max_amount")}
+            "free_days", "free_hours", "free_mode", "period_unit", "tier_mode", "friday_extra_day",
+            "friday_monday_free", "saturday_until_monday", "min_amount", "min_per_day", "max_amount",
+            "round_undecided")}
         params["brackets"] = [{"up_to": b.up_to, "fixed_amount": b.fixed_amount, "unit_price": b.unit_price}
                               for b in self.bracket_ids]
         params["base_product_ids"] = self.base_product_ids.ids
@@ -207,7 +235,8 @@ METHOD_FIELDS = {
     "max_of_bases": ("basis_2", "unit_price_2", "b2_unit_size", "b2_round_up"),
     "brackets": ("floor_previous", "per_container"),
     "percent": ("percent_base", "rate", "base_product_ids"),
-    "time": ("free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day", "saturday_until_monday"),
+    "time": ("free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day", "friday_monday_free",
+             "saturday_until_monday", "min_per_day", "round_undecided"),
 }
 EXAMPLE_INPUTS = {"gross_kg": 500.0, "volume_m3": 2.0, "awb_kg": 500.0, "pallets": 4.0, "km": 100.0,
                   "goods_value": 10000.0, "duties_amount": 2000.0, "storage_days": 10, "start_weekday": 2}
@@ -252,7 +281,7 @@ class BossTariffLineWorkspace(models.Model):
 
     @api.depends("method", "basis", "unit_size", "basis_2", "b2_unit_size", "uom_id", "currency_id",
                  "percent_base", "unit_price", "unit_price_2", "rate", "bracket_ids.unit_price",
-                 "bracket_ids.fixed_amount", "on_request", "free_of_charge")
+                 "bracket_ids.fixed_amount", "on_request", "free_of_charge", "min_per_day")
     @api.depends_context("lang")
     def _compute_ws_amount_labels(self):
         """What each amount of the form is charged on, in words (from the line's own basis and unit)."""
@@ -263,8 +292,11 @@ class BossTariffLineWorkspace(models.Model):
             line.ws_price_unit_label = _("%(cur)s per %(unit)s", cur=cur, unit=unit)
             line.ws_price2_unit_label = _("%(cur)s per %(unit)s", cur=cur,
                                           unit=line._ws_unit(line.basis_2, line.b2_unit_size) if line.basis_2 else "")
-            line.ws_bounds_label = _("%(cur)s on the cost of the whole quotation line (%(uom)s)", cur=cur,
-                                     uom=line.uom_id.name or "-")
+            if line.method == "time" and line.min_per_day:
+                line.ws_bounds_label = _("%(cur)s per charged day (minimum) · whole quotation line (maximum)", cur=cur)
+            else:
+                line.ws_bounds_label = _("%(cur)s on the cost of the whole quotation line (%(uom)s)", cur=cur,
+                                         uom=line.uom_id.name or "-")
             if line.method == "time":
                 line.ws_brackets_label = _("'Up to' = day number (0 = no limit) · price in %(cur)s per %(unit)s and day",
                                            cur=cur, unit=unit)
@@ -293,7 +325,9 @@ class BossTariffLineWorkspace(models.Model):
 
     @api.depends("method", "basis", "unit_size", "unit_price", "basis_2", "unit_price_2", "b2_unit_size",
                  "bracket_ids.up_to", "bracket_ids.unit_price", "bracket_ids.fixed_amount", "rate", "percent_base",
-                 "free_days", "free_hours", "min_amount", "max_amount", "on_request", "uom_id", "tariff_id.state",
+                 "free_days", "free_hours", "tier_mode", "period_unit", "round_undecided", "min_amount",
+                 "min_per_day", "max_amount", "on_request",
+                 "uom_id", "tariff_id.state",
                  "tariff_id.valid_from", "tariff_id.valid_to", "tariff_id.direction", "tariff_id.transport_mode",
                  "tariff_id.load_type", "tariff_id.port_ids", "tariff_id.state_ids", "tariff_id.customer_id",
                  "container_size", "container_type_ids", "tariff_id.currency_id")
@@ -338,8 +372,15 @@ class BossTariffLineWorkspace(models.Model):
                     free = (_("%s h free", line.free_hours) if line.free_hours
                             else _("%s days free", line.free_days))
                     price += f" · {free}"
+                    undecided = [label for label, flag in ((_("day count"), line.period_unit == "undecided"),
+                                                           (_("tiers"), line.tier_mode == "undecided"),
+                                                           (_("or fraction"), line.round_undecided)) if flag]
+                    if undecided:
+                        price += " · " + _("not decided: %s", ", ".join(undecided))
             if line.min_amount:
-                price += " · " + _("min. %s", f"{num(line.min_amount)} {cur}")
+                price += " · " + (_("min. %s per day", f"{num(line.min_amount)} {cur}")
+                                  if line.method == "time" and line.min_per_day
+                                  else _("min. %s", f"{num(line.min_amount)} {cur}"))
             if line.max_amount:
                 price += " · " + _("max. %s", f"{num(line.max_amount)} {cur}")
             line.price_display = price
@@ -390,8 +431,9 @@ class BossTariffLineWorkspace(models.Model):
     @api.depends("method", "basis", "unit_size", "round_up", "unit_price", "basis_2", "unit_price_2",
                  "b2_unit_size", "b2_round_up", "bracket_ids", "bracket_ids.up_to", "bracket_ids.unit_price",
                  "bracket_ids.fixed_amount", "floor_previous", "per_container", "percent_base", "rate",
-                 "base_product_ids", "free_days", "free_hours", "free_mode", "tier_mode", "friday_extra_day",
-                 "saturday_until_monday", "min_amount", "max_amount", "volumetric_factor", "uom_id",
+                 "base_product_ids", "free_days", "free_hours", "free_mode", "period_unit", "tier_mode",
+                 "friday_extra_day", "friday_monday_free", "saturday_until_monday", "min_amount", "min_per_day",
+                 "round_undecided", "max_amount", "volumetric_factor", "uom_id",
                  "container_size", "container_type_ids", "on_request")
     @api.depends_context("lang")
     def _compute_example_text(self):
@@ -411,6 +453,14 @@ class BossTariffLineWorkspace(models.Model):
                 continue
             except engine.OutOfRange:
                 line.example_text = _("The example quantity is above the last bracket: no price (ask the supplier).")
+                continue
+            except engine.Undecided as exc:
+                readings = dict(exc.steps).get("readings_undecided", {})
+                line.example_text = _(
+                    "Illustrative shipment of 500 kg and 10 days: the readings not decided give between %(low)s and "
+                    "%(high)s, so such a stay is not priced automatically.",
+                    low=pricing._num(float(readings.get("low", 0)), line.currency_id),
+                    high=pricing._num(float(readings.get("high", 0)), line.currency_id))
                 continue
             except Exception:  # noqa: BLE001 (values still being typed)
                 line.example_text = _("Complete the values to see an example.")

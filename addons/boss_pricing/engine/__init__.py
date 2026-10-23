@@ -5,7 +5,7 @@
 from decimal import ROUND_HALF_UP, Decimal
 
 from .methods import METHODS
-from .methods_base import MissingInput, OutOfRange, dec
+from .methods_base import MissingInput, OutOfRange, Undecided, dec
 from .model import Match, Result, Rule, Status
 from .selection import select
 
@@ -37,6 +37,9 @@ def price(rules, inputs, day, decimals=2):
         return result
     except OutOfRange:
         result.status, result.steps = Status.NO_TARIFF, [("out_of_range", {})]
+        return result
+    except Undecided as exc:
+        result.status, result.steps = Status.NOT_READY, exc.steps
         return result
     if inputs.get("line_qty") not in (None, False, "") and dec(inputs["line_qty"]) <= 0:
         result.status, result.missing = Status.MISSING_INPUT, ["quantity"]

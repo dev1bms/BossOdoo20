@@ -144,9 +144,22 @@ msgid "Accepted without cost because"
 msgstr "Aceptado sin coste porque"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__storage_end
+msgid "Actual end (pickup / exit of the goods, return of the container)."
+msgstr ""
+"Fin real (retirada / salida de la mercancía, devolución del contenedor)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_days_source__actual
 msgid "Actual period (ended)"
 msgstr "Periodo real (terminado)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__storage_start
+msgid ""
+"Actual start of a time-based service (storage: arrival notice NOA or freight on hand FOH; demurrage: the carrier's event). With the end, it replaces the days: exact hours and weekdays."
+msgstr ""
+"Inicio real de un servicio por tiempo (almacenaje: aviso de llegada NOA o mercancía recibida FOH; demora: el evento de la naviera). Con el fin, sustituye a los días: horas exactas y días de la semana."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_add_services_view_form
@@ -1327,6 +1340,16 @@ msgstr "Palés"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_vat_status__pending
 msgid "Pending"
 msgstr "Pendiente"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__storage_end
+msgid "Period end"
+msgstr "Fin del periodo"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__storage_start
+msgid "Period start"
+msgstr "Inicio del periodo"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__date

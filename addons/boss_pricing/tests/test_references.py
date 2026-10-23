@@ -8,8 +8,9 @@ import base64
 import json
 import logging
 import os
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from odoo.tests import TransactionCase, new_test_user, tagged
 
@@ -40,6 +41,9 @@ class TestSupplierReferences(TransactionCase):
     def _inputs(self, raw):
         inputs = {k: raw[k] for k in ("direction", "transport_mode", "load_type", "line_qty", "gross_kg",
                                       "volume_m3", "awb_kg", "storage_days", "container_size", "start_weekday") if k in raw}
+        for key in ("storage_start", "storage_end"):  # warehouse local times (Madrid) of an actual period
+            if key in raw:
+                inputs[key] = datetime.fromisoformat(raw[key]).replace(tzinfo=ZoneInfo("Europe/Madrid"))
         if "carrier" in raw:
             inputs["carrier_id"] = self._id("res.partner", [("name", "=", f"{raw['carrier']} [MUESTRA]")])
         if "country" in raw:

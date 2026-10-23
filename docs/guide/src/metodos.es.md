@@ -40,24 +40,42 @@ en la misma moneda (combustible o seguro sobre el transporte).
 
 ## 5. Por día con periodo libre
 
-Cantidad por día (contenedores, 100 kg…) × precio de cada día cobrado.
+Cantidad por periodo (contenedores, 100 kg…) × precio de cada periodo cobrado. Se calcula con el **periodo real** (inicio
+y fin con fecha y hora) cuando se conoce, y si no con una **estimación en días**.
 
-- **Días libres descontados**: solo se pagan los días después del periodo libre.
-- **Umbral**: superado el periodo libre, se paga **desde el día 1** (habitual en almacenes de aeropuerto). Las horas
-  libres cuentan como días completos en la oferta (48 h = 2 días).
+- **Cómo se cuentan los días** (dato de cada precio): **periodos de 24 h** desde el inicio («por 24 horas»: una parte de
+  periodo cuenta como periodo entero) o **días naturales** con el día de entrada y el de salida («por día», «se
+  contabiliza el día de entrada y el de salida»). Ejemplo: lunes 10:00 → sábado 10:00 = 120 h = 5 periodos de 24 h,
+  pero 6 días naturales.
+- **Días libres descontados**: solo se pagan los periodos después del periodo libre.
+- **Umbral**: superado el periodo libre, se paga **desde el inicio** (habitual en almacenes de aeropuerto). Las horas
+  libres se comparan con las **horas exactas**: 48 h 00 min es libre; 48 h 01 min se cobra entera.
 - **Tramos**: por número de día desde el inicio («del día 5 al 7»), por días después del periodo libre («5 días a X,
   después Y») o todos los días al tramo que alcanza la estancia completa.
+- **Mínimo**: sobre la estancia (total de la línea) o, si el documento dice «/día», sobre cada día cobrado. Una
+  estancia dentro del periodo libre cuesta 0, nunca el mínimo.
+- **Excepciones por día de la semana**, si el documento las da: inicio en **viernes y salida el lunes** → otro periodo
+  libre (WFS: 72 h); inicio en **sábado** → libre hasta el **lunes incluido** (por fecha, no 72 h: sábado 09:00 →
+  martes 08:00 son 71 h y se cobran). Dependen del día de salida: solo se aplican con el periodo real; la estimación de
+  la oferta no las supone y lo dice. «Viernes +1 día libre» (cualquier salida) existe para documentos que lo digan así.
+- **Lecturas sin decidir**: si un documento puede leerse de dos maneras y el negocio no ha decidido (periodos de 24 h o
+  días naturales, tramo en los días siguientes o en toda la estancia, «por 100 kg» con o sin fracción), el precio lo
+  marca «sin decidir». El sistema calcula todas las lecturas: si dan el mismo importe, hay coste automático; si no, la
+  línea queda **«No se calcula automáticamente»** con todos los importes, y se escribe el coste a mano (factura o
+  presupuesto del proveedor).
 
-Ejemplo: 7 días libres, «5 días a 30 €, después 80 €», 15 días, 1 contenedor: días 8-12 = 5 × 30 = 150; días 13-15 =
-3 × 80 = 240 → **390 €**. Con umbral de 48 h, 500 kg por 100 kg a 10 €/día: 2 días → **0 €**; 3 días → 3 × 5 × 10 =
-**150 €**.
+Ejemplo (importes ilustrativos): 7 días libres, «5 días a 30 €, después 80 €», 15 días, 1 contenedor: días 8-12 =
+5 × 30 = 150; días 13-15 = 3 × 80 = 240 → **390 €**. Umbral de 48 h, 500 kg por 100 kg a 10 € por periodo: NOA lunes
+10:00 → retirada miércoles 10:00 → **0 €**; miércoles 10:01 → 3 × 5 × 10 = **150 €**. Tramos sin decidir (10 € hasta 7
+días, 20 € después), 10 días: día a día 7 × 5 × 10 + 3 × 5 × 20 = 650 €; toda la estancia 10 × 5 × 20 = 1.000 € →
+coste manual hasta decidir.
 
-- **Día de la semana de llegada** (fecha prevista), si el documento lo dice: llegada en **sábado** → libre hasta el
-  lunes incluido (en WFS, 3 periodos); llegada en **viernes** → un día libre más. WFS solo da las 72 h del viernes si la
-  mercancía sale el lunes, y la oferta no conoce el día de salida: en las tarifas de WFS esa opción no se marca y el
-  coste estimado puede ser algo mayor que el real.
-- **Horas libres** (48 h, 36 h…) cuentan como días completos en la oferta: 48 h = 2 periodos de 24 h.
 - Los días de la oferta se indican una vez en la pestaña Envío y valen para todos los servicios por tiempo (DEM, OCU,
-  ALM). Sin **días indicados** la línea dice «Faltan datos del envío»; 0 días indicados es una estimación válida.
+  ALM); una línea puede tener su propia estimación. Sin **días indicados** la línea dice «Faltan datos del envío»;
+  0 días indicados es una estimación válida.
+- En «Probar precios» se pueden escribir el **inicio y el fin del periodo** (hora de Madrid; Canarias, hora de
+  Canarias) para ver el coste real con las excepciones.
 
-> En la oferta el resultado es una **estimación** con los días supuestos; el coste real se conoce al terminar el periodo.
+> En la oferta el resultado es una **estimación**; con el inicio y el fin reales el sistema recalcula el coste del
+> periodo, y la factura del proveedor es la que cuenta en contabilidad. Guía completa del almacenaje aéreo:
+> [ALM paso a paso](#/almacenaje).

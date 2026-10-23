@@ -165,7 +165,11 @@
                                     <field name="name" optional="hide"/>
                                     <field name="partner_id" options="{'no_create': True}"/>
                                     <field name="cost_method" column_invisible="1"/>
-                                    <field name="days" optional="show" invisible="cost_method != 'time'" width="55px"/>
+                                    <field name="days" optional="hide" invisible="cost_method != 'time'" width="55px"/>
+                                    <field name="period_start" optional="show" invisible="cost_method != 'time'"
+                                           width="98px"/>
+                                    <field name="period_end" optional="show" invisible="cost_method != 'time'"
+                                           width="98px"/>
                                     <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
                                     <field name="uom_id" string="Unit" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
@@ -174,7 +178,7 @@
                                     <field name="expected_amount" optional="show"/>
                                     <field name="accepted_amount_company" optional="hide"/>
                                     <field name="accepted_cost_kind" optional="hide"/>
-                                    <field name="extra_class" invisible="kind != 'extra'"/>
+                                    <field name="extra_class" optional="hide" invisible="kind != 'extra'"/>
                                     <field name="reason" optional="hide"/>
                                     <field name="state" widget="badge"
                                            decoration-success="state in ('performed', 'billed')"
