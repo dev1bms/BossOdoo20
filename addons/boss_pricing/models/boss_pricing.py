@@ -213,7 +213,7 @@ class BossPricing(models.AbstractModel):
                 "friday_monday": _("arrival on a Friday and exit on Monday: %s", free),
                 "friday_extra_day": _("arrival on a Friday: %s", free)}.get(v.get("rule"))
         if v.get("open"):  # the amount depends on the readings listed next
-            return head
+            return head + "."
         if v.get("rule") == "saturday_until_monday" or not v["charged_days"]:
             text = _("%(head)s; %(rule)s → nothing charged (inside the free period, no minimum).", head=head,
                      rule=rule or free)

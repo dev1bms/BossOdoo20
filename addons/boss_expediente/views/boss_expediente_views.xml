@@ -167,9 +167,9 @@
                                     <field name="cost_method" column_invisible="1"/>
                                     <field name="days" optional="show" invisible="cost_method != 'time'" width="55px"/>
                                     <field name="period_start" optional="show" invisible="cost_method != 'time'"
-                                           width="125px"/>
+                                           width="98px"/>
                                     <field name="period_end" optional="show" invisible="cost_method != 'time'"
-                                           width="125px"/>
+                                           width="98px"/>
                                     <field name="quantity" readonly="purchase_line_ids"/>
                                     <field name="uom_id" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
