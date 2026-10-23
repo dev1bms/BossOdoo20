@@ -43,12 +43,12 @@ class BossExpedienteSplit(models.TransientModel):
         digits = self.env["decimal.precision"].precision_get("Product Unit")
         Allocation = self.env["boss.expediente.allocation"]
         for move in moves:
-            allocation = move.allocation_id
+            allocation, quantity = move.allocation_id, move.quantity  # the move line goes when its part is emptied
             line = allocation.sale_line_id
-            if float_compare(move.quantity, allocation.quantity, precision_digits=digits) > 0:
+            if float_compare(quantity, allocation.quantity, precision_digits=digits) > 0:
                 raise UserError(self.env._("%(service)s: only %(qty)s in %(file)s.", service=line.product_id.display_name,
                                            qty=allocation.quantity, file=source.name))
-            share = move.quantity / allocation.quantity
+            share = quantity / allocation.quantity
             need = source.cost_ids.filtered(lambda n, line=line: n.sale_line_id == line and n.kind == "sale")
             if need:
                 keep = need.quantity * (1 - share)
@@ -59,26 +59,28 @@ class BossExpedienteSplit(models.TransientModel):
                         "order before moving part of it.", service=need.display_name, ordered=ordered,
                         file=source.name))
             target_part = target.allocation_ids.filtered(lambda a, line=line: a.sale_line_id == line)
-            remaining = allocation.quantity - move.quantity
+            remaining = allocation.quantity - quantity
             if float_compare(remaining, 0.0, precision_digits=digits) > 0:
                 allocation.quantity = remaining
             else:
                 allocation.unlink()
             if target_part:
-                target_part.quantity += move.quantity
+                target_part.quantity += quantity
             else:
-                Allocation.create({"expediente_id": target.id, "sale_line_id": line.id, "quantity": move.quantity})
+                Allocation.create({"expediente_id": target.id, "sale_line_id": line.id, "quantity": quantity})
             if need:
                 moved = need.quantity * share
                 accepted = need.accepted_amount_company * share
-                need.write({"quantity": need.quantity - moved,
-                            "accepted_amount_company": need.accepted_amount_company - accepted})
+                left = need.quantity - moved
+                need.write({"quantity": left, "accepted_amount_company": need.accepted_amount_company - accepted,
+                            "closed": float_compare(left, 0.0, precision_digits=digits) <= 0})
                 twin = target.cost_ids.filtered(lambda n, line=line: n.sale_line_id == line and n.kind == "sale")
                 if twin:
                     twin.write({"quantity": twin.quantity + moved,
                                 "accepted_amount_company": twin.accepted_amount_company + accepted})
                 else:
                     need.copy({"expediente_id": target.id, "quantity": moved, "accepted_amount_company": accepted,
+                               "closed": False,
                                "accepted_unit_cost": need.accepted_unit_cost,
                                "accepted_cost_kind": need.accepted_cost_kind, "tariff_line_id": need.tariff_line_id.id,
                                "expected_date": need.expected_date})
