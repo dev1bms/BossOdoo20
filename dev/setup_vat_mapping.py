@@ -22,6 +22,10 @@ ROWS = [
      "Ángel: cliente UE → EX · Odoo 17 acción 1232: cliente UE → «0% EU S» · PGC: no sujeta por localización, 303 [59], 349"),
     ("EX", "TER", "any", "account_tax_template_s_iva_e",
      "Ángel: cliente de tercer país → EX · Odoo 17 acción 1232: «0% EX S», 303 [120] · PGC: no sujeta por localización"),
+    ("EX", "PRO", "any", "account_tax_template_s_iva0_art22",
+     "Belal 23/10/2026 (propuesta aprobada, P17): cliente español → exento art. 22 LIVA, 303 [60]"),
+    ("EX", "CAN", "any", "account_tax_template_s_iva_ns",
+     "Belal 23/10/2026 (propuesta aprobada, P17): Canarias, Ceuta y Melilla → no sujeta por localización, 303 [120]"),
     ("NS", "any", "paid_on_behalf", "account_tax_template_s_iva0_ns",
      "Ángel: NS = no sujeto por naturaleza · Odoo 17: suplidos (conceptos TAX: ARA, IVA, PLA, DUM) en factura de "
      "impuestos con «0% EXEMPT NS», sin casilla 303"),

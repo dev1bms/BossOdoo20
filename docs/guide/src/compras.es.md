@@ -37,19 +37,19 @@ en el pedido de compra.
 
 Cuando el proveedor ha hecho el servicio, pulse el icono ✓ (**Marcar como prestado**) en la línea: la cantidad
 recibida pasa a ser la pedida. Si la política de control de facturas del producto es «cantidades recibidas», solo se
-factura lo prestado (decisión pendiente de Ángel, P32).
+factura lo prestado: los servicios BOSS tienen el control «cantidades recibidas» (aprobado el 23/10/2026, P32).
 
 ## Factura de proveedor
 
 Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica. Antes de contabilizarla, cada línea de servicio BOSS
 necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
 
-**Orden de trabajo**: Cristina pide facturar al cliente antes de contabilizar o pagar la factura del proveedor
-(requisito escrito, pendiente de confirmar: P30). Por ahora la factura de proveedor muestra un aviso amarillo
-(«Antes de contabilizar o pagar») si el servicio no está en una factura de cliente **contabilizada**, y el expediente lo
-lista. En **Ajustes › Ventas › Factura de proveedor antes de la de cliente** la compañía puede pasar a «Bloquear»
-(contabilizar y pagar). Sin aviso: coste cubierto por el precio o que asume BOSS; **Pagado por adelantado** (flete
-pagado a un agente: basta la línea de venta).
+**Orden de trabajo** (aprobado el 23/10/2026, P30): la factura de proveedor se **contabiliza a tiempo**; su **pago**
+espera a que el servicio esté en una factura de cliente **contabilizada**. Mientras tanto la factura de proveedor muestra
+un aviso amarillo («Antes de contabilizar o pagar») y el expediente lo lista; registrar el pago se bloquea. Ajuste:
+**Ajustes › Ventas › Factura de proveedor antes de la de cliente** = «Bloquear el pago (contabilizar permitido)». Sin
+aviso: coste cubierto por el precio o que asume BOSS; **Pagado por adelantado** (flete pagado a un agente: basta la
+línea de venta).
 
 Un coste sin pedido (gasto, tique) se registra con [[Coste sin pedido de compra]]: la factura de proveedor queda
 en la cuenta analítica del expediente.

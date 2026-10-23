@@ -7,6 +7,8 @@ from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import new_test_user, tagged
 
+from odoo.addons.boss_pricing_sale.models import vat_rules
+
 from .test_cycle import CycleCommon
 
 
@@ -224,7 +226,11 @@ class TestFileFollowUp(CycleCommon):
                 "invoice_line_ids": [Command.create({"product_id": ara.id, "quantity": 1, "price_unit": 350.0,
                                                      "tax_ids": [Command.set(self.purchase_tax.ids)]})]})
         self.assertIn("not invoiced to the customer yet", bill.boss_bill_warning)
-        bill.with_user(self.accountant).action_post()  # warn only (pending decision)
+        # approved 23/10 (P30): the bill is posted on time, its payment waits for the customer invoice
+        self.assertEqual(self.env.company.boss_bill_before_invoice, "block_payment")
+        bill.with_user(self.accountant).action_post()
+        with self.assertRaises(UserError):
+            bill.with_user(self.accountant).action_register_payment()
         file.invalidate_recordset()
         duty.invalidate_recordset()
         self.assertEqual((duty.state, duty.billed_amount_company), ("billed", 350.0))
@@ -238,6 +244,9 @@ class TestFileFollowUp(CycleCommon):
         self.assertEqual(file.amount_cost_actual, 370.0)
         self.assertEqual(file.amount_cost_pending, 240.0)  # THC still to order; duties not counted twice
 
+        # Ceuta and Melilla belong to the CAN zone (approved 23/10, P17)
+        self.assertEqual((vat_rules.zone("ES", "CE"), vat_rules.zone("ES", "ME"), vat_rules.zone("ES", "V")),
+                         ("CAN", "CAN", "PRO"))
         # Customer in Spain without identification: not posted. A customer abroad without VAT: posted.
         spanish = self.env["res.partner"].create({"name": "CLIENTE SIN NIF (FICTICIO)",
                                                   "country_id": self.env.ref("base.es").id})

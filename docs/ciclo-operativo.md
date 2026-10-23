@@ -59,6 +59,21 @@ contabilidad, analítica y actividades; BOSS añade tarifas, datos del envío, e
 - Control de facturas de proveedor de servicios BOSS «según cantidades recibidas» (servicio prestado), reversible en
   el producto; pendiente de confirmar por Ángel (P32).
 
+## Plan de las decisiones aprobadas el 23/10/2026
+
+Decisiones y estado por pregunta: `docs/preguntas-abiertas.md` («Aprobadas el 23/10/2026», publicada en la guía,
+«Decisiones pendientes»). Fases:
+
+| Fase | Qué | Dónde (estructura del proyecto) | Estado |
+|---|---|---|---|
+| A | IVA P17 (Art.22; Canarias, Ceuta y Melilla «0% S NS», zona CAN), tipo de cambio P03, pago de facturas de proveedor P30, control por cantidades prestadas P32, suplidos en 419000 P18, lecturas WFS P40/P41/P29/P42 | `boss_pricing_sale` (`vat_rules`), `boss_expediente` (ajuste de compañía, control de compra), configuración en boss20 (`dev/setup_vat_mapping.py`, `dev/setup_decisions_2310.py`) | Hecho |
+| B1 | Venta única de ALM por tiempo (P43) con los valores del 25/09 | `boss_pricing`: una tarifa de **venta** con el mismo motor por tiempo (franquicia, tramos por número de día, mínimo) y una regla de lista de precios que la usa; ADR-006 | Primero leer los valores del 25/09 en Odoo 19 (solo lectura) y confirmarlos |
+| B2 | QBR (P03): factura en EUR de una oferta en USD con el tipo de la naviera y la línea de quebranto | `boss_expediente` (asistente «Facturar servicios»: moneda de la factura) y servicio QBR | Falta el porcentaje de QBR aprobado (Odoo 19 usaba 1 %, sin confirmar) |
+| B3 | ETX (compra por AWB máster, venta por expediente) y DET (código propio) (P10, P09) | `boss_services` (servicios, unidades) | Con el documento del proveedor |
+| B4 | Almacenaje especial y almacén fuera del aeropuerto (P44) | `boss_pricing` (condición de tipo de carga) y `boss_services` (código nuevo) | Tras las tarifas y la aprobación del código |
+| B5 | Acuerdo de precio para varios envíos (P34) | `boss_expediente` sobre el reparto entre expedientes | Tras los datos de Cristina |
+| C | Aprobación de tarifas (P19), IRENEO 2026 (P28), precios por cliente y margen mínimo (P01/P02), lista Lejano Oriente (P24), servicios por definir (P16), CAU/SEG (P13), cuentas por categoría (P37) | Pantallas existentes (tarifas, listas de precios, servicios, ajustes contables) | Pendiente de Cristina / Ángel |
+
 ## Decisiones y requisitos citados
 
 ### Factura de proveedor y facturación al cliente (P30)

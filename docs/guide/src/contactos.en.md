@@ -26,4 +26,4 @@ A **preliminary** contact can be created with its name only and quoted. If it is
 **Missing for invoices** in yellow: tax ID, address (street, city, country) and email.
 
 The invoice of a customer in **Spain (or without country)** is not posted without NIF or another identification of
-the Spanish localization (Odoo 17 practice; P31). A missing address is shown, not blocking.
+the Spanish localization (Odoo 17 practice, confirmed 23/10/2026; P31). A missing address is shown, not blocking.

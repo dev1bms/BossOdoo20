@@ -168,6 +168,7 @@ class TestShipmentCycle(CycleCommon):
         self.assertEqual(po_line.price_unit, 240.0)
         po_line.product_qty = 1
         self.assertEqual(thc_need.state, "rfq")
+        self.assertEqual(self.thc.purchase_method, "receive")  # billed once performed (approved 23/10, P32)
         (carrier_po | broker_po).with_user(self.manager).button_confirm()
         thc_need.with_user(self.sales).action_mark_performed()
         self.assertEqual(thc_need.state, "performed")

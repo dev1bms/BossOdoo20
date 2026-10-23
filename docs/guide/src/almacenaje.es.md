@@ -128,8 +128,10 @@ Capturas de la base de pruebas local con datos [DEMO] (importes ficticios; la mo
   fechas reales, el mínimo, el historial de recálculos, el aviso de pedido a revisar y la comparación con la factura.
 - Necesita una persona: aprobar la tarifa (P19), escribir el coste cuando las lecturas sin decidir difieren, la venta de
   ALM (P43), la carga especial (P44) y decidir qué se hace con una diferencia.
-- Necesita una decisión de Cristina: P29 (tramos), P40 (24 h o días naturales), P41 (fracción de 100 kg), P42 (unidad
-  del mínimo), P43 (venta única), P44 (almacenajes especiales y almacén fuera del aeropuerto).
+- Decidido el 23/10/2026 y aplicado en los precios WFS [MUESTRA]: P40 periodos de 24 h, P41 por 100 kg o fracción,
+  P29 tramos por número de día, P42 mínimo por estancia. El precio [DEMO] «lecturas sin decidir» se mantiene para
+  enseñar ese estado.
+- Pendiente: P43 (venta única, valores del 25/09; fase B) y P44 (almacenajes especiales y almacén fuera del aeropuerto).
 
 ## 7. Pruébelo usted mismo ([DEMO] en el servidor)
 

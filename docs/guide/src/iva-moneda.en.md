@@ -26,16 +26,20 @@ Two steps:
 «Odoo 17» is its invoicing assistant (action «Create Invoice»), which picks the tax by class, customer type and
 invoice type. A row exists only where Ángel's rules, Odoo 17 and the legal nature of the tax agree.
 
-### Cases still pending (Ángel's decision, P17)
+### Decided on 23/10/2026 (P17)
+
+| Case | Tax | Source |
+|---|---|---|
+| EX of a **Spanish** customer (mainland and Balearics) | 0% Exent Art.22 | Exempt, art. 22 LIVA, 303 [60] (proposal approved by Belal) |
+| EX of a customer in the **Canaries, Ceuta or Melilla** (zone CAN) | 0% S NS | Not subject by place of supply, 303 [120] |
+
+### Case still pending
 
 | Case | Why | Example |
 |---|---|---|
-| EX for a **Spanish or Canary** customer | Ángel calls it exempt; Odoo 17 uses «0% S», which the localization defines as **subject at 0 %** (box 150), neither exempt nor not subject. The exempt tax with its article, or Odoo 17's practice, is still to be chosen | THC of an import from China for a customer in Valencia |
-| NS that is **not paid on behalf** (CAU, QBR) | Odoo 17 invoices them on a normal invoice with the customer-based zero rate, not as not subject | Customs guarantee fee |
-| Customer in **Ceuta or Melilla** | No zone in the rules | — |
+| NS that is **not paid on behalf** (CAU, QBR) for a Spanish customer | Odoo 17 invoices them on a normal invoice at 0 % by customer, not as not subject | Customs guarantee fee |
 
-In those cases the line says «VAT pending» with the reason, and the quotation cannot be sent or confirmed. Quotations
-whose cases are decided (for example, an EU customer) go all the way to acceptance.
+In that case the line says «VAT pending» with the reason, and the quotation cannot be sent or confirmed.
 
 ## Supplier cost in another currency
 
@@ -43,4 +47,5 @@ whose cases are decided (for example, an EU customer) go all the way to acceptan
   the quotation cost.
 - **Odoo rate of the quotation date**: converted with Odoo's rate; the rate used is kept in the acceptance snapshot.
 
-> The exchange policy and the bank-loss rule (QBR) are pending (P03).
+> Policy approved 23/10/2026 (P03): Odoo exchange rate of the quotation date, active on the server. The bank-loss
+> charge (QBR) applies only when a USD quotation is invoiced in EUR: in development (phase B).

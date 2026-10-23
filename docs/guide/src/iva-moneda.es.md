@@ -26,16 +26,20 @@ Dos pasos:
 «Odoo 17» es su asistente de facturación (acción «Create Invoice»), que elige el impuesto por clase, tipo de cliente
 y tipo de factura. Solo hay fila cuando las reglas de Ángel, Odoo 17 y la naturaleza legal del impuesto coinciden.
 
-### Casos que siguen pendientes (decisión de Ángel, P17)
+### Decididos el 23/10/2026 (P17)
+
+| Caso | Impuesto | Fuente |
+|---|---|---|
+| EX de un cliente **español** (península y Baleares) | 0% Exent Art.22 | Exento art. 22 LIVA, 303 [60] (propuesta aprobada por Belal) |
+| EX de un cliente de **Canarias, Ceuta o Melilla** (zona CAN) | 0% S NS | No sujeta por reglas de localización, 303 [120] |
+
+### Caso que sigue pendiente
 
 | Caso | Por qué | Ejemplo |
 |---|---|---|
-| EX de un cliente **español o canario** | Ángel lo llama exento; Odoo 17 usa «0% S», que la localización define como **sujeta al 0 %** (casilla 150), ni exenta ni no sujeta. Falta elegir el impuesto exento con su artículo o mantener la práctica de Odoo 17 | THC de una importación de China para un cliente de Valencia |
-| NS que **no es suplido** (CAU, QBR) | Odoo 17 los factura en factura normal con el 0 % según el cliente, no como no sujetos | Caución del aval aduanero |
-| Cliente de **Ceuta o Melilla** | Sin zona en las reglas | — |
+| NS que **no es suplido** (CAU, QBR) de un cliente español | Odoo 17 los factura en factura normal con el 0 % según el cliente, no como no sujetos | Caución del aval aduanero |
 
-En esos casos la línea dice «IVA pendiente» con el motivo, y la oferta no se puede enviar ni confirmar. Las ofertas
-cuyos casos están decididos (por ejemplo, un cliente de la UE) llegan hasta la aceptación.
+En ese caso la línea dice «IVA pendiente» con el motivo, y la oferta no se puede enviar ni confirmar.
 
 ## Coste de proveedor en otra moneda
 
@@ -44,4 +48,5 @@ cuyos casos están decididos (por ejemplo, un cliente de la UE) llegan hasta la 
 - **Tipo de cambio de Odoo de la fecha de la oferta**: se convierte con el tipo de Odoo; el tipo usado se guarda en la
   foto al aceptar.
 
-> La política de cambio y la regla de quebranto bancario (QBR) están pendientes (P03).
+> Política aprobada el 23/10/2026 (P03): tipo de cambio de Odoo de la fecha de la oferta, activo en el servidor. El
+> quebranto bancario (QBR) se cobra solo cuando una oferta en USD se factura en EUR: en desarrollo (fase B).

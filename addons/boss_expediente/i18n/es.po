@@ -195,9 +195,9 @@ msgstr "Una línea de venta tiene una parte por expediente."
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid ""
-"A supplier bill of a file service before that service is invoiced to the customer. Requirement written by Cristina, pending confirmation: warn by default."
+"A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time)."
 msgstr ""
-"Factura de proveedor de un servicio del expediente antes de facturarlo al cliente. Requisito escrito por Cristina, pendiente de confirmar: por defecto solo avisa."
+"Factura de proveedor de un servicio del expediente antes de facturarlo al cliente (requisito de Cristina, aprobado el 23/10: el pago espera; la factura se contabiliza a tiempo)."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__ata
@@ -450,6 +450,11 @@ msgstr "Facturado sin pedido de compra"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Bills"
 msgstr "Facturas proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_bill_before_invoice__block_payment
+msgid "Block payment (posting allowed)"
+msgstr "Bloquear el pago (contabilizar permitido)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_bill_before_invoice__block
@@ -911,6 +916,7 @@ msgstr "Sentido"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_product_template__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_purchase_order_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_res_company__display_name
@@ -1303,6 +1309,7 @@ msgstr "Cómo se calcula el coste"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__id
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__id
+#: model:ir.model.fields,field_description:boss_expediente.field_product_template__id
 #: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__id
 #: model:ir.model.fields,field_description:boss_expediente.field_purchase_order_line__id
 #: model:ir.model.fields,field_description:boss_expediente.field_res_company__id
@@ -1993,6 +2000,7 @@ msgid "Priced"
 msgstr "Cotizado"
 
 #. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_product_template
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__product_id
@@ -2715,8 +2723,8 @@ msgstr "Almacén"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_bill_before_invoice__warn
-msgid "Warn only (pending decision)"
-msgstr "Solo avisar (decisión pendiente)"
+msgid "Warn only"
+msgstr "Solo avisar"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form

@@ -5,12 +5,14 @@
    COM->COM, TER->PRO, TER->COM; any other pair -> EX.
 3. NR, layer 2 (customer zone): PRO keeps NR; CAN, COM, TER -> EX.
 4. A missing zone is pending, never guessed.
-Zones: PRO = mainland Spain + Balearics, CAN = Canary Islands, COM = rest of the EU, TER = third countries.
+Zones: PRO = mainland Spain + Balearics, CAN = Canary Islands, Ceuta and Melilla (approved by Belal 23/10/2026, P17),
+COM = rest of the EU, TER = third countries.
 """
 
 NR_PAIRS = {("PRO", "PRO"), ("CAN", "PRO"), ("COM", "PRO"), ("COM", "COM"), ("TER", "PRO"), ("TER", "COM")}
-CANARY_STATE_CODES = {"GC", "TF"}
-SPAIN_OUTSIDE_ZONES = {"CE", "ME"}  # Ceuta, Melilla (Odoo codes): zone not settled (P17) -> pending
+# Canary Islands, Ceuta and Melilla (Odoo state codes): outside the Spanish VAT territory, zone CAN (P17, 23/10/2026)
+CANARY_STATE_CODES = {"GC", "TF", "CE", "ME"}
+SPAIN_OUTSIDE_ZONES = set()
 
 
 def zone(country_code, state_code=None, eu_codes=frozenset(), canary=False):

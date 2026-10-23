@@ -19,7 +19,7 @@ Una factura de cliente no se contabiliza si:
 - una línea tiene el **IVA pendiente** (tabla de IVA BOSS; regla de Ángel: una zona que falta nunca se adivina) o no
   tiene impuesto;
 - el cliente es de **España (o no tiene país)** y no tiene **NIF** ni otra identificación de la localización española
-  (pasaporte, NIE, certificado de residencia): práctica de Odoo 17, pendiente de confirmar por Ángel (P31). Un cliente
+  (pasaporte, NIE, certificado de residencia): práctica de Odoo 17, confirmada el 23/10/2026 (P31). Un cliente
   extranjero sin NIF no se bloquea aquí (un cliente UE empresa sin NIF-IVA ya deja el IVA pendiente). La dirección que
   falta se muestra en el contacto, sin bloquear.
 

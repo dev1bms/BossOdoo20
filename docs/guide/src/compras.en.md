@@ -37,18 +37,18 @@ Order** on the purchase order.
 
 When the supplier has done the service, click the ✓ icon (**Mark as performed**) on the line: the received quantity
 becomes the ordered one. If the product's bill control is "received quantities", only performed services are billed
-(decision pending, Ángel P32).
+(BOSS services use «received quantities», approved 23/10/2026, P32).
 
 ## Vendor bill
 
 It is created from the purchase order (**Create Bill**), with its analytic account. Before posting it, each BOSS service line needs the
 **tax shown on the supplier invoice** (0 % included).
 
-**Order of work**: Cristina asks to invoice the customer before posting or paying the supplier bill (written
-requirement, pending confirmation: P30). For now the vendor bill shows a yellow notice ("Before posting or paying") when
-the service is not on a **posted** customer invoice, and the file lists it. In **Settings › Sales › Supplier bill before
-the customer invoice** the company can switch to "Block" (posting and payment). No notice: cost covered by the price or
-borne by BOSS; **Paid in advance** (freight paid to an agent: the sale line is enough).
+**Order of work** (approved 23/10/2026, P30): the supplier bill is **posted on time**; its **payment** waits until the
+service is on a **posted** customer invoice. Meanwhile the vendor bill shows a yellow notice ("Before posting or paying")
+and the file lists it; registering the payment is blocked. Setting: **Settings › Sales › Supplier bill before the
+customer invoice** = "Block payment (posting allowed)". No notice: cost covered by the price or borne by BOSS; **Paid in
+advance** (freight paid to an agent: the sale line is enough).
 
 A cost without purchase order (expense, receipt) is entered with [[Cost without purchase order]]: the vendor bill goes
 to the file's analytic account.

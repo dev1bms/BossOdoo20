@@ -20,7 +20,7 @@
         <field name="arch" type="xml">
             <setting id="boss_vat_mapping" position="after">
                 <setting id="boss_bill_before_invoice" string="Supplier bill before the customer invoice"
-                         help="A supplier bill of a file service before that service is invoiced to the customer. Requirement written by Cristina, pending confirmation: warn by default.">
+                         help="A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time).">
                     <field name="boss_bill_before_invoice"/>
                 </setting>
             </setting>

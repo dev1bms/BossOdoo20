@@ -1,4 +1,4 @@
-# Decisiones de negocio · Business decisions (revisión 22/10/2026)
+# Decisiones de negocio · Business decisions (revisión 23/10/2026)
 
 Preguntas que cambian un cálculo o un comportamiento. Revisadas contra Odoo 19 (`docs/agents/DECISIONS.md`,
 `BOSS_DECISION_LOG.md`, `iva_rules.md`, actas), la carpeta NEW ODOO y Odoo 17 producción (solo lectura).
@@ -6,6 +6,39 @@ Mientras una pregunta sigue abierta el sistema hace lo que dice la última colum
 Importes de los ejemplos ilustrativos; las cifras reales de proveedor están en `.research/` (fuera de Git).
 Questions that change a calculation or behaviour, reviewed against the previous projects; open ones are ordered
 by impact. Amounts are illustrative.
+
+## Aprobadas el 23/10/2026 · Approved on 23/10/2026
+
+Belal aprobó el 23/10/2026 las propuestas de respuesta a las preguntas abiertas. Plan de implantación en tres fases,
+sobre la estructura del proyecto (servicios, tarifas, oferta, expediente; Odoo estándar primero):
+**A** configuración o código pequeño (hecho), **B** desarrollo, **C** datos que solo pueden dar las personas (el sistema
+ya los admite). Ninguna tarifa real se aprueba en nombre de Cristina.
+
+| Id | Decisión aprobada | Fase | Estado en el sistema |
+|---|---|---|---|
+| P17 | IVA de un cliente español en servicios EX: «0% Exent Art.22» (exento art. 22, 303 [60]). Canarias, Ceuta y Melilla: «0% S NS» (no sujeta por localización, 303 [120]); Ceuta y Melilla en la zona CAN | A | Hecho: tabla de IVA BOSS y reglas de zona. Sigue abierto: NS que no son suplidos (CAU, QBR) de cliente español |
+| P03 | Coste en otra moneda: tipo de Odoo del día de la oferta, congelado al aceptar. QBR solo cuando una oferta en USD se factura en EUR | A + B | Tipo de cambio hecho (ajuste de la compañía). QBR: fase B (Odoo factura en la moneda del pedido; hay que diseñar la factura en EUR de un pedido en USD) |
+| P30 | La factura de proveedor se contabiliza a tiempo; su **pago** espera a la factura de cliente (excepciones: coste que asume BOSS o cubierto, flete pagado por adelantado) | A | Hecho: ajuste «Bloquear el pago (contabilizar permitido)», por defecto |
+| P32 | Factura de proveedor de servicios por cantidades **prestadas** | A | Hecho: servicios BOSS con control «cantidades recibidas»; botón «Marcar como prestado» en el expediente |
+| P18 · P37 | Suplidos (ARA, IVA, PLA, DUM) en la cuenta 419000, como en Odoo 17; el resto de cuentas por categoría las fija Ángel | A + C | 419000 hecho. Resto: Ángel |
+| P40 | WFS «por 24 horas»: periodos de 24 h desde la llegada | A | Hecho en los precios WFS [MUESTRA] (siguen pendientes de aprobación, P19) |
+| P41 | WFS «por 100 kg»: por 100 kg **o fracción** | A | Hecho, ídem |
+| P29 | Tramos WFS: el precio alto solo en los días siguientes (por número de día) | A | Hecho, ídem |
+| P42 | Mínimo de WFS por estancia de la AWB | A | Hecho, ídem |
+| P31 · P33 · P35 · P36 · P38 · P39 · P11 · P05 · P06 · P07 · P12 · P14 | Se confirma lo que ya hace el sistema: NIF del cliente de España para contabilizar (dirección solo aviso); pedido de compra para servicios de proveedor y suplidos sin pedido; visibilidad estándar por rol; numeración E26xxxx; margen «tras costes externos»; sin «Gastos» de Odoo; PAD bajo T3 e IVA de THC todo EX; oferta con coste pendiente con aviso; recotizar solo el gestor con motivo; DEM/OCU/VGM/GLO vendibles y PFT nunca; peso tasable de la AWB o de la tarifa | A | Sin cambios: ya implantado |
+| P43 | Venta única de ALM con los valores del 25/09 (por 100 kg o fracción y día superadas 48 h; mínimo; desde el 8.º día otro precio desde el día 1) | B | Falta: los importes del 25/09 (Odoo 19, condiciones de almacenaje de clientes) y la regla de venta por tiempo |
+| P10 · P09 | ETX: compra por AWB máster y venta por expediente. DET: código propio cuando el proveedor lo factura aparte | B | Configurar los dos servicios (unidades y forma de cotizar) con el documento del proveedor |
+| P44 | Almacenaje especial con condición de tipo de carga; código nuevo para el almacén fuera del aeropuerto | B + C | Falta: tarifas especiales y aprobación del código (Cristina + Ángel) |
+| P19 | Cristina revisa cada tarifa con su PDF y los ejemplos y la aprueba | C | Pendiente de Cristina |
+| P28 | Pedir a IRENEO la tarifa 2026 o una confirmación escrita | C | Pendiente de Cristina |
+| P01 · P02 | Precios pactados por cliente en su lista de precios; margen mínimo con el valor que fije Ángel | C | Mecanismo listo; faltan los valores |
+| P24 | Lista de países «Lejano Oriente» (FuelEU) y tráficos «short sea» | C | Pendiente de Cristina |
+| P16 | Definir los servicios de uso real (unidad, proveedor, documento) y retirar el resto | C | Pendiente de Cristina |
+| P34 | Precio cerrado para varios envíos: clientes, duración y cantidades máximas de cada acuerdo | C + B | Pendiente de Cristina; después, el acuerdo en el sistema |
+| P13 | Caución (CAU) y seguro (SEG): cada valor como tarifa con su documento | C | Pendiente de Cristina + Ángel |
+
+Siguen abiertas (no estaban entre las propuestas): P17 en la parte NS de cliente español (CAU, QBR) y P20–P23 · P26.
+Las tablas siguientes conservan el contexto de cada pregunta.
 
 ## Cerradas con respuesta documentada · Closed
 
@@ -18,7 +51,7 @@ by impact. Amounts are illustrative.
 | P27 | Compañía de Odoo 20: datos, moneda, país, plan contable | Los de Odoo 17 producción: Boss Continental S.L., EUR, España, PGC PYMEs 2008 | `res.company` de Odoo 17 (lectura 22/10) | Configurada en `boss20` (`dev/setup_company.py`) |
 | P17 (parte) | Impuesto de Odoo de NR, EX de clientes UE y de terceros países, y NS de suplidos | NR → «21% S»; EX cliente UE → «0% UE S»; EX cliente de tercer país → «0% EX S»; NS suplidos → «0% Exent NS» | Reglas de Ángel 31/08 (B01/B02) + acción 1232 «Create Invoice» de Odoo 17 + naturaleza legal en la localización (ADR-004) | Tabla de IVA BOSS en `boss20` (`dev/setup_vat_mapping.py`) |
 
-## Abiertas por impacto · Open, by impact
+## Contexto de las preguntas · Context of the questions
 
 | # | Id | Pregunta | Qué bloquea hoy | Servicios | Propuesta práctica | Quién | Mientras tanto |
 |---|---|---|---|---|---|---|---|

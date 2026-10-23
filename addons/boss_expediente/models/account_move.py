@@ -8,11 +8,12 @@ class ResCompany(models.Model):
     _inherit = "res.company"
 
     # Cristina's requirement («Nuevo Odoo», Facturación A3, Facturación y costes A11): a supplier bill is not posted
-    # or paid before its service is invoiced to the customer. Written requirement without confirmation: until Ángel
-    # and Cristina confirm it, the system warns (order of work) and does not block.
+    # or paid before its service is invoiced to the customer. Approved 23/10/2026 (Belal, P30): the bill is posted on
+    # time (it must be recorded when received) and its PAYMENT waits for the customer invoice.
     boss_bill_before_invoice = fields.Selection(
-        [("warn", "Warn only (pending decision)"), ("block", "Block posting and payment")],
-        "Supplier bill before the customer invoice", default="warn", required=True)
+        [("warn", "Warn only"), ("block_payment", "Block payment (posting allowed)"),
+         ("block", "Block posting and payment")],
+        "Supplier bill before the customer invoice", default="block_payment", required=True)
 
 
 class ResConfigSettings(models.TransientModel):
@@ -103,7 +104,7 @@ class AccountMove(models.Model):
 
     def action_register_payment(self):
         for move in self.filtered(lambda m: m.move_type == "in_invoice"
-                                  and m.company_id.boss_bill_before_invoice == "block"):
+                                  and m.company_id.boss_bill_before_invoice in ("block", "block_payment")):
             problems = move._boss_bill_order_problems()
             if problems:
                 raise UserError(self.env._("%(move)s cannot be paid yet:\n%(problems)s", move=move.display_name,
