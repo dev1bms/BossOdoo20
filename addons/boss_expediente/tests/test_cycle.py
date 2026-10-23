@@ -230,6 +230,8 @@ class TestShipmentCycle(TransactionCase):
         self.assertEqual(extra.purchase_line_ids.order_id.state, "draft")
         file.invalidate_recordset()
         self.assertAlmostEqual(file.amount_sale, 620.0)
+        # margin at acceptance: accepted sale 470 - accepted cost (240 + 40); the re-invoiced 150 came later
+        self.assertAlmostEqual(file.amount_margin_accepted, 190.0)
         self.assertIn("RFQ", file.completeness)
 
     def test_contact_switches_and_invoice_data(self):

@@ -320,7 +320,9 @@ class BossExpediente(models.Model):
                 "amount_cost_accepted": sum(needs.filtered(lambda n: n.kind == "sale").mapped("accepted_amount_company")),
                 "amount_committed": committed, "amount_cost_actual": actual, "amount_cost_pending": pending,
                 "amount_cost_forecast": actual + pending,
+                # services re-invoiced after acceptance were not part of it (their cost is an extra cost)
                 "amount_margin_accepted": amount_sale - sum(
+                    amount for line, amount in line_amount.items() if line in needs.rebill_line_id) - sum(
                     needs.filtered(lambda n: n.kind == "sale").mapped("accepted_amount_company")),
                 "amount_margin_forecast": amount_sale - actual - pending,
                 "amount_invoiced": invoiced, "amount_to_invoice": amount_sale - invoiced,
