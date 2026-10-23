@@ -1469,17 +1469,13 @@ msgstr "No inferior al tramo anterior"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_unit__undecided
-msgid ""
-"Not decided: 24-hour periods or calendar days (no automatic price when they differ)"
-msgstr ""
-"Sin decidir: periodos de 24 horas o días naturales (sin precio automático si difieren)"
+msgid "Not decided (24 h or calendar days)"
+msgstr "Sin decidir (24 h o días naturales)"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__undecided
-msgid ""
-"Not decided: day by day or whole stay (no automatic price when they differ)"
-msgstr ""
-"Sin decidir: día a día o toda la estancia (sin precio automático si difieren)"
+msgid "Not decided (day by day or whole stay)"
+msgstr "Sin decidir (día a día o toda la estancia)"
 
 #. module: boss_pricing
 #. odoo-python

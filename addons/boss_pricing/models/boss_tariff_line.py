@@ -81,7 +81,7 @@ class BossTariffLine(models.Model):
     period_unit = fields.Selection(
         [("24h", "Periods of 24 hours from the start"),
          ("calendar", "Calendar days (entry and exit days counted)"),
-         ("undecided", "Not decided: 24-hour periods or calendar days (no automatic price when they differ)")],
+         ("undecided", "Not decided (24 h or calendar days)")],
         "Days counted as", default="calendar", required=True,
         help="How the actual period is counted. «Por 24 horas»: every started period of 24 hours from the start "
         "event (a part counts as a whole period). «Por día» / «días naturales»: calendar days from the entry date "
@@ -89,8 +89,7 @@ class BossTariffLine(models.Model):
     tier_mode = fields.Selection([("positional", "Day number since the start (\"day 5 to 7\")"),
                                   ("relative", "Days after the free period (\"5 days at X, then Y\")"),
                                   ("whole_stay", "Every day at the tier reached by the whole stay"),
-                                  ("undecided", "Not decided: day by day or whole stay (no automatic price "
-                                                "when they differ)")],
+                                  ("undecided", "Not decided (day by day or whole stay)")],
                                  default="positional",
                                  help="How the 'Up to' of the day tiers is read. 'Not decided' when the document "
                                  "does not say: stays where both readings give the same amount are priced, longer "
