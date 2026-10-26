@@ -42,6 +42,8 @@ distintas; los importes están en `.research/` (fuera de Git):
 | Mínimo | Sí (unidad no dicha) | Sí, por estancia (importe distinto con DHL) |
 | Cobro desde la llegada si se supera la franquicia | Sí | Sí |
 
+**Origen de la regla B (26/10, código C# PrevAdder `Utils.cs` 1673–1699, configuración «ALMACENAJES AEREO VENTA»):** 3 días libres (4 si la llegada es en viernes), por 100 kg o fracción del peso tasable, un importe hasta el día 10 y otro después, mínimo, contados desde la llegada. El texto de las condiciones generales de las ofertas no lo genera Odoo 17 ni el C#: vive en el Excel de ofertas de Cristina (`COSTO_VENTA_MULTINIVEL.xlsx`, hoja `IAB FOB`), donde una versión dice «a partir del día 20». La compra en PrevAdder ya variaba por handler (WFS 3/4 días, Swissport 3, Iberia 4 importación / 2 exportación, IAS y ACL 3/4 con corte en el día 20).
+
 Hipótesis para Cristina (ninguna confirmada): (a) la oferta de febrero es anterior a la regla del 25/09 y la plantilla de
 condiciones del programa de ofertas no se actualizó; (b) la regla depende del handler (la variante DHL lo sugiere) y la
 del 25/09 es la de WFS; (c) la regla depende del cliente o del tipo de oferta. Decisión necesaria antes de B01: qué regla

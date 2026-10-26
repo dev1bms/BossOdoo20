@@ -623,20 +623,23 @@ TASKS = [
                             "that apply SOMETIMES, with a real Odoo 17 file as reference", epic="E8", type=T.ANALYSIS,
          sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 30), priority=P.CRITICAL, deps=[], hours=2,
          who="cristina", dept="ops", status=None, done=None,
-         desc=desc("Decision: for each case (air import FOB/EXW/DAP, air export, sea FCL import/export, sea LCL, road) "
-                   "the standard services that must appear automatically and the optional ones, with a real Odoo 17 "
-                   "file or offer per case as reference (the Cofitel offer 05570 of 03/02/2026 is the air import FOB "
-                   "one).",
-                   "Open items found on 26/10 (unresolved until Cristina answers): 1) origin pickup Shenzhen of the "
-                   "Cofitel offer: which code? Odoo 17 has «EXW – GASTOS EXWORKS» (active) and «TRE – (ANTIGUO) "
-                   "TRANSPORTE RECOGIDA» (retired); Odoo 20 proposes EXW-AIR; 2) sea FCL import list (FMI, THC, BL, "
-                   "GLO-CCC, FAD, CSM, TTE-FCL) and air export list (TTE-CON, HAN, AWB, DEX, CSA, FAE) are proposals "
-                   "without a customer offer as reference; 3) ETX («Tasa Energética»): scope, purchase/sale unit, "
-                   "supplier and tariff document; 4) ALM sale rule: the 02/2026 Cofitel offer (3 free days, change from "
-                   "day 10, DHL variant) differs from the 25/09 rule (48 h, change from day 8): which one, since when, "
-                   "per handler or per customer (docs/especificacion-alm-venta.md); 5) meaning of «EPX» in the meeting.",
-                   NOT_COMMITTED, "Acceptance: table received; templates TP02 built from it."),
-         evidence=None, links=[]),
+         desc=desc("Searched first (Belal's rule 26/10): Odoo 19 project + database boss_uat, Odoo 17 concepts, Boss-Project "
+                   "knowledge base, PrevAdder C# code, Cristina's NEW ODOO files. Findings in docs/respuestas-cristina.md: "
+                   "case codes decoded (B13, approved); the service-proposal rule of Odoo 19 (Cristina's 'paso cero', 31/08) "
+                   "with the per-case lists read from boss_uat (classification by Belal 15/10, not validated); Incoterm only "
+                   "decides the invoiced party; ETX = energy tax of the handlers on air import (WFS, Iberia, Swissport), "
+                   "bought per AWB, sold per shipment, VAT NR; three ALM sale rules in the sources (PrevAdder/offers vs "
+                   "25/09); EPX exists nowhere; TRE/TRI/TCC/TTC retired for TTE; multi-shipment agreements exist in Odoo 17 "
+                   "(boss_market); numbering format E26xxxx.",
+                   "What still needs Cristina (short list, each with a proposal in docs/respuestas-cristina.md §3): 1) validate "
+                   "the always/sometimes lists per case (IAB, IMB, EAB, EMB) and whether they change with the Incoterm; "
+                   "2) ALM sale rule: 25/09 (48 h, day 8) or offers (3 days, day 10/20), DHL variant; 3) origin pickup of a "
+                   "FOB air import = EXW-AIR per document?; 4) what «EPX» meant; 5) Far East list; 6) VET and DET proposals; "
+                   "7) IRENEO 2026 (C03). No longer asked: meaning of case codes, role of the Incoterm, ETX concept and scope, "
+                   "retired services, numbering format, CRM not mandatory, GLO per document, multi-shipment model, minimum "
+                   "margin (Angel).", NOT_COMMITTED,
+                   "Acceptance: Cristina answers the 7 points on the draft; templates TP02 updated from them."),
+         evidence="Research of 26/10/2026 documented in docs/respuestas-cristina.md (sources listed there); matrix extract in .research/matriz-odoo19.txt.", links=[]),
     dict(code="TP04", title="Demo of the next meeting: Cofitel air import FOB end to end (quotation from template → "
                             "costs → confirm → file → ATA/Pickup → recompute), run by Cristina", epic="E5",
          type=T.TRAINING, sprint="S44", points=2, start=D(2026, 10, 29), due=D(2026, 10, 30), priority=P.CRITICAL,
