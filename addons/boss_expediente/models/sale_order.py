@@ -126,7 +126,16 @@ class SaleOrderLine(models.Model):
             plan_accounts = present.filtered(lambda a: a.plan_id == plan) | Account.browse(list(shares))
             distribution = with_accounts(line.analytic_distribution, shares, plan_accounts)
             if distribution != line.analytic_distribution:
-                line.analytic_distribution = distribution
+                # done right after the confirmation, when Odoo may already have locked the order
+                line.with_context(boss_file_analytic=True).analytic_distribution = distribution
+
+    def _get_protected_fields(self):
+        """A locked order (setting «Lock confirmed sales») still gets the analytic account of its files: BOSS writes
+        it on acceptance and when services move between files. Only that write, nothing else, passes the lock."""
+        fields = super()._get_protected_fields()
+        if self.env.context.get("boss_file_analytic"):
+            fields = [f for f in fields if f != "analytic_distribution"]
+        return fields
 
 
 class BossAddServiceWizard(models.TransientModel):

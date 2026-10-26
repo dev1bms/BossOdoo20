@@ -3,7 +3,7 @@ for several shipments, partial / cancelled / replaced purchases, purchase basis 
 FICTITIOUS partners, prices and taxes only."""
 from datetime import date
 
-from odoo import Command
+from odoo import SUPERUSER_ID, Command
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import new_test_user, tagged
 
@@ -334,3 +334,16 @@ class TestFileFollowUp(CycleCommon):
         self.assertEqual(invoice.invoice_line_ids.account_id, charged)
         invoice.with_user(self.accountant).action_post()
         self.assertEqual((invoice.state, bill.state), ("posted", "posted"))
+
+    def test_acceptance_with_locked_confirmed_orders(self):
+        """boss20 has «Lock confirmed sales» on: Odoo locks the order inside the confirmation, then BOSS writes the
+        analytic account of the file on its lines. Found on boss20 on 26/10/2026 (S00024)."""
+        lock = self.env.ref("sale.group_auto_done_setting")  # what the setting does: the feature group on everybody
+        self.env.ref("base.group_user").write({"implied_ids": [Command.link(lock.id)]})
+        self.env["res.users"].browse(SUPERUSER_ID).sudo().write({"group_ids": [Command.link(lock.id)]})
+        order, file = self._accepted(self.thc, {self.thc: 300.0})
+        self.assertTrue(order.locked)
+        line = order.order_line.filtered(lambda l: l.product_id == self.thc)
+        self.assertIn(str(file.analytic_account_id.id), line.analytic_distribution)
+        with self.assertRaises(UserError):  # the lock still protects everything else
+            line.with_user(self.sales).price_unit = 1.0
