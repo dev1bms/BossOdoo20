@@ -585,9 +585,9 @@ TASKS = [
                    "asociación.",
                    "Estado real 26/10: no implementado (H1-26).",
                    "Aceptación: lista validada por Cristina; sirve de carga para F02."),
-         evidence="Cerrada el 26/10 con evidencia: configuración «HandlingConfig» de Odoo 17 leída (47 filas; la "
-                  "archivada #29 duplicaba una activa) y cargada como datos del módulo (37 aerolíneas, 6 handlers, 46 "
-                  "relaciones en MAD, BCN, VLC, AGP, BIO; addons/boss_expediente/data/boss_airline_handler_data.xml, "
+         evidence="Cerrada el 26/10 con evidencia: configuración «HandlingConfig» de Odoo 17 leída (48 filas: 47 "
+                  "activas y la #29 archivada, duplicado de una activa) y cargada como datos del módulo (37 aerolíneas, 6 handlers, "
+                  "47 relaciones: MAD 30, BCN 13, AGP 2, VLC 1, BIO 1; addons/boss_expediente/data/boss_airline_handler_data.xml, "
                   "commit d86cded). Queda la validación de Cristina (C04).",
          links=[]),
     dict(code="N01", title="Alcance de la migración de Odoo 17: qué datos, qué expedientes abiertos, fecha de corte",
@@ -1391,8 +1391,8 @@ DESCS_EN = {
     "F03": "Result: read-only script on Odoo 17 (air files: airline, airport, handler used) and list in .research (real "
            "data, outside Git) for Cristina to validate the association.\nActual status 26/10: not implemented "
            "(H1-26).\nAcceptance: list validated by Cristina; it is the load for F02.\nClosed 26/10 with evidence: "
-           "Odoo 17 «HandlingConfig» read (47 rows; archived #29 duplicated an active one) and loaded as module data "
-           "(37 airlines, 6 handlers, 46 relations at MAD, BCN, VLC, AGP, BIO; commit d86cded). Cristina's validation "
+           "Odoo 17 «HandlingConfig» read (48 rows: 47 active and the archived #29, a duplicate of an active one) and "
+           "loaded as module data (37 airlines, 6 handlers, 47 relations: MAD 30, BCN 13, AGP 2, VLC 1, BIO 1; commit d86cded). Cristina's validation "
            "remains (C04).",
     "G01": f"Notice to the team; from the cut-off time no new record or change in Odoo 17.\nOwner: Cristina "
            f"(operations). {PROPOSED}",

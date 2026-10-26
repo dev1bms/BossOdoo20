@@ -7,7 +7,7 @@ HANDLER_SERVICE_CODES = ("HAN", "ALM", "AWB", "ETX", "X-R")
 
 class BossAirlineHandler(models.Model):
     """Which handler serves an airline at an airport. Loaded from the Odoo 17 configuration «HandlingConfig» (read
-    on 26/10/2026, 46 active rows: MAD, BCN, AGP, VLC, BIO) and maintained here. One airline may have a different
+    on 26/10/2026: 48 rows, 47 active loaded: MAD 30, BCN 13, AGP 2, VLC 1, BIO 1) and maintained here. One airline may have a different
     handler per airport, and an airport may list several handlers for the same airline: then the file shows the
     options instead of choosing one."""
 

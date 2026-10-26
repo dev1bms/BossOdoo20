@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
     <!-- Airlines, handlers and their relation per airport: Odoo 17 configuration «HandlingConfig» read on 26/10/2026
-         (46 active rows; the archived row #29 duplicated an active one and is not loaded). Partners carry the Odoo 17 id in «ref» so the migration never duplicates them;
+         (48 rows: 47 active, loaded here, and the archived #29, a duplicate of an active one, not loaded). Partners carry the Odoo 17 id in «ref» so the migration never duplicates them;
          their [supplier/carrier] roles come from boss_expediente. Names and codes are public business data. -->
     <record id="port_esagp_air" model="boss.port"><field name="name">Málaga</field><field name="code">AGP</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
     <record id="port_esbio_air" model="boss.port"><field name="name">Bilbao (airport)</field><field name="code">BIO</field><field name="kind">air</field><field name="country_id" ref="base.es"/></record>
