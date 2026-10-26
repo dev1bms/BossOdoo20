@@ -402,7 +402,10 @@ class BossExpediente(models.Model):
             self._boss_apply_dates()
         if vals.get("handler_id"):
             for file in self:
-                file._boss_handler_needs().write({"partner_id": file.handler_id.id})
+                needs = file._boss_handler_needs().filtered(lambda n: n.partner_id != file.handler_id)
+                if needs:
+                    needs.write({"partner_id": file.handler_id.id})
+                    file.with_context(boss_reason=self.env._("Handler changed")).action_recompute_costs()
         return res
 
     def _boss_apply_dates(self):

@@ -3008,3 +3008,9 @@ msgstr "Todavía no hay ningún coste previsto"
 #: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
 msgid "Every service to buy of the open files with its expected cost: what the system forecasts to pay to each supplier, before and after the purchase orders and bills."
 msgstr "Cada servicio a comprar de los expedientes abiertos con su coste previsto: lo que el sistema prevé pagar a cada proveedor, antes y después de los pedidos de compra y las facturas."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Handler changed"
+msgstr "Cambio de handler"
