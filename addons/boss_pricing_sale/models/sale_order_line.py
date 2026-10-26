@@ -253,7 +253,7 @@ class SaleOrderLine(models.Model):
         if related_costs is not None:
             inputs["related_costs"] = related_costs
         return self.env["boss.pricing"].price_cost(self.product_id, self.product_uom_id, inputs,
-                                                   self.order_id.boss_planned_date, self.order_id.company_id)
+                                                   self.order_id.boss_planned_date or None, self.order_id.company_id)
 
     def _boss_related_costs(self):
         """Costs of the other lines of the order, for percentages on services of the same supplier."""

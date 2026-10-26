@@ -62,6 +62,13 @@ class TestSelection(unittest.TestCase):
                          ["quantity"])
 
 
+    def test_empty_date_is_a_missing_input_not_a_crash(self):
+        """A quotation line priced before the shipment date is known (Odoo passes False, not None)."""
+        for empty in (None, False):
+            res = price([rule(1, params={"unit_price": "10"})], SHIP, empty)
+            self.assertEqual((res.status, res.missing), (Status.MISSING_INPUT, ["tariff_date"]))
+
+
 class TestMethods(unittest.TestCase):
     CONTAINERS = [{"size": "20", "type_id": 1, "quantity": 2}, {"size": "40", "type_id": 1, "quantity": 1},
                   {"size": "40", "type_id": 3, "quantity": 1}]

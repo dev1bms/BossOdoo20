@@ -35,7 +35,7 @@ def select(rules, shipment, day):
     """Pick the rule for one service + charge basis. `rules` are already filtered by both."""
     if not rules:
         return Result(Status.NO_TARIFF, steps=[("no_rule", {})])
-    if day is None:
+    if not day:  # None, or False from an empty Odoo date field: the shipment date is not known yet
         return Result(Status.MISSING_INPUT, missing=["tariff_date"])
     dated = [r for r in rules if r.valid_on(day)]
     if not dated:
