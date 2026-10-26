@@ -10,17 +10,21 @@ for user in users:
     roles = [g.split(".")[1] for g, rec in groups.items() if user in rec.all_user_ids]
     res = {}
     def attempt(name, fn):
-        sp = env.cr.savepoint()
+        class Undo(Exception):
+            pass
         try:
-            fn(); res[name] = "yes"
-        except (AccessError, UserError) as exc:
+            with env.cr.savepoint():  # released on exit (Odoo 20 refuses a final rollback with open savepoints)
+                fn()
+                res[name] = "yes"
+                raise Undo()
+        except Undo:
+            pass
+        except (AccessError, UserError):
             res[name] = "no"
-        finally:
-            sp.rollback()
     u = env(user=user)
     attempt("read prices", lambda: u["boss.tariff.line"].search([], limit=1).mapped("unit_price"))
     attempt("mark demo customer", lambda: real_customer.with_user(user).write({"boss_demo": True}))
     draft = u["boss.tariff"].sudo().search([("state", "=", "to_approve")], limit=1)
-    attempt("approve", lambda: draft.with_user(user).action_approve() if draft else None)
+    attempt("approve", lambda: draft.with_user(user).action_approve()) if draft else res.update(approve="n/a (no tariff waiting)")
     print(user.login, roles, res)
 env.cr.rollback()

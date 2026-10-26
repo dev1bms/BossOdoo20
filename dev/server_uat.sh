@@ -12,7 +12,7 @@ HOST=boss@100.87.98.15
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"
 MODULES="boss_expediente,accountant,l10n_es_reports,contacts"
 SEED="uat_isolate local_chart local_lang_es setup_vat_mapping server_trial local_demo_suppliers demo_meeting demo_cycle
-      setup_decisions_2310 setup_suplidos_accounts uat_customers setup_templates uat_isolate"
+      setup_decisions_2310 setup_suplidos_accounts uat_customers uat_users setup_templates uat_isolate"
 case "${1:-}" in
   build)
     $SSH "cd ~/BossOdoo20 && LOG=~/tmp/uat_build_\$(date +%Y%m%d_%H%M%S).log && \
