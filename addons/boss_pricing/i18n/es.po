@@ -2954,3 +2954,9 @@ msgstr "Hecho del expediente que abre el periodo facturable, como dice el docume
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_end_event
 msgid "Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del vacío»). Events of each container price each container with its own dates. Empty: the default of the service for the direction."
 msgstr "Hecho del expediente que cierra el periodo facturable (p. ej. demoras MSC «devolución del vacío»). Con los hechos de cada contenedor, cada contenedor se valora con sus propias fechas. Vacío: el de defecto del servicio para el sentido."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__emptying
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__emptying
+msgid "Emptying of the groupage container (LCL)"
+msgstr "Vaciado del contenedor de grupaje (LCL)"

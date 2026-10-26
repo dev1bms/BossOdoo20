@@ -3155,3 +3155,13 @@ msgstr "Confirmada por la factura del proveedor"
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__forecast_status
 msgid "Estimated: cost of the accepted quotation. Recomputed: the file data (dates, weights, containers) changed it. Ordered: in a confirmed purchase order. Confirmed: the supplier bill is posted (or nothing more is expected)."
 msgstr "Estimada: coste de la oferta aceptada. Recalculada: los datos del expediente (fechas, pesos, contenedores) la han cambiado. Pedida: en un pedido de compra confirmado. Confirmada: la factura del proveedor está contabilizada (o no se espera nada más)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__emptying_date
+msgid "Emptying (LCL)"
+msgstr "Vaciado (LCL)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__emptying_date
+msgid "Sea groupage import: the container is emptied at the warehouse (CFS). Start of the LCL storage (Cristina 25/09/2026: emptying -> pickup)."
+msgstr "Importación de grupaje: el contenedor se vacía en el almacén (CFS). Inicio del almacenaje LCL (Cristina 25/09/2026: vaciado -> retirada)."

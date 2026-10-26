@@ -31,6 +31,7 @@ PERIOD_EVENTS = [
     ("discharge", "Discharge of the vessel"),
     ("noa", "Arrival notice of the handler (NOA)"),
     ("noa_or_ata", "NOA, or ATA when there is no NOA"),
+    ("emptying", "Emptying of the groupage container (LCL)"),
     ("foh", "Goods delivered to the handler or terminal (FOH)"),
     ("departure", "Actual departure (ATD)"),
     ("pickup", "Pickup of the shipment (port, airport, handler)"),

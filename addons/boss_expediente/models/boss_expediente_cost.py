@@ -420,8 +420,10 @@ class BossExpedienteCost(models.Model):
         line = self.tariff_line_id
         if line.period_start_event and line.period_end_event:
             return line.period_start_event, line.period_end_event, "tariff"
-        start, end = DEFAULT_PERIOD_EVENTS.get((self.product_id.default_code, self.expediente_id.direction),
-                                               (False, False))
+        file = self.expediente_id
+        code = self.product_id.default_code
+        start, end = DEFAULT_PERIOD_EVENTS.get((code, file.direction, file.load_type), DEFAULT_PERIOD_EVENTS.get(
+            (code, file.direction), (False, False)))
         return start, end, "default" if start else False
 
     def _boss_containers(self):

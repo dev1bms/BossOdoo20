@@ -287,6 +287,7 @@
                                     <field name="eta"/>
                                     <field name="ata" invisible="direction == 'export'"/>
                                     <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"/>
+                                    <field name="emptying_date" invisible="direction == 'export' or load_type != 'lcl'"/>
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
                                     <field name="pickup_date" invisible="direction == 'export'"/>
                                     <field name="delivery_date"/>

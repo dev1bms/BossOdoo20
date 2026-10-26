@@ -475,3 +475,9 @@ class TestFileFollowUp(CycleCommon):
         dem_need.invalidate_recordset()
         self.assertTrue(dem_need.period_manual)
         self.assertEqual(dem_need.period_end, datetime(2026, 11, 14, 12, 0))
+        # LCL import storage: from the emptying of the groupage container to the pickup (Cristina 25/09)
+        file.load_type = "lcl"
+        self.assertEqual(alm._boss_period_events()[:2], ("emptying", "pickup"))
+        file.emptying_date = datetime(2026, 11, 4, 9, 0)
+        alm.invalidate_recordset()
+        self.assertEqual(alm.period_start, datetime(2026, 11, 4, 9, 0))

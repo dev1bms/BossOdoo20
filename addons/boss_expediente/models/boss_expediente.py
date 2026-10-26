@@ -16,7 +16,7 @@ from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipmen
 from .boss_airline_handler import HANDLER_SERVICE_CODES
 
 FILE_EVENT_FIELDS = {"ata": "ata", "discharge": "discharge_date", "noa": "noa", "foh": "foh", "departure": "atd",
-                     "pickup": "pickup_date", "delivery": "delivery_date"}
+                     "pickup": "pickup_date", "delivery": "delivery_date", "emptying": "emptying_date"}
 CONTAINER_EVENT_FIELDS = {"container_empty_out": "empty_out_date", "container_gate_in": "gate_in_date",
                           "container_full_out": "pickup_date", "container_empty_return": "return_date"}
 # Period of a time-based service when its supplier price states no events (or it has no supplier price yet).
@@ -26,6 +26,8 @@ CONTAINER_EVENT_FIELDS = {"container_empty_out": "empty_out_date", "container_ga
 # entrada lleno»). Export storage ends at the ACTUAL departure (Cristina says ETD: the actual one is used once known,
 # the estimate of days until then). DET is only an export charge in the MSC documents (import: inside DEM, Hapag).
 DEFAULT_PERIOD_EVENTS = {
+    ("ALM", "import", "lcl"): ("emptying", "pickup"),  # Cristina 25/09: LCL import emptying -> pickup
+    ("ALM", "export", "lcl"): (False, False),  # Cristina 25/09: LCL export, none
     ("ALM", "import"): ("noa_or_ata", "pickup"),
     ("ALM", "export"): ("foh", "departure"),
     ("DEM", "import"): ("ata", "container_empty_return"),
@@ -175,6 +177,9 @@ class BossExpediente(models.Model):
                                "instead of the ATA (WFS counts from the NOA).")
     foh = fields.Datetime("FOH (goods in the terminal)", tracking=True,
                           help="Export: freight on hand at the handler or terminal. Start of the export storage.")
+    emptying_date = fields.Datetime("Emptying (LCL)", tracking=True,
+                                    help="Sea groupage import: the container is emptied at the warehouse (CFS). Start of "
+                                         "the LCL storage (Cristina 25/09/2026: emptying -> pickup).")
     discharge_date = fields.Datetime("Vessel discharge", tracking=True,
                                      help="Sea: discharge of the vessel. Start of the carrier periods that count from "
                                           "it (Hapag-Lloyd demurrage and detention «DIFU»).")
@@ -411,7 +416,7 @@ class BossExpediente(models.Model):
     # Actual period of the time-based services, from the file's and containers' dates (Cristina 26/10/2026: ATA and
     # pickup with date and time, the system computes the dates). Each service follows the events of the supplier price
     # that prices it (PERIOD_EVENTS on the tariff line, as the supplier document states them), else its default below.
-    PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date", "delivery_date", "discharge_date")
+    PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date", "delivery_date", "discharge_date", "emptying_date")
 
     def _boss_event_date(self, event, container=None):
         """Datetime (UTC) of an event of this file, or of one of its containers for the per-container events.
