@@ -7,7 +7,7 @@ boss20 or the local copy (odoo shell). Idempotent. The VAT rows of P17 are in de
 - P40, P41, P29, P42: readings of the real WFS documents ([MUESTRA], waiting for approval): periods of 24 hours,
   per 100 kg or fraction, tiers by day number, minimum per stay. The tariffs stay waiting for approval (P19).
 """
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True))  # noqa: F821
 company = env.ref("base.main_company")
 

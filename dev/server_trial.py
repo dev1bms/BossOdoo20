@@ -12,7 +12,7 @@ from datetime import date
 from odoo import Command
 
 env = env  # noqa: F821 (odoo shell)
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname
+assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname
 env = env(context=dict(env.context, tracking_disable=True, mail_create_nosubscribe=True))
 IMD = env["ir.model.data"]
 MODULE = "boss_trial"

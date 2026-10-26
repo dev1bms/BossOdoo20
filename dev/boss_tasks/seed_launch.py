@@ -605,14 +605,20 @@ TASKS = [
     dict(code="TP02", title="Create the quotation templates on boss20: air import FOB (Cofitel), sea FCL import, air "
                             "export; standard vs optional services per case", epic="E6", type=T.DEV, sprint="S44",
          points=3, start=D(2026, 10, 27), due=D(2026, 10, 29), priority=P.CRITICAL, deps=["TP01"], hours=5,
-         who="belal", dept="sys", status=None, done=None,
-         desc="Result: templates on boss20 with the services that ALWAYS apply per case; optional services (ALM, "
-              "inspections, SEG, CAU, QBR, extras) are added with «Add services». Air import FOB from the real Cofitel "
-              "offer of 03/02/2026: FAI, origin pickup (code to confirm: EXW-AIR), HAN, AWB, CSA, FAD, ETX, TTE-CON. "
-              "Sea FCL import and air export: lists to be confirmed by Cristina (task TP03).\nAcceptance: on boss20 a "
-              "[DEMO] quotation with the template shows the lines and prices them with [DEMO] tariffs; screenshots for "
-              "the demo of the next meeting.",
-         evidence=None, links=[f"{DOC}#/oferta-envio"]),
+         who="belal", dept="sys", status=S.IN_PROGRESS, done=None, progress=80,
+         desc="Result: [DEMO] templates on boss20, selectable (no default template for every quotation; no tariff or "
+              "accounting setting changed). Done 26/10: «[DEMO] Importación aérea FOB» from the real Cofitel offer "
+              "05570 (FAI, HAN, AWB, CSA, FAD, ETX, TTE-CON: 7 of the 8 lines of the offer; the 8th, origin pickup "
+              "Shenzhen, is left out because its code is not confirmed, see TP03); «[DEMO] Importación marítima FCL» "
+              "(reference: [DEMO] quotation S00009 of the guide and the MSC 2026 local charges document) and «[DEMO] "
+              "Exportación aérea» (reference: WFS export tariff) as proposals. Code c1091b9 deployed: template lines "
+              "are counted from the shipment and container services split per container group. Draft quotation "
+              "S00024 «[DEMO] Caso Cofitel — Importación aérea» on boss20 shows the 7 lines (HAN 500 kg and AWB priced "
+              "with [DEMO] tariffs, FAI manual, FAD and TTE-CON without tariff, ETX pending decision).\nRemaining: "
+              "Cristina confirms the three lists (TP03); then the names lose «Cristina confirma».",
+         evidence="26/10/2026: dev/setup_templates.py on boss20 (templates 1–3, quotation S00024 with 7 lines, HAN "
+                  "500 kg); deploy log deploy_20261026 (c1091b9); test test_quotation_template_lines_count_the_shipment "
+                  "green (16/16 boss_pricing_sale).", links=[f"{DOC}#/oferta-envio"]),
     dict(code="TP03", title="Cristina: services that ALWAYS apply per case (direction × mode × Incoterm) and services "
                             "that apply SOMETIMES, with a real Odoo 17 file as reference", epic="E8", type=T.ANALYSIS,
          sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 30), priority=P.CRITICAL, deps=[], hours=2,
@@ -620,8 +626,16 @@ TASKS = [
          desc=desc("Decision: for each case (air import FOB/EXW/DAP, air export, sea FCL import/export, sea LCL, road) "
                    "the standard services that must appear automatically and the optional ones, with a real Odoo 17 "
                    "file or offer per case as reference (the Cofitel offer 05570 of 03/02/2026 is the air import FOB "
-                   "one). Also: meaning of «EPX» mentioned in the meeting of 26/10.", NOT_COMMITTED,
-                   "Acceptance: table received; templates TP02 built from it."),
+                   "one).",
+                   "Open items found on 26/10 (unresolved until Cristina answers): 1) origin pickup Shenzhen of the "
+                   "Cofitel offer: which code? Odoo 17 has «EXW – GASTOS EXWORKS» (active) and «TRE – (ANTIGUO) "
+                   "TRANSPORTE RECOGIDA» (retired); Odoo 20 proposes EXW-AIR; 2) sea FCL import list (FMI, THC, BL, "
+                   "GLO-CCC, FAD, CSM, TTE-FCL) and air export list (TTE-CON, HAN, AWB, DEX, CSA, FAE) are proposals "
+                   "without a customer offer as reference; 3) ETX («Tasa Energética»): scope, purchase/sale unit, "
+                   "supplier and tariff document; 4) ALM sale rule: the 02/2026 Cofitel offer (3 free days, change from "
+                   "day 10, DHL variant) differs from the 25/09 rule (48 h, change from day 8): which one, since when, "
+                   "per handler or per customer (docs/especificacion-alm-venta.md); 5) meaning of «EPX» in the meeting.",
+                   NOT_COMMITTED, "Acceptance: table received; templates TP02 built from it."),
          evidence=None, links=[]),
     dict(code="TP04", title="Demo of the next meeting: Cofitel air import FOB end to end (quotation from template → "
                             "costs → confirm → file → ATA/Pickup → recompute), run by Cristina", epic="E5",

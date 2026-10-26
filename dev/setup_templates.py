@@ -9,21 +9,31 @@ from datetime import date
 
 from odoo import Command
 
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True, mail_create_nosubscribe=True))  # noqa: F821
 P, Template = env["product.product"], env["sale.order.template"]
 TEMPLATES = {
-    "Importación aérea FOB · servicios estándar (lista de la oferta Cofitel 02/2026; Cristina confirma)":
+    "[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
         ["FAI", "HAN", "AWB", "CSA", "FAD", "ETX", "TTE-CON"],
-    "Importación marítima FCL · servicios estándar (propuesta 26/10; Cristina confirma)":
+    "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
         ["FMI", "THC", "BL", "GLO-CCC", "FAD", "CSM", "TTE-FCL"],
-    "Exportación aérea · servicios estándar (propuesta 26/10; Cristina confirma)":
+    "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
         ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
 }
 NOTE = ("Plantilla de servicios que aplican SIEMPRE en este caso. Los servicios que aplican A VECES (almacenaje ALM, "
         "inspecciones, seguro, caución, quebranto, extras) se añaden en la oferta con «Añadir servicios». Lista "
         "pendiente de confirmación por Cristina (tarea BOSS20-TP03).")
 made = {}
+OLD = {"[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
+       "Importación aérea FOB · servicios estándar (lista de la oferta Cofitel 02/2026; Cristina confirma)",
+       "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
+       "Importación marítima FCL · servicios estándar (propuesta 26/10; Cristina confirma)",
+       "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
+       "Exportación aérea · servicios estándar (propuesta 26/10; Cristina confirma)"}
+for new_name, old_name in OLD.items():
+    Template.search([("name", "=", old_name)]).write({"name": new_name})
+env["sale.order"].search([("origin", "=", "[DEMO] Plantilla importación aérea FOB (26/10)")]).write({"origin": "[DEMO] Caso Cofitel — Importación aérea"})
+assert not env["ir.config_parameter"].sudo().get_str("sale.default_sale_order_template_id"), "a default template would apply to every quotation"
 for name, codes in TEMPLATES.items():
     products = [P.search([("default_code", "=", c)], limit=1) for c in codes]
     assert all(products), [c for c, p in zip(codes, products) if not p]
@@ -37,8 +47,8 @@ for name, codes in TEMPLATES.items():
 
 # [DEMO] draft quotation from the air import template (DEMO customer, DEMO tariffs); never sent or confirmed
 customer = env["res.partner"].search([("name", "=", "[DEMO] Cliente UE Ejemplo GmbH")], limit=1)
-air = made[next(n for n in TEMPLATES if n.startswith("Importación aérea"))]
-origin = "[DEMO] Plantilla importación aérea FOB (26/10)"
+air = made[next(n for n in TEMPLATES if n.startswith("[DEMO] Importación aérea"))]
+origin = "[DEMO] Caso Cofitel — Importación aérea"
 order = env["sale.order"].search([("origin", "=", origin)], limit=1)
 if customer and not order:
     mad = env["boss.port"].search([("code", "=", "MAD")], limit=1)
@@ -46,6 +56,9 @@ if customer and not order:
         "partner_id": customer.id, "origin": origin, "sale_order_template_id": air.id, "boss_direction": "import",
         "boss_transport_mode": "air", "boss_load_type": "air", "boss_port_id": mad.id,
         "boss_country_id": env.ref("base.cn").id, "boss_planned_date": date(2026, 11, 4), "boss_awb_kg": 500.0})
+    order._onchange_sale_order_template_id()
+if order and order.state == "draft" and any(l.product_uom_qty == 1 and l.product_id.default_code == "HAN" for l in order.order_line):
+    order.order_line.unlink()  # re-apply the template with the deployed counting of the shipment
     order._onchange_sale_order_template_id()
 if order:
     print("QUOTE", order.name, order.state, "| lines", len(order.order_line))

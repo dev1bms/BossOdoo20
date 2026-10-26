@@ -25,6 +25,28 @@ Ninguna fuente dice que los valores del 25/09 estén sustituidos, pero tampoco q
    día 1** (toda la estancia, no solo desde el día 8).
 5. Un único precio de venta para todos los clientes, solo para ALM.
 
+## Dos reglas de venta en las fuentes · Two sale rules in the sources (26/10/2026)
+
+La página oficial de la guía ([Almacenaje](https://doc.bosscontinental.com/new/#/srv-alm), estado a 23/10) dice que la venta
+de ALM **no se calcula sola** porque los valores del precio único (P43) no están aprobados. Las fuentes dan dos reglas
+distintas; los importes están en `.research/` (fuera de Git):
+
+| | Regla A (25/09/2026) | Regla B (oferta real a Cofitel, 03/02/2026) |
+|---|---|---|
+| Fecha | 25/09/2026, reunión con Cristina (transmitida por Belal); cargada en Odoo 19 ese día, borrada el 08/10 | 03/02/2026, propuesta 05570 (y correo de septiembre 2026 con la misma plantilla de condiciones) |
+| Cliente | Todos (precio único, Cristina 08/10: «los clientes no lo negocian») | Cofitel, S.A. (condiciones generales impresas en toda oferta de ese tipo) |
+| Handler / aeropuerto | No dice | MAD; handler no indicado; **variante propia si la carga llega con DHL** (menos días libres, otro importe y mínimo) |
+| Franquicia | 48 horas desde la llegada | 3 días; con DHL, 2 días |
+| Cambio de importe | Desde el 8.º día, toda la estancia | Desde el día 10 (incluido) |
+| Unidad | Por día y 100 kg o fracción | Por día y 100 kg o fracción |
+| Mínimo | Sí (unidad no dicha) | Sí, por estancia (importe distinto con DHL) |
+| Cobro desde la llegada si se supera la franquicia | Sí | Sí |
+
+Hipótesis para Cristina (ninguna confirmada): (a) la oferta de febrero es anterior a la regla del 25/09 y la plantilla de
+condiciones del programa de ofertas no se actualizó; (b) la regla depende del handler (la variante DHL lo sugiere) y la
+del 25/09 es la de WFS; (c) la regla depende del cliente o del tipo de oferta. Decisión necesaria antes de B01: qué regla
+vale, desde cuándo, y si cambia por handler o por cliente (D1, D7, D9 de la tabla siguiente).
+
 ## Puntos que necesitan decisión
 
 Mientras no se decidan, el sistema no propone precio de venta de ALM (venta tecleada, como hoy).
