@@ -10,10 +10,12 @@ sub-accounts of current liabilities, by concept and side (charged to the custome
 The product -> account map below is the proposal for Ángel (docs/cuentas-suplidos.md); it is not his decision yet.
 Idempotent."""
 assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
-import sys  # noqa: E402
+import os  # noqa: E402
 
-if env.cr.dbname == "boss20" and "--apply-on-boss20" not in sys.argv:  # noqa: F821
-    raise SystemExit("boss20: run only with --apply-on-boss20 (Odoo 17 practice applied by Belal's mandate 26/10; Ángel ratifies, task W10).")
+# boss20 only with the explicit token mounted: dev/server_shell.sh setup_suplidos_accounts.py dev/apply-on-boss20.txt
+if env.cr.dbname == "boss20" and not os.path.exists("/tmp/boss/apply-on-boss20.txt"):  # noqa: F821
+    raise SystemExit("boss20: run only with the token dev/apply-on-boss20.txt (Odoo 17 practice applied by Belal's "
+                     "mandate of 26/10/2026; Ángel ratifies, task W10).")
 company = env.ref("base.main_company")  # noqa: F821
 Account = env["account.account"].with_company(company)  # noqa: F821
 ACCOUNTS = {

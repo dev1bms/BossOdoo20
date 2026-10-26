@@ -37,6 +37,7 @@ class BossExpedienteCost(models.Model):
 
     expediente_id = fields.Many2one("boss.expediente", "File", required=True, ondelete="cascade", index=True)
     company_id = fields.Many2one(related="expediente_id.company_id", store=True)
+    customer_id = fields.Many2one(related="expediente_id.partner_id", string="Customer", store=True)
     company_currency_id = fields.Many2one(related="company_id.currency_id", string="Company currency")
     kind = fields.Selection([("sale", "Sold service"), ("extra", "Extra cost")], required=True, default="extra",
                             readonly=True)

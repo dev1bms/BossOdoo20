@@ -2990,3 +2990,21 @@ msgstr "De dónde procede la relación (configuración de Odoo 17, aviso del pro
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_airline_handler_view_search
 msgid "Archived"
 msgstr "Archivado"
+
+#. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_expediente_cost_forecast_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_forecast
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_graph
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_pivot
+msgid "Cost forecast"
+msgstr "Previsión de costes"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
+msgid "No cost expected yet"
+msgstr "Todavía no hay ningún coste previsto"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
+msgid "Every service to buy of the open files with its expected cost: what the system forecasts to pay to each supplier, before and after the purchase orders and bills."
+msgstr "Cada servicio a comprar de los expedientes abiertos con su coste previsto: lo que el sistema prevé pagar a cada proveedor, antes y después de los pedidos de compra y las facturas."
