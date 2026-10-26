@@ -24,7 +24,7 @@
                 <field name="airport_id"/>
                 <field name="airline_code"/>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <group string="Group By">
                     <filter string="Airport" name="group_airport" context="{'group_by': 'airport_id'}"/>
                     <filter string="Handler" name="group_handler" context="{'group_by': 'handler_id'}"/>
                 </group>
