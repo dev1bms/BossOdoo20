@@ -358,3 +358,24 @@ class TestQuotationPricing(TransactionCase):
         draft.line_ids.free_of_charge = True
         draft.action_submit()
         self.assertEqual(draft.state, "to_approve")
+
+    def test_quotation_template_lines_count_the_shipment(self):
+        """Standard services of a case come from a quotation template (Cristina, 26/10/2026); each line is counted
+        from the shipment like a service added by hand, so THC per container gives one line per container group."""
+        template = self.env["sale.order.template"].create({
+            "name": "PLANTILLA PRUEBA (FICTICIA)", "sale_order_template_line_ids": [Command.create({
+                "product_id": self.thc.id, "product_uom_qty": 1, "product_uom_id": self.thc.uom_id.id})]})
+        order = self.env["sale.order"].with_user(self.salesman).create({
+            "partner_id": self.customer.id, "sale_order_template_id": template.id, "boss_direction": "import",
+            "boss_transport_mode": "sea", "boss_load_type": "fcl", "boss_carrier_id": self.carrier_a.id,
+            "boss_port_id": self.env.ref("boss_pricing.port_esvlc").id, "boss_country_id": self.env.ref("base.cn").id,
+            "boss_planned_date": date(2026, 11, 2),
+            "boss_container_ids": [Command.create({"size": "20", "container_type_id": self.dv.id, "quantity": 2}),
+                                   Command.create({"size": "40", "container_type_id": self.hc.id, "quantity": 1})]})
+        order._onchange_sale_order_template_id()  # what the form does when the template is chosen
+        lines = order.order_line.filtered(lambda l: l.product_id == self.thc)
+        # one line per container group, counted from the shipment (not the template's 1), priced like «Add services»
+        self.assertEqual(sorted(zip(lines.mapped("boss_container_size"), lines.mapped("product_uom_qty"))),
+                         [("20", 2.0), ("40", 1.0)])
+        self.assertEqual(set(lines.mapped("boss_cost_status")), {"ok"})
+        self.assertEqual(sum(lines.mapped("boss_cost_amount")), 2 * 180.0 + 240.0)

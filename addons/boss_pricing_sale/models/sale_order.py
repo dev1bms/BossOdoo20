@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
 
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
@@ -92,6 +92,26 @@ class SaleOrder(models.Model):
         if "boss_storage_days" in vals and "boss_storage_days_known" not in vals:
             vals = dict(vals, boss_storage_days_known=True)
         return super().write(vals)
+
+    @api.onchange("sale_order_template_id")
+    def _onchange_sale_order_template_id(self):
+        """The template lists the services of a case; container services become one line per container size and
+        type of the shipment, like «Add services» does (they may be priced and sold differently)."""
+        super()._onchange_sale_order_template_id()
+        groups = sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
+                        key=lambda g: (g[0], g[1].sequence))
+        if not groups:
+            return
+        added = []
+        for line in self.order_line:
+            if (line.product_id.boss_pricing_mode and not line.boss_container_size
+                    and line.product_uom_id.boss_quantity_source in ("container", "teu")):
+                (line.boss_container_size, line.boss_container_type_id), *rest = groups
+                added += [Command.create({"product_id": line.product_id.id, "product_uom_id": line.product_uom_id.id,
+                                          "boss_container_size": size, "boss_container_type_id": ctype.id,
+                                          "sequence": line.sequence}) for size, ctype in rest]
+        if added:
+            self.update({"order_line": added})
 
     def _boss_quantity(self, source, size=False, ctype=False):
         """Quantity of a charge basis taken from the shipment, or None when entered on the line."""
