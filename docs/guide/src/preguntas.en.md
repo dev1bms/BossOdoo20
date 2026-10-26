@@ -51,6 +51,13 @@ None has an assumed answer: while they are open, the system does what the last c
 | P38 | Internal cost of BOSS own services | Ángel | Margin «after external costs»: not net profit |
 | P45 | Sending invoices to the tax agency (SII or VeriFactu) and returns Odoo 20 must prepare from go-live | Ángel | No SII or VeriFactu module installed on boss20 (checked 26/10/2026); nothing is sent |
 
+### Known defects (26/10/2026)
+
+| Id | Defect | Status |
+|---|---|---|
+| D-1 | A supplier bill created from the purchase order carries every line, also those with quantity 0 (services not performed), and the payment block (P30) counted them | Fixed in code with a test on 26/10 (Belal's decision W04-1); deployment to boss20 pending (task BOSS20-W09) |
+| D-2 | Amounts paid on behalf (ARA, IVA, PLA, DUM) on account 419000, a **payable** account: neither the broker's bill nor the customer invoice can be created, also on boss20 | Account map as Odoo 17 (419001–419007) prepared and tested locally (`docs/cuentas-suplidos.md`); the change on boss20 waits for Ángel's approval (task BOSS20-W10) |
+
 Still open (not among the proposals): P20–P23 · P26. The tables below keep the context of each question.
 
 ## Closed with a documented answer

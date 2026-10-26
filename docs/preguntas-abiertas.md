@@ -56,6 +56,13 @@ Ninguna tiene una respuesta supuesta: mientras sigan abiertas, el sistema hace l
 | P38 | Coste interno de los servicios propios de BOSS | Ángel | Margen «tras costes externos»: no es beneficio neto |
 | P45 | Envío de facturas a la AEAT (SII o VeriFactu) y declaraciones que debe preparar Odoo 20 desde el arranque | Ángel | Ningún módulo SII ni VeriFactu instalado en boss20 (comprobado el 26/10/2026); nada se envía |
 
+### Defectos conocidos (26/10/2026) · Known defects
+
+| Id | Defecto | Estado |
+|---|---|---|
+| D-1 | Una factura de proveedor creada desde el pedido lleva todas sus líneas, también las de cantidad 0 (servicios no prestados), y el bloqueo de pago (P30) las contaba | Corregido en el código con prueba el 26/10 (decisión de Belal W04-1); pendiente de desplegar en boss20 (tarea BOSS20-W09) |
+| D-2 | Los suplidos (ARA, IVA, PLA, DUM) en la cuenta 419000, que es **a pagar**: ni la factura del agente ni la factura al cliente se pueden crear, también en boss20 | Mapa de cuentas como Odoo 17 (419001–419007) preparado y probado en local (`docs/cuentas-suplidos.md`); el cambio en boss20 espera la aprobación de Ángel (tarea BOSS20-W10) |
+
 Siguen abiertas (no estaban entre las propuestas): P20–P23 · P26.
 Las tablas siguientes conservan el contexto de cada pregunta.
 

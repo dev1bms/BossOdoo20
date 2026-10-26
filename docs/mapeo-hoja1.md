@@ -90,6 +90,41 @@ de Cristina** (P19), no desarrollo: el motor, los métodos y el expediente ya es
 desarrollo: H1-21 (NOA/ATA con hora), H1-23/H1-24 (aerolínea ↔ handler), H1-26 (extracción de Odoo 17) y las decisiones
 H1-11, H1-13, H1-14, H1-17.
 
+## Qué falta exactamente por requisito · What is missing, by kind
+
+Tipos: **desarrollo**, **datos**, **documentos**, **decisión/aprobación**, **prueba** (toda falta termina con la prueba del escenario y la verificación en boss20, tareas D04, V01 y Q03).
+
+| Id | Qué falta |
+|---|---|
+| H1-01 | Documentos (Hapag, T3 grupaje) + aprobación (MSC) + prueba de escenario |
+| H1-02 | Documentos (Aducex, Ramos Vila) + aprobación + prueba |
+| H1-03 | Documentos (agente export) + aprobación + prueba |
+| H1-04 | Documentos (CFS) + aprobación + prueba |
+| H1-05 | Aprobación (MSC) + documentos (otras navieras) + prueba de escenario |
+| H1-06 | Datos (acuerdos PFT) + aprobación + prueba |
+| H1-07 | Documentos + aprobación + prueba |
+| H1-08 | Documentos + aprobación + prueba |
+| H1-09 | Documentos + aprobación + prueba |
+| H1-10 | Documentos + aprobación + prueba |
+| H1-11 | Decisión (Cristina, P16) + desarrollo/configuración (B05) + prueba |
+| H1-12 | Aprobación (MSC) + prueba |
+| H1-13 | Decisión (Cristina) + documentos + prueba |
+| H1-14 | Datos (lista Lejano Oriente) + aprobación + prueba |
+| H1-15 | Aprobación (3 navieras) + confirmación de vigencia 2026 + prueba |
+| H1-16 | Aprobación + prueba |
+| H1-17 | Decisión (Cristina, P09) + documento MSC export + desarrollo (B03) + prueba |
+| H1-18 | Documentos + aprobación + prueba |
+| H1-19 | Documentos + aprobación + prueba |
+| H1-20 | Documento IRENEO 2026 + aprobación + prueba |
+| H1-21 | Desarrollo (F01) + prueba automática + verificación en boss20 (V01) |
+| H1-22 | Desarrollo (F01) + aprobación de tarifas + verificación (V01) |
+| H1-23 | Desarrollo (F02) + datos (F03) + prueba + verificación (V01) |
+| H1-24 | Desarrollo (F02) + prueba + verificación (V01) |
+| H1-25 | Aprobación (WFS) + decisión ETX (B03) + documento 2.º handler (D03) + prueba |
+| H1-26 | Desarrollo del script (F03) + validación de Cristina (C04) + verificación (V01) |
+| H1-27 | Documentos (HAN/AWB export WFS, 2.º handler) + aprobación + prueba |
+| H1-28 | Documentos (ONE, MSK, ZIM, OOCL) + decisión DET + aprobación + prueba |
+
 ## Tareas en la plataforma · Tasks
 
 Tareas creadas el 26/10/2026 en https://task.bosscontinental.com (plan `seed_launch`, 99 tareas; plan semanal en https://task.bosscontinental.com/gantt/):
@@ -106,3 +141,6 @@ Tareas creadas el 26/10/2026 en https://task.bosscontinental.com (plan `seed_lau
 | BOSS20-F01 | Campos NOA y ATA con fecha y hora en el expediente | https://task.bosscontinental.com/tareas/227/ |
 | BOSS20-F02 | Aerolínea y handling en el expediente, emparejados con el aeropuerto | https://task.bosscontinental.com/tareas/228/ |
 | BOSS20-F03 | Extraer de Odoo 17 la lista aerolínea / aeropuerto / handling | https://task.bosscontinental.com/tareas/224/ |
+| BOSS20-B05 | VET: configurar tras la decisión de Cristina, con ejemplo de referencia | https://task.bosscontinental.com/tareas/276/ |
+| BOSS20-V01 | Verificación en boss20 de Hoja1 filas 8–10 (NOA/ATA, aerolínea↔handler, lista Odoo 17) | https://task.bosscontinental.com/tareas/277/ |
+| BOSS20-X01 | Excepción de coste manual para servicios sin tarifa en la entrega: aprobación de Belal | https://task.bosscontinental.com/tareas/275/ |

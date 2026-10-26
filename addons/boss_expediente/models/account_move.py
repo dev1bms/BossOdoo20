@@ -31,7 +31,10 @@ class AccountMove(models.Model):
         """File services billed by this vendor bill: through its purchase lines, or (amounts paid on behalf, billed
         without purchase order) through the service and the file's analytic account."""
         self.ensure_one()
-        lines = self.invoice_line_ids.filtered(lambda l: l.display_type == "product" and l.product_id)
+        # Odoo 20 puts every purchase line on the bill, with quantity 0 for what is not performed yet: those lines
+        # bill nothing and must not hold the payment (defect D-1, 26/10/2026).
+        lines = self.invoice_line_ids.filtered(
+            lambda l: l.display_type == "product" and l.product_id and l.quantity)
         needs = lines.purchase_line_id.boss_cost_id
         Need = self.env["boss.expediente.cost"].sudo()
         for line in lines.filtered(lambda l: not l.purchase_line_id and l.product_id.boss_paid_on_behalf):

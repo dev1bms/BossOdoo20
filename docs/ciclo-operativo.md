@@ -65,6 +65,27 @@ contabilidad, analítica y actividades; BOSS añade tarifas, datos del envío, e
 
 Hitos aprobados por Belal el 26/10/2026: entrega completa el **20/11/2026**, operación en pruebas hasta el **1/12/2026**, corrección y preparación del cambio del 2 al 31/12, Odoo 20 único sistema el **1/1/2027** (sustituyen al 30/11). El plan semanal (sprints S43 19–25 oct → cambio definitivo 1–8 ene; 99 tareas con estado, evidencia, responsable y dependencias) está en https://task.bosscontinental.com (`dev/boss_tasks/seed_launch.py`, siembra idempotente). Mapeo de Hoja1 de «Plan detallado previsiones»: `docs/mapeo-hoja1.md` (28 requisitos: 0 completos, 23 parciales, 5 no implementados).
 
+### Capacidad frente a trabajo planificado (26/10/2026)
+
+Horas estimadas de Belal por semana (sin contar lo ya hecho) frente a 7 h útiles por día laborable; las tareas de
+Cristina y Ángel son esperas de decisión o datos, no horas de desarrollo:
+
+| Semana | Capacidad | Planificado | Diferencia | Acción |
+|---|---|---|---|---|
+| S44 26 oct–1 nov | 35 h | 33 h | — | F01 adelantada a esta semana |
+| S45 2–8 nov (4 días) | 28 h | 87 h | **−59 h** | Falta capacidad: decidir (Belal) entre segundo desarrollador, mover B02/B04/P02 a la estabilización con su aprobación, o aceptar entrega parcial |
+| S46 9–15 nov (4 días) | 28 h | 71 h | **−43 h** | Ídem; N06 solo si Ángel decide que aplica |
+| S47 16–20 nov | 35 h | 40 h | −5 h | Ajustable |
+| S48–S53 (pruebas, estabilización, cambio) | 28–35 h | 3–32 h | — | Holgura para incidencias |
+
+Lo que amenaza el 20/11, con el responsable y la acción: capacidad de S45–S46 (Belal: decidir antes del 30/10);
+documentos de tarifa (D01, Cristina/operaciones antes del 4/11); decisiones de Cristina C02 (antes del 4/11) y de
+Ángel A02–A04 (antes del 6/11); alcance de la migración (N01, Belal, 30/10). Cada retraso de una semana en D01 o C02
+desplaza D02, B01, B03 y la verificación de Hoja1 una semana.
+
+Defectos: D-1 corregido en código con prueba el 26/10 (despliegue W09 pendiente); D-2 mapa de cuentas propuesto a
+Ángel (`docs/cuentas-suplidos.md`), cambio en boss20 bloqueado hasta su aprobación (W10).
+
 ## Plan de las decisiones aprobadas el 23/10/2026
 
 Decisiones y estado por pregunta: `docs/preguntas-abiertas.md` («Aprobadas el 23/10/2026», publicada en la guía,

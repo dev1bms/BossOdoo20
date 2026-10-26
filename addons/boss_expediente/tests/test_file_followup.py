@@ -267,3 +267,70 @@ class TestFileFollowUp(CycleCommon):
                     partner.l10n_es_passport = "X0000000T"
                     invoice.with_user(self.accountant).action_post()
                     self.assertEqual(invoice.state, "posted")
+
+    def test_zero_quantity_bill_lines_do_not_hold_the_payment(self):
+        """D-1 (26/10/2026): Odoo 20 copies every purchase line on the bill, quantity 0 for services not performed;
+        once the billed service is invoiced to the customer the payment is free."""
+        bl = self.env.ref("boss_services.service_bl").product_variant_id
+        self._tariff(self.carrier, bl, {"unit_price": 60.0}, carrier_id=self.carrier.id)
+        order, file = self._accepted(self.thc | bl, {self.thc: 300.0, bl: 90.0})
+        file.with_user(self.sales).action_create_rfqs()
+        po = file.purchase_order_ids
+        po.with_user(self.manager).button_confirm()
+        self._need(file, self.thc).with_user(self.sales).action_mark_performed()
+        po.with_user(self.accountant).action_create_invoice()
+        bill = po.invoice_ids
+        self.assertEqual(sorted(bill.invoice_line_ids.mapped("quantity")), [0.0, 1.0])  # BL not performed: 0
+        bill.invoice_date = date(2026, 11, 5)
+        bill.invoice_line_ids.tax_ids = self.purchase_tax
+        bill.with_user(self.accountant).action_post()
+        with self.assertRaises(UserError):  # THC not invoiced to the customer yet
+            bill.with_user(self.accountant).action_register_payment()
+        thc_part = file.allocation_ids.filtered(lambda a: a.product_id == self.thc)
+        wizard = self.env["boss.invoice.services"].with_user(self.sales).create({
+            "expediente_id": file.id, "allocation_ids": [Command.set(thc_part.ids)]})
+        self.env["account.move"].browse(wizard.action_create()["res_id"]).with_user(self.accountant).action_post()
+        self.assertFalse(bill.boss_bill_warning)
+        bill.with_user(self.accountant).action_register_payment()  # the BL line with quantity 0 does not hold it
+
+    def test_paid_on_behalf_on_current_liability_accounts(self):
+        """D-2 (26/10/2026): with the accounts proposed to Ángel (sub-accounts of 419, current liabilities, as
+        Odoo 17) the broker's bill and the customer invoice of the duties are created and posted; on a payable
+        account (419000) neither can be."""
+        ara = self.env.ref("boss_services.service_ara").product_variant_id
+        Account = self.env["account.account"]
+        payable = Account.search([("account_type", "=", "liability_payable")], limit=1)
+        charged = Account.create({"code": "419002", "name": "Suplidos aranceles repercutidos (prueba)",
+                                  "account_type": "liability_current", "reconcile": False})
+        borne = Account.create({"code": "419004", "name": "Suplidos aranceles soportados (prueba)",
+                                "account_type": "liability_current", "reconcile": False})
+        order = self._order(self.thc | ara)
+        self._line(order, self.thc).price_unit = 300.0
+        self._line(order, ara).write({"boss_manual_cost": 350.0, "boss_manual_cost_note": "DUA (prueba)",
+                                      "price_unit": 350.0})
+        order.with_user(self.sales).action_confirm()
+        file = order.boss_expediente_id.with_env(self.env)
+        ara_part = file.allocation_ids.filtered(lambda a: a.product_id == ara)
+
+        def broker_bill():
+            return self.env["account.move"].with_context(
+                boss_default_analytic={str(file.analytic_account_id.id): 100.0}).create({
+                    "move_type": "in_invoice", "partner_id": self.broker.id, "invoice_date": date(2026, 11, 5),
+                    "invoice_line_ids": [Command.create({"product_id": ara.id, "quantity": 1, "price_unit": 350.0,
+                                                         "tax_ids": [Command.set(self.purchase_tax.ids)]})]})
+
+        ara.product_tmpl_id.write({"property_account_income_id": payable.id,
+                                   "property_account_expense_id": payable.id})
+        with self.assertRaises(UserError):  # 419000 (payable): the configuration of 23/10 fails
+            broker_bill()
+        ara.product_tmpl_id.write({"property_account_income_id": charged.id,
+                                   "property_account_expense_id": borne.id})
+        bill = broker_bill()
+        self.assertEqual(bill.invoice_line_ids.account_id, borne)
+        bill.with_user(self.accountant).action_post()
+        wizard = self.env["boss.invoice.services"].with_user(self.sales).create({
+            "expediente_id": file.id, "allocation_ids": [Command.set(ara_part.ids)]})
+        invoice = self.env["account.move"].browse(wizard.action_create()["res_id"])
+        self.assertEqual(invoice.invoice_line_ids.account_id, charged)
+        invoice.with_user(self.accountant).action_post()
+        self.assertEqual((invoice.state, bill.state), ("posted", "posted"))
