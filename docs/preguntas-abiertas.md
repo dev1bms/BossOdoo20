@@ -60,8 +60,10 @@ Ninguna tiene una respuesta supuesta: mientras sigan abiertas, el sistema hace l
 
 | Id | Defecto | Estado |
 |---|---|---|
-| D-1 | Una factura de proveedor creada desde el pedido lleva todas sus líneas, también las de cantidad 0 (servicios no prestados), y el bloqueo de pago (P30) las contaba | Corregido en el código con prueba el 26/10 (decisión de Belal W04-1); pendiente de desplegar en boss20 (tarea BOSS20-W09) |
-| D-2 | Los suplidos (ARA, IVA, PLA, DUM) en la cuenta 419000, que es **a pagar**: ni la factura del agente ni la factura al cliente se pueden crear, también en boss20 | Mapa de cuentas como Odoo 17 (419001–419007) preparado y probado en local (`docs/cuentas-suplidos.md`); el cambio en boss20 espera la aprobación de Ángel (tarea BOSS20-W10) |
+| D-1 | Una factura de proveedor creada desde el pedido lleva todas sus líneas, también las de cantidad 0 (servicios no prestados), y el bloqueo de pago (P30) las contaba | Corregido con prueba y **desplegado en boss20 el 26/10** (W09); comprobado en boss20_uat: la factura de MSC con 4 líneas a 0 se paga tras facturar al cliente (`dev/uat_cycle.py`, C5) |
+| D-2 | Los suplidos (ARA, IVA, PLA, DUM) en la cuenta 419000, que es **a pagar**: ni la factura del agente ni la factura al cliente se pueden crear, también en boss20 | Mapa de cuentas como Odoo 17 (419001–419007, pasivo corriente) **aplicado en boss20 y boss20_uat el 26/10** por mandato de Belal (W10); Ángel lo ratifica o corrige (A02). Comprobado en boss20_uat: factura del agente de ARA en 419004 y factura al cliente en 419002 (C7) |
+| D-3 | El bloqueo de pago de la factura de proveedor (P30) solo actuaba en el botón «Registrar pago» de la factura; el asistente de pagos abierto desde una lista o un extracto lo saltaba | Encontrado en boss20_uat el 26/10 (C4); corregido con prueba (el asistente también se rechaza) y desplegado en boss20 y boss20_uat el 26/10 |
+| D-4 | Odoo 20 copia todas las líneas del pedido en la factura: un pedido sin nada prestado creaba una factura de ceros | Encontrado en boss20_uat el 26/10 (C3); ahora «Crear factura» se rechaza con el aviso «ningún servicio marcado como prestado» (prueba; desplegado el 26/10) |
 
 Siguen abiertas (no estaban entre las propuestas): P20–P23 · P26.
 Las tablas siguientes conservan el contexto de cada pregunta.

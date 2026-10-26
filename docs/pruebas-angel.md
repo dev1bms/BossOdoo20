@@ -312,3 +312,11 @@ Cuestiones abiertas, sin respuesta supuesta (el sistema hace lo que dice la colu
 | — | Dónde se hacen las pruebas con asientos antes del arranque (boss20 no tiene ninguno) | Copia local aislada | |
 
 Firma / fecha:
+
+## Resultado del ensayo en boss20_uat (26/10/2026) · Rehearsal result
+
+Ejecutado con `dev/uat_cycle.py` en el entorno persistente `boss20_uat` (registros guardados; detalle y cómo repetirlo en
+`docs/escenario-uat.md`): C1, C2, C5, C6, C7 y C8 dan el resultado esperado de esta hoja; C7 ya funciona con las cuentas
+419001–419007 (D-2 aplicado, Ángel ratifica). Dos hallazgos corregidos y desplegados el mismo día: el bloqueo de pago no
+actuaba en el asistente de pagos (D-3) y un pedido sin nada prestado creaba una factura de ceros (D-4). Nada se ha
+enviado a nadie: el entorno no tiene servidor de correo.
