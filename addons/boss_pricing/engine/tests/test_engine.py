@@ -108,6 +108,21 @@ class TestMethods(unittest.TestCase):
         self.assertEqual(amount(rule(1, method="brackets", params={"basis": "gross_kg", "brackets": open_table}),
                                 gross_kg=2000), Decimal("500.00"))
 
+    def test_customs_clearance_by_number_of_containers(self):
+        """FAD as Cristina described it (Explicaciones previsiones A111-A120, 28/09/2026; figures as she wrote them):
+        one agent 66 with 1 container and 75 with 2 or more; the other 66 + 26 per additional container, at most 4
+        additional (A33 «66 + 4 x 26 = 170»): brackets on the containers of the shipment."""
+        rows = [{"size": "40", "type_id": 1, "quantity": 1}]
+        one_or_more = rule(1, method="brackets", params={"basis": "containers", "brackets": [
+            {"up_to": 1, "fixed_amount": 66}, {"up_to": 0, "fixed_amount": 75}]})
+        self.assertEqual(amount(one_or_more, containers=rows), Decimal("66.00"))
+        self.assertEqual(amount(one_or_more, containers=[{"size": "40", "type_id": 1, "quantity": 3}]), Decimal("75.00"))
+        per_extra = rule(1, method="brackets", params={"basis": "containers", "brackets": [
+            {"up_to": 1, "fixed_amount": 66}, {"up_to": 2, "fixed_amount": 92}, {"up_to": 3, "fixed_amount": 118},
+            {"up_to": 4, "fixed_amount": 144}, {"up_to": 0, "fixed_amount": 170}]})
+        self.assertEqual(amount(per_extra, containers=[{"size": "20", "type_id": 1, "quantity": 2}]), Decimal("92.00"))
+        self.assertEqual(amount(per_extra, containers=[{"size": "40", "type_id": 1, "quantity": 9}]), Decimal("170.00"))
+
     def test_percent_of_goods_and_of_same_supplier_services(self):
         r = rule(1, method="percent", params={"percent_base": "goods_value", "rate": 0.3, "min_amount": 35})
         self.assertEqual(amount(r, goods_value=20000), Decimal("60.00"))

@@ -720,12 +720,18 @@ TASKS = [
          evidence=None, links=[f"{DOC}#/almacenaje"]),
     dict(code="B03", title="Fase B3: ETX (compra por AWB máster, venta por expediente) y DET (código propio o "
                            "dentro de DEM)", epic="E4", type=T.DEV, sprint="S45", points=3, start=D(2026, 11, 5),
-         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=5, who="belal", dept="sys", status=None,
-         done=None,
+         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=5, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 26),
          desc=desc("Resultado: ETX y DET configurados (unidad, método, modo de coste) con el documento del "
                    "proveedor; DET de MSC exportación cargado si procede (Hoja1 H1-17, H1-25).",
                    "Aceptación: ejemplo de referencia por servicio y prueba en verde."),
-         evidence=None, links=[f"{DOC}#/catalogo"]),
+         evidence="Cerrada el 26/10 con evidencia: migración boss_services 20.0.1.3.0 (commit 92c29f8) desplegada en "
+                  "boss20 y boss20_uat: ETX por AWB máster con tarifa (importación aérea; Cristina 07/10 y 08/10), "
+                  "DET por contenedor y día con tarifa (MSC exportación p.10; propuesta 07/10 aplicada por mandato de "
+                  "Belal). ETX de WFS (ítem 49) cargado desde el PDF identificado por SHA-256 en la tarifa [MUESTRA] "
+                  "WFS importación (dev/setup_wfs_lines.py). Pruebas del servidor 36/36. Falta el documento MSC "
+                  "exportación de detention para cargar DET.",
+         links=[f"{DOC}#/catalogo"]),
     dict(code="B02", title="Fase B2: QBR — factura en EUR de una oferta en USD con el tipo de la naviera y línea de "
                            "quebranto", epic="E7", type=T.DEV, sprint="S45", points=5, start=D(2026, 11, 5),
          due=D(2026, 11, 6), priority=P.MEDIUM, deps=["A04"], hours=8, who="belal", dept="sys", status=None,
@@ -777,7 +783,11 @@ TASKS = [
     dict(code="D03", title="Cargar el segundo handler aéreo (import y export) y HAN/AWB de exportación de WFS "
                            "(Hoja1 B10, D10)", epic="E8", type=T.MIGRATION, sprint="S46", points=5,
          start=D(2026, 11, 10), due=D(2026, 11, 12), priority=P.HIGH, deps=["D01"], hours=8, who="belal",
-         dept="sys", status=None, done=None,
+         dept="sys", status=S.BLOCKED, done=None,
+         blocked="Ningún documento de tarifa de un segundo handler (Swissport, IAS, Iberia, SAASA) en NEW ODOO, Boss "
+                 "Continental - IT, OPERACIONES, Documents/costs, .research, BossOdoo19 ni Odoo 19 (búsqueda del "
+                 "26/10). Swissport es el candidato con más compras en Odoo 17 (153 líneas 2025-26). WFS exportación "
+                 "HAN (ítem 12) ya cargado; WFS no tiene cargo AWB ni ETX de exportación en su documento.",
          desc=desc("Resultado: HAN, ETX, ALM y AWB del segundo handler (IAS o SAASA) para importación y "
                    "exportación, y los códigos de exportación de WFS que faltan, cargados y enviados a aprobación.",
                    "Estado real 26/10: solo WFS (import: HAN, ALM, AWB; export: ALM, X-R).",
@@ -1050,25 +1060,32 @@ TASKS = [
          evidence=None, links=[]),
     dict(code="B05", title="VET: configurar el servicio tras la decisión de Cristina, con ejemplo de referencia "
                            "(Hoja1 B7)", epic="E8", type=T.DEV, sprint="S45", points=2, start=D(2026, 11, 5),
-         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=3, who="belal", dept="sys", status=None,
-         done=None,
+         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=3, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 26),
          desc=desc("Resultado: VET deja de estar «pendiente de decisión»: unidad, método, modo de coste y clase de IVA "
                    "según la respuesta de Cristina (P16: ¿inspección veterinaria en PIF por documento como SAN? "
                    "proveedor y precio); tarifa cargada si hay documento; ejemplo de referencia y prueba.",
                    "Estado real 26/10: H1-11 no implementado (modo pending).",
                    "Aceptación: VET calcula en una oferta en borrador según el ejemplo; docs/mapeo-hoja1.md H1-11 "
                    "actualizado."),
-         evidence=None, links=[f"{DOC}#/srv-VET"]),
+         evidence="Cerrada el 26/10: propuesta del 07/10 aplicada por mandato de Belal (sin consultar): VET coste manual "
+                  "por documento como SAN; coste = veterinario + 20 % del handler (WFS ítem 54). Migración "
+                  "boss_services 20.0.1.3.0 desplegada (commit 92c29f8). Cristina puede ratificarla (P16).",
+         links=[f"{DOC}#/srv-VET"]),
     dict(code="V01", title="Verificación en boss20 de Hoja1 filas 8–10: NOA/ATA con hora, aerolínea↔handler, lista "
                            "de Odoo 17", epic="E5", type=T.TEST, sprint="S46", points=2, start=D(2026, 11, 12),
          due=D(2026, 11, 13), priority=P.HIGH, deps=["F01", "F02", "F03", "C04"], hours=3, who="belal", dept="sys",
-         status=None, done=None,
+         status=S.DONE, done=D(2026, 10, 26),
          desc=desc("Resultado: con un expediente aéreo [DEMO] en boss20: NOA y ATA con hora propagan el periodo de "
                    "ALM y recalculan el coste (H1-21, H1-22); al elegir aerolínea y aeropuerto se propone el handler "
                    "validado por Cristina (H1-23, H1-24, H1-26); capturas en la guía.",
                    "Aceptación: comportamiento observado en boss20 (no solo el campo en pantalla); docs/mapeo-hoja1.md "
                    "actualizado con la evidencia."),
-         evidence=None, links=[f"{DOC}#/expediente"]),
+         evidence="Comprobado en boss20 desde Chrome el 26/10: E260011 Cathay → handler WFS, Qatar → Iberia (handling); "
+                  "E260015 (S00031): ATA 10/11 08:00 y fechas de contenedor guardadas en la interfaz → DEM 20' "
+                  "10/11 → 18/11 = 60 €, DEM 40' HC → 25/11 = 390 €, previsión «Recalculada»; menú «Aerolíneas y "
+                  "handlers» con 47 relaciones. Validación de la lista por Cristina: C04.",
+         links=[f"{DOC}#/expediente"]),
     dict(code="G07", title="Soporte posterior al cambio (4–8 ene): incidencias con prioridad y seguimiento diario",
          epic="E12", type=T.INFRA, sprint="S2701", points=3, start=D(2027, 1, 4), due=D(2027, 1, 8),
          priority=P.CRITICAL, deps=["G04"], hours=20, who="belal", dept="sys", status=None, done=None,
@@ -1601,7 +1618,7 @@ ORIG_EN = {
     "026": "Source strings in English and translation in .po; no accepted failures.",
     "030": "Demonstration of the cost calculation and list of open questions pending their approval.",
 }
-BLOCKED_EN = {}
+BLOCKED_EN = {"D03": "No tariff document of a second air handler (Swissport, IAS, Iberia, SAASA) in NEW ODOO, Boss Continental - IT, OPERACIONES, Documents/costs, .research, BossOdoo19 or Odoo 19 (search of 26/10). Swissport has the most purchases in Odoo 17 (153 lines 2025-26). WFS export HAN (item 12) already loaded; the WFS document has no export AWB or ETX charge."}
 
 class Command(BaseCommand):
     help = "Siembra idempotente del plan de lanzamiento BOSS Odoo 20 (26/10/2026): sprints semanales, epics, tareas."

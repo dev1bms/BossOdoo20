@@ -20,6 +20,11 @@ TEMPLATES = {
     "[DEMO] EAB · Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
         ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
 }
+EN_NAMES = dict(zip(TEMPLATES, [
+    "[DEMO] IAB FOB · Air import FOB · standard services (Cofitel offer 02/2026; Cristina confirms)",
+    "[DEMO] IMB FOB · Sea import FCL · standard services (reference S00009 [DEMO] and MSC 2026; Cristina confirms)",
+    "[DEMO] EAB · Air export · standard services (reference WFS export tariff; Cristina confirms)",
+]))
 NOTE = ("Plantilla de servicios que aplican SIEMPRE en este caso. Los servicios que aplican A VECES (almacenaje ALM, "
         "inspecciones, seguro, caución, quebranto, extras) se añaden en la oferta con «Añadir servicios». Lista "
         "pendiente de confirmación por Cristina (tarea BOSS20-TP03).")
@@ -44,6 +49,10 @@ for name, codes in TEMPLATES.items():
         template = Template.create({"name": name, "note": NOTE, "sale_order_template_line_ids": [
             Command.create({"product_id": p.id, "product_uom_qty": 1, "product_uom_id": p.uom_id.id,
                             "sequence": i * 10}) for i, p in enumerate(products, start=1)]})
+    # The name is translatable: the same «[DEMO] <case>» prefix in every language, so that the template is found by
+    # its case code whatever the language of the user (found in Chrome on 26/10: the English name was an older one).
+    template.with_context(lang="es_ES").name = name
+    template.with_context(lang="en_US").name = EN_NAMES[name]
     made[name] = template
     print("TEMPLATE", template.id, name[:40], [l.product_id.default_code for l in template.sale_order_template_line_ids])
 
