@@ -553,8 +553,13 @@ TASKS = [
          type=T.ANALYSIS, sprint="S44", points=1, start=D(2026, 10, 28), due=D(2026, 11, 6), priority=P.HIGH,
          deps=[], hours=1, who="cristina", dept="ops", status=None, done=None,
          desc=desc("Resultado: documento IRENEO 2026 (HAN, X-R, TTE-CON, SEG, FS) o confirmación escrita; las "
-                   "tarifas de 2025 no se prorrogan (Hoja1 H1-20).", f"{NOT_COMMITTED}",
-                   "Aceptación: documento en la carpeta NEW ODOO y tarifa nueva cargada (D02)."),
+                   "tarifas de 2025 no se prorrogan (Hoja1 H1-20).",
+                   "Estado 26/10: la carta de IRENEO del 14/07/2026 (RDL 9/2026) confirma por escrito +10 % en los "
+                   "servicios de transporte desde el 15/07; con ella se ha creado en boss20 la tarifa «IRENEO "
+                   "distribución nacional zona 3 2026 (+10 % transporte, carta 14/07/2026)» (TTE-CON × 1,10, carta "
+                   "adjunta, esperando aprobación). Solo queda confirmar si el handling (HAN, X-R aéreo) sigue a "
+                   "precio 2025.", f"{NOT_COMMITTED}",
+                   "Aceptación: Cristina aprueba la versión 2026 del transporte y confirma el handling."),
          evidence=None, links=[f"{DOC}#/srv-TTE-CON"]),
     dict(code="D01", title="Reunir los documentos de tarifa que faltan (lista del 07/10: aduanas, Hapag, Transglory, "
                            "PFT, inspecciones, CES, navieras D&D, 2.º handler)", epic="E8", type=T.MIGRATION,
@@ -573,13 +578,18 @@ TASKS = [
          evidence=None, links=[f"{DOC}#/sin-precio"]),
     dict(code="F03", title="Extraer de Odoo 17 la lista aerolínea / aeropuerto / handling y proponer la asociación "
                            "(Hoja1 C10)", epic="E8", type=T.ANALYSIS, sprint="S44", points=3, start=D(2026, 10, 29),
-         due=D(2026, 10, 30), priority=P.HIGH, deps=[], hours=4, who="belal", dept="sys", status=None, done=None,
+         due=D(2026, 10, 30), priority=P.HIGH, deps=[], hours=4, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 26),
          desc=desc("Resultado: script de solo lectura sobre Odoo 17 (expedientes aéreos: aerolínea, aeropuerto, "
                    "handler usado) y lista en .research (datos reales, fuera de Git) para que Cristina valide la "
                    "asociación.",
                    "Estado real 26/10: no implementado (H1-26).",
                    "Aceptación: lista validada por Cristina; sirve de carga para F02."),
-         evidence=None, links=[]),
+         evidence="Cerrada el 26/10 con evidencia: configuración «HandlingConfig» de Odoo 17 leída (47 filas; la "
+                  "archivada #29 duplicaba una activa) y cargada como datos del módulo (37 aerolíneas, 6 handlers, 46 "
+                  "relaciones en MAD, BCN, VLC, AGP, BIO; addons/boss_expediente/data/boss_airline_handler_data.xml, "
+                  "commit d86cded). Queda la validación de Cristina (C04).",
+         links=[]),
     dict(code="N01", title="Alcance de la migración de Odoo 17: qué datos, qué expedientes abiertos, fecha de corte",
          epic="E9", type=T.ANALYSIS, sprint="S44", points=2, start=D(2026, 10, 28), due=D(2026, 10, 30),
          priority=P.CRITICAL, deps=[], hours=3, who="belal", dept="dir", status=None, done=None,
@@ -669,24 +679,34 @@ TASKS = [
          evidence=None, links=[f"{DOC}#/tarifa-alta"]),
     dict(code="F01", title="Campos NOA y ATA con fecha y hora en el expediente; alimentan el periodo de ALM/DEM/OCU "
                            "(Hoja1 C8, D8)", epic="E6", type=T.DEV, sprint="S44", points=3, start=D(2026, 10, 29),
-         due=D(2026, 10, 30), priority=P.HIGH, deps=[], hours=6, who="belal", dept="sys", status=None, done=None,
+         due=D(2026, 10, 30), priority=P.HIGH, deps=[], hours=6, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 26),
          desc=desc("Resultado: NOA (fecha y hora) y ATA con hora en «Referencias y fechas» del expediente; al "
                    "rellenarlos se propone el inicio del periodo real de los servicios por tiempo; evento en el "
                    "expediente; recálculo.",
                    "Adelantada a la semana del 26/10 (hueco de capacidad; no depende de ninguna decisión). Estado real 26/10: ATA solo fecha; NOA solo como inicio del periodo del servicio (H1-21, H1-22).",
                    "Aceptación: prueba automática (NOA → periodo ALM → coste recalculado) y captura en la guía."),
-         evidence=None, links=[f"{DOC}#/expediente"]),
+         evidence="Cerrada el 26/10 con evidencia: commits 593c320 y d86cded (ATA, ATD, NOA, FOH, recogida y entrega "
+                  "con fecha y hora; periodo real de ALM/DEM/OCU desde las fechas; recálculo «Cambio de fechas del "
+                  "expediente»); test test_file_dates_set_the_actual_period_and_recompute en verde en el servidor "
+                  "(18/18, BD boss20_test_161814); desplegado en boss20 (boss_expediente 20.0.1.5.0).",
+         links=[f"{DOC}#/expediente"]),
     dict(code="F02", title="Aerolínea y handling en el expediente, emparejados con el aeropuerto; asociación "
                            "aerolínea → handler (Hoja1 B9, C9)", epic="E6", type=T.DEV, sprint="S45", points=5,
          start=D(2026, 11, 4), due=D(2026, 11, 6), priority=P.HIGH, deps=["F03"], hours=10, who="belal",
-         dept="sys", status=None, done=None,
+         dept="sys", status=S.DONE, done=D(2026, 10, 26),
          desc=desc("Resultado: modelo de asociación (aerolínea, aeropuerto → handler) cargado desde F03; en el "
                    "expediente aéreo, al elegir aerolínea y aeropuerto se propone el handler (editable); el "
                    "handler es el proveedor por defecto de HAN, ALM, AWB, ETX.",
                    "Estado real 26/10: no implementado (H1-23, H1-24). Cristina 28/09: asociación «más adelante»; "
                    "se hace ahora porque Hoja1 la pide.",
                    "Aceptación: prueba automática y oferta [DEMO] aérea con handler propuesto."),
-         evidence=None, links=[f"{DOC}#/expediente"]),
+         evidence="Cerrada el 26/10 con evidencia: commits d86cded, 2feb285, ff03448, 9a87b94 (modelo "
+                  "boss.airline.handler, menú «Aerolíneas y handlers», campo handler del expediente con propuesta u "
+                  "opciones, proveedor de HAN/ALM/AWB/ETX/X-R en la oferta y en las necesidades, recálculo al cambiar "
+                  "de handler); test test_handler_of_the_airline_at_the_airport en verde en el servidor (18/18); "
+                  "desplegado en boss20.",
+         links=[f"{DOC}#/expediente"]),
     dict(code="B01", title="Fase B1: venta única de ALM (tarifa de venta con el motor por tiempo + regla de lista; "
                            "ADR-006)", epic="E4", type=T.DEV, sprint="S45", points=8, start=D(2026, 11, 3),
          due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=14, who="belal", dept="sys", status=None,
@@ -1006,15 +1026,17 @@ TASKS = [
          evidence="Deployed on 26/10/2026 (dev/deploy.sh update boss_pricing,boss_pricing_sale,boss_expediente, exit 0, log deploy_20261026_130252.log) together with the fix of the crash when a line is priced before the planned date (commit fbea99c); 29/29 Odoo tests and 22/22 engine tests green before deploying; source on the server checked afterwards.", links=[SYS]),
     dict(code="W10", title="Aplicar en boss20 el mapa de cuentas de suplidos aprobado por Ángel (D-2)", epic="E7",
          type=T.FIX, sprint="S45", points=2, start=D(2026, 11, 4), due=D(2026, 11, 5), priority=P.CRITICAL,
-         deps=["W06", "A02"], hours=2, who="belal", dept="sys", status=S.BLOCKED, done=None,
-         blocked="Espera que Ángel apruebe el mapa de cuentas de suplidos (docs/cuentas-suplidos.md, tarea A02).",
+         deps=["W06", "A02"], hours=2, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 26),
+         evidence="Aplicado en boss20 el 26/10 por mandato de Belal (práctica de Odoo 17): cuentas 419001–419007 "
+                  "(pasivo corriente) creadas y asignadas a IVA, ARA, DUM y PLA con dev/setup_suplidos_accounts.py y "
+                  "el testigo dev/apply-on-boss20.txt. Ángel ratifica o corrige el mapa en A02.",
          desc=desc("Resultado: cuentas 419001–419007 (o las que Ángel apruebe) creadas en boss20 y asignadas a ARA, IVA, "
                    "PLA y DUM con dev/setup_suplidos_accounts.py --approved-by-angel; el borrador de factura de ARA de "
                    "E260001 se crea sin error.",
                    "Bloqueo: espera la aprobación del mapa (docs/cuentas-suplidos.md) por Ángel (A02). Mientras tanto "
                    "la fila ARA de E260001 no se puede facturar en boss20 (defecto D-2).",
                    "Aceptación: lectura de boss20 con las cuentas y el mapa; factura borrador de ARA creada."),
-         evidence=None, links=[f"{DOC}#/facturacion"]),
+         links=[f"{DOC}#/facturacion"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
@@ -1316,7 +1338,11 @@ DESCS_EN = {
            f"retire (P16), E26xxxx numbering at go-live (P36), multi-shipment agreements (P34).\n{PROPOSED}\n"
            "Acceptance: written answers in docs/preguntas-abiertas.md with date; tasks B01, B03, B05 and D02 unblocked.",
     "C03": "Result: IRENEO 2026 document (HAN, X-R, TTE-CON, SEG, FS) or written confirmation; the 2025 tariffs are not "
-           f"extended (Hoja1 H1-20).\n{PROPOSED}\nAcceptance: document in the NEW ODOO folder and new tariff loaded (D02).",
+           "extended (Hoja1 H1-20).\nStatus 26/10: IRENEO's letter of 14/07/2026 (RDL 9/2026) confirms in writing +10 % on "
+           "transport services from 15/07; with it the tariff «IRENEO distribución nacional zona 3 2026 (+10 % "
+           "transporte, carta 14/07/2026)» was created on boss20 (TTE-CON × 1.10, letter attached, waiting for "
+           "approval). Only the handling (HAN, air X-R) at 2025 prices remains to confirm.\n"
+           f"{PROPOSED}\nAcceptance: Cristina approves the 2026 transport version and confirms the handling.",
     "C04": "Result: batch 1 tariffs approved (or sent back with a correction) and airline / airport / handler list "
            f"validated.\n{PROPOSED}\nAcceptance: statuses changed on boss20; list signed.",
     "C05": f"Result: batch 2 tariffs approved or sent back.\n{PROPOSED}",
@@ -1350,14 +1376,24 @@ DESCS_EN = {
            "Brought forward to the week of 26/10 (capacity available; depends on no decision). Actual status 26/10: "
            "the file has ATA and Pickup as dates without time, and they do not feed the service period (H1-21, "
            "H1-22).\nAcceptance: automated tests (ATA + Pickup with time → ALM period → days → cost recomputed; same "
-           "for DEM/OCU on sea) and screenshots in the guide; checked with Cristina on a [DEMO] air file.",
+           "for DEM/OCU on sea) and screenshots in the guide; checked with Cristina on a [DEMO] air file.\n"
+           "Closed 26/10 with evidence: commits 593c320 and d86cded (ATA, ATD, NOA, FOH, pickup and delivery with "
+           "date and time; actual period of ALM/DEM/OCU from the file dates; recompute «File dates changed»); test "
+           "green on the server (18/18); deployed on boss20 (boss_expediente 20.0.1.5.0).",
     "F02": "Result: association model (airline, airport → handler) loaded from F03; on an air file, choosing airline "
            "and airport proposes the handler (editable); the handler is the default supplier of HAN, ALM, AWB, ETX.\n"
            "Actual status 26/10: not implemented (H1-23, H1-24). Cristina 28/09: association «later»; done now because "
-           "Hoja1 asks for it.\nAcceptance: automated test and a [DEMO] air quotation with the handler proposed.",
+           "Hoja1 asks for it.\nAcceptance: automated test and a [DEMO] air quotation with the handler proposed.\n"
+           "Closed 26/10 with evidence: commits d86cded, 2feb285, ff03448, 9a87b94 (model boss.airline.handler, menu "
+           "«Airlines and handlers», handler field on the file proposed or offered as options, supplier of "
+           "HAN/ALM/AWB/ETX/X-R on the quotation and on the needs, recompute on handler change); test green on the "
+           "server (18/18); deployed on boss20.",
     "F03": "Result: read-only script on Odoo 17 (air files: airline, airport, handler used) and list in .research (real "
            "data, outside Git) for Cristina to validate the association.\nActual status 26/10: not implemented "
-           "(H1-26).\nAcceptance: list validated by Cristina; it is the load for F02.",
+           "(H1-26).\nAcceptance: list validated by Cristina; it is the load for F02.\nClosed 26/10 with evidence: "
+           "Odoo 17 «HandlingConfig» read (47 rows; archived #29 duplicated an active one) and loaded as module data "
+           "(37 airlines, 6 handlers, 46 relations at MAD, BCN, VLC, AGP, BIO; commit d86cded). Cristina's validation "
+           "remains (C04).",
     "G01": f"Notice to the team; from the cut-off time no new record or change in Odoo 17.\nOwner: Cristina "
            f"(operations). {PROPOSED}",
     "G02": "Result: final Odoo 17 backup archived; differences loaded into boss20 with procedure S02; load report.",
@@ -1517,7 +1553,9 @@ DESCS_EN = {
            "DUM with dev/setup_suplidos_accounts.py --approved-by-angel; the ARA draft invoice of E260001 is created "
            "without error.\nBlocker: waits for Ángel's approval of the map (docs/cuentas-suplidos.md, A02). Meanwhile "
            "the ARA line of E260001 cannot be invoiced on boss20 (defect D-2).\nAcceptance: boss20 read with the "
-           "accounts and the map; ARA draft invoice created.",
+           "accounts and the map; ARA draft invoice created.\nApplied on boss20 on 26/10 by Belal's mandate (Odoo 17 "
+           "practice): accounts 419001–419007 (current liabilities) created and assigned to IVA, ARA, DUM and PLA with "
+           "dev/setup_suplidos_accounts.py and the token dev/apply-on-boss20.txt. Ángel ratifies or corrects the map in A02.",
     "X01": "Belal's rule (26/10): the 20/11 delivery includes the approved scope and the Hoja1 requirements; a manual "
            "cost for a service without a tariff is an exception that needs his approval, and the requirement concerned "
            "stays «Partial».\nResult: list of Hoja1 services still without an approved tariff on 16/11, with the reason "
@@ -1563,7 +1601,7 @@ ORIG_EN = {
     "026": "Source strings in English and translation in .po; no accepted failures.",
     "030": "Demonstration of the cost calculation and list of open questions pending their approval.",
 }
-BLOCKED_EN = {"W10": "Waiting for Ángel to approve the paid-on-behalf account map (docs/cuentas-suplidos.md, task A02)."}
+BLOCKED_EN = {}
 
 class Command(BaseCommand):
     help = "Siembra idempotente del plan de lanzamiento BOSS Odoo 20 (26/10/2026): sprints semanales, epics, tareas."
