@@ -27,8 +27,11 @@ WFS la tienen), y el botón «Aprobar» no la exige. Antes de aprobar, revisar e
 | 9 | IRENEO | [MUESTRA] IRENEO MAD recogidas en terminal 2025 | Ídem | 01/01/2025 – 31/12/2025 (**caducada**) | HAN (kg tasable aéreo, p.7) | Importación · aéreo | Ídem | Ídem |
 | 10 | IRENEO | [MUESTRA] IRENEO distribución nacional zona 3 2025 | Ídem | 01/01/2025 – 31/12/2025 (**caducada**) | TTE-CON (kg tasable terrestre, tramos, p.6-7 y p.16) · SEG (porcentaje por expediente, p.16) | Importación y exportación · cualquier modo · 15 provincias de la zona 3 | Ídem; el recargo de combustible (FS) no está en esta tarifa | Ídem |
 
-Si IRENEO confirma por escrito que los precios de 2025 siguen en 2026, esa confirmación es el documento de una **tarifa
-nueva** con validez 2026, revisada y aprobada por Cristina; la de 2025 no se modifica.
+**Confirmación escrita encontrada el 26/10/2026** (carta de IRENEO del 14/07/2026 adjunta al correo «Actualización del
+Recargo por Combustible conforme a RDL 9/2026»): las tarifas de **transporte** suben un 10 % desde el 15/07 (de 2026; la
+carta pone 2025 por errata). Con ella se crea una **tarifa nueva** de IRENEO con validez desde el 15/07/2026: TTE-CON de
+2025 × 1,10, documento = la carta + la tarifa 2025; la de 2025 no se modifica. HAN y X-R (handling) no están en la carta:
+solo con confirmación de Cristina.
 
 ## Qué se activa al aprobar · What approval turns on
 

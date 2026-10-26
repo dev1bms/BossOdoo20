@@ -1,6 +1,7 @@
 from odoo import Command, api, fields, models
 from odoo.exceptions import ValidationError
 
+from .boss_airline_handler import HANDLER_SERVICE_CODES
 from .boss_expediente import FROM_ORDER, with_accounts
 
 
@@ -28,6 +29,25 @@ class SaleOrder(models.Model):
         domain="[('state', '!=', 'cancel'), ('financial_closed', '=', False)]",
         help="Shipment file of this order. Empty: opened when the quotation is accepted. Choose a file to add a "
         "service sold later or to link a file opened before the quotation (pre-alert).")
+
+    def _boss_handler_candidates(self):
+        """Handlers known for the airline at the airport of an air quotation (empty otherwise)."""
+        self.ensure_one()
+        if self.boss_transport_mode != "air":
+            return self.env["res.partner"]
+        return self.env["boss.airline.handler"]._handlers_for(self.boss_carrier_id, self.boss_port_id)
+
+    @api.onchange("boss_carrier_id", "boss_port_id", "boss_transport_mode")
+    def _onchange_boss_handler_supplier(self):
+        """Airline or airport changed on the quotation: the handling lines without supplier, or with a handler no
+        longer known for that pair, follow the new handler when exactly one is known."""
+        for order in self:
+            handlers = order._boss_handler_candidates()
+            if len(handlers) != 1:
+                continue
+            for line in order.order_line.filtered(
+                    lambda l: l.product_id.default_code in HANDLER_SERVICE_CODES and l.boss_supplier_id != handlers):
+                line.boss_supplier_id = handlers
     boss_expediente_ids = fields.Many2many("boss.expediente", string="Files", compute="_compute_boss_expediente_ids",
                                            help="Every file with part of the accepted services of this order.")
     boss_expediente_count = fields.Integer(compute="_compute_boss_expediente_ids")
@@ -101,6 +121,21 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     boss_allocation_ids = fields.One2many("boss.expediente.allocation", "sale_line_id", "Files", copy=False)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Air handling services (HAN, ALM, AWB, ETX, X-R) are bought from the handler of the airline at the airport:
+        when the quotation knows exactly one, it becomes the supplier of the line (only its tariffs price it)."""
+        Order = self.env["sale.order"]
+        for vals in vals_list:
+            if vals.get("boss_supplier_id") or not vals.get("order_id") or not vals.get("product_id"):
+                continue
+            product = self.env["product.product"].browse(vals["product_id"])
+            if product.default_code in HANDLER_SERVICE_CODES:
+                handlers = Order.browse(vals["order_id"])._boss_handler_candidates()
+                if len(handlers) == 1:
+                    vals["boss_supplier_id"] = handlers.id
+        return super().create(vals_list)
 
     def _boss_posted_invoiced_qty(self):
         """Quantity invoiced to the customer on posted invoices, minus posted credit notes (drafts do not count)."""

@@ -32,3 +32,6 @@ boss_expediente_allocation_account,File parts of sale lines (accounting),boss.ex
 boss_expediente_allocation_comp_rule,File parts multi-company,boss.expediente.allocation,,crud,"[('company_id', 'in', company_ids)]"
 boss_expediente_split_salesman,Move services to another file,boss.expediente.split,sales_team.group_sale_salesman,crud,
 boss_expediente_split_line_salesman,Move services to another file (lines),boss.expediente.split.line,sales_team.group_sale_salesman,crud,
+boss_airline_handler_read,Airline handlers: read,boss.airline.handler,base.group_user,r,
+boss_airline_handler_purchase,Airline handlers: maintain (purchase),boss.airline.handler,purchase.group_purchase_user,crud,
+boss_airline_handler_manager,Airline handlers: maintain (sales manager),boss.airline.handler,sales_team.group_sale_manager,crud,

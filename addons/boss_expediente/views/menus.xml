@@ -12,6 +12,9 @@
               action="account.res_partner_action_customer"/>
     <menuitem id="menu_boss_files_suppliers" name="Suppliers" parent="menu_boss_files_root" sequence="40"
               action="account.res_partner_action_supplier"/>
+    <menuitem id="menu_boss_files_handlers" name="Airlines and handlers" parent="menu_boss_files_root"
+              sequence="50" action="boss_airline_handler_action"
+              groups="purchase.group_purchase_user,sales_team.group_sale_manager"/>
     <menuitem id="menu_boss_files_roles" name="Logistic roles" parent="menu_boss_files_root" sequence="90"
               action="boss_partner_role_action" groups="sales_team.group_sale_manager"/>
     <menuitem id="menu_sale_boss_files" name="Shipment files" parent="sale.sale_order_menu" sequence="30"

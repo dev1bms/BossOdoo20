@@ -78,6 +78,9 @@
                             <field name="consignee_id"/>
                             <field name="agent_id"/>
                             <field name="carrier_id"/>
+                            <field name="handler_candidate_ids" invisible="1"/>
+                            <field name="handler_id" invisible="transport_mode != 'air'"
+                                   domain="[('id', 'in', handler_candidate_ids)] if handler_candidate_ids else [('boss_role_ids.code', '=', 'handler')]"/>
                             <field name="preliminary" invisible="1"/>
                             <field name="financial_closed" invisible="1"/>
                             <field name="company_id" groups="base.group_multi_company"/>

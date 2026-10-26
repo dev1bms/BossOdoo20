@@ -5,6 +5,7 @@ from odoo.tools import float_compare
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 from odoo.addons.boss_pricing_sale.models.sale_order_line import COST_KINDS
 
+from .boss_airline_handler import HANDLER_SERVICE_CODES
 from .boss_expediente import COST_GROUPS, account_share
 
 NEED_STATES = [
@@ -150,7 +151,9 @@ class BossExpedienteCost(models.Model):
             "name": line.product_id.display_name,
             # amounts paid on behalf (duties, import VAT) are paid by the customs broker and billed by it at cost
             "partner_id": (line._boss_purchase_partner() or (
-                expediente.customs_broker_id if line.product_id.boss_paid_on_behalf else self.env["res.partner"])).id,
+                expediente.customs_broker_id if line.product_id.boss_paid_on_behalf
+                else expediente.handler_id if line.product_id.default_code in HANDLER_SERVICE_CODES
+                else self.env["res.partner"])).id,
             "currency_id": currency.id, "uom_id": uom.id, "quantity": quantity,
             "expected_unit_cost": unit, "accepted_unit_cost": unit, "accepted_amount_company": accepted,
             "accepted_cost_kind": line.boss_cost_kind, "tariff_line_id": tariff_line.id,

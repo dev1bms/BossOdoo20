@@ -371,3 +371,40 @@ class TestFileFollowUp(CycleCommon):
         file.pickup_date = datetime(2026, 11, 20, 10, 0)
         alm.invalidate_recordset()
         self.assertEqual(alm.period_end, datetime(2026, 11, 12, 10, 0))  # the file no longer overwrites it
+
+    def test_handler_of_the_airline_at_the_airport(self):
+        """Hoja1 B9/C9/C10: HAN and the other handling services are bought from the handler of the airline at the
+        airport. One handler known: proposed on the quotation line and on the file, and the need gets it as
+        supplier. Several handlers (IAG at MAD: Iberia or WFS): nothing is chosen for the user, the file only offers
+        those; choosing one on the file gives it to the handling needs still without supplier."""
+        Partner = self.env["res.partner"]
+        han = self.env.ref("boss_services.service_han").product_variant_id
+        airline, lh = Partner.create([{"name": "AEROLINEA UNO (FICTICIA)"}, {"name": "AEROLINEA DOS (FICTICIA)"}])
+        wfs, iberia = Partner.create([{"name": "HANDLER A (FICTICIO)", "boss_is_supplier": True},
+                                      {"name": "HANDLER B (FICTICIO)", "boss_is_supplier": True}])
+        mad, bcn = self.env.ref("boss_pricing.port_esmad_air"), self.env.ref("boss_pricing.port_esbcn_air")
+        self.env["boss.airline.handler"].create([
+            {"airline_id": airline.id, "airport_id": mad.id, "handler_id": wfs.id},
+            {"airline_id": lh.id, "airport_id": mad.id, "handler_id": wfs.id},
+            {"airline_id": lh.id, "airport_id": mad.id, "handler_id": iberia.id},
+        ])
+        self._tariff(wfs, han, {"basis": "awb_kg", "unit_price": 0.2}, transport_mode="air", load_type=False,
+                     port_ids=[Command.set(mad.ids)])
+        air = {"boss_transport_mode": "air", "boss_load_type": False, "boss_carrier_id": airline.id,
+               "boss_port_id": mad.id, "boss_container_ids": False, "boss_awb_kg": 500.0}
+        order, file = self._accepted(han, {han: 200.0}, **air)
+        self.assertEqual(self._line(order, han).boss_supplier_id, wfs)
+        self.assertEqual(file.handler_id, wfs)
+        self.assertEqual(self._need(file, han).partner_id, wfs)
+
+        # Two handlers known: the user chooses on the file; the need waits for that choice.
+        order2, file2 = self._accepted(han, {han: 200.0}, **dict(air, boss_carrier_id=lh.id))
+        self.assertFalse(self._line(order2, han).boss_supplier_id)
+        self.assertFalse(file2.handler_id)
+        self.assertEqual(file2.handler_candidate_ids, wfs | iberia)
+        self.assertFalse(self._need(file2, han).partner_id)
+        file2.handler_id = iberia
+        self.assertEqual(self._need(file2, han).partner_id, iberia)
+        # Another airport without a known handler: no candidates, free choice.
+        file2.port_id = bcn
+        self.assertFalse(file2.handler_candidate_ids)

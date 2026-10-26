@@ -2912,3 +2912,81 @@ msgstr "Exportación: mercancía recibida en el handler o la terminal. Inicio de
 
 msgid "The period was typed on this service: the file dates (ATA, NOA, FOH, pickup, departure) no longer overwrite it. Untick it to follow the file dates again."
 msgstr "El periodo se escribió en este servicio: las fechas del expediente (ATA, NOA, FOH, recogida, salida) ya no lo sobrescriben. Desmárquelo para seguir otra vez las fechas del expediente."
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_airline_handler
+msgid "Handler of an airline at an airport"
+msgstr "Handler de una aerolínea en un aeropuerto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__airline_id
+msgid "Airline"
+msgstr "Aerolínea"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__airline_code
+msgid "Airline code (AWB prefix)"
+msgstr "Código de aerolínea (prefijo AWB)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__airport_id
+msgid "Airport"
+msgstr "Aeropuerto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__handler_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__handler_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_airline_handler_view_search
+msgid "Handler"
+msgstr "Handler"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__source
+msgid "Source"
+msgstr "Origen del dato"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__handler_candidate_ids
+msgid "Handlers known for this airline at this airport"
+msgstr "Handlers conocidos para esta aerolínea en este aeropuerto"
+
+#. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_airline_handler_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_handlers
+msgid "Airlines and handlers"
+msgstr "Aerolíneas y handlers"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_airline_handler_action
+msgid "Which handler serves each airline at each airport"
+msgstr "Qué handler atiende a cada aerolínea en cada aeropuerto"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_airline_handler_action
+msgid "The file proposes the handler from this table when the airline and the airport are known; with several handlers for the same airline and airport, the file shows the options."
+msgstr "El expediente propone el handler desde esta tabla cuando se conocen la aerolínea y el aeropuerto; con varios handlers para la misma aerolínea y aeropuerto, el expediente muestra las opciones."
+
+#. module: boss_expediente
+#: model:ir.model.constraint,message:boss_expediente.constraint_boss_airline_handler_unique
+msgid "This handler is already set for the airline at this airport."
+msgstr "Este handler ya está registrado para la aerolínea en este aeropuerto."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__handler_id
+msgid "Air handling agent of the airline at the airport (HAN, ALM, AWB, ETX, X-R are bought from it). Proposed from «Airlines and handlers» when one handler is known; with several, choose among them."
+msgstr "Agente de handling de la aerolínea en el aeropuerto (a él se compran HAN, ALM, AWB, ETX, X-R). Se propone desde «Aerolíneas y handlers» cuando se conoce un handler; con varios, se elige entre ellos."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_airline_handler__airline_code
+msgid "Three-digit IATA prefix of the airline's AWBs."
+msgstr "Prefijo IATA de tres cifras de los AWB de la aerolínea."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_airline_handler__source
+msgid "Where the relation comes from (Odoo 17 configuration, supplier notice, Cristina...)."
+msgstr "De dónde procede la relación (configuración de Odoo 17, aviso del proveedor, Cristina...)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_airline_handler_view_search
+msgid "Archived"
+msgstr "Archivado"

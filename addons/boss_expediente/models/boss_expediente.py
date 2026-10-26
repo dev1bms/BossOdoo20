@@ -12,6 +12,8 @@ from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
 
+from .boss_airline_handler import HANDLER_SERVICE_CODES
+
 STATES = [
     ("open", "Open"),
     ("in_transit", "In transit"),
@@ -97,6 +99,13 @@ class BossExpediente(models.Model):
     notify_id = fields.Many2one("res.partner", "Notify party")
     agent_id = fields.Many2one("res.partner", "Agent abroad", tracking=True)
     carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True, help="Shipping line, airline or haulier.")
+    handler_id = fields.Many2one(
+        "res.partner", "Handler", tracking=True,
+        help="Air handling agent of the airline at the airport (HAN, ALM, AWB, ETX, X-R are bought from it). "
+             "Proposed from «Airlines and handlers» when one handler is known; with several, choose among them.")
+    handler_candidate_ids = fields.Many2many(
+        "res.partner", compute="_compute_handler_candidate_ids",
+        string="Handlers known for this airline at this airport")
     haulier_id = fields.Many2one("res.partner", "Haulier")
     customs_broker_id = fields.Many2one("res.partner", "Customs broker")
     # route and scope
@@ -242,6 +251,8 @@ class BossExpediente(models.Model):
                 vals["name"] = self.env["ir.sequence"].next_by_code("boss.expediente") or "/"
         files = super().create(vals_list)
         files._boss_create_analytic_account()
+        for file in files.filtered(lambda f: not f.handler_id and len(f.handler_candidate_ids) == 1):
+            file.handler_id = file.handler_candidate_ids  # the only handler known for the airline at the airport
         return files
 
     def _boss_create_analytic_account(self):
@@ -313,9 +324,9 @@ class BossExpediente(models.Model):
         version of each supplier tariff."""
         self.ensure_one()
         if self.direction == "export":
-            day = self.atd or self.etd
+            day = self.atd and self.atd.date() or self.etd
         else:
-            day = self.ata or self.eta
+            day = self.ata and self.ata.date() or self.eta
         order = self.sale_order_ids.filtered(lambda o: o.state == "sale").sorted("date_order")[:1]
         return day or order.boss_planned_date or fields.Date.context_today(self)
 
@@ -347,6 +358,31 @@ class BossExpediente(models.Model):
             "start_weekday": day.weekday() if day else None,
         }
 
+    # Handler of the airline at the airport (Hoja1 B9/C9/C10)
+    @api.depends("carrier_id", "port_id", "transport_mode")
+    def _compute_handler_candidate_ids(self):
+        Rel = self.env["boss.airline.handler"]
+        for file in self:
+            file.handler_candidate_ids = (Rel._handlers_for(file.carrier_id, file.port_id)
+                                          if file.transport_mode == "air" else self.env["res.partner"])
+
+    @api.onchange("carrier_id", "port_id", "transport_mode")
+    def _onchange_handler_proposal(self):
+        """One known handler for the airline at the airport: proposed. Several: the user chooses among them (the
+        field only offers those). None recorded: free choice among handling agents."""
+        for file in self:
+            candidates = file.handler_candidate_ids
+            if len(candidates) == 1 and not file.handler_id:
+                file.handler_id = candidates
+            elif candidates and file.handler_id and file.handler_id not in candidates:
+                file.handler_id = False
+
+    def _boss_handler_needs(self):
+        """Needs bought from the handler (air handling services) still without supplier and not ordered."""
+        return self.cost_ids.filtered(
+            lambda n: n.product_id.default_code in HANDLER_SERVICE_CODES and not n.partner_id
+            and not n.purchase_line_ids and n.state not in ("closed", "billed", "performed"))
+
     # Actual period of the time-based services, from the file's dates (Cristina, 26/10/2026)
     PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date")
 
@@ -363,6 +399,9 @@ class BossExpediente(models.Model):
         res = super().write(vals)
         if any(f in vals for f in self.PERIOD_FIELDS):
             self._boss_apply_dates()
+        if vals.get("handler_id"):
+            for file in self:
+                file._boss_handler_needs().write({"partner_id": file.handler_id.id})
         return res
 
     def _boss_apply_dates(self):
@@ -464,6 +503,7 @@ class BossExpediente(models.Model):
                               actual=self._boss_containers_text(actual_containers) or "-"))
             planned = order.boss_planned_date
             actual_date = file.ata if file.direction == "import" else file.atd
+            actual_date = actual_date and actual_date.date()
             if planned and actual_date and planned != actual_date:
                 rows.append(_("Date: planned %(planned)s, actual %(actual)s", planned=planned, actual=actual_date))
             file.quote_difference = "\n".join(rows) or False

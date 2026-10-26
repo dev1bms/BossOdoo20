@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_airline_handler_view_list" model="ir.ui.view">
+        <field name="name">boss.airline.handler.list</field>
+        <field name="model">boss.airline.handler</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" default_order="airport_id, airline_id">
+                <field name="airport_id" options="{'no_create': True}"/>
+                <field name="airline_id" domain="[('is_company', '=', True)]"/>
+                <field name="airline_code" optional="show"/>
+                <field name="handler_id" domain="[('is_company', '=', True)]"/>
+                <field name="source" optional="show"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    <record id="boss_airline_handler_view_search" model="ir.ui.view">
+        <field name="name">boss.airline.handler.search</field>
+        <field name="model">boss.airline.handler</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="airline_id"/>
+                <field name="handler_id"/>
+                <field name="airport_id"/>
+                <field name="airline_code"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Airport" name="group_airport" context="{'group_by': 'airport_id'}"/>
+                    <filter string="Handler" name="group_handler" context="{'group_by': 'handler_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="boss_airline_handler_action" model="ir.actions.act_window">
+        <field name="name">Airlines and handlers</field>
+        <field name="res_model">boss.airline.handler</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_group_airport': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Which handler serves each airline at each airport</p>
+            <p>The file proposes the handler from this table when the airline and the airport are known; with several
+               handlers for the same airline and airport, the file shows the options.</p>
+        </field>
+    </record>
+</odoo>
