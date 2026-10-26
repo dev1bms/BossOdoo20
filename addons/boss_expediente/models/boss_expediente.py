@@ -135,10 +135,18 @@ class BossExpediente(models.Model):
     # dates: estimated and actual are separate fields, the actual one never overwrites the estimate
     etd = fields.Date("ETD", tracking=True)
     eta = fields.Date("ETA", tracking=True)
-    atd = fields.Date("ATD (actual departure)", tracking=True)
-    ata = fields.Date("ATA (actual arrival)", tracking=True)
-    pickup_date = fields.Date("Pickup (actual)")
-    delivery_date = fields.Date("Delivery (actual)")
+    # Actual dates carry the time: the time-based services (storage, demurrage, occupancy) are priced on the exact
+    # period between them (Cristina, 26/10/2026: ATA and Pickup with date and time on every file; the system
+    # computes the dates). NOA and FOH are optional events that refine the start when the supplier counts from them.
+    atd = fields.Datetime("ATD (actual departure)", tracking=True)
+    ata = fields.Datetime("ATA (actual arrival)", tracking=True)
+    noa = fields.Datetime("NOA (arrival notice)", tracking=True,
+                          help="Air import: the handler's arrival notice. When set, the storage period starts here "
+                               "instead of the ATA (WFS counts from the NOA).")
+    foh = fields.Datetime("FOH (goods in the terminal)", tracking=True,
+                          help="Export: freight on hand at the handler or terminal. Start of the export storage.")
+    pickup_date = fields.Datetime("Pickup (actual)", tracking=True)
+    delivery_date = fields.Datetime("Delivery (actual)", tracking=True)
     event_ids = fields.One2many("boss.expediente.event", "expediente_id", "Events", copy=False)
     # links: every document points to the file, the file never duplicates their amounts
     order_link_ids = fields.One2many("sale.order", "boss_expediente_id", "Orders of this file",
@@ -338,6 +346,43 @@ class BossExpediente(models.Model):
             "duties_amount": order.boss_duties_amount or None, "storage_days": None,
             "start_weekday": day.weekday() if day else None,
         }
+
+    # Actual period of the time-based services, from the file's dates (Cristina, 26/10/2026)
+    PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date")
+
+    def _boss_period_bounds(self):
+        """(start, end) of the actual period of a time-based service of this file, from its dates. Import: arrival
+        (NOA when the handler counts from it, else ATA) → pickup. Export: goods in the terminal (FOH) → actual
+        departure. None while a bound is not known: the service keeps its estimate of days."""
+        self.ensure_one()
+        if self.direction == "export":
+            return self.foh, self.atd
+        return self.noa or self.ata, self.pickup_date
+
+    def write(self, vals):
+        res = super().write(vals)
+        if any(f in vals for f in self.PERIOD_FIELDS):
+            self._boss_apply_dates()
+        return res
+
+    def _boss_apply_dates(self):
+        """The time-based services whose period is not set by hand follow the file's dates; a milestone records
+        it and the expected cost is recomputed (the sale never changes)."""
+        for file in self:
+            start, end = file._boss_period_bounds()
+            needs = file.cost_ids.filtered(
+                lambda n: n.product_id.boss_cost_method == "time" and not n.period_manual and not n.closed
+                and (n.period_start != start or n.period_end != end))
+            if not needs:
+                continue
+            needs.with_context(boss_period_from_file=True).write({"period_start": start, "period_end": end})
+            fmt = lambda d: fields.Datetime.context_timestamp(file, d).strftime("%d/%m/%Y %H:%M") if d else "—"  # noqa: E731
+            file.event_ids.create({
+                "expediente_id": file.id, "kind": "milestone",
+                "name": self.env._("Period of %(services)s from the file dates: %(start)s → %(end)s",
+                                   services=", ".join(needs.mapped("product_id.default_code")),
+                                   start=fmt(start), end=fmt(end))})
+            file.with_context(boss_reason=self.env._("File dates changed")).action_recompute_costs()
 
     def action_recompute_costs(self):
         """Expected cost again with the file's current data. Sale prices and the acceptance snapshot do not change."""

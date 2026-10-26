@@ -2,7 +2,7 @@
 Islands, Ceuta, third country) and a fictitious Spanish tax ID with a valid check digit for case C2. Idempotent."""
 from stdnum.es import cif
 
-assert env.cr.dbname in ("boss_test", "boss_uat"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss_test", "boss_uat", "boss20_uat"), env.cr.dbname  # noqa: F821
 Partner = env["res.partner"]  # noqa: F821
 es = env.ref("base.es")  # noqa: F821
 

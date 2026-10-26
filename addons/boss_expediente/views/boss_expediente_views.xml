@@ -170,6 +170,7 @@
                                            width="98px"/>
                                     <field name="period_end" optional="show" invisible="cost_method != 'time'"
                                            width="98px"/>
+                                    <field name="period_manual" optional="hide"/>
                                     <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
                                     <field name="uom_id" string="Unit" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
@@ -274,10 +275,12 @@
                                 </group>
                                 <group string="Dates">
                                     <field name="etd"/>
-                                    <field name="atd"/>
+                                    <field name="atd" invisible="direction != 'export'"/>
+                                    <field name="foh" invisible="direction != 'export'"/>
                                     <field name="eta"/>
-                                    <field name="ata"/>
-                                    <field name="pickup_date"/>
+                                    <field name="ata" invisible="direction == 'export'"/>
+                                    <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
+                                    <field name="pickup_date" invisible="direction == 'export'"/>
                                     <field name="delivery_date"/>
                                 </group>
                                 <group string="Other parties">

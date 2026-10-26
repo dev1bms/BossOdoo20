@@ -9,11 +9,11 @@ sub-accounts of current liabilities, by concept and side (charged to the custome
   419006 IMPUESTO SOBRE PLASTICO NO REUTILIZABLE REPERCUTIDO  419007 ... SOPORTADO
 The product -> account map below is the proposal for Ángel (docs/cuentas-suplidos.md); it is not his decision yet.
 Idempotent."""
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 import sys  # noqa: E402
 
-if env.cr.dbname == "boss20" and "--approved-by-angel" not in sys.argv:  # noqa: F821
-    raise SystemExit("boss20: run only with --approved-by-angel once the account map is approved (W04-2).")
+if env.cr.dbname == "boss20" and "--apply-on-boss20" not in sys.argv:  # noqa: F821
+    raise SystemExit("boss20: run only with --apply-on-boss20 (Odoo 17 practice applied by Belal's mandate 26/10; Ángel ratifies, task W10).")
 company = env.ref("base.main_company")  # noqa: F821
 Account = env["account.account"].with_company(company)  # noqa: F821
 ACCOUNTS = {

@@ -1,6 +1,6 @@
 """Read-only: supplier tariffs from real documents ([MUESTRA], not demo) for Cristina's review table. Prints no
 amount (real prices stay out of Git and out of the docs). Rollback at the end."""
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, lang="es_ES"))  # noqa: F821
 for t in env["boss.tariff"].search([("is_demo", "=", False), ("active", "=", True)], order="partner_id, name"):
     print(f"TARIFF {t.id} | {t.partner_id.name} | {t.name} | {t.state} | {t.valid_from} -> {t.valid_to or 'open'} | "

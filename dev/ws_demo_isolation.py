@@ -6,7 +6,7 @@
   their frozen prices and history.
 Real tariffs ([MUESTRA] and others) and real customers are not touched.
 """
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, lang="es_ES"))  # noqa: F821
 Tariff, Partner = env["boss.tariff"].with_context(active_test=False), env["res.partner"].with_context(active_test=False)
 demo_tariffs = Tariff.search([("name", "=like", "[DEMO]%"), ("is_demo", "=", False)])

@@ -1,6 +1,6 @@
 """Read-only: [DEMO] records named in the accounting test sheet (docs/pruebas-angel.md), on boss20 or the local copy.
 Rollback at the end."""
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, lang="es_ES"))  # noqa: F821
 print("DB", env.cr.dbname, "| company", env.company.name, env.company.boss_bill_before_invoice,  # noqa: F821
       env.company.boss_fx_policy)

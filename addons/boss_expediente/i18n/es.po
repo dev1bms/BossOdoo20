@@ -2888,3 +2888,27 @@ msgstr "servicios sin proveedor"
 #: code:addons/boss_expediente/models/res_partner.py:0
 msgid "tax ID"
 msgstr "NIF"
+
+msgid "NOA (arrival notice)"
+msgstr "NOA (aviso de llegada)"
+
+msgid "FOH (goods in the terminal)"
+msgstr "FOH (mercancía en la terminal)"
+
+msgid "Period set by hand"
+msgstr "Periodo escrito a mano"
+
+msgid "Period of %(services)s from the file dates: %(start)s → %(end)s"
+msgstr "Periodo de %(services)s según las fechas del expediente: %(start)s → %(end)s"
+
+msgid "File dates changed"
+msgstr "Cambio de fechas del expediente"
+
+msgid "Air import: the handler's arrival notice. When set, the storage period starts here instead of the ATA (WFS counts from the NOA)."
+msgstr "Importación aérea: aviso de llegada del handler. Si se rellena, el periodo de almacenaje empieza aquí en vez de en la ATA (WFS cuenta desde el NOA)."
+
+msgid "Export: freight on hand at the handler or terminal. Start of the export storage."
+msgstr "Exportación: mercancía recibida en el handler o la terminal. Inicio del almacenaje de exportación."
+
+msgid "The period was typed on this service: the file dates (ATA, NOA, FOH, pickup, departure) no longer overwrite it. Untick it to follow the file dates again."
+msgstr "El periodo se escribió en este servicio: las fechas del expediente (ATA, NOA, FOH, recogida, salida) ya no lo sobrescriben. Desmárquelo para seguir otra vez las fechas del expediente."

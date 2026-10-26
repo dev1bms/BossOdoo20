@@ -1,6 +1,6 @@
 """Local copy only (boss_test): Spanish chart PGC PYMEs on the fictitious company, so the VAT table and the [DEMO]
 quotations work like on boss20 without BOSS master data."""
-assert env.cr.dbname in ("boss_test", "boss_uat"), env.cr.dbname
+assert env.cr.dbname in ("boss_test", "boss_uat", "boss20_uat"), env.cr.dbname
 company = env.ref("base.main_company")
 company.write({"name": "Empresa Ejemplo S.L. [DEMO]", "country_id": env.ref("base.es").id,
                "currency_id": env.ref("base.EUR").id})

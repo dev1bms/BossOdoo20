@@ -11,7 +11,7 @@ Only cases where the three agree get a row; the rest stay «VAT pending» (EX or
 NS of CAU and QBR). Taxes are found by their localization template, never by name. Idempotent.
 """
 env = env  # noqa: F821 (odoo shell)
-assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname
+assert env.cr.dbname in ("boss20", "boss_test", "boss_uat", "boss20_uat"), env.cr.dbname
 company = env.ref("base.main_company")
 assert company.chart_template == "es_pymes", company.chart_template
 tax = env["account.chart.template"].with_company(company).ref

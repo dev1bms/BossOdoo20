@@ -2,7 +2,7 @@
 Scheduled jobs off, no mail server, Odoo online services (IAP: OCR of bills, partner autocomplete, SMS, live currency
 rates...) pointed at a closed local port. `dev/test.sh serve` also starts Odoo without cron threads, with a closed
 SMTP port and a dead HTTP proxy. Idempotent."""
-assert env.cr.dbname in ("boss_test", "boss_uat"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss_test", "boss_uat", "boss20_uat"), env.cr.dbname  # noqa: F821
 DEAD = "http://127.0.0.1:9"
 ICP = env["ir.config_parameter"].sudo()  # noqa: F821
 

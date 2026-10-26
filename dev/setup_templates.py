@@ -9,7 +9,7 @@ from datetime import date
 
 from odoo import Command
 
-assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss_uat", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True, mail_create_nosubscribe=True))  # noqa: F821
 P, Template = env["product.product"], env["sale.order.template"]
 TEMPLATES = {

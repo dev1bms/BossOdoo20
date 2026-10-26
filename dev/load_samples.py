@@ -5,7 +5,7 @@ approval with their document, and never approved here.
 import json
 
 env = env  # noqa: F821 (odoo shell)
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname
 data = json.load(open("/tmp/samples.json", encoding="utf-8"))
 created = env["boss.tariff"]._boss_import_tariffs(data)
 env.cr.commit()

@@ -1,7 +1,7 @@
 """Follow-up of an accepted shipment: cost recomputed from the file data, services added after acceptance, agreement
 for several shipments, partial / cancelled / replaced purchases, purchase basis and who sees which figure.
 FICTITIOUS partners, prices and taxes only."""
-from datetime import date
+from datetime import date, datetime
 
 from odoo import SUPERUSER_ID, Command
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -347,3 +347,27 @@ class TestFileFollowUp(CycleCommon):
         self.assertIn(str(file.analytic_account_id.id), line.analytic_distribution)
         with self.assertRaises(UserError):  # the lock still protects everything else
             line.with_user(self.sales).price_unit = 1.0
+
+    def test_file_dates_set_the_actual_period_and_recompute(self):
+        """Cristina (26/10/2026): ATA and Pickup with date and time on the file; the system computes the dates. The
+        storage period follows them (NOA first when set), the cost is recomputed, the sale is untouched; a period
+        typed on the service is never overwritten by the file dates."""
+        order, file = self._accepted(self.thc | self.alm, {self.thc: 300.0, self.alm: 120.0}, boss_storage_days=5)
+        alm = self._need(file, self.alm)
+        self.assertEqual(alm.expected_amount, 75.0)  # estimate: (5 - 2 free) x 25
+        file.write({"ata": datetime(2026, 11, 2, 8, 0), "pickup_date": datetime(2026, 11, 10, 10, 0)})
+        alm.invalidate_recordset()
+        self.assertEqual((alm.period_start, alm.period_end), (datetime(2026, 11, 2, 8, 0), datetime(2026, 11, 10, 10, 0)))
+        self.assertEqual(alm.expected_amount, 175.0)  # 9 calendar days - 2 free = 7 x 25, from the actual period
+        self.assertFalse(alm.period_manual)
+        self.assertTrue(file.event_ids.filtered(lambda e: "ALM" in e.name))
+        self.assertEqual(self._line(order, self.alm).price_unit, 120.0)  # sale unchanged
+        file.noa = datetime(2026, 11, 3, 9, 0)  # the handler counts from the arrival notice
+        alm.invalidate_recordset()
+        self.assertEqual(alm.period_start, datetime(2026, 11, 3, 9, 0))
+        self.assertEqual(alm.expected_amount, 150.0)  # 8 days - 2 = 6 x 25
+        alm.period_end = datetime(2026, 11, 12, 10, 0)  # typed by a person
+        self.assertTrue(alm.period_manual)
+        file.pickup_date = datetime(2026, 11, 20, 10, 0)
+        alm.invalidate_recordset()
+        self.assertEqual(alm.period_end, datetime(2026, 11, 12, 10, 0))  # the file no longer overwrites it

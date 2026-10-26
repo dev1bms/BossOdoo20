@@ -1,7 +1,7 @@
 """Read-only permission check on boss20 / the local copy (odoo shell): what each internal user may do with
 supplier prices. Every write attempt is rolled back."""
 from odoo.exceptions import AccessError, UserError
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 groups = {g: env.ref(g) for g in ("sales_team.group_sale_salesman", "boss_pricing.group_tariff_user",
                                   "boss_pricing.group_tariff_approver")}
 users = env["res.users"].search([("share", "=", False)])

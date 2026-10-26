@@ -1,6 +1,6 @@
 """Read-only readiness snapshot of boss20 (odoo shell via dev/server_shell.sh). Nothing is written (rollback)."""
 from collections import Counter
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, lang="en_US", active_test=False))  # noqa: F821
 today = __import__("datetime").date.today()
 

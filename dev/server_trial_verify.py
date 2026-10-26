@@ -13,7 +13,7 @@ from odoo import Command
 from odoo.exceptions import UserError
 
 env = env  # noqa: F821 (odoo shell)
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname
 ref = env.ref
 checks = []
 

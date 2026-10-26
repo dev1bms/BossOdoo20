@@ -102,6 +102,10 @@ class BossExpedienteCost(models.Model):
         "Period end", copy=False,
         help="Actual end. Airport storage: import pickup of the goods, export ETD (Cristina 25/09). With the start, "
         "'Recompute expected cost' prices the actual period: exact hours, weekdays and the supplier's exceptions.")
+    period_manual = fields.Boolean(
+        "Period set by hand", copy=False,
+        help="The period was typed on this service: the file dates (ATA, NOA, FOH, pickup, departure) no longer "
+             "overwrite it. Untick it to follow the file dates again.")
     expected_date = fields.Datetime("Expected cost set on", readonly=True, copy=False)
     revision_ids = fields.One2many("boss.expediente.cost.revision", "cost_id", "Recalculations", readonly=True)
     variance_reviewed = fields.Boolean("Variance reviewed", copy=False)
@@ -293,6 +297,9 @@ class BossExpedienteCost(models.Model):
                     raise UserError(self.env._(
                         "%s is already in a purchase order: cancel that order before changing supplier, currency or "
                         "unit.", need.display_name))
+        if ("period_start" in vals or "period_end" in vals) and not self.env.context.get("boss_period_from_file") \
+                and "period_manual" not in vals:
+            vals = dict(vals, period_manual=True)  # typed by a person: the file dates stop overwriting it
         return super().write(vals)
 
     @api.ondelete(at_uninstall=False)

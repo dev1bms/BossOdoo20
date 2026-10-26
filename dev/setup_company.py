@@ -12,7 +12,7 @@ import json
 import os
 
 env = env  # noqa: F821 (odoo shell)
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname
 # Server: dev/server_shell.sh mounts the file at /tmp/boss; local copy: samples-private is mounted at /mnt/samples.
 path = next(p for p in ("/tmp/boss/company.json", "/mnt/samples/company.json") if os.path.isfile(p))
 data = json.load(open(path, encoding="utf-8"))

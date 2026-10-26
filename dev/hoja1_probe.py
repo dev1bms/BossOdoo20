@@ -2,7 +2,7 @@
 02/10/2026). No amount is printed. Rollback at the end."""
 from datetime import date
 
-assert env.cr.dbname in ("boss20", "boss_test"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname in ("boss20", "boss_test", "boss20_uat"), env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, lang="es_ES"))  # noqa: F821
 today = date.today()
 CODES = ["T3", "T3-PAD", "FAD", "DEX", "THC-LCL", "THC", "PFT-FCL", "PFT-LCL", "PFT-AIR", "ROH", "SOI", "INS", "SAN",
