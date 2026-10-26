@@ -591,6 +591,47 @@ TASKS = [
                    "clientes ni proveedores reales.",
                    "Aceptación: alcance escrito en docs/migracion.md con criterios de conciliación."),
          evidence=None, links=[]),
+    dict(code="TP01", title="Quotation templates with BOSS lines: standard Odoo templates verified on the local copy",
+         epic="E6", type=T.TEST, sprint="S44", points=2, start=D(2026, 10, 26), due=D(2026, 10, 26),
+         priority=P.CRITICAL, deps=[], hours=3, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 26),
+         desc="Result: a standard Odoo 20 quotation template (sale_management, already installed on boss20) filled a "
+              "BOSS quotation with the 7 standard lines of an air import FOB (FAI, HAN, AWB, CSA, FAD, ETX, TTE-CON): "
+              "right unit and executor (BOSS/supplier), cost status per line (manual for the freight, 'no tariff' until "
+              "a tariff is approved, 'pending decision' for ETX), supplier chosen per line. No new module is needed; "
+              "Belal's Odoo 19 template module is not reused.\nSource: meeting of 26/10 with Cristina and Ángel "
+              "(Cofitel air import FOB must show its standard services automatically).",
+         evidence="Probe dev/uat_template_probe.py on the local copy (rolled back), 26/10/2026: 7 lines created from "
+                  "the template through the form onchange, BOSS fields computed on each line.", links=[]),
+    dict(code="TP02", title="Create the quotation templates on boss20: air import FOB (Cofitel), sea FCL import, air "
+                            "export; standard vs optional services per case", epic="E6", type=T.DEV, sprint="S44",
+         points=3, start=D(2026, 10, 27), due=D(2026, 10, 29), priority=P.CRITICAL, deps=["TP01"], hours=5,
+         who="belal", dept="sys", status=None, done=None,
+         desc="Result: templates on boss20 with the services that ALWAYS apply per case; optional services (ALM, "
+              "inspections, SEG, CAU, QBR, extras) are added with «Add services». Air import FOB from the real Cofitel "
+              "offer of 03/02/2026: FAI, origin pickup (code to confirm: EXW-AIR), HAN, AWB, CSA, FAD, ETX, TTE-CON. "
+              "Sea FCL import and air export: lists to be confirmed by Cristina (task TP03).\nAcceptance: on boss20 a "
+              "[DEMO] quotation with the template shows the lines and prices them with [DEMO] tariffs; screenshots for "
+              "the demo of the next meeting.",
+         evidence=None, links=[f"{DOC}#/oferta-envio"]),
+    dict(code="TP03", title="Cristina: services that ALWAYS apply per case (direction × mode × Incoterm) and services "
+                            "that apply SOMETIMES, with a real Odoo 17 file as reference", epic="E8", type=T.ANALYSIS,
+         sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 30), priority=P.CRITICAL, deps=[], hours=2,
+         who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Decision: for each case (air import FOB/EXW/DAP, air export, sea FCL import/export, sea LCL, road) "
+                   "the standard services that must appear automatically and the optional ones, with a real Odoo 17 "
+                   "file or offer per case as reference (the Cofitel offer 05570 of 03/02/2026 is the air import FOB "
+                   "one). Also: meaning of «EPX» mentioned in the meeting of 26/10.", NOT_COMMITTED,
+                   "Acceptance: table received; templates TP02 built from it."),
+         evidence=None, links=[]),
+    dict(code="TP04", title="Demo of the next meeting: Cofitel air import FOB end to end (quotation from template → "
+                            "costs → confirm → file → ATA/Pickup → recompute), run by Cristina", epic="E5",
+         type=T.TRAINING, sprint="S44", points=2, start=D(2026, 10, 29), due=D(2026, 10, 30), priority=P.CRITICAL,
+         deps=["TP02", "W08", "F01"], hours=3, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Result: one-page demo script; environment ready BEFORE the meeting (templates, [DEMO] customer or "
+                   "Cofitel entered as test customer, users for Cristina and Ángel, WFS tariff approved or [DEMO] "
+                   "tariff); Cristina runs the flow herself; what works / what fails recorded; decisions TP03, C02 and "
+                   "A02 taken in the meeting.", NOT_COMMITTED),
+         evidence=None, links=[f"{DOC}#/demo-ciclo"]),
     # ===================================================================== S45 · 2–8 nov
     dict(code="D02", title="Cargar y enviar a aprobación las tarifas recibidas (lote 1: aduanas, Hapag, Transglory, "
                            "inspecciones, IRENEO 2026) con ejemplos de referencia", epic="E8", type=T.MIGRATION,
@@ -1557,7 +1598,7 @@ class Command(BaseCommand):
         for order, row in enumerate(TASKS, start=1):
             code = f"BOSS20-{row['code']}"
             plan = {
-                "title": TITLES_EN[row["code"]], "description": DESCS_EN[row["code"]] + (
+                "title": TITLES_EN.get(row["code"], row["title"]), "description": DESCS_EN.get(row["code"], row["desc"]) + (
                     "\n\nOriginal description (plan of 21/10/2026): " + ORIG_EN[row["code"]]
                     if row["code"] in ORIG_EN else ""), "phase": epics[row["epic"]],
                 "task_type": row["type"], "sprint": sprints.get(row["sprint"]), "story_points": row["points"],
