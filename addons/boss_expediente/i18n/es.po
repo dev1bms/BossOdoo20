@@ -3124,3 +3124,34 @@ msgstr "Por contenedor: %s"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Period from the file dates: %s"
 msgstr "Periodo según las fechas del expediente: %s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__forecast_status
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+msgid "Forecast"
+msgstr "Previsión"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__estimate
+msgid "Estimated (quotation)"
+msgstr "Estimada (oferta)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__recomputed
+msgid "Recomputed with the file data"
+msgstr "Recalculada con los datos del expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__ordered
+msgid "Ordered to the supplier"
+msgstr "Pedida al proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__confirmed
+msgid "Confirmed by the supplier bill"
+msgstr "Confirmada por la factura del proveedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__forecast_status
+msgid "Estimated: cost of the accepted quotation. Recomputed: the file data (dates, weights, containers) changed it. Ordered: in a confirmed purchase order. Confirmed: the supplier bill is posted (or nothing more is expected)."
+msgstr "Estimada: coste de la oferta aceptada. Recalculada: los datos del expediente (fechas, pesos, contenedores) la han cambiado. Pedida: en un pedido de compra confirmado. Confirmada: la factura del proveedor está contabilizada (o no se espera nada más)."

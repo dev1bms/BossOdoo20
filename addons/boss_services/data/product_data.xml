@@ -437,9 +437,9 @@
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
-        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">time</field>
-        <field name="description">Use of the container outside the terminal beyond free time; own code or part of DEM is undecided.</field>
+        <field name="description">Container detention outside the terminal when the carrier bills it on its own (MSC export: empty pickup to full gate-in); inside DEM when combined (Hapag MHD/DTD). Proposal of 07/10/2026 applied (P09).</field>
         <field name="boss_open_question">P09</field>
         <field name="boss_vat_class">NR</field>
     </record>
@@ -545,16 +545,15 @@
         <field name="type">service</field>
         <field name="categ_id" ref="product_category_services"/>
         <field name="list_price" eval="0.0"/>
-        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_id" ref="uom_awb"/>
         <field name="uom_ids" eval="[Command.set([])]"/>
         <field name="taxes_id" eval="[Command.clear()]"/>
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
-        <field name="boss_pricing_mode">pending</field>
+        <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
-        <field name="description">Handler surcharge; its concept, unit and scope are not confirmed yet.</field>
-        <field name="boss_open_question">P10</field>
+        <field name="description">Energy / service maintenance surcharge of the handler (WFS item 49, Swissport «tasa de mantenimiento»): air import only, bought per master AWB, sold per file (one master AWB per file). Cristina 07/10 and 08/10/2026.</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="329"/>
         <field name="boss_o17_concept_code">ETX</field>
@@ -1277,9 +1276,9 @@
         <field name="supplier_taxes_id" eval="[Command.clear()]"/>
         <field name="sale_ok" eval="True"/>
         <field name="purchase_ok" eval="True"/>
-        <field name="boss_pricing_mode">pending</field>
-        <field name="boss_cost_method">per_unit</field>
-        <field name="description">Used in Odoo 17 (one customer); definition and unit not decided.</field>
+        <field name="boss_pricing_mode">manual</field>
+        <field name="boss_cost_method">manual</field>
+        <field name="description">Veterinary inspection at the border post, per document like SAN: cost of the veterinarian + 20 % handling of the handler (WFS item 54). Proposal of 07/10/2026 applied (P16).</field>
         <field name="boss_open_question">P16</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="213"/>

@@ -175,6 +175,7 @@
                                            width="98px"/>
                                     <field name="period_manual" optional="hide"/>
                                     <field name="period_rule" optional="hide" invisible="cost_method != 'time'"/>
+                                    <field name="forecast_status" optional="show" widget="badge"/>
                                     <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
                                     <field name="uom_id" string="Unit" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
@@ -424,6 +425,7 @@
                     <filter name="by_service" string="Service" context="{'group_by': 'product_id'}"/>
                     <filter name="by_file" string="File" context="{'group_by': 'expediente_id'}"/>
                     <filter name="by_customer" string="Customer" context="{'group_by': 'customer_id'}"/>
+                    <filter name="by_forecast" string="Forecast" context="{'group_by': 'forecast_status'}"/>
                 </group>
             </search>
         </field>
@@ -437,7 +439,7 @@
         <field name="arch" type="xml">
             <pivot string="Cost forecast" sample="1">
                 <field name="partner_id" type="row"/>
-                <field name="state" type="col"/>
+                <field name="forecast_status" type="col"/>
                 <field name="expected_amount" type="measure"/>
             </pivot>
         </field>

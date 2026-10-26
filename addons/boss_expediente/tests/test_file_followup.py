@@ -444,10 +444,12 @@ class TestFileFollowUp(CycleCommon):
         alm, dem_need, ocu_need = (self._need(file, p) for p in (self.alm, dem, ocu))
         self.assertEqual(len(file.container_ids), 2)
         self.assertIn("ATA", dem_need.period_rule)
+        self.assertEqual(alm.forecast_status, "estimate")
         file.write({"ata": datetime(2026, 11, 2, 8, 0), "pickup_date": datetime(2026, 11, 10, 10, 0)})
         (alm | dem_need | ocu_need).invalidate_recordset()
         self.assertEqual(alm.period_start, datetime(2026, 11, 2, 8, 0))  # storage: ATA -> pickup
         self.assertEqual(alm.expected_amount, 175.0)  # 9 calendar days - 2 free = 7 x 25
+        self.assertEqual(alm.forecast_status, "recomputed")
         self.assertFalse(dem_need.period_end)  # waits for the containers' dates
         first, second = file.container_ids
         first.write({"pickup_date": date(2026, 11, 5), "return_date": date(2026, 11, 12)})

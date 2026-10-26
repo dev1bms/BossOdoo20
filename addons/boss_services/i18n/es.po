@@ -542,8 +542,8 @@ msgstr "Tarifa del handler por kg tasable con mínimo."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_etx
-msgid "Handler surcharge; its concept, unit and scope are not confirmed yet."
-msgstr "Recargo del handler; concepto, unidad y alcance sin confirmar."
+msgid "Energy / service maintenance surcharge of the handler (WFS item 49, Swissport «tasa de mantenimiento»): air import only, bought per master AWB, sold per file (one master AWB per file). Cristina 07/10 and 08/10/2026."
+msgstr "Tasa energética / recargo de mantenimiento del servicio del handler (WFS ítem 49, Swissport «tasa de mantenimiento»): solo importación aérea, compra por AWB máster, venta por expediente (un AWB máster por expediente). Cristina 07/10 y 08/10/2026."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc_lcl
@@ -1146,10 +1146,8 @@ msgstr "Transmisión anticipada a la aduana de EE. UU., por BL."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_det
-msgid ""
-"Use of the container outside the terminal beyond free time; own code or part of DEM is undecided."
-msgstr ""
-"Uso del contenedor fuera de la terminal más allá del tiempo libre; pendiente decidir si es código propio o parte de DEM."
+msgid "Container detention outside the terminal when the carrier bills it on its own (MSC export: empty pickup to full gate-in); inside DEM when combined (Hapag MHD/DTD). Proposal of 07/10/2026 applied (P09)."
+msgstr "Detención del contenedor fuera de la terminal cuando la naviera la factura aparte (MSC exportación: retirada del vacío a entrada del lleno); dentro de DEM cuando va combinada (Hapag MHD/DTD). Propuesta del 07/10/2026 aplicada (P09)."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_gav
@@ -1158,8 +1156,8 @@ msgstr "Usado para tránsitos T1 semanales de un cliente; por confirmar."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_vet
-msgid "Used in Odoo 17 (one customer); definition and unit not decided."
-msgstr "Usado en Odoo 17 (un cliente); definición y unidad sin decidir."
+msgid "Veterinary inspection at the border post, per document like SAN: cost of the veterinarian + 20 % handling of the handler (WFS item 54). Proposal of 07/10/2026 applied (P16)."
+msgstr "Inspección veterinaria en el PIF, por documento como SAN: coste del veterinario + 20 % de gestión del handler (WFS ítem 54). Propuesta del 07/10/2026 aplicada (P16)."
 
 #. module: boss_services
 #: model:ir.model.fields,field_description:boss_services.field_product_product__boss_vat_class

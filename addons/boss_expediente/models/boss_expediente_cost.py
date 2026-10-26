@@ -77,6 +77,15 @@ class BossExpedienteCost(models.Model):
                             "supplier replaced, cost not incurred).")
     purchase_line_ids = fields.One2many("purchase.order.line", "boss_cost_id", "Purchase lines", readonly=True)
     state = fields.Selection(NEED_STATES, compute="_compute_state", store=True)
+    # «Previsiones» (Nuevo Odoo.xlsx, hoja «previsiones» A14-A15): estimated forecasts entered before the final data,
+    # marked confirmed when the documents arrive. Here the status follows the documents themselves.
+    forecast_status = fields.Selection(
+        [("estimate", "Estimated (quotation)"), ("recomputed", "Recomputed with the file data"),
+         ("ordered", "Ordered to the supplier"), ("confirmed", "Confirmed by the supplier bill")],
+        "Forecast", compute="_compute_forecast_status", store=True,
+        help="Estimated: cost of the accepted quotation. Recomputed: the file data (dates, weights, containers) changed "
+             "it. Ordered: in a confirmed purchase order. Confirmed: the supplier bill is posted (or nothing more is "
+             "expected).")
     qty_ordered = fields.Float("Ordered", compute="_compute_quantities", compute_sudo=True, digits="Product Unit")
     qty_received = fields.Float("Performed", compute="_compute_quantities", compute_sudo=True, digits="Product Unit")
     qty_billed = fields.Float("Billed", compute="_compute_quantities", compute_sudo=True, digits="Product Unit")
@@ -391,6 +400,18 @@ class BossExpedienteCost(models.Model):
             else:
                 need.period_rule = "%s → %s (%s)" % (labels[start], labels[end], self.env._("supplier price")
                                                      if source == "tariff" else self.env._("default of the service"))
+
+    @api.depends("state", "revision_ids.applied")
+    def _compute_forecast_status(self):
+        for need in self:
+            if need.state in ("billed", "closed"):
+                need.forecast_status = "confirmed"
+            elif need.state in ("ordered", "performed"):
+                need.forecast_status = "ordered"
+            elif need.revision_ids.filtered("applied"):
+                need.forecast_status = "recomputed"
+            else:
+                need.forecast_status = "estimate"
 
     def _boss_period_events(self):
         """(start event, end event, source) of the period of this time-based service: the events of the supplier

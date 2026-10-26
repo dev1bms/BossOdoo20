@@ -116,8 +116,9 @@ check("3 DEM estimate 10 days: (5 x 30 + (10-7-5<0 → 0)) → 3 chargeable days
 # supplier price recorded by the salesman and approved by the tariff approver (role user uat_operaciones).
 broker, haulier = xid("demo_broker"), xid("haulier")
 approver = env["res.users"].search([("login", "=", "uat_operaciones")], limit=1)
-manual = {"FMI": (900.0, msc), "GLO-CCC": (40.0, msc)}
-priced = {"BL": (60.0, msc, "line"), "FAD": (85.0, broker, "line"), "TTE-FCL": (300.0, haulier, "containers")}
+manual = {"FMI": (900.0, msc)}
+priced = {"BL": (60.0, msc, "line"), "FAD": (85.0, broker, "line"), "TTE-FCL": (300.0, haulier, "containers"),
+          "GLO-CCC": (40.0, msc, "containers")}
 for l in order.order_line.filtered(lambda l: l.product_id.default_code in manual or l.product_id.default_code in priced):
     check(f"3 {l.product_id.default_code}{' ' + l.boss_container_size if l.boss_container_size else ''} without tariff "
           f"is not priced at 0", True, l.boss_cost_status in ("no_tariff", "pending_approval", "manual", "not_ready")

@@ -14,7 +14,13 @@ The 2026 version: same scope (15 provinces of zone 3, any direction and mode), v
 gives none); TTE-CON amounts × 1.10 (per-shipment amounts to cents, per-kg prices to 4 decimals); SEG (insurance, %)
 unchanged; handling (HAN, X-R) is not transport and is not versioned. The tariff is left WAITING FOR APPROVAL: approval is
 Cristina's, never this script's. Idempotent: an existing version waiting for approval with other amounts is set back to
-draft, corrected and sent again."""
+draft, corrected and sent again.
+
+From 01/01/2026 to 14/07/2026 the 2025 prices apply: «TARIFAS MAD 2025.pdf — mismos precios en 2026 (confirmado por
+Ángel, 14/10/2026)» (document reference of the IRENEO MAD 2026 tariffs of Odoo 19, boss_uat, quoted in quotation
+S03541 of 15/10/2026). So the script also creates, from the same verified document: the zone-3 transport at 2025 prices
+for 01/01-14/07/2026, and the handling tariffs (terminal pickups, Barajas export package: not transport, the letter does
+not change them) at 2025 prices for 2026. All waiting for Cristina's approval."""
 import hashlib
 import os
 import re
@@ -123,4 +129,45 @@ new.action_submit()
 assert new.state == "to_approve" and not new.approved_by_id
 print(f"VERSION ok: «{new.name}» {new.state}, valid from {new.valid_from}, no end, {len(got)} TTE-CON steps = 2025 × 1.10 "
       f"(cents / 4 decimals per kg), SEG unchanged, document = letter; approval left to Cristina")
+
+# 4. 2025 prices in 2026 (Ángel, 14/10/2026): zone 3 until 14/07, handling for the whole year
+p7 = " ".join(pages[6].split())
+assert "0,040 €/kg" in p7 and "Mínimo 9,00" in p7, "p.7: terminal pickup price not found"
+pickup = Tariff.search([("name", "=", "[MUESTRA] IRENEO MAD recogidas en terminal 2025")], limit=1)
+han = pickup.line_ids.filtered(lambda l: l.product_id.default_code == "HAN")
+assert (round(han.unit_price, 3), round(han.min_amount, 2)) == (0.04, 9.0), "terminal pickup tariff differs from p.7"
+print("BASE ok: «[MUESTRA] IRENEO MAD recogidas en terminal 2025» = p.7 «0,040 €/kg (Mínimo 9,00 €)»")
+SAME = "Mismos precios que TARIFAS MAD 2025 en 2026 (confirmado por Ángel, 14/10/2026; referencia de las tarifas IRENEO "        f"MAD 2026 de Odoo 19); documento sha256 {BASE_PDF[1][:12]}"
+plan = [
+    (base, "[MUESTRA] IRENEO distribución nacional zona 3 2026 hasta 14/07 (precios 2025)", date(2026, 1, 1),
+     date(2026, 7, 14)),
+    (pickup, "[MUESTRA] IRENEO MAD recogidas en terminal 2026 (precios 2025)", date(2026, 1, 1), False),
+    (Tariff.search([("name", "=", "[MUESTRA] IRENEO MAD exportación Barajas 2025")], limit=1),
+     "[MUESTRA] IRENEO MAD exportación Barajas 2026 (precios 2025)", date(2026, 1, 1), False),
+]
+base_pdf_data = mounted(*BASE_PDF)
+for source, name, valid_from, valid_to in plan:
+    assert source, name
+    version = Tariff.search([("name", "=", name)], limit=1)
+    if version.state == "approved":
+        print("approved, not changed:", name)
+        continue
+    if not version:
+        version = source.copy({"name": name})
+    if version.state == "to_approve":
+        version.action_back_to_draft()
+    version.write({"valid_from": valid_from, "valid_to": valid_to, "scope_confirmed": True,
+                   "document": BinaryBytes(base_pdf_data, filename=BASE_PDF[0]), "document_name": BASE_PDF[0],
+                   "document_reference": SAME,
+                   "note": "Precios de «" + source.name + "» sin cambio en 2026 (Ángel, 14/10/2026). Creada por "
+                           "dev/setup_ireneo_2026.py; la aprobación es de Cristina."})
+    same_prices = all(
+        (a.unit_price, a.min_amount, a.max_amount, a.rate) == (b.unit_price, b.min_amount, b.max_amount, b.rate)
+        and [(x.up_to, x.unit_price, x.fixed_amount) for x in a.bracket_ids] ==
+        [(x.up_to, x.unit_price, x.fixed_amount) for x in b.bracket_ids]
+        for a, b in zip(source.line_ids.sorted("id"), version.line_ids.sorted("id")))
+    assert same_prices and len(source.line_ids) == len(version.line_ids), name
+    version.action_submit()
+    print(f"VERSION ok: «{name}» {version.state}, {valid_from} → {valid_to or 'no end'}, "
+          f"{len(version.line_ids)} prices = 2025, document = TARIFAS MAD 2025")
 env.cr.commit()

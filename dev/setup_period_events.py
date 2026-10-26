@@ -1,6 +1,7 @@
 """Start and end events of the time-based supplier prices, read from their documents (odoo shell; boss20 / boss20_uat).
-Only [MUESTRA] tariffs waiting for approval are touched (back to draft, events, sent again: approval stays Cristina's);
-approved tariffs never change (they use the default of the service, the same events here). Idempotent.
+Only [MUESTRA] tariffs not approved are touched: the events are written on their time lines and a note in the tariff's
+chatter tells the approver (state and approval untouched: approval stays Cristina's); approved tariffs never change
+(they use the default of the service, the same events here). Idempotent.
 
 Sources (.research/06_sea_supplier_docs.md, 07_air_road_supplier_docs.md; BossOdoo19 DECISIONS.md:139):
 - MSC local charges import 01/09/2026 p.18 «DEMORAS (Fecha llegada buque hasta devolución del vacío)».
@@ -34,11 +35,9 @@ for (name, code), (start, end) in EVENTS.items():
     if tariff.state == "approved":
         print("approved, not changed:", name)
         continue
-    was = tariff.state
-    if was == "to_approve":
-        tariff.action_back_to_draft()
     lines.write({"period_start_event": start, "period_end_event": end})
-    if was == "to_approve":
-        tariff.action_submit()
+    labels = dict(lines._fields["period_start_event"]._description_selection(env))
+    tariff.message_post(body=f"{code}: periodo desde «{labels[start]}» hasta «{labels[end]}», según el documento del "
+                             f"proveedor (dev/setup_period_events.py, 26/10/2026). Estado y aprobación sin cambios.")
     print("set", name, code, f"({len(lines)} lines)", start, "->", end, "| state", tariff.state)
 env.cr.commit()
