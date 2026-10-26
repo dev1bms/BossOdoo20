@@ -1277,14 +1277,15 @@ DESCS_EN = {
     "D05": "Result: import OCU/DEM/DET of the 5 carriers of Hoja1 (today only MSC; CMA and Hapag in addition) and the "
            "local charges received, loaded with their examples.\nAcceptance: tariffs waiting for approval and "
            "reference test green.",
-    "F01": "Result: by transport mode, as Belal stated on 26/10/2026: on AIR files ATA (actual arrival) is not "
-           "used; the air arrival is the NOA with date and time (start of the ALM period, Cristina 25/09: import NOA → "
-           "pickup). On SEA files ATA (actual arrival) with time. The field that does not apply is hidden on the file. "
-           "Filling NOA (air) or ATA (sea) proposes the start of the actual period of time-based services (ALM; "
-           "DEM/OCU), adds an event and recomputes.\nBrought forward to the week of 26/10 (capacity available; depends "
-           "on no decision). Actual status 26/10: the file shows ATA (date only) for every mode; NOA exists only as the "
-           "start of the service period (H1-21, H1-22).\nAcceptance: automated tests (air: NOA → ALM period → cost "
-           "recomputed, ATA not shown; sea: ATA with time) and screenshots in the guide.",
+    "F01": "Result (Cristina via Belal, 26/10/2026; replaces the earlier note that air files would not use ATA): "
+           "the file has ATA (actual arrival) and Pickup (actual), both with date AND time, on every transport mode, "
+           "and the system computes the dates from them: ATA → Pickup is the actual period of the time-based services "
+           "(ALM on air; DEM/OCU on sea), the days/periods are counted by the engine and the expected cost is "
+           "recomputed; an event is added to the file. NOA (Cristina 25/09) stays as an optional event, not required.\n"
+           "Brought forward to the week of 26/10 (capacity available; depends on no decision). Actual status 26/10: "
+           "the file has ATA and Pickup as dates without time, and they do not feed the service period (H1-21, "
+           "H1-22).\nAcceptance: automated tests (ATA + Pickup with time → ALM period → days → cost recomputed; same "
+           "for DEM/OCU on sea) and screenshots in the guide; checked with Cristina on a [DEMO] air file.",
     "F02": "Result: association model (airline, airport → handler) loaded from F03; on an air file, choosing airline "
            "and airport proposes the handler (editable); the handler is the default supplier of HAN, ALM, AWB, ETX.\n"
            "Actual status 26/10: not implemented (H1-23, H1-24). Cristina 28/09: association «later»; done now because "
