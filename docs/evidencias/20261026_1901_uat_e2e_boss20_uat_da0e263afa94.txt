@@ -1,0 +1,86 @@
+# Evidence: dev/uat_e2e.py on boss20_uat
+# Date: 2026-10-26 19:01    
+# Commit tested: da0e263afa94 (fix(expediente): a credit note to the customer no longer holds the supplier payment for ever (D-5, f)
+# Installed on boss20_uat: boss_expediente 20.0.1.6.0 boss_pricing 20.0.1.6.0 boss_pricing_sale 20.0.1.7.0 boss_services 20.0.1.3.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-26 18:01:13,417 1 WARNING boss20_uat odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-26 18:01:13,479 1 WARNING boss20_uat odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+CHECK PASS 0 data: [DEMO] Spanish customer with NIF and approved MSC tariff for it: expected (True, 'approved') got (True, 'approved')
+CHECK PASS 2 template services + DEM: expected ['BL', 'CSM', 'DEM', 'FAD', 'FMI', 'GLO-CCC', 'THC', 'TTE-FCL'] got ['BL', 'CSM', 'DEM', 'FAD', 'FMI', 'GLO-CCC', 'THC', 'TTE-FCL']
+CHECK PASS 2 THC split per container size (20' and 40'): expected ['20', '40'] got ['20', '40']
+CHECK PASS 3 THC 20' cost from the approved tariff: expected 180.0 got 180.0
+CHECK PASS 3 THC 40' HC cost from the approved tariff: expected 240.0 got 240.0
+CHECK PASS 3 THC supplier = MSC: expected res.partner(12,) got res.partner(12,)
+CHECK PASS 3 DEM estimate 10 days: (5 x 30 + (10-7-5<0 → 0)) → 3 chargeable days x 30 € per container: expected 90.0 got 90.0
+CHECK PASS 3 FMI 20 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 BL without tariff is not priced at 0: expected True got True
+CHECK PASS 3 GLO-CCC 20 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 FAD without tariff is not priced at 0: expected True got True
+CHECK PASS 3 TTE-FCL 20 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 FMI 40 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 GLO-CCC 40 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 TTE-FCL 40 without tariff is not priced at 0: expected True got True
+CHECK PASS 3 BL: the salesman cannot approve the supplier price: expected 'refused' got 'refused'
+      «Solo un aprobador de tarifas puede aprobar precios de proveedor.»
+CHECK PASS 3 BL: supplier price approved by uat_operaciones: expected ('approved', res.users(7,)) got ('approved', res.users(7,))
+CHECK PASS 3 FAD: the salesman cannot approve the supplier price: expected 'refused' got 'refused'
+      «Solo un aprobador de tarifas puede aprobar precios de proveedor.»
+CHECK PASS 3 FAD: supplier price approved by uat_operaciones: expected ('approved', res.users(7,)) got ('approved', res.users(7,))
+CHECK PASS 3 TTE-FCL: the salesman cannot approve the supplier price: expected 'refused' got 'refused'
+      «Solo un aprobador de tarifas puede aprobar precios de proveedor.»
+CHECK PASS 3 TTE-FCL: supplier price approved by uat_operaciones: expected ('approved', res.users(7,)) got ('approved', res.users(7,))
+CHECK PASS 3 GLO-CCC: the salesman cannot approve the supplier price: expected 'refused' got 'refused'
+      «Solo un aprobador de tarifas puede aprobar precios de proveedor.»
+CHECK PASS 3 GLO-CCC: supplier price approved by uat_operaciones: expected ('approved', res.users(7,)) got ('approved', res.users(7,))
+CHECK PASS 3 BL cost from the new approved price: expected 60.0 got 60.0
+CHECK PASS 3 TTE-FCL 20' cost from the new approved price: expected 300.0 got 300.0
+CHECK PASS 3 manual costs are taken as the line cost: expected 900.0 got 900.0
+CHECK PASS 3 quotation untaxed = sum of the sale prices x quantities: expected 4125.0 got 4125.0
+CHECK PASS 3 nothing blocks acceptance (VAT decided, every sale price set): expected False got False
+      lines: [('FMI', '20', False, 'known', 'manual', 900.0), ('FMI', '40', False, 'known', 'manual', 900.0), ('DEM', '20', False, 'estimate', 'ok', 90.0), ('DEM', '40', False, 'estimate', 'ok', 90.0), ('THC', '20', False, 'known', 'ok', 180.0), ('THC', '40', False, 'known', 'ok', 240.0), ('BL', False, False, 'known', 'ok', 60.0), ('GLO-CCC', '20', False, 'known', 'ok', 40.0), ('GLO-CCC', '40', False, 'known', 'ok', 40.0), ('FAD', False, False, 'known', 'ok', 85.0), ('CSM', False, False, 'boss', 'ok', 0.0), ('TTE-FCL', '20', False, 'known', 'ok', 300.0), ('TTE-FCL', '40', False, 'known', 'ok', 300.0)]
+CHECK PASS 4 order confirmed and file opened: expected ('sale', True) got ('sale', True)
+CHECK PASS 4 file has its analytic account: expected True got True
+CHECK PASS 4 every sale line on the file's analytic account (100 %): expected True got True
+CHECK PASS 4 one need per bought line: expected 12 got 12
+CHECK PASS 5 a second «Create RFQs» says there is nothing to order: expected 'refused' got 'refused'
+      «No hay nada que pedir.»
+CHECK PASS 5 ... and creates nothing: expected 12 got 12
+CHECK PASS 5 one purchase order per supplier: expected [10, 12, 15] got [10, 12, 15]
+CHECK PASS 5 every need with a supplier ordered exactly once: expected True got True
+CHECK PASS 5 MSC order confirmed: expected 'purchase' got 'purchase'
+CHECK PASS 5 purchase lines on the file's analytic account: expected True got True
+CHECK PASS 6 DEM waits for the containers' dates (arrival -> empty return, MSC p.18): expected (False, False) got (False, False)
+      DEM rule: 7 free, deduct, relative, [(5.0, 30.0), (0.0, 60.0)]
+CHECK PASS 6 DEM 20': period ATA 10/11 -> empty return 18/11: expected (datetime.datetime(2026, 11, 10, 8, 0), datetime.datetime(2026, 11, 18, 12, 0)) got (datetime.datetime(2026, 11, 10, 8, 0), datetime.datetime(2026, 11, 18, 12, 0))
+CHECK PASS 6 DEM 20': 9 days - 7 free = 2 x 30: expected 60.0 got 60.0
+CHECK PASS 6 DEM 40': 16 days - 7 free = 9: 5 x 30 + 4 x 60: expected 390.0 got 390.0
+CHECK PASS 6 DEM forecast: already ordered to MSC (confirmed order), cost recomputed with the file data: expected ('ordered', True) got ('ordered', True)
+CHECK PASS 6 the sale of DEM is not changed: expected 120.0 got 120.0
+CHECK PASS 6 bill with nothing performed (D-4): expected 'refused' got 'refused'
+      «P00010: ningún servicio de este pedido está marcado como realizado, no hay nada que facturar. Marque primero los servicios realizados en el expediente.»
+CHECK PASS 6 performed quantities on the order: expected [1.0, 1.0, 1.0, 1.0, 1.0] got [1.0, 1.0, 1.0, 1.0, 1.0]
+CHECK PASS 7 vendor bill = performed services only: expected 2280.0 got 2280.0
+CHECK PASS 7 vendor bill posted: expected 'posted' got 'posted'
+CHECK PASS 7 pay the bill before the customer invoice (P30): expected 'refused' got 'refused'
+      «FACTURA/2026/11/0003 ([UAT-E2E] 20261026-180115 MSC-1) aún no se puede pagar: - E260013 · [FMI] Flete marítimo importación (FCL, por contenedor): aún no facturado al cliente - E260013 · [FMI] Flete ma»
+CHECK PASS 8 partial invoice = 2 THC: expected 560.0 got 560.0
+CHECK PASS 8 THC to a Spanish customer: exempt art. 22: expected True got True
+CHECK PASS 8 everything invoiced after the second invoice: expected (4125.0, 0.0) got (4125.0, 0.0)
+CHECK PASS 9 credit note applied to the invoice it corrects: expected 3760.9 got 3760.9
+CHECK PASS 9 credit note = BL: expected 75.0 got 75.0
+CHECK PASS 9 invoiced after the credit note: expected 4050.0 got 4050.0
+CHECK PASS 9 extra cost re-invoiced: new sale line 160 €: expected 160.0 got 160.0
+CHECK PASS 10 cobro THC: paid and reconciled with the bank line: expected 'paid' got 'paid'
+CHECK PASS 10 cobro resto: paid and reconciled with the bank line: expected 'paid' got 'paid'
+CHECK PASS 10 cobro OCU: paid and reconciled with the bank line: expected 'paid' got 'paid'
+CHECK PASS 10 pago MSC-1: paid and reconciled with the bank line: expected 'paid' got 'paid'
+CHECK PASS 10 pago MSC-2: paid and reconciled with the bank line: expected 'paid' got 'paid'
+CHECK PASS 11 invoiced (sale - credit note + re-invoiced extra): expected 4210.0 got 4210.0
+CHECK PASS 11 actual cost (posted bills): expected 2400.0 got 2400.0
+      file E260013: forecast cost 3765.0, pending 1365.0, margin final 0.0, collected 4514.5, paid 2400.0
+CHECK PASS 11 collected = customer invoices with taxes: expected 4514.5 got 4514.5
+RESULT 64 passed, 0 failed | run [UAT-E2E] 20261026-180115 | order S00026 | file E260013 | invoices INV/2026/00004, INV/2026/00005, INV/2026/00006 | credit note RINV/2026/00002 | bills FACTURA/2026/11/0003, FACTURA/2026/11/0004
+# Exit status: 0
