@@ -171,8 +171,10 @@ check("4 one need per bought line", len(order.order_line.filtered(lambda l: l.bo
 # 5. Purchases without duplicates
 file.action_create_rfqs()
 po_lines = file.purchase_order_ids.order_line
-file.action_create_rfqs()
-check("5 a second «Create RFQs» creates nothing", len(po_lines), len(file.purchase_order_ids.order_line))
+refused("5 a second «Create RFQs» says there is nothing to order", file.action_create_rfqs)
+check("5 ... and creates nothing", len(po_lines), len(file.purchase_order_ids.order_line))
+check("5 one purchase order per supplier", sorted(set(supplier_needs.partner_id.ids)),
+      sorted(file.purchase_order_ids.partner_id.ids))
 check("5 every need with a supplier ordered exactly once", True,
       all(len(n.purchase_line_ids) == 1 for n in supplier_needs))
 po = file.purchase_order_ids.filtered(lambda p: p.partner_id == msc)
