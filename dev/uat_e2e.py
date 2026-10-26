@@ -183,9 +183,24 @@ check("5 purchase lines on the file's analytic account", True, all(
 
 # 6. Actual execution: dates and performed services
 file.write({"ata": datetime(2026, 11, 10, 8, 0), "pickup_date": datetime(2026, 11, 22, 10, 0)})
-dem_need = file.cost_ids.filtered(lambda n: n.product_id.default_code == "DEM")
-dem_need.invalidate_recordset()
-print(f"      DEM period {dem_need.period_start} -> {dem_need.period_end}, expected cost {dem_need.expected_amount}")
+dem20, dem40 = (file.cost_ids.filtered(lambda n, s=s: n.product_id.default_code == "DEM"
+                                       and n.sale_line_id.boss_container_size == s) for s in ("20", "40"))
+check("6 DEM waits for the containers' dates (arrival -> empty return, MSC p.18)", (False, False),
+      (bool(dem20.period_end), bool(dem40.period_end)))
+c20 = file.container_ids.filtered(lambda c: c.size == "20")
+c40 = file.container_ids.filtered(lambda c: c.size == "40")
+c20.write({"number": "DEMU2000001", "pickup_date": date(2026, 11, 13), "return_date": date(2026, 11, 18)})
+c40.write({"number": "DEMU4000001", "pickup_date": date(2026, 11, 15), "return_date": date(2026, 11, 25)})
+(dem20 | dem40).invalidate_recordset()
+dem_rule = tariff.line_ids.filtered(lambda l: l.product_id.default_code == "DEM")
+print(f"      DEM rule: {dem_rule.free_days} free, {dem_rule.free_mode}, {dem_rule.tier_mode}, "
+      f"{[(b.up_to, b.unit_price) for b in dem_rule.bracket_ids]}")
+check("6 DEM 20': period ATA 10/11 -> empty return 18/11", (datetime(2026, 11, 10, 8, 0), datetime(2026, 11, 18, 12, 0)),
+      (dem20.period_start, dem20.period_end))
+check("6 DEM 20': 9 days - 7 free = 2 x 30", 60.0, dem20.expected_amount)
+check("6 DEM 40': 16 days - 7 free = 9: 5 x 30 + 4 x 60", 390.0, dem40.expected_amount)
+check("6 DEM forecast recomputed with the file data", "recomputed", dem40.forecast_status)
+check("6 the sale of DEM is not changed", 120.0, line(order, "DEM", "40").price_unit)
 refused("6 bill with nothing performed (D-4)", po.action_create_invoice)
 thc_needs = file.cost_ids.filtered(lambda n: n.product_id.default_code in ("THC", "BL", "FMI"))
 thc_needs.action_mark_performed()
