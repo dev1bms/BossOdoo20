@@ -1277,11 +1277,14 @@ DESCS_EN = {
     "D05": "Result: import OCU/DEM/DET of the 5 carriers of Hoja1 (today only MSC; CMA and Hapag in addition) and the "
            "local charges received, loaded with their examples.\nAcceptance: tariffs waiting for approval and "
            "reference test green.",
-    "F01": "Result: NOA (date and time) and ATA with time in «References and dates» of the file; filling them proposes "
-           "the start of the actual period of time-based services; event on the file; recompute.\nBrought forward to "
-           "the week of 26/10 (capacity available; depends on no decision). Actual status 26/10: ATA date only; NOA only "
-           "as the start of the service period (H1-21, H1-22).\nAcceptance: automated test (NOA → ALM period → cost "
-           "recomputed) and screenshot in the guide.",
+    "F01": "Result: by transport mode, as Belal stated on 26/10/2026: on AIR files ATA (actual arrival) is not "
+           "used; the air arrival is the NOA with date and time (start of the ALM period, Cristina 25/09: import NOA → "
+           "pickup). On SEA files ATA (actual arrival) with time. The field that does not apply is hidden on the file. "
+           "Filling NOA (air) or ATA (sea) proposes the start of the actual period of time-based services (ALM; "
+           "DEM/OCU), adds an event and recomputes.\nBrought forward to the week of 26/10 (capacity available; depends "
+           "on no decision). Actual status 26/10: the file shows ATA (date only) for every mode; NOA exists only as the "
+           "start of the service period (H1-21, H1-22).\nAcceptance: automated tests (air: NOA → ALM period → cost "
+           "recomputed, ATA not shown; sea: ATA with time) and screenshots in the guide.",
     "F02": "Result: association model (airline, airport → handler) loaded from F03; on an air file, choosing airline "
            "and airport proposes the handler (editable); the handler is the default supplier of HAN, ALM, AWB, ETX.\n"
            "Actual status 26/10: not implemented (H1-23, H1-24). Cristina 28/09: association «later»; done now because "
