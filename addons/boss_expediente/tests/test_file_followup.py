@@ -286,6 +286,9 @@ class TestFileFollowUp(CycleCommon):
         bill.with_user(self.accountant).action_post()
         with self.assertRaises(UserError):  # THC not invoiced to the customer yet
             bill.with_user(self.accountant).action_register_payment()
+        with self.assertRaises(UserError):  # nor through the payments wizard opened on the bill (list, statement)
+            self.env["account.payment.register"].with_user(self.accountant).with_context(
+                active_model="account.move", active_ids=bill.ids).create({}).action_create_payments()
         thc_part = file.allocation_ids.filtered(lambda a: a.product_id == self.thc)
         wizard = self.env["boss.invoice.services"].with_user(self.sales).create({
             "expediente_id": file.id, "allocation_ids": [Command.set(thc_part.ids)]})

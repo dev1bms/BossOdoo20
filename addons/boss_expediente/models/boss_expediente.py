@@ -371,8 +371,8 @@ class BossExpediente(models.Model):
         """One known handler for the airline at the airport: proposed. Several: the user chooses among them (the
         field only offers those). None recorded: free choice among handling agents."""
         for file in self:
-            candidates = file.handler_candidate_ids
-            if file.handler_id and candidates and file.handler_id not in candidates:
+            candidates = file.handler_candidate_ids._origin  # on the form the candidates are new-id copies
+            if file.handler_id and candidates and file.handler_id._origin not in candidates:
                 file.handler_id = False  # the handler of the previous airline or airport
             if len(candidates) == 1 and not file.handler_id:
                 file.handler_id = candidates

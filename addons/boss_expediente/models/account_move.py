@@ -105,13 +105,17 @@ class AccountMove(models.Model):
                 raise UserError(_("%(move)s cannot be posted:\n%(problems)s",
                                   move=move.display_name, problems="\n".join(f"- {p}" for p in problems)))
 
-    def action_register_payment(self):
+    def _boss_check_payment_allowed(self):
+        """P30: a supplier bill of a file service is not paid before that service is invoiced to the customer."""
         for move in self.filtered(lambda m: m.move_type == "in_invoice"
                                   and m.company_id.boss_bill_before_invoice in ("block", "block_payment")):
             problems = move._boss_bill_order_problems()
             if problems:
                 raise UserError(self.env._("%(move)s cannot be paid yet:\n%(problems)s", move=move.display_name,
                                            problems="\n".join(f"- {p}" for p in problems)))
+
+    def action_register_payment(self):
+        self._boss_check_payment_allowed()
         return super().action_register_payment()
 
     def _boss_refresh_file_needs(self):
@@ -148,3 +152,13 @@ class AccountMoveLine(models.Model):
         if default and not values and self.display_type == "product":
             values = dict(default)
         return values
+
+
+class AccountPaymentRegister(models.TransientModel):
+    _inherit = "account.payment.register"
+
+    def _create_payments(self):
+        """The payment block holds every path that registers a payment on the bill (its button, the bills list, the
+        wizard opened on its lines), not only the button of the bill."""
+        self.line_ids.move_id._boss_check_payment_allowed()
+        return super()._create_payments()
