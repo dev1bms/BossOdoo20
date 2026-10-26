@@ -1140,6 +1140,362 @@ TITLES_EN = {
     "X01": "Manual-cost exception at delivery for services without approved tariff: Belal's approval per service",
 }
 
+# English task descriptions (Belal, 26/10/2026: titles and descriptions in English). One text per task; the
+# kickoff tasks of 21/10 keep their original description once, translated (ORIG_EN).
+PROPOSED = "Date proposed by Belal on 26/10/2026; not confirmed by the person responsible."
+RETRO_EN = ("Task created on 26/10/2026 to record work already done (planning rebuilt after the fact); the dates are "
+            "those of the commits.")
+DESCS_EN = {
+    "000": "Result: analysis of what is asked and what is not, with open questions for Belal (step 1 of the KICKOFF).\n"
+           "Source: KICKOFF_PROMPT.md.\nAcceptance: Belal answers the questions (done on 21–22/10).",
+    "001": "Result: task.bosscontinental.com with sprints, backlog, board, story points, burndown and Gantt.\n"
+           "Acceptance: published and checked in the browser.",
+    "002": "Result: addons/, docs/adr, dev/, .gitignore without Odoo source or supplier PDFs; CLAUDE.md with the project "
+           "rules.",
+    "003": "Result: dev/test.sh (local Docker stack with an in-memory DB for tests), dev/deploy.sh with an environment "
+           "identity check, boss20 server running Odoo 20 Enterprise.",
+    "004": "Result: docs/adr/001-architecture-and-modules.md (context, alternatives, decision, consequences).",
+    "005": "Result: docs/adr/002-pricing-model.md: tariff with document, validity and versions; line per service; "
+           "methods; scope; minimum/maximum; approval; single pricing service.",
+    "006": "Replaced: docs/services was not created; the per-service study lives in docs/matriz-servicios.md (unit, "
+           "method, VAT, status) and docs/ejemplos-referencia.md (cases checked against real documents), plus each "
+           "service page of the guide.",
+    "007": "Result: the BossOdoo20 repository has a remote (dev1bms GitHub or another approved by Belal) with all "
+           "commits; ruff and pre-commit configured.\nActual status 26/10: no remote (every commit is local: risk of "
+           "loss).\nOriginal plan date: 3/11. New date: 27/10, brought forward by Belal's decision (26/10): the code is "
+           "still local and the current machine is slow.\nAcceptance: `git remote -v` shows the remote and `git push` "
+           "succeeds; ruff without errors.",
+    "010": "Result: THC studied with the MSC 09/2026 document p.12 (R1), sample tariff loaded and reference test; "
+           "equivalent to docs/services/THC.md of the original plan.",
+    "011": "Result: BL once per file (R4, MSC p.12); DOC for the house; master per file (P25).",
+    "012": "Result: T3-PAD by container size (R2, MSC p.12); T3 of other carriers and of LCL pending a document (Hoja1 "
+           "H1-01).",
+    "013": "Result: free days, events that open and close the period, relative or day-number tiers, 24 h periods or "
+           "calendar days, minimum; cases R8–R18 (MSC, Hapag, CMA) and R01–R05 (WFS).",
+    "014": "Result: GLO-CCC per DV/HC container (R5) and GLO-FUELEU per TEU, origin China (R3); «Far East» list pending "
+           "from Cristina (P24); GLO per document pending a decision (H1-13).",
+    "015": "Result: FAD with the real Aducex and Ramos Vila tariffs (1 container / 2 or more; several entries) loaded "
+           "and checked with a reference example.\nActual status 26/10: «per clearance» method configured; no document "
+           "(Hoja1 H1-02). Cristina 28/09: the operator chooses the broker, no automatic choice.\nOriginal date in the "
+           "plan of 21/10: none (backlog). New date: 5/11, because the documents are missing (task D01).\nAcceptance: "
+           "reference example with the real tariff in docs/ejemplos-referencia.md and reference test green.",
+    "016": "Result: TTE-FCL with a real tariff by route and brackets, loaded and checked.\nActual status 26/10: "
+           "brackets method configured; no document (Hoja1 H1-18).\nOriginal date: backlog, none. New date: 6/11, "
+           "because the document is missing (task D01).\nAcceptance: reference example and test green.",
+    "017": "Result: freight (FMI, FME, FAI, FAE) is quoted with the manual amount of the supplier offer («manual "
+           "amount» mode), in its currency at the rate of the quotation date (P03).",
+    "020": "Result: addons/boss_pricing/engine (fixed, per unit, larger of two bases, brackets, percentage, time with "
+           "free period, 24 h periods or days, weekend exceptions) with its tests.",
+    "021": "Result: boss.tariff and boss.tariff.line with document and page, validity, versions, scope, approval "
+           "(draft → waiting for approval → approved) and sample importer.",
+    "022": "Result: boss.pricing.price_cost(): one function for quotation and file, with explicit statuses (ok, missing "
+           "input, no tariff, pending approval, conflict, not ready).",
+    "023": "Result: shipment data on the quotation and the file (containers by size and type, gross kg, m³, pallets, "
+           "AWB chargeable kg, dates, port, country, carrier) and one quantity function per charge basis.",
+    "024": "Result: ALM/DEM/OCU with the actual period (start and end with date and time), 24 h or calendar-day "
+           "readings, minimum per stay, weekend exceptions; recompute of the expected cost.",
+    "025": "Result: one way to enter a price, linked to its document; filters by status; «Test pricing» with draft "
+           "simulation; DEMO tariffs isolated.",
+    "026": "Result: source strings in English and es.po translation of the four modules; 27 Odoo tests (boss_expediente "
+           "13, boss_pricing_sale 13, boss_pricing 1) and 21 engine tests without failures.",
+    "030": "Result: Cristina and Ángel have seen the system and ratified (or changed) the decisions in their area.\n"
+           "Actual status 26/10: documentation delivered (ES/EN guide published on 23/10, decisions P03–P44 approved by "
+           "Belal, Ángel's test sheet of 26/10); the sessions have not taken place.\nOriginal date: backlog, none. New "
+           "date: 30/10 (sessions A01 and C01).\nAcceptance: minutes of both sessions with the ratifications recorded "
+           "in docs/preguntas-abiertas.md.",
+    "A01": "Result: docs/pruebas-angel.md filled in (actual result per case) and Ángel's decisions recorded: P17, P30, "
+           "P31, P32, P03, P11, P38, P39, P33; paid-on-behalf accounts (D-2); VAT of CAU/QBR; purchase taxes per bill "
+           "type; QBR; minimum margin; SII/VeriFactu (P45).\nEnvironments: boss20 drafts only; posting and payments on "
+           f"the isolated local copy.\nOrganised by Belal; Ángel takes part. {PROPOSED}\nAcceptance: sheet signed and "
+           "docs/preguntas-abiertas.md updated with date and source.",
+    "A02": "Decision: which accounts the paid-on-behalf services (ARA, IVA, PLA, DUM) use when invoicing the customer "
+           "and when recording the broker's bill. Odoo 17 uses 419001 VAT charged, 419002 duties charged, 419003 VAT "
+           "borne, 419004 duties borne, 419005 anti-dumping, 419006 and 419007 plastic tax (current liabilities). Also "
+           "the income and expense accounts per service category.\nProposal ready: docs/cuentas-suplidos.md (task "
+           f"W06). {PROPOSED}\nAcceptance: account list per concept signed; applied in W10.",
+    "A03": "Decision: whether BOSS must send invoices to the tax agency (SII or VeriFactu) from 1/1/2027 and which "
+           "returns (303, 349, 390…) Odoo 20 produces. Today boss20 has no SII or VeriFactu module (read on 26/10) and "
+           f"nothing is sent.\n{PROPOSED}\nAcceptance: written decision; if it applies, installation and configuration "
+           "task (N06).",
+    "A04": "VAT and finance decisions with no assumed answer: tax of NS services that are not paid on behalf (CAU, QBR) "
+           "for a Spanish customer; exchange-loss rate and EUR invoice of a USD order; minimum margin value and who "
+           "approves selling below it; rates and minimums of CAU and SEG (with Cristina).\nMeanwhile: VAT pending in "
+           f"those cases; no QBR; no minimum margin. {PROPOSED}",
+    "B01": "Result: per docs/especificacion-alm-venta.md: BOSS sale tariff (approved by Cristina), new pricelist base "
+           "«BOSS sale tariff», price with explanation on the quotation, snapshot on acceptance; engine tests E1–E6 and "
+           "a quotation with ALM.\nBlocker: needs Cristina's answers D1–D7 (C02). Real amounts stay out of Git.\n"
+           "Acceptance: tests green; a [DEMO] quotation with ALM shows the price and its explanation.",
+    "B02": "Result: «Invoice services» wizard with invoice currency; QBR line with the approved rate; exchange "
+           "difference recorded as Ángel decides.\nBlocker: rate and accounting treatment (A04).\nAcceptance: test with "
+           "a USD order invoiced in EUR on a throw-away DB.",
+    "B03": "Result: ETX and DET configured (unit, method, cost mode) with the supplier document; MSC export DET loaded "
+           "if applicable (Hoja1 H1-17, H1-25).\nAcceptance: reference example per service and test green.",
+    "B04": "Result: cargo-type condition in the ALM tariffs, code for the off-airport warehouse if Cristina and Ángel "
+           "approve it (P44), and price agreement for several shipments on top of the split between files (P34), if "
+           "Cristina provides the data.\nIf there is no data by 9/11, it moves to the December stabilisation (not "
+           "essential for delivery).",
+    "B05": "Result: VET is no longer «pending decision»: unit, method, cost mode and VAT class per Cristina's answer "
+           "(P16: veterinary inspection at the BIP, per document like SAN? supplier and price); tariff loaded if there "
+           "is a document; reference example and test.\nActual status 26/10: H1-11 not implemented (pending mode).\n"
+           "Acceptance: VET prices a draft quotation as in the example; docs/mapeo-hoja1.md H1-11 updated.",
+    "C01": "Result: each [MUESTRA] tariff (MSC ×3, WFS ×2, CMA CGM, Hapag-Lloyd, IRENEO ×3) reviewed with its PDF and "
+           "the examples of docs/ejemplos-referencia.md, and approved, sent back to draft with the correction, or not "
+           "approved (IRENEO 2025 is not extended). WFS readings P40, P41, P29, P42 ratified or changed.\nSource: Hoja1 "
+           "rows 7 and 10 (H1-01, 05, 12, 14, 15, 16, 20, 25, 27, 28); docs/revision-tarifas.md.\nNote: 8 of the 10 "
+           "arrived without «Scope reviewed»; check it before approving.\nOrganised by Belal; Cristina approves in "
+           f"Tariffs → Waiting for approval. {PROPOSED}\nAcceptance: status of each tariff on boss20 changed by "
+           "Cristina; after approval, reference scenario tested with a draft quotation (task D04).",
+    "C02": "Decisions that block Hoja1: VET (H1-11, P16), which GLO per document are proposed automatically (H1-13), "
+           "«Far East» country list (H1-14, P24), DET own code or within DEM (H1-17, P09), ETX concept and unit (H1-25, "
+           "P10), single ALM sale price points D1–D7 of docs/especificacion-alm-venta.md (P43), services to define or "
+           f"retire (P16), E26xxxx numbering at go-live (P36), multi-shipment agreements (P34).\n{PROPOSED}\n"
+           "Acceptance: written answers in docs/preguntas-abiertas.md with date; tasks B01, B03, B05 and D02 unblocked.",
+    "C03": "Result: IRENEO 2026 document (HAN, X-R, TTE-CON, SEG, FS) or written confirmation; the 2025 tariffs are not "
+           f"extended (Hoja1 H1-20).\n{PROPOSED}\nAcceptance: document in the NEW ODOO folder and new tariff loaded (D02).",
+    "C04": "Result: batch 1 tariffs approved (or sent back with a correction) and airline / airport / handler list "
+           f"validated.\n{PROPOSED}\nAcceptance: statuses changed on boss20; list signed.",
+    "C05": f"Result: batch 2 tariffs approved or sent back.\n{PROPOSED}",
+    "D01": "Result: current documents in the NEW ODOO folder: Aducex and Ramos Vila (FAD), export broker (DEX), "
+           "Hapag-Lloyd local charges (T3, THC, CES), Transglory CFS (THC-LCL), agents' PFT agreements, prices per "
+           "document (ROH, SOI, INS, SAN, VET), CES, D&D of ONE, MSK, ZIM and OOCL, and the second air handler (IAS or "
+           "SAASA: import and export).\nSource: Hoja1 rows 7 and 10; sheet «Documentos no encontrados» of 07/10 (37 "
+           "services without a document on 26/10: docs/revision-tarifas.md).\nOwner: to be assigned (07/10 proposal: "
+           f"Laura / operations; Cristina coordinates). {PROPOSED}\nAcceptance: each document with supplier, edition and "
+           "validity; what does not exist is noted as «does not exist», so a manual cost with supporting document is "
+           "used (exception X01).",
+    "D02": "Result: each received document loaded as a tariff (price with page, scope reviewed) and submitted for "
+           "approval; reference example per service and reference test green.\nSource: Hoja1 H1-01 to H1-10, H1-12, "
+           "H1-13, H1-18, H1-19, H1-20, H1-28.\nAcceptance: tariffs «Waiting for approval» on boss20; "
+           "docs/ejemplos-referencia.md extended; Cristina's approval (C04).",
+    "D03": "Result: HAN, ETX, ALM and AWB of the second handler (IAS or SAASA) for import and export, and the missing "
+           "WFS export codes, loaded and submitted for approval.\nActual status 26/10: WFS only (import: HAN, ALM, AWB; "
+           "export: ALM, X-R).\nAcceptance: tariffs waiting for approval; reference examples; Cristina's approval (C05).",
+    "D04": "Result: for each approved tariff, a draft quotation (non-DEMO test customer) with the data of the reference "
+           "example gives the cost of the example; the quotation is not sent.\nSource: condition 5 of "
+           "docs/revision-tarifas.md.\nAcceptance: table tariff → quotation → expected cost = obtained, in "
+           "docs/ejemplos-referencia.md.",
+    "D05": "Result: import OCU/DEM/DET of the 5 carriers of Hoja1 (today only MSC; CMA and Hapag in addition) and the "
+           "local charges received, loaded with their examples.\nAcceptance: tariffs waiting for approval and "
+           "reference test green.",
+    "F01": "Result: NOA (date and time) and ATA with time in «References and dates» of the file; filling them proposes "
+           "the start of the actual period of time-based services; event on the file; recompute.\nBrought forward to "
+           "the week of 26/10 (capacity available; depends on no decision). Actual status 26/10: ATA date only; NOA only "
+           "as the start of the service period (H1-21, H1-22).\nAcceptance: automated test (NOA → ALM period → cost "
+           "recomputed) and screenshot in the guide.",
+    "F02": "Result: association model (airline, airport → handler) loaded from F03; on an air file, choosing airline "
+           "and airport proposes the handler (editable); the handler is the default supplier of HAN, ALM, AWB, ETX.\n"
+           "Actual status 26/10: not implemented (H1-23, H1-24). Cristina 28/09: association «later»; done now because "
+           "Hoja1 asks for it.\nAcceptance: automated test and a [DEMO] air quotation with the handler proposed.",
+    "F03": "Result: read-only script on Odoo 17 (air files: airline, airport, handler used) and list in .research (real "
+           "data, outside Git) for Cristina to validate the association.\nActual status 26/10: not implemented "
+           "(H1-26).\nAcceptance: list validated by Cristina; it is the load for F02.",
+    "G01": f"Notice to the team; from the cut-off time no new record or change in Odoo 17.\nOwner: Cristina "
+           f"(operations). {PROPOSED}",
+    "G02": "Result: final Odoo 17 backup archived; differences loaded into boss20 with procedure S02; load report.",
+    "G03": "Result: legacy and new counts and totals match; file and invoice numbering per the decision (P36 and 2027 "
+           f"series); each user with their role.\nWith Ángel for balances and invoice series. {PROPOSED}",
+    "G04": "Result: go-live announcement and Odoo 20 declared the only system of record on 1/1/2027 (milestone approved "
+           "by Belal on 26/10). Support in the first week is task G07.",
+    "G05": "Result: Odoo 17 users without write access; database and filestore backup kept; read access preserved.",
+    "G06": f"Result: minutes with criteria G01–G05 checked, open incidents and their plan.\n{PROPOSED}",
+    "G07": "Result: immediate support in the first week of real operation; each incident as a Fix task with priority; "
+           "daily review with Cristina and Ángel. Acceptance: no critical incident open on 8/1 (minutes G06).",
+    "I01": "Result: the repository, Docker (dev/test.sh), the deployment scripts and the SSH keys work from the Mac; "
+           "tests and a test deployment to the local copy done from it.\nActual status 26/10: not verified (no evidence "
+           "in the repository that the move is done). Brought forward to this week by Belal's decision (26/10): the "
+           "current machine is slow.\nAcceptance: `dev/test.sh run boss_expediente` green from the Mac; `dev/deploy.sh` "
+           "run from the Mac.",
+    "I02": "Result: daily backup of the boss20 database and filestore outside the server, with retention; restore "
+           "tested on the local copy; written rollback plan (Odoo 17 stays untouched until 1/1).\nAcceptance: one full "
+           "restore verified and documented with date.",
+    "I03": "Result: dev/deploy.sh with a prior backup step and documented rollback; timing measured with migrated data "
+           "(target: < 2 s per screen, as on 23/10). Acceptance: measurements in docs/ciclo-operativo.md.",
+    "N01": "Decision of Belal with Cristina: master data (customers, suppliers, roles, ports, container types, "
+           "airlines/handlers), files open on 1/1/2027 (and their quotations), history in Odoo 17 read-only; invoices "
+           "and accounting stay in Odoo 17 (criterion of the Odoo 19 mapping, Q11) unless Ángel decides otherwise.\n"
+           "Actual status 26/10: no migration script in the repository; boss20 has no real customers or suppliers.\n"
+           "Acceptance: scope written in docs/migracion.md with reconciliation criteria.",
+    "N02": "Result: docs/migracion.md with the mapping per group (customers and suppliers with dedup by VAT number and "
+           "name, roles, ports, container types, airlines/handlers, open files with parties, containers, references and "
+           "dates); read-only Odoo 17 script and load into the local copy with a quality report (duplicates, no VAT "
+           "number, zones).\nAcceptance: load into the local copy without errors; legacy counts = new; human review list "
+           "for doubtful cases.",
+    "N03": "Result: master data loaded into boss20 from Odoo 17 with a reconciliation report (counts, duplicates "
+           "resolved, VAT numbers and VAT zones, legacy id in «Reference»); review list for Cristina.\nAcceptance: "
+           "legacy counts = new; no duplicates by VAT number; each customer with a VAT zone.",
+    "N04": "Result: load of the open files (parties, containers, references, dates, services with expected cost) into "
+           "the local copy; reconciliation report per file (legacy and new counts and totals match, differences "
+           "explained); repeatable procedure to load differences by date or legacy id without duplicates.\nAcceptance: "
+           "0 unexplained differences; procedure documented in docs/migracion.md.",
+    "N06": "Result: localisation module installed and configured in test mode; real sending only after go-live and with "
+           "Ángel's approval.\nIf Ángel decides it does not apply in 2027, the task is cancelled with the reason.",
+    "P01": "Result: list and pivot view over files and their services (agreed sale, cost at acceptance, committed, "
+           "actual, forecast, margins, invoiced, collected, paid) filterable by status, customer, mode and dates "
+           "(ETD/ETA/ATA/NOA); exportable.\nSource: Hoja1 «PREVISIONES» (A6); Odoo 17 forecast report (extension).\n"
+           "Actual status 26/10: the figures exist per file («Summary» and «Where the figures come from»); no aggregated "
+           "view.\nAcceptance: Cristina validates the columns with the [DEMO] data; it matches each file's summary.",
+    "P02": "Result: invoiced, collected, paid and margin by file, customer and month, from the same calculations as the "
+           "file summary; exportable.\nAcceptance: Ángel validates the columns with the [DEMO] data.",
+    "Q01": "Result: engine, reference tests (with all private samples) and Odoo tests green; open defects fixed or "
+           "logged with priority. Acceptance: 0 failures recorded in docs/ciclo-operativo.md with the commit.",
+    "Q02": "Result: guide published with the final screens; ADR-006 (ALM sale); docs/preguntas-abiertas.md with all "
+           "ratifications; docs/migracion.md. Acceptance: published and checked with curl.",
+    "Q03": "Result: docs/mapeo-hoja1.md with the final status of each requirement (Complete / Partial / Not implemented) "
+           "and its evidence (test, screenshot or boss20 read); what stays Partial says what is missing and who it "
+           "depends on. Acceptance: no requirement «Not verified».",
+    "Q04": "Result: delivery minutes signed by Belal and accepted by Cristina and Ángel: delivered scope (Hoja1, phase B "
+           "per decisions, cycle, accounting, reports, data, permissions, documentation, training 1), open items with "
+           "owner and date, pilot start criteria (T01).\nMilestone approved by Belal on 26/10/2026: full delivery on "
+           "20/11/2026, with the approved scope and the Hoja1 requirements; manual cost for services without a tariff "
+           "only as an exception approved by Belal (X01), and those requirements stay «Partial».",
+    "R01": f"{RETRO_EN}\nResult: boss_services with the services as standard products, charge bases as units, cost mode "
+           "(tariff, manual, own, pending) and VAT class.",
+    "R02": f"{RETRO_EN}\nResult: Ángel's rules (31/08) as pure functions and a configurable table; a case without a row "
+           "leaves the VAT pending and blocks sending or accepting.",
+    "R03": f"{RETRO_EN}\nResult: «expected cost of the line» base in pricelist rules, markup or margin on sale, minimum "
+           "margin; the values per customer are set by Cristina (P01/P02).",
+    "R04": f"{RETRO_EN}\nResult: boss_expediente: E26xxxx file opened on acceptance, analytic account, parties and roles, "
+           "RFQs without duplicates, «Mark as performed», invoicing by service (milestones), credit notes, extra cost "
+           "re-invoiced, posting checks and profitability summary with the source of each figure.",
+    "R05": f"{RETRO_EN}\nResult: expected cost recomputed from file data (recompute history), split of an accepted "
+           "quotation across files, BOSS or supplier service added after acceptance with reason and snapshot.",
+    "R06": f"{RETRO_EN}\nResult: 30 ES/EN pages (cycle, roles, tariffs, methods, services, file, purchases, invoicing, "
+           "profitability, storage, decisions) with real screenshots.",
+    "R07": f"{RETRO_EN}\nResult: modules deployed with the web stopped; VAT table (Art.22, CAN), exchange rate, payment "
+           "block, control on received quantities, paid-on-behalf (419000: see D-2).",
+    "R08": f"{RETRO_EN}\nResult: 10 [MUESTRA] tariffs from real documents, each price with its page; reference examples "
+           "R1–R27 and automated test with the private samples.",
+    "R09": f"{RETRO_EN}\nResult: proposals approved by Belal with phase A/B/C; pending ratification by Ángel (finance, "
+           "VAT) and Cristina (services, prices, operations).",
+    "R10": f"{RETRO_EN}\nResult: form and list load times in Chrome with a normal session; the 20–50 s waits came from "
+           "the hidden panel of the built-in browser, not from the server.",
+    "S01": "Result: incidents of report T08 fixed by priority, with test and retest. Acceptance: list closed and "
+           "approved by Cristina and Ángel.",
+    "S02": "Rule: until 31/12 Odoo 17 is the only system of record; Odoo 20 is for tests only. New data (files created "
+           "or changed since the last rehearsal) is loaded as differences (modification date and legacy id stored in "
+           "«Reference»), without duplicates; procedure written and tested in rehearsal S04.\nAcceptance: document "
+           "approved by Belal and Cristina.",
+    "S03": "Result: each person has done their scenario without help; one-page go-live guide per role.\nParticipants "
+           f"per Cristina and Ángel. {PROPOSED}",
+    "S04": "Result: full rehearsal of procedure G01–G05 on the local copy with measured times; reconciliation of open "
+           "files, balances and numbering; checklist corrected. Acceptance: 0 unexplained differences; total time known.",
+    "S05": "Result: restore of the latest backup tested; rollback plan (stay on Odoo 17) approved by Belal.",
+    "S06": "Result: checklist G01–G06 with cut-off time, owners, verifiable acceptance criteria and a plan for any "
+           f"obstacle; approved by Cristina (operations) and Ángel (accounting).\n{PROPOSED}",
+    "T01": "Start: delivery accepted, master data migrated, users trained, daily backup active. Exit: every scenario run "
+           "by its owner with the result recorded, critical incidents fixed and retested, closing report. «Passes with "
+           "[DEMO]» is distinguished from «passes with representative operational data» (migrated and approved by "
+           "Cristina).\nLog: Fix tasks on this platform, one per incident.",
+    "T02": "With a real representative shipment (migrated customer, carrier with an approved tariff) in the test "
+           "environment; result and remarks recorded by the operator.\nOwner: to be assigned (operations; Cristina "
+           f"decides who). {PROPOSED}",
+    "T03": "With real representative shipments; checks NOA/ATA, actual period and recompute, proposed handler.\nOwner: "
+           f"to be assigned (operations). {PROPOSED}",
+    "T04": f"With real representative shipments.\nOwner: to be assigned. {PROPOSED}",
+    "T05": "On the files of T02–T04 in the test environment (never in the real books of boss20 before 1/1): post, pay, "
+           f"credit; check accounts, taxes and the invoicing and profitability reports.\n{PROPOSED}",
+    "T06": "With real migrated customers and the pricelists Cristina decides (P01/P02).\nOwner: to be assigned (sales). "
+           f"{PROPOSED}",
+    "T07": "Result: each incident logged as a task, fixed with a test, deployed to the test environment and retested by "
+           "whoever opened it. Acceptance: no critical incident open on 1/12.",
+    "T08": "Result: scenarios run and their result, incidents opened and closed, what passes with [DEMO] versus what is "
+           "verified with real data, and the list of what goes into stabilisation. Milestone approved by Belal: pilot "
+           "until 1/12/2026.",
+    "U01": "Result: groups and rules checked with one user per role (sales, operations, purchasing, accounting); BOSS "
+           "outgoing mail server configured and tested to an internal mailbox; quotation and invoice templates with "
+           "BOSS legal data (address, VAT number, terms) reviewed by Ángel.\nAcceptance: screenshot per role; test "
+           "e-mail received; quotation and invoice PDFs approved.",
+    "U02": "Result: 2 h session with the guide as material, on the [DEMO] data and migrated master data; questions "
+           f"logged as tasks.\nParticipants as Cristina indicates. {PROPOSED}\nAcceptance: attendees create and accept "
+           "a quotation without help.",
+    "V01": "Result: with a [DEMO] air file on boss20: NOA and ATA with time propagate the ALM period and recompute the "
+           "cost (H1-21, H1-22); choosing airline and airport proposes the handler validated by Cristina (H1-23, H1-24, "
+           "H1-26); screenshots in the guide.\nAcceptance: behaviour observed on boss20 (not only the field on screen); "
+           "docs/mapeo-hoja1.md updated with the evidence.",
+    "W01": "Result: docs/pruebas-angel.md (8 cases, 90 min, environment per case); isolated local copy (dev/test.sh "
+           "uat: no scheduled jobs, mail or online services); rolled-back dry run that found defects D-1 and D-2.",
+    "W02": "Result: docs/revision-tarifas.md (10 tariffs: document, validity, services, scope, decision) and "
+           "docs/especificacion-alm-venta.md (rule of 25/09 read in Odoo 19, 14 points to decide).",
+    "W03": "Result: docs/mapeo-hoja1.md (28 requirements with status, test, evidence and tasks) and this plan (weekly "
+           "sprints until 8/1/2027) seeded on the platform. Review: Belal.",
+    "W04": "Three decisions Belal deferred on 26/10 until the plan was finished, decided the same day:\n1) D-1: local "
+           "fix with tests approved; deployment to boss20 is a separate task after verification (W09).\n2) D-2: prepare "
+           "the account map, the fix and the invoicing tests locally and present them to Ángel; the accounting change "
+           "on boss20 depends on his approval of the map (W10); reverting to the category accounts is NOT approved.\n"
+           "3) Guide: publish the corrected version after checking the build, explaining the open defects and pending "
+           "decisions (W07).",
+    "W05": "Result: `_boss_bill_needs` (boss_expediente/models/account_move.py) ignores bill lines with quantity 0; test "
+           "in test_file_followup.\nSource: defect D-1 of the 26/10 dry run (docs/pruebas-angel.md).\nAcceptance: new "
+           "test green; payment allowed after invoicing the customer even when the order has services not performed. "
+           "Deployment to boss20 is task W09.",
+    "W06": "Result: proposal so that ARA, IVA, PLA and DUM can be invoiced to the customer and recorded on the broker's "
+           "bill.\nSource: defect D-2 (419000 is a payable account; Odoo 17 uses 419001–419007, current liabilities).\n"
+           "Belal's decision (26/10, W04-2): prepare the account map, the fix and the tests locally and present them to "
+           "Ángel; reverting to the category accounts is not approved. The change on boss20 is task W10, which depends "
+           "on Ángel's approval (A02).\nAcceptance: docs/cuentas-suplidos.md, script dev/setup_suplidos_accounts.py and "
+           "automated test green (broker bill and customer invoice with the proposed accounts).",
+    "W07": "Result: doc.bosscontinental.com/new with the corrected pages (decisions with a «Ratification» column, open "
+           "accounting questions, defects D-1 and D-2). Acceptance: the «Pending decisions» page shows «Ratification» "
+           "and the known defects (checked with curl).",
+    "W08": "Result: internal users on boss20 (today only Belal's exists): Ángel (Accounting administrator, Sales all "
+           "documents, Purchase user), Cristina (Sales administrator, Purchase, tariff approver) and those Cristina "
+           "names for operations; with no mail server, passwords are handed over in person.\nAcceptance: each person "
+           "logs in and sees what the guide page «Roles» describes (test with screenshot).",
+    "W09": "Result: boss_expediente with the D-1 fix deployed to boss20 (dev/deploy.sh, web stopped) after the Odoo and "
+           "engine tests pass; read check afterwards.\nBelal's decision (26/10, W04-1): deployment is a task separate "
+           "from the fix.\nAcceptance: version installed on boss20 = commit; boss20 read without errors.",
+    "W10": "Result: accounts 419001–419007 (or those Ángel approves) created on boss20 and assigned to ARA, IVA, PLA and "
+           "DUM with dev/setup_suplidos_accounts.py --approved-by-angel; the ARA draft invoice of E260001 is created "
+           "without error.\nBlocker: waits for Ángel's approval of the map (docs/cuentas-suplidos.md, A02). Meanwhile "
+           "the ARA line of E260001 cannot be invoiced on boss20 (defect D-2).\nAcceptance: boss20 read with the "
+           "accounts and the map; ARA draft invoice created.",
+    "X01": "Belal's rule (26/10): the 20/11 delivery includes the approved scope and the Hoja1 requirements; a manual "
+           "cost for a service without a tariff is an exception that needs his approval, and the requirement concerned "
+           "stays «Partial».\nResult: list of Hoja1 services still without an approved tariff on 16/11, with the reason "
+           "(document not received, not approved, decision pending) and Belal's approval or not of the exception per "
+           "service; reflected in docs/mapeo-hoja1.md and in the delivery minutes (Q04).",
+}
+ORIG_EN = {
+    "000": "Summary of what is asked and what is not, with questions for Belal (step 1 of the KICKOFF). Acceptance: "
+           "Belal answers the questions.",
+    "001": "Adapt task.bosscontinental.com to the project: dated sprints, Product/Sprint Backlog, board, story points, "
+           "burndown and Gantt. Acceptance: published and checked in the browser.",
+    "002": "addons/, docs/adr, docs/services, docs/requirements, tests/fixtures and tools. .gitignore excludes the Odoo "
+           "source and supplier PDFs. CLAUDE.md with the project rules. Acceptance: proposal reviewed by Belal before "
+           "creating it.",
+    "003": "Step 6, only after steps 2–5 are approved. Docker Desktop is not stable: local venv with PostgreSQL 16 or a "
+           "container on the server (with approval). Acceptance: Odoo 20 starts and runs a sample test.",
+    "004": "docs/adr/001: version, overall architecture, proposed pricing modules and the responsibility of each. "
+           "Context, alternatives, decision and consequences.",
+    "005": "Supplier tariff with document, validity and versions; price line per service; methods (fixed, per unit, "
+           "brackets, percentage, time-based); scope conditions; minimum/maximum; approval; single matching and pricing "
+           "service; specialisation modules. With alternatives and examples.",
+    "006": "Template with: what the service is, how suppliers charge it, lessons from Odoo 19, industry practice, "
+           "proposed decision, open questions and golden cases.",
+    "007": "Quality tools and creation of the repository in dev1bms (only with Belal's approval).",
+    "010": "docs/services/THC.md per the template: the sample study of step 5. Business rules stay pending approval by "
+           "Ángel or Cristina.",
+    "011": "docs/services/BL-DOC.md per the template.",
+    "012": "docs/services/T3.md per the template.",
+    "013": "docs/services/DEM-OCU.md: free days, events that open and close the count, brackets and golden cases.",
+    "014": "docs/services/GLO.md per the template.",
+    "015": "docs/services/FAD.md per the template.",
+    "016": "docs/services/TTE-FCL.md: road transport by route and brackets.",
+    "017": "docs/services/FMI.md: the main freight comes with a supplier offer.",
+    "020": "Fixed, per unit, brackets, percentage and time-based methods, without Odoo. Acceptance: unit tests on the "
+           "THC golden cases green.",
+    "021": "Each price linked to its PDF and page. The price line belongs to the service (lesson from Odoo 19). First "
+           "task to postpone if the engine takes longer.",
+    "022": "Direction, mode, shipment type, ports/zones, supplier role and customer. One single service called by every "
+           "screen.",
+    "023": "Containers, weights, volumes, dates and route; only what is needed to test the expected cost.",
+    "024": "Specialisation on top of the general engine for time-based charges.",
+    "025": "One single way to enter a price, linked to its document.",
+    "026": "Source strings in English and translation in .po; no accepted failures.",
+    "030": "Demonstration of the cost calculation and list of open questions pending their approval.",
+}
+BLOCKED_EN = {"W10": "Waiting for Ángel to approve the paid-on-behalf account map (docs/cuentas-suplidos.md, task A02)."}
+
 class Command(BaseCommand):
     help = "Siembra idempotente del plan de lanzamiento BOSS Odoo 20 (26/10/2026): sprints semanales, epics, tareas."
 
@@ -1197,12 +1553,14 @@ class Command(BaseCommand):
         for order, row in enumerate(TASKS, start=1):
             code = f"BOSS20-{row['code']}"
             plan = {
-                "title": TITLES_EN[row["code"]], "description": row["desc"], "phase": epics[row["epic"]],
+                "title": TITLES_EN[row["code"]], "description": DESCS_EN[row["code"]] + (
+                    "\n\nOriginal description (plan of 21/10/2026): " + ORIG_EN[row["code"]]
+                    if row["code"] in ORIG_EN else ""), "phase": epics[row["epic"]],
                 "task_type": row["type"], "sprint": sprints.get(row["sprint"]), "story_points": row["points"],
                 "start_date": row["start"], "due_date": row["due"], "priority": row["priority"],
                 "backlog_order": order * 10, "estimated_hours": row["hours"], "assigned_to": people[row["who"]],
                 "department": depts[row["dept"]], "related_links": "\n".join(row["links"]),
-                "blocked_reason": row.get("blocked", ""),
+                "blocked_reason": BLOCKED_EN.get(row["code"], ""),
             }
             task = Task.objects.filter(code=code).first()
             if task is None:
@@ -1220,9 +1578,6 @@ class Command(BaseCommand):
                 self.stdout.write(f"  + {code} {row['title'][:70]}")
             else:
                 snapshot = snapshot_task(task)
-                previous = (task.description or "").strip()
-                if previous and previous not in plan["description"]:
-                    plan["description"] += "\n\nDescripción original (plan del 21/10/2026): " + previous
                 for field, value in plan.items():
                     setattr(task, field, value)
                 if row.get("progress") is not None and task.status != S.DONE:
