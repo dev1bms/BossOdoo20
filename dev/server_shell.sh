@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run an odoo shell script from dev/ on the BOSS Odoo 20 server database (boss20), never Odoo 17/19.
+# Run an odoo shell script from dev/ on the BOSS Odoo 20 server database (boss20; BOSS_DB=boss20_uat for the UAT copy), never Odoo 17/19.
 #   dev/server_shell.sh <script.py> [private-data-file]
 # The optional data file (real data, outside Git) is copied to a private folder, mounted read-only as
 # /tmp/boss/<name> and deleted afterwards. The script decides whether it commits or rolls back.
@@ -16,5 +16,5 @@ TMP=$($SSH 'mkdir -p ~/tmp && d=$(mktemp -d ~/tmp/boss-shell-XXXX) && chmod 755 
 if [ -n "$DATA" ]; then
   $SSH "cat > $TMP/$(basename "$DATA") && chmod 644 $TMP/$(basename "$DATA")" < "$DATA"
 fi
-$SSH "cd ~/BossOdoo20 && docker compose run --rm -T -v $TMP:/tmp/boss:ro odoo shell -c /etc/odoo/odoo.conf -d boss20 \
+$SSH "cd ~/BossOdoo20 && docker compose run --rm -T -v $TMP:/tmp/boss:ro odoo shell -c /etc/odoo/odoo.conf -d ${BOSS_DB:-boss20} \
       --no-http --log-level=warn; rc=\$?; rm -rf $TMP; exit \$rc" < "dev/$SCRIPT"
