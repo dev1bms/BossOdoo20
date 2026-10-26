@@ -9,7 +9,7 @@ SCRIPT="${1:?script}"
 DATA="${2:-}"
 HOST=boss@100.87.98.15
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"
-$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && grep -qxF "dbfilter = ^boss20\$" config/odoo.conf \
+$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && grep -qE "^dbfilter = \^boss20(\(_uat\)\?)?[$]$" config/odoo.conf \
       && docker compose ps --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
   || { echo "Refusing: ~/BossOdoo20 is not the BOSS Odoo 20 environment"; exit 1; }
 TMP=$($SSH 'mkdir -p ~/tmp && d=$(mktemp -d ~/tmp/boss-shell-XXXX) && chmod 755 $d && echo $d')
