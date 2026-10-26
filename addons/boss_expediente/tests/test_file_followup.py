@@ -5,7 +5,7 @@ from datetime import date, datetime
 
 from odoo import SUPERUSER_ID, Command
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tests import new_test_user, tagged
+from odoo.tests import Form, new_test_user, tagged
 
 from odoo.addons.boss_pricing_sale.models import vat_rules
 
@@ -410,3 +410,10 @@ class TestFileFollowUp(CycleCommon):
         # Another airport without a known handler: no candidates, free choice.
         file2.port_id = bcn
         self.assertFalse(file2.handler_candidate_ids)
+        # On the form, changing the airline replaces the handler of the previous one by the new single handler.
+        self.env["boss.airline.handler"].create({"airline_id": lh.id, "airport_id": bcn.id, "handler_id": iberia.id})
+        with Form(file) as form:
+            form.carrier_id = lh
+            self.assertEqual(form.handler_id, wfs)  # LH at MAD: two handlers, the previous one (WFS) is among them
+            form.port_id = bcn
+            self.assertEqual(form.handler_id, iberia)  # LH at BCN: only Iberia

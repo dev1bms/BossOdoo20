@@ -372,10 +372,10 @@ class BossExpediente(models.Model):
         field only offers those). None recorded: free choice among handling agents."""
         for file in self:
             candidates = file.handler_candidate_ids
+            if file.handler_id and candidates and file.handler_id not in candidates:
+                file.handler_id = False  # the handler of the previous airline or airport
             if len(candidates) == 1 and not file.handler_id:
                 file.handler_id = candidates
-            elif candidates and file.handler_id and file.handler_id not in candidates:
-                file.handler_id = False
 
     def _boss_handler_needs(self):
         """Needs bought from the handler (air handling services) not ordered yet: they follow the handler chosen on
