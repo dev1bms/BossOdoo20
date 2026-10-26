@@ -66,7 +66,9 @@ class AccountMove(models.Model):
                                   need.display_name))
             elif need.paid_in_advance:
                 continue  # freight paid in advance to an agent: the sale line is enough
-            elif not sale_line._boss_posted_invoiced_qty():
+            elif not sale_line.invoice_lines.filtered(
+                    lambda l: l.parent_state == "posted" and l.move_id.move_type == "out_invoice"):
+                # invoiced once is enough: a later credit note is a sales decision, the supplier is still owed (D-5)
                 problems.append(_("%s: not invoiced to the customer yet", need.display_name))
         return problems
 

@@ -201,7 +201,8 @@ check("6 DEM 20': period ATA 10/11 -> empty return 18/11", (datetime(2026, 11, 1
       (dem20.period_start, dem20.period_end))
 check("6 DEM 20': 9 days - 7 free = 2 x 30", 60.0, dem20.expected_amount)
 check("6 DEM 40': 16 days - 7 free = 9: 5 x 30 + 4 x 60", 390.0, dem40.expected_amount)
-check("6 DEM forecast recomputed with the file data", "recomputed", dem40.forecast_status)
+check("6 DEM forecast: already ordered to MSC (confirmed order), cost recomputed with the file data",
+      ("ordered", True), (dem40.forecast_status, bool(dem40.revision_ids.filtered("applied"))))
 check("6 the sale of DEM is not changed", 120.0, line(order, "DEM", "40").price_unit)
 refused("6 bill with nothing performed (D-4)", po.action_create_invoice)
 thc_needs = file.cost_ids.filtered(lambda n: n.product_id.default_code in ("THC", "BL", "FMI"))

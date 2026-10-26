@@ -294,9 +294,15 @@ class TestFileFollowUp(CycleCommon):
         thc_part = file.allocation_ids.filtered(lambda a: a.product_id == self.thc)
         wizard = self.env["boss.invoice.services"].with_user(self.sales).create({
             "expediente_id": file.id, "allocation_ids": [Command.set(thc_part.ids)]})
-        self.env["account.move"].browse(wizard.action_create()["res_id"]).with_user(self.accountant).action_post()
+        invoice = self.env["account.move"].browse(wizard.action_create()["res_id"])
+        invoice.with_user(self.accountant).action_post()
         self.assertFalse(bill.boss_bill_warning)
         bill.with_user(self.accountant).action_register_payment()  # the BL line with quantity 0 does not hold it
+        # D-5 (UAT 26/10): a credit note to the customer does not hold the supplier's payment for ever: the service was
+        # invoiced; what the customer is finally charged is a sales decision, the supplier is still owed.
+        invoice._reverse_moves([{"invoice_date": date(2026, 11, 6)}]).with_user(self.accountant).action_post()
+        self.assertFalse(bill.boss_bill_warning)
+        bill.with_user(self.accountant).action_register_payment()
 
     def test_paid_on_behalf_on_current_liability_accounts(self):
         """D-2 (26/10/2026): with the accounts proposed to Ángel (sub-accounts of 419, current liabilities, as
