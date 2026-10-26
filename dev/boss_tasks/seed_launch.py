@@ -1,0 +1,1039 @@
+# -*- coding: utf-8 -*-
+"""Plan de lanzamiento BOSS Odoo 20 en task.bosscontinental.com (siembra idempotente, 26/10/2026).
+
+Uso (en el servidor, ~/boss-tasks):
+    .venv/bin/python manage.py seed_launch            # aplica el plan: sprints semanales, epics, festivos, tareas
+    .venv/bin/python manage.py seed_launch --dry-run  # solo muestra lo que haría
+
+Hitos aprobados por Belal el 26/10/2026 (sustituyen al 30/11 y a cualquier calendario anterior):
+  semana 19–25 oct = inicio del registro de avance real · 20/11/2026 entrega completa · operación en pruebas hasta
+  el 1/12/2026 · 2–31/12 corrección, estabilización y preparación del cambio · 1/1/2027 Odoo 20 único sistema.
+
+Reglas:
+  * Idempotente por Sprint.name, Phase.name, Holiday.date y Task.code; todo en una transacción.
+  * Las tareas del plan del 21/10 (BOSS20-000…026) se conservan: se actualiza su estado SOLO con evidencia
+    (commit, fichero o lectura del sistema) y se registra en el historial y en un comentario.
+  * Las tareas creadas hoy para trabajo ya realizado (semana 19–25 oct) lo dicen en su descripción: son
+    planificación reconstruida a posteriori; sus fechas son las de los commits.
+  * Nunca cambia estado, avance ni horas reales que un usuario haya registrado después (solo aplica estados a
+    tareas que siguen como las dejó la siembra anterior).
+  * Las fechas de las tareas de Cristina y Ángel son propuestas de Belal, no compromisos suyos.
+"""
+from datetime import date, datetime, time
+
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
+from django.utils import timezone
+
+from panel.models import (Comment, Department, Holiday, Phase, Sprint, Task, log_activity, log_task_changes,
+                          snapshot_task)
+
+D = date
+P = Task.Priority
+T = Task.TaskType
+S = Task.Status
+
+USERS = {"belal": "balswerki@bosscontinental.com", "cristina": "csantisteban@bosscontinental.com",
+         "angel": "adesantisteban@bosscontinental.com"}
+DEPTS = {"sys": "Sistemas / Odoo 20", "fin": "Administración / Finanzas", "com": "Comercial / CRM",
+         "ops": "Operaciones", "dir": "Dirección"}
+
+HOLIDAYS = [
+    (D(2026, 11, 2), "Todos los Santos (traslado)"),
+    (D(2026, 11, 9), "Nuestra Señora de La Almudena"),
+    (D(2026, 12, 8), "Inmaculada Concepción"),
+    (D(2026, 12, 25), "Navidad"),
+    (D(2027, 1, 1), "Año Nuevo"),
+    (D(2027, 1, 6), "Epifanía"),
+]
+
+EPICS = {
+    "E1": "E1 · Setup y gobierno",
+    "E2": "E2 · Arquitectura (ADR)",
+    "E3": "E3 · Estudios de servicios IMB",
+    "E4": "E4 · Motor de tarifas",
+    "E5": "E5 · Validación y entrega",
+    "E6": "E6 · Ciclo operativo y expediente",
+    "E7": "E7 · Facturación y contabilidad",
+    "E8": "E8 · Tarifas y documentos de proveedores (Hoja1)",
+    "E9": "E9 · Migración de datos de Odoo 17",
+    "E10": "E10 · Informes y previsiones",
+    "E11": "E11 · Usuarios, formación y pruebas de usuario",
+    "E12": "E12 · Infraestructura, arranque y continuidad",
+}
+
+# key: (nombre, inicio, fin, estado, objetivo, nombre anterior a renombrar o None)
+SPRINTS = {
+    "S43": ("S43 · 19–25 oct · Arranque (realizado)", D(2026, 10, 19), D(2026, 10, 25), Sprint.Status.CLOSED,
+            "Registro del avance real: catálogo, motor de tarifas, tabla de IVA, ciclo operativo completo, guía "
+            "publicada y despliegue en boss20 (commits del 21 al 23/10). Planificación reconstruida el 26/10 con las "
+            "fechas reales de los commits.", "Sprint 0 · Arranque"),
+    "S44": ("S44 · 26 oct–1 nov · Decisiones y datos", D(2026, 10, 26), D(2026, 11, 1), Sprint.Status.ACTIVE,
+            "Sesiones con Ángel (contabilidad) y Cristina (tarifas); corrección de D-1 y D-2; usuarios en boss20; "
+            "documentos de tarifa pedidos; repositorio remoto; lista aerolínea/handler de Odoo 17.",
+            "Sprint 1 · Modelo y estudios"),
+    "S45": ("S45 · 2–8 nov · Hoja1 y fase B (4 días laborables)", D(2026, 11, 2), D(2026, 11, 8),
+            Sprint.Status.PLANNED,
+            "Tarifas lote 1 cargadas; NOA/ATA y aerolínea↔handler en el expediente; venta ALM (B1); ETX/DET (B3); "
+            "QBR (B2); informe de previsiones; alcance y mapeo de la migración.", "Sprint 2 · Motor de tarifas"),
+    "S46": ("S46 · 9–15 nov · Datos y preparación (4 días laborables)", D(2026, 11, 9), D(2026, 11, 15),
+            Sprint.Status.PLANNED,
+            "Tarifas lote 2; migración de maestros en boss20; usuarios, permisos, correo y plantillas; informes de "
+            "facturación y rentabilidad; SII/VeriFactu según decisión; formación 1; entorno Mac.", None),
+    "S47": ("S47 · 16–20 nov · Entrega completa", D(2026, 11, 16), D(2026, 11, 20), Sprint.Status.PLANNED,
+            "Ensayo de migración completo con conciliación; copias y vuelta atrás; verificación final de Hoja1 "
+            "(28 requisitos) con evidencias; acta de entrega el 20/11.", None),
+    "PIL": ("Operación en pruebas · 21 nov–1 dic", D(2026, 11, 21), D(2026, 12, 1), Sprint.Status.PLANNED,
+            "Escenarios completos con las personas de cada área sobre datos migrados; incidencias registradas, "
+            "corregidas y re-probadas; informe de cierre el 1/12.", None),
+    "STA": ("Estabilización y preparación del cambio · 2–31 dic", D(2026, 12, 2), D(2026, 12, 31),
+            Sprint.Status.PLANNED,
+            "Corrección de incidencias priorizadas, formación restante, ensayo del cambio definitivo, copias y "
+            "vuelta atrás verificadas, lista de comprobación aprobada. Odoo 17 sigue siendo el sistema de registro.",
+            None),
+    "GO": ("Cambio definitivo · 1–8 ene 2027", D(2027, 1, 1), D(2027, 1, 8), Sprint.Status.PLANNED,
+           "Corte de Odoo 17, copia final, carga de diferencias, conciliación, Odoo 20 único sistema, Odoo 17 en "
+           "solo lectura, soporte de arranque y acta de aceptación.", None),
+}
+
+RETRO = ("Tarea creada el 26/10/2026 para reflejar trabajo ya realizado (planificación reconstruida a posteriori); "
+         "las fechas son las de los commits.")
+NOT_COMMITTED = "Fecha propuesta por Belal el 26/10/2026; no confirmada por la persona responsable."
+DOC = "https://doc.bosscontinental.com/new/"
+SYS = "https://system.bosscontinental.com"
+
+
+def desc(*parts):
+    return "\n".join(p for p in parts if p)
+
+
+def mad(day, hour=18):
+    """Hora local de Madrid de un día (para completed_at de trabajo ya hecho)."""
+    return timezone.make_aware(datetime.combine(day, time(hour, 0)), timezone.get_default_timezone())
+
+
+# Cada tarea: dict con code, title, epic, type, sprint, points, start, due, priority, deps, hours, who, dept,
+# status (None = no tocar), done (fecha de cierre real, solo con status hecha), desc, evidence (comentario), links.
+TASKS = [
+    # ===================================================================== S43 · 19–25 oct (realizado)
+    dict(code="000", title="Paso 1: análisis de la situación y preguntas abiertas", epic="E1", type=T.ANALYSIS,
+         sprint="S43", points=2, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.HIGH, deps=[], hours=4,
+         who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc=desc("Resultado: análisis de lo pedido y preguntas abiertas para Belal (paso 1 del KICKOFF).",
+                   "Fuente: KICKOFF_PROMPT.md.", "Aceptación: Belal responde a las preguntas (hecho el 21–22/10)."),
+         evidence="Cerrada el 26/10 con evidencia: docs/preguntas-abiertas.md y docs/fuentes.md (commit 155ce70, "
+                  "21/10/2026); respuestas de Belal recogidas en docs/preguntas-abiertas.md.",
+         links=[f"{DOC}#/preguntas"]),
+    dict(code="001", title="Task manager: Scrum (sprints, backlog, tablero, burndown) + Gantt y publicación",
+         epic="E1", type=T.INFRA, sprint="S43", points=5, start=D(2026, 10, 21), due=D(2026, 10, 22),
+         priority=P.HIGH, deps=[], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc=desc("Resultado: task.bosscontinental.com con sprints, backlog, tablero, story points, burndown y Gantt.",
+                   "Aceptación: publicado y verificado en el navegador."),
+         evidence="Cerrada el 26/10 con evidencia: plataforma en producción (servicio boss-tasks activo desde el "
+                  "23/10 06:18 UTC; siembra seed_boss20 del 21/10 con 3 sprints y 24 tareas; historial del 21/10).",
+         links=["https://task.bosscontinental.com/gantt/"]),
+    dict(code="002", title="Estructura del repositorio, CLAUDE.md y .gitignore", epic="E1", type=T.INFRA,
+         sprint="S43", points=2, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.HIGH, deps=["000"],
+         hours=3, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc=desc("Resultado: addons/, docs/adr, dev/, .gitignore sin código de Odoo ni PDF de proveedores; "
+                   "CLAUDE.md con las reglas del proyecto."),
+         evidence="Cerrada el 26/10 con evidencia: commits 08324fc y dc1897b (21/10/2026); CLAUDE.md y .gitignore "
+                  "en el repositorio BossOdoo20.", links=[]),
+    dict(code="004", title="ADR-001: versión, arquitectura y módulos de tarifas", epic="E2", type=T.DOCS,
+         sprint="S43", points=3, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.HIGH, deps=["002"],
+         hours=3, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: docs/adr/001-architecture-and-modules.md (contexto, alternativas, decisión, consecuencias).",
+         evidence="Cerrada el 26/10 con evidencia: docs/adr/001-architecture-and-modules.md (commit 08324fc, 21/10).",
+         links=[f"{DOC}#/arquitectura"]),
+    dict(code="005", title="ADR-002: modelo de datos de tarifas", epic="E2", type=T.DOCS, sprint="S43", points=5,
+         start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.CRITICAL, deps=["004"], hours=4, who="belal",
+         dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: docs/adr/002-pricing-model.md: tarifa con documento, vigencia y versiones; línea por "
+              "servicio; métodos; ámbito; mínimo/máximo; aprobación; servicio único de cálculo.",
+         evidence="Cerrada el 26/10 con evidencia: docs/adr/002-pricing-model.md (commit 08324fc, 21/10/2026).",
+         links=[f"{DOC}#/metodos"]),
+    dict(code="006", title="Plantilla del estudio de servicio (docs/services)", epic="E3", type=T.DOCS,
+         sprint="S43", points=1, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.MEDIUM, deps=["005"],
+         hours=1, who="belal", dept="sys", status=S.CANCELLED, done=None,
+         desc=desc("Sustituida: no se creó docs/services; el estudio por servicio vive en docs/matriz-servicios.md "
+                   "(unidad, método, IVA, estado) y docs/ejemplos-referencia.md (casos comprobados con documentos "
+                   "reales), más la página de cada servicio en la guía."),
+         evidence="Cancelada el 26/10: sustituida por docs/matriz-servicios.md, docs/ejemplos-referencia.md y las "
+                  "78 páginas de servicio de la guía (commits 155ce70 y 45220ef, 21/10/2026).",
+         links=[f"{DOC}#/catalogo"]),
+    dict(code="010", title="Estudio THC (importación marítima FCL) + casos dorados", epic="E3", type=T.ANALYSIS,
+         sprint="S43", points=3, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.HIGH, deps=["005"],
+         hours=4, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: THC estudiado con el documento MSC 09/2026 p.12 (R1), tarifa de muestra cargada y "
+              "prueba de referencia; equivale a docs/services/THC.md del plan original.",
+         evidence="Cerrada el 26/10 con evidencia: docs/ejemplos-referencia.md R1; prueba de referencias de "
+                  "boss_pricing (0 fallos, 23/10); tarifa [MUESTRA] MSC en boss20 (esperando aprobación).",
+         links=[f"{DOC}#/srv-THC"]),
+    dict(code="003", title="Entorno de desarrollo y pruebas (Docker local, BD desechable) y servidor boss20",
+         epic="E1", type=T.INFRA, sprint="S43", points=3, start=D(2026, 10, 21), due=D(2026, 10, 21),
+         priority=P.CRITICAL, deps=["002"], hours=6, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: dev/test.sh (pila Docker local con BD en memoria para pruebas), dev/deploy.sh con "
+              "comprobación de identidad del entorno, servidor boss20 con Odoo 20 Enterprise.",
+         evidence="Cerrada el 26/10 con evidencia: dev/test.sh, dev/compose.test.yml, dev/deploy.sh (commits "
+                  "8f0744c y 9bc6dbe, 21/10/2026); pruebas Odoo ejecutadas en BD desechable el 23/10.",
+         links=[SYS]),
+    dict(code="020", title="Motor de cálculo en Python puro + tests sobre casos dorados", epic="E4", type=T.DEV,
+         sprint="S43", points=8, start=D(2026, 10, 21), due=D(2026, 10, 22), priority=P.CRITICAL,
+         deps=["005", "003"], hours=16, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc="Resultado: addons/boss_pricing/engine (fijo, por unidad, mayor de dos bases, tramos, porcentaje, "
+              "tiempo con franquicia, periodos de 24 h o días, excepciones de fin de semana) con sus pruebas.",
+         evidence="Cerrada el 26/10 con evidencia: commits 08324fc, b242af1 (21/10) y 312088f (23/10); 21/21 "
+                  "pruebas del motor (python -m unittest) el 23/10/2026.", links=[f"{DOC}#/metodos"]),
+    dict(code="021", title="Módulo Odoo: tarifa de proveedor (documento, vigencia, versiones, línea por servicio)",
+         epic="E4", type=T.DEV, sprint="S43", points=8, start=D(2026, 10, 21), due=D(2026, 10, 22),
+         priority=P.HIGH, deps=["005", "003"], hours=16, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 22),
+         desc="Resultado: boss.tariff y boss.tariff.line con documento y página, vigencia, versiones, ámbito, "
+              "aprobación (borrador → esperando aprobación → aprobada) e importador de muestras.",
+         evidence="Cerrada el 26/10 con evidencia: commits 08324fc, 2140038, 31d64ee (21/10/2026); 10 tarifas "
+                  "[MUESTRA] cargadas en boss20 y esperando aprobación (lectura del 26/10).",
+         links=[f"{DOC}#/tarifa-alta"]),
+    dict(code="013", title="Estudio DEM/OCU/ALM (cargos por tiempo)", epic="E3", type=T.ANALYSIS, sprint="S43",
+         points=5, start=D(2026, 10, 22), due=D(2026, 10, 23), priority=P.CRITICAL, deps=["005"], hours=8,
+         who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc="Resultado: días libres, eventos que abren y cierran el periodo, tramos relativos o por número de "
+              "día, periodos de 24 h o días naturales, mínimo; casos R8–R18 (MSC, Hapag, CMA) y R01–R05 (WFS).",
+         evidence="Cerrada el 26/10 con evidencia: docs/ejemplos-referencia.md, guía «Almacenaje» y «Métodos» "
+                  "(commits 9b4e632 y 312088f, 23/10/2026); decisiones P40–P42 aprobadas por Belal el 23/10.",
+         links=[f"{DOC}#/almacenaje"]),
+    dict(code="022", title="Condiciones de ámbito y servicio único de matching y cálculo", epic="E4", type=T.DEV,
+         sprint="S43", points=5, start=D(2026, 10, 21), due=D(2026, 10, 22), priority=P.HIGH, deps=["020", "021"],
+         hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc="Resultado: boss.pricing.price_cost(): una sola función para oferta y expediente, con estados "
+              "explícitos (ok, faltan datos, sin tarifa, pendiente de aprobación, conflicto, no preparado).",
+         evidence="Cerrada el 26/10 con evidencia: addons/boss_pricing/models/boss_pricing.py (commit b242af1, "
+                  "21/10); usada por oferta y expediente (commit b318401, 23/10).", links=[f"{DOC}#/coste"]),
+    dict(code="011", title="Estudio BL/DOC", epic="E3", type=T.ANALYSIS, sprint="S43", points=2,
+         start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.MEDIUM, deps=["005"], hours=2, who="belal",
+         dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: BL una vez por expediente (R4, MSC p.12); DOC para el house; máster por expediente (P25).",
+         evidence="Cerrada el 26/10 con evidencia: docs/ejemplos-referencia.md R4; decisión P25 (Cristina 28/09) en "
+                  "docs/preguntas-abiertas.md.", links=[f"{DOC}#/srv-BL"]),
+    dict(code="012", title="Estudio T3 / T3-PAD", epic="E3", type=T.ANALYSIS, sprint="S43", points=2,
+         start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.MEDIUM, deps=["005"], hours=2, who="belal",
+         dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: T3-PAD por tamaño de contenedor (R2, MSC p.12); T3 de otras navieras y de grupaje "
+              "pendientes de documento (Hoja1 H1-01).",
+         evidence="Cerrada el 26/10 con evidencia: docs/ejemplos-referencia.md R2; docs/mapeo-hoja1.md H1-01.",
+         links=[f"{DOC}#/srv-T3-PAD"]),
+    dict(code="014", title="Estudio GLO (CCC, FUELEU, LOG)", epic="E3", type=T.ANALYSIS, sprint="S43", points=2,
+         start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.MEDIUM, deps=["005"], hours=2, who="belal",
+         dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: GLO-CCC por contenedor DV/HC (R5) y GLO-FUELEU por TEU origen China (R3); lista "
+              "«Lejano Oriente» pendiente de Cristina (P24); GLO por documento pendiente de decisión (H1-13).",
+         evidence="Cerrada el 26/10 con evidencia: docs/ejemplos-referencia.md R3 y R5; docs/mapeo-hoja1.md H1-12 a "
+                  "H1-14.", links=[f"{DOC}#/srv-GLO-CCC"]),
+    dict(code="015", title="Estudio FAD (despacho de importación)", epic="E3", type=T.ANALYSIS, sprint="S45",
+         points=2, start=D(2026, 11, 3), due=D(2026, 11, 5), priority=P.MEDIUM, deps=["D01"], hours=2,
+         who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: FAD con las tarifas reales de Aducex y Ramos Vila (1 contenedor / 2 o más; varias "
+                   "partidas) cargadas y comprobadas con un ejemplo de referencia.",
+                   "Estado real 26/10: método «por despacho» configurado; sin documento (Hoja1 H1-02). Cristina "
+                   "28/09: el operador elige el agente, sin elección automática.",
+                   "Fecha original del plan del 21/10: sin fecha (backlog). Nueva fecha: 5/11, por falta de los "
+                   "documentos (tarea D01).",
+                   "Aceptación: ejemplo de referencia con la tarifa real en docs/ejemplos-referencia.md y prueba "
+                   "de referencias en verde."),
+         evidence=None, links=[f"{DOC}#/srv-FAD"]),
+    dict(code="016", title="Estudio TTE-FCL (transporte de contenedor)", epic="E3", type=T.ANALYSIS, sprint="S45",
+         points=3, start=D(2026, 11, 4), due=D(2026, 11, 6), priority=P.MEDIUM, deps=["D01"], hours=3,
+         who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: TTE-FCL con una tarifa real por ruta y tramos, cargada y comprobada.",
+                   "Estado real 26/10: método por tramos configurado; sin documento (Hoja1 H1-18).",
+                   "Fecha original: backlog sin fecha. Nueva fecha: 6/11, por falta del documento (tarea D01).",
+                   "Aceptación: ejemplo de referencia y prueba en verde."),
+         evidence=None, links=[f"{DOC}#/srv-TTE-FCL"]),
+    dict(code="017", title="Estudio FMI (flete marítimo con oferta)", epic="E3", type=T.ANALYSIS, sprint="S43",
+         points=3, start=D(2026, 10, 21), due=D(2026, 10, 21), priority=P.MEDIUM, deps=["005"], hours=2,
+         who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc="Resultado: los fletes (FMI, FME, FAI, FAE) se cotizan con importe manual de la oferta del "
+              "proveedor (modo «importe manual»), en su moneda con el tipo del día de la oferta (P03).",
+         evidence="Cerrada el 26/10 con evidencia: docs/matriz-servicios.md (fletes en modo manual, 12 servicios "
+                  "manuales en boss20, lectura del 26/10); ajuste de moneda P03 activo en boss20.",
+         links=[f"{DOC}#/iva-moneda"]),
+    dict(code="023", title="Contexto de envío en la oferta (contenedores, pesos, volúmenes, fechas, ruta)",
+         epic="E4", type=T.DEV, sprint="S43", points=3, start=D(2026, 10, 22), due=D(2026, 10, 22),
+         priority=P.MEDIUM, deps=["022"], hours=6, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc="Resultado: datos del envío en la oferta y en el expediente (contenedores por tamaño y tipo, kg "
+              "brutos, m³, palés, kg tasable de la AWB, fechas, puerto, país, naviera) y una sola función de "
+              "cantidad por base de cobro.",
+         evidence="Cerrada el 26/10 con evidencia: commits 6f20152 (22/10) y b318401 (23/10); guía "
+                  "«Oferta y envío» y «Cantidades».", links=[f"{DOC}#/oferta-envio"]),
+    dict(code="024", title="Cargos por tiempo en el expediente (periodo real con horas, recálculo)", epic="E4",
+         type=T.DEV, sprint="S43", points=5, start=D(2026, 10, 23), due=D(2026, 10, 23), priority=P.MEDIUM,
+         deps=["013", "022"], hours=10, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc="Resultado: ALM/DEM/OCU con periodo real (inicio y fin con fecha y hora), lecturas de 24 h o días "
+              "naturales, mínimo por estancia, excepciones de fin de semana; recálculo del coste previsto.",
+         evidence="Cerrada el 26/10 con evidencia: commits 312088f, 125f55b y fusión fdb4cbd (23/10/2026); test "
+                  "de referencia de WFS R01–R05; boss20 E260002 (AWB 500→620 kg, +3 días).",
+         links=[f"{DOC}#/almacenaje"]),
+    dict(code="025", title="Espacio «Tarifas y proveedores»: alta de precios con PDF y página, prueba de cálculo",
+         epic="E4", type=T.DEV, sprint="S43", points=5, start=D(2026, 10, 22), due=D(2026, 10, 22),
+         priority=P.MEDIUM, deps=["021"], hours=10, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc="Resultado: una sola forma de introducir un precio ligada a su documento; filtros por estado; "
+              "«Probar cálculo» con simulación de borradores; tarifas DEMO aisladas.",
+         evidence="Cerrada el 26/10 con evidencia: commits a02548e, 3bef1b2, 8e9171b (22/10/2026); guía "
+                  "«Alta de tarifa» y «Aprobación».", links=[f"{DOC}#/tarifa-alta"]),
+    dict(code="026", title="Traducción es_ES y pruebas automáticas en verde", epic="E5", type=T.TEST,
+         sprint="S43", points=3, start=D(2026, 10, 22), due=D(2026, 10, 23), priority=P.MEDIUM, deps=["022"],
+         hours=6, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc="Resultado: textos fuente en inglés y traducción es.po de los cuatro módulos; 27 pruebas de Odoo "
+              "(boss_expediente 13, boss_pricing_sale 13, boss_pricing 1) y 21 del motor sin fallos.",
+         evidence="Cerrada el 26/10 con evidencia: i18n/es.po de cada módulo (commit 5b2d337 y siguientes); "
+                  "pruebas del 23/10 en 8ec4a2c: 0 fallos (docs/ciclo-operativo.md).",
+         links=[f"{DOC}#/mantenimiento"]),
+    dict(code="030", title="Revisión con Cristina y Ángel + documentación de entrega", epic="E5",
+         type=T.TRAINING, sprint="S44", points=3, start=D(2026, 10, 21), due=D(2026, 10, 30), priority=P.HIGH,
+         deps=["020"], hours=6, who="belal", dept="dir", status=S.IN_PROGRESS, done=None, progress=60,
+         desc=desc("Resultado: Cristina y Ángel han visto el sistema y han ratificado (o cambiado) las decisiones "
+                   "de su ámbito.",
+                   "Estado real 26/10: documentación entregada (guía ES/EN publicada el 23/10, decisiones P03–P44 "
+                   "aprobadas por Belal, hoja de pruebas de Ángel del 26/10); las sesiones no se han celebrado.",
+                   "Fecha original: backlog sin fecha. Nueva fecha: 30/10 (sesiones A01 y C01).",
+                   "Aceptación: actas de las dos sesiones con las ratificaciones registradas en "
+                   "docs/preguntas-abiertas.md."),
+         evidence="En progreso desde el 26/10: documentación y hoja de pruebas listas (commits 0192e66 y 367cbcd); "
+                  "sesiones pendientes (tareas A01 y C01).", links=[f"{DOC}#/preguntas"]),
+    dict(code="007", title="Repositorio remoto (GitHub) y copia del código; calidad (ruff, pre-commit)", epic="E1",
+         type=T.INFRA, sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 28), priority=P.HIGH,
+         deps=["003"], hours=3, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: el repositorio BossOdoo20 tiene un remoto (GitHub de dev1bms u otro aprobado por "
+                   "Belal) con todos los commits; ruff y pre-commit configurados.",
+                   "Estado real 26/10: no hay remoto (todos los commits son locales: riesgo de pérdida).",
+                   "Fecha original del plan: 3/11. Nueva fecha: 28/10, adelantada por el riesgo.",
+                   "Aceptación: `git remote -v` muestra el remoto y `git push` en verde; ruff sin errores."),
+         evidence=None, links=[]),
+    # ---- Trabajo de la semana 19–25 oct no previsto en el plan del 21/10 (reconstruido)
+    dict(code="R01", title="Catálogo de servicios BOSS (78) con unidad, método de cálculo y clase de IVA",
+         epic="E4", type=T.DEV, sprint="S43", points=5, start=D(2026, 10, 21), due=D(2026, 10, 21),
+         priority=P.HIGH, deps=[], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 21),
+         desc=desc(RETRO, "Resultado: boss_services con los servicios como productos estándar, bases de cobro como "
+                          "unidades, modo de coste (tarifa, manual, propio, pendiente) y clase de IVA."),
+         evidence="Commit 08324fc (21/10/2026); boss20: 77 servicios activos (lectura del 26/10).",
+         links=[f"{DOC}#/catalogo"]),
+    dict(code="R02", title="Tabla de IVA BOSS: impuesto de Odoo por clase, zona del cliente y suplidos", epic="E7",
+         type=T.DEV, sprint="S43", points=3, start=D(2026, 10, 22), due=D(2026, 10, 22), priority=P.HIGH, deps=[],
+         hours=6, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc=desc(RETRO, "Resultado: reglas de Ángel (31/08) como funciones puras y tabla configurable; un caso "
+                          "sin fila deja el IVA pendiente y bloquea enviar o aceptar."),
+         evidence="Commit 1f49df8 (22/10/2026); boss20: 6 filas (lectura del 26/10); P17 aplicado el 23/10.",
+         links=[f"{DOC}#/iva-moneda"]),
+    dict(code="R03", title="Precio de venta desde el coste (listas de precios: fijo, recargo, margen, mínimo)",
+         epic="E4", type=T.DEV, sprint="S43", points=3, start=D(2026, 10, 22), due=D(2026, 10, 22),
+         priority=P.MEDIUM, deps=["022"], hours=6, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 22),
+         desc=desc(RETRO, "Resultado: base «coste previsto de la línea» en las reglas de lista de precios, recargo "
+                          "o margen sobre venta, margen mínimo; los valores por cliente los fija Cristina (P01/P02)."),
+         evidence="Commit 70491d3 (22/10/2026); guía «Listas de precios».", links=[f"{DOC}#/tarifa-listas"]),
+    dict(code="R04", title="Ciclo operativo: expediente, partes, pedidos de compra, facturación por servicios, "
+                           "abonos y rentabilidad", epic="E6", type=T.DEV, sprint="S43", points=13,
+         start=D(2026, 10, 23), due=D(2026, 10, 23), priority=P.CRITICAL, deps=["023"], hours=24, who="belal",
+         dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: boss_expediente: expediente E26xxxx abierto al aceptar, cuenta analítica, "
+                          "partes y roles, solicitudes de presupuesto sin duplicados, «Marcar como prestado», "
+                          "facturación por servicios (hitos), abonos, coste extra refacturado, bloqueos al "
+                          "contabilizar y resumen de rentabilidad con origen de cada cifra."),
+         evidence="Commits f06470c, 344bd0f, fusión fdb4cbd (23/10/2026); 13 pruebas de boss_expediente en BD "
+                  "desechable; ejemplos [DEMO] E260001–E260011 en boss20.", links=[f"{DOC}#/expediente"]),
+    dict(code="R05", title="Recálculo con datos reales, una oferta en varios expedientes, servicio añadido tras "
+                           "aceptar", epic="E6", type=T.DEV, sprint="S43", points=8, start=D(2026, 10, 23),
+         due=D(2026, 10, 23), priority=P.HIGH, deps=["R04"], hours=12, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: coste previsto recalculado con los datos del expediente (historial de "
+                          "recálculos), reparto de una oferta aceptada entre expedientes, servicio BOSS o de "
+                          "proveedor añadido tras la aceptación con motivo y foto."),
+         evidence="Commits 344bd0f y b318401 (23/10/2026); pruebas test_file_followup (6 métodos); boss20 "
+                  "E260003 (CSA), E260009/E260010 (reparto).", links=[f"{DOC}#/anadir-servicios"]),
+    dict(code="R06", title="Guía de usuario ES/EN publicada en doc.bosscontinental.com/new", epic="E5",
+         type=T.DOCS, sprint="S43", points=5, start=D(2026, 10, 21), due=D(2026, 10, 23), priority=P.HIGH,
+         deps=[], hours=12, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: 30 páginas ES/EN (ciclo, roles, tarifas, métodos, servicios, expediente, "
+                          "compras, facturación, rentabilidad, almacenaje, decisiones) con capturas reales."),
+         evidence="Commits 45220ef (21/10) … 0192e66 (23/10, versión 20261023g); páginas verificadas con curl el "
+                  "23/10.", links=[DOC]),
+    dict(code="R07", title="Despliegue en boss20 (8ec4a2c) y configuración de las decisiones del 23/10", epic="E5",
+         type=T.INFRA, sprint="S43", points=3, start=D(2026, 10, 23), due=D(2026, 10, 23), priority=P.CRITICAL,
+         deps=["R04"], hours=4, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: módulos desplegados con la web parada; tabla de IVA (Art.22, CAN), tipo de "
+                          "cambio, bloqueo de pago, control por cantidades recibidas, suplidos (419000: ver D-2)."),
+         evidence="Commit 8ec4a2c desplegado el 23/10 (dev/deploy.sh); lectura de boss20 del 26/10: versiones "
+                  "instaladas iguales al commit, ajustes de compañía aplicados.", links=[SYS]),
+    dict(code="R08", title="Muestras de tarifas reales cargadas y enviadas a aprobación (MSC, WFS, IRENEO, CMA, "
+                           "Hapag)", epic="E8", type=T.MIGRATION, sprint="S43", points=5, start=D(2026, 10, 21),
+         due=D(2026, 10, 22), priority=P.HIGH, deps=["021"], hours=8, who="belal", dept="sys", status=S.DONE,
+         done=D(2026, 10, 22),
+         desc=desc(RETRO, "Resultado: 10 tarifas [MUESTRA] desde documentos reales, cada precio con página; "
+                          "ejemplos de referencia R1–R27 y prueba automática con las muestras privadas."),
+         evidence="Commit 31d64ee (21/10); boss20: 10 tarifas esperando aprobación, 0 aprobadas (lectura del "
+                  "26/10); docs/revision-tarifas.md.", links=[f"{DOC}#/tarifa-aprobacion"]),
+    dict(code="R09", title="Decisiones del 23/10 (P03–P44) aprobadas por Belal y documentadas", epic="E5",
+         type=T.DOCS, sprint="S43", points=2, start=D(2026, 10, 23), due=D(2026, 10, 23), priority=P.HIGH,
+         deps=[], hours=4, who="belal", dept="dir", status=S.DONE, done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: propuestas aprobadas por Belal con fase A/B/C; pendientes de ratificación "
+                          "por Ángel (finanzas, IVA) y Cristina (servicios, precios, operaciones)."),
+         evidence="Commit 8ec4a2c (docs) y 367cbcd (26/10, columna «Ratificación»); guía «Decisiones pendientes».",
+         links=[f"{DOC}#/preguntas"]),
+    dict(code="R10", title="Rendimiento medido en navegador real (0,95–1,47 s por pantalla)", epic="E12",
+         type=T.TEST, sprint="S43", points=2, start=D(2026, 10, 23), due=D(2026, 10, 23), priority=P.MEDIUM,
+         deps=["R07"], hours=3, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 23),
+         desc=desc(RETRO, "Resultado: tiempos de carga de formulario y lista en Chrome con sesión normal; las "
+                          "esperas de 20–50 s eran del panel oculto del navegador interno, no del servidor."),
+         evidence="docs/ciclo-operativo.md (registro del 23/10); dev/perf_probe.py.", links=[]),
+    # ===================================================================== S44 · 26 oct–1 nov
+    dict(code="W01", title="Hoja de pruebas de Ángel, copia local aislada y ensayo de los 8 casos", epic="E7",
+         type=T.TEST, sprint="S44", points=5, start=D(2026, 10, 26), due=D(2026, 10, 26), priority=P.HIGH,
+         deps=["R07"], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 26),
+         desc="Resultado: docs/pruebas-angel.md (8 casos, 90 min, entorno por caso); copia local aislada "
+              "(dev/test.sh uat: sin tareas programadas, correo ni servicios en línea); ensayo deshecho que "
+              "descubrió los defectos D-1 y D-2.",
+         evidence="Commits 367cbcd y e04500f (26/10/2026); aislamiento comprobado (ProxyError, 0 crons).",
+         links=[]),
+    dict(code="W02", title="Revisión de tarifas para Cristina y especificación de la venta única de ALM (P43)",
+         epic="E8", type=T.DOCS, sprint="S44", points=3, start=D(2026, 10, 26), due=D(2026, 10, 26),
+         priority=P.HIGH, deps=["R08"], hours=5, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 26),
+         desc="Resultado: docs/revision-tarifas.md (10 tarifas: documento, vigencia, servicios, ámbito, decisión) y "
+              "docs/especificacion-alm-venta.md (regla del 25/09 leída en Odoo 19, 14 puntos por decidir).",
+         evidence="Commit 367cbcd (26/10/2026).", links=[]),
+    dict(code="W03", title="Mapeo de Hoja1 y plan de lanzamiento semanal en la plataforma", epic="E1", type=T.DOCS,
+         sprint="S44", points=5, start=D(2026, 10, 26), due=D(2026, 10, 26), priority=P.HIGH, deps=[], hours=8,
+         who="belal", dept="dir", status=S.IN_REVIEW, done=None, progress=90,
+         desc="Resultado: docs/mapeo-hoja1.md (28 requisitos con estado, prueba, evidencia y tareas) y este plan "
+              "(sprints semanales hasta el 1/1/2027) sembrado en la plataforma. Revisión: Belal.",
+         evidence="Siembra seed_launch del 26/10/2026; docs/mapeo-hoja1.md en el repositorio.",
+         links=["https://task.bosscontinental.com/gantt/"]),
+    dict(code="W04", title="Decisión de Belal: cuentas de suplidos en boss20 (D-2), corrección D-1 y publicación de "
+                           "la guía", epic="E7", type=T.ANALYSIS, sprint="S44", points=1, start=D(2026, 10, 26),
+         due=D(2026, 10, 27), priority=P.CRITICAL, deps=["W01"], hours=1, who="belal", dept="dir", status=None,
+         done=None,
+         desc=desc("Tres decisiones aplazadas el 26/10 por Belal hasta terminar el plan:",
+                   "1) D-2: volver ARA, IVA, PLA y DUM a las cuentas de la categoría (estado anterior al 23/10) hasta "
+                   "que Ángel fije las cuentas de suplidos (hoy 419000, cuenta a pagar, impide facturar). Cambio "
+                   "contable en boss20.",
+                   "2) D-1: corregir el bloqueo de pago para que no cuente líneas de cantidad 0 (código + prueba, "
+                   "sin desplegar hasta la decisión).",
+                   "3) Publicar la guía corregida (ratificaciones pendientes) en doc.bosscontinental.com.",
+                   "Aceptación: respuesta registrada en esta tarea; las tareas W05, W06 y W07 se ejecutan según ella."),
+         evidence=None, links=[]),
+    dict(code="W05", title="Corregir D-1: el bloqueo de pago ignora las líneas de cantidad 0 (código + prueba)",
+         epic="E7", type=T.FIX, sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 28),
+         priority=P.HIGH, deps=["W04"], hours=3, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: `_boss_bill_needs` (boss_expediente/models/account_move.py) no cuenta las líneas "
+                   "de factura con cantidad 0; prueba en test_file_followup.",
+                   "Fuente: defecto D-1 del ensayo del 26/10 (docs/pruebas-angel.md).",
+                   "Aceptación: prueba nueva en verde; pago permitido tras facturar al cliente aunque el pedido "
+                   "tenga servicios sin prestar; desplegado en boss20 solo con el visto bueno de Belal."),
+         evidence=None, links=[]),
+    dict(code="W06", title="Corregir la configuración de suplidos en boss20 (D-2) según la decisión", epic="E7",
+         type=T.FIX, sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 30), priority=P.CRITICAL,
+         deps=["W04"], hours=3, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: ARA, IVA, PLA y DUM se pueden facturar al cliente y registrar como factura del "
+                   "agente en boss20.",
+                   "Fuente: defecto D-2 (419000 es cuenta a pagar; Odoo 17 usa 419001–419007 de pasivo corriente).",
+                   "Paso 1 (decisión de Belal, W04): reversión a las cuentas de la categoría. Paso 2 (decisión de "
+                   "Ángel, A02): subcuentas definitivas por concepto y sentido.",
+                   "Aceptación: en la copia local el caso C7 de la hoja de Ángel pasa; en boss20, el borrador de "
+                   "factura de ARA de E260001 se crea sin error (sin contabilizar)."),
+         evidence=None, links=[f"{DOC}#/facturacion"]),
+    dict(code="W07", title="Publicar la guía corregida (ratificaciones pendientes, decisiones abiertas)", epic="E5",
+         type=T.DOCS, sprint="S44", points=1, start=D(2026, 10, 27), due=D(2026, 10, 28), priority=P.MEDIUM,
+         deps=["W04"], hours=1, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: doc.bosscontinental.com/new con las páginas del commit 367cbcd (decisiones con columna "
+              "«Ratificación», cuestiones contables abiertas, D-1 y D-2). Aceptación: la página «Decisiones "
+              "pendientes» muestra «Ratificación» (comprobado con curl).",
+         evidence=None, links=[f"{DOC}#/preguntas"]),
+    dict(code="W08", title="Usuarios de boss20 para Ángel, Cristina y operaciones, con sus roles", epic="E11",
+         type=T.INFRA, sprint="S44", points=2, start=D(2026, 10, 27), due=D(2026, 10, 28), priority=P.HIGH,
+         deps=[], hours=2, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: usuarios internos en boss20 (hoy solo existe el de Belal): Ángel (Contabilidad "
+                   "administrador, Ventas todos los documentos, Compras usuario), Cristina (Ventas administrador, "
+                   "Compras, aprobador de tarifas) y los que indique Cristina para operaciones; sin servidor de "
+                   "correo, las contraseñas se entregan en persona.",
+                   "Aceptación: cada persona entra y ve lo que define docs/guide «Roles» (prueba con captura)."),
+         evidence=None, links=[f"{DOC}#/roles"]),
+    dict(code="A01", title="Sesión con Ángel: hoja de pruebas (8 casos) y ratificación de las decisiones contables",
+         epic="E7", type=T.TEST, sprint="S44", points=3, start=D(2026, 10, 29), due=D(2026, 10, 30),
+         priority=P.CRITICAL, deps=["W01", "W08"], hours=3, who="belal", dept="fin", status=None, done=None,
+         desc=desc("Resultado: docs/pruebas-angel.md cumplimentada (resultado real por caso) y las decisiones de "
+                   "Ángel registradas: P17, P30, P31, P32, P03, P11, P38, P39, P33; cuentas de suplidos (D-2); IVA "
+                   "de CAU/QBR; impuestos de compra por tipo de factura; QBR; margen mínimo; SII/VeriFactu (P45).",
+                   "Entornos: boss20 solo borradores; contabilizar y pagar en la copia local aislada.",
+                   f"Convoca Belal; participa Ángel. {NOT_COMMITTED}",
+                   "Aceptación: hoja firmada y docs/preguntas-abiertas.md actualizado con fecha y fuente."),
+         evidence=None, links=[f"{DOC}#/preguntas"]),
+    dict(code="A02", title="Ángel: cuentas de suplidos por concepto y sentido, y cuentas por categoría (P18, P37)",
+         epic="E7", type=T.ANALYSIS, sprint="S44", points=2, start=D(2026, 10, 29), due=D(2026, 11, 4),
+         priority=P.CRITICAL, deps=["A01"], hours=2, who="angel", dept="fin", status=None, done=None,
+         desc=desc("Decisión: qué cuentas usan los suplidos (ARA, IVA, PLA, DUM) al facturar al cliente y al "
+                   "registrar la factura del agente. Odoo 17 usa 419001 IVA repercutido, 419002 aranceles "
+                   "repercutidos, 419003 IVA soportado, 419004 aranceles soportados, 419005 antidumping, 419006 y "
+                   "419007 plástico (pasivo corriente). Y las cuentas de ingreso y gasto por categoría de servicio.",
+                   f"Mientras tanto: cuentas de la categoría. {NOT_COMMITTED}",
+                   "Aceptación: lista de cuentas por concepto firmada; aplicada en W06."),
+         evidence=None, links=[f"{DOC}#/preguntas"]),
+    dict(code="A03", title="Ángel: SII o VeriFactu y declaraciones que debe preparar Odoo 20 desde el arranque (P45)",
+         epic="E7", type=T.ANALYSIS, sprint="S44", points=2, start=D(2026, 10, 29), due=D(2026, 11, 6),
+         priority=P.CRITICAL, deps=["A01"], hours=2, who="angel", dept="fin", status=None, done=None,
+         desc=desc("Decisión: si BOSS debe enviar facturas a la AEAT (SII o VeriFactu) desde el 1/1/2027 y qué "
+                   "modelos (303, 349, 390…) genera Odoo 20. Hoy boss20 no tiene ningún módulo SII ni VeriFactu "
+                   "(lectura del 26/10) y nada se envía.",
+                   f"{NOT_COMMITTED}",
+                   "Aceptación: decisión escrita; si aplica, tarea de instalación y configuración (N06)."),
+         evidence=None, links=[]),
+    dict(code="A04", title="Ángel: IVA de CAU y QBR para cliente español, porcentaje de QBR, margen mínimo y "
+                           "CAU/SEG (P17, P03, P01/P02, P13)", epic="E7", type=T.ANALYSIS, sprint="S45", points=2,
+         start=D(2026, 10, 29), due=D(2026, 11, 6), priority=P.HIGH, deps=["A01"], hours=2, who="angel",
+         dept="fin", status=None, done=None,
+         desc=desc("Decisiones de IVA y finanzas sin respuesta supuesta: impuesto de los NS que no son suplidos "
+                   "(CAU, QBR) para cliente español; porcentaje del quebranto y factura en EUR de pedido en USD; "
+                   "valor del margen mínimo y quién aprueba vender por debajo; porcentajes y mínimos de CAU y SEG "
+                   "(con Cristina).",
+                   f"Mientras tanto: IVA pendiente en esos casos; sin QBR; sin margen mínimo. {NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/preguntas"]),
+    dict(code="C01", title="Cristina: revisión y aprobación de las 10 tarifas de muestra (P19) y ratificación de las "
+                           "lecturas WFS", epic="E8", type=T.ANALYSIS, sprint="S44", points=3,
+         start=D(2026, 10, 28), due=D(2026, 10, 30), priority=P.CRITICAL, deps=["W02", "W08"], hours=3,
+         who="cristina", dept="com", status=None, done=None,
+         desc=desc("Resultado: cada tarifa [MUESTRA] (MSC ×3, WFS ×2, CMA CGM, Hapag-Lloyd, IRENEO ×3) revisada con "
+                   "su PDF y los ejemplos de docs/ejemplos-referencia.md, y aprobada, devuelta a borrador con la "
+                   "corrección, o no aprobada (IRENEO 2025 no se prorroga). Lecturas WFS P40, P41, P29, P42 "
+                   "ratificadas o cambiadas.",
+                   "Fuente: Hoja1 fila 7 y 10 (H1-01, 05, 12, 14, 15, 16, 20, 25, 27, 28); docs/revision-tarifas.md.",
+                   "Ojo: 8 de las 10 llegaron sin «Ámbito revisado»; revisarlo antes de aprobar.",
+                   f"Convoca Belal; aprueba Cristina en Tarifas → Esperando aprobación. {NOT_COMMITTED}",
+                   "Aceptación: estado de cada tarifa en boss20 cambiado por Cristina; tras aprobar, prueba del "
+                   "escenario de referencia con una oferta en borrador (tarea D04)."),
+         evidence=None, links=[f"{DOC}#/tarifa-aprobacion"]),
+    dict(code="C02", title="Cristina: decisiones pendientes de servicios (VET, GLO por documento, Lejano Oriente, DET, "
+                           "ETX, venta ALM D1–D7, servicios sin definir, numeración)", epic="E8",
+         type=T.ANALYSIS, sprint="S44", points=3, start=D(2026, 10, 28), due=D(2026, 11, 4), priority=P.CRITICAL,
+         deps=["W02"], hours=3, who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Decisiones que bloquean Hoja1: VET (H1-11, P16), qué GLO por documento se proponen solos "
+                   "(H1-13), lista de países «Lejano Oriente» (H1-14, P24), DET código propio o dentro de DEM (H1-17, "
+                   "P09), ETX concepto y unidad (H1-25, P10), venta única de ALM puntos D1–D7 de "
+                   "docs/especificacion-alm-venta.md (P43), servicios por definir o retirar (P16), numeración "
+                   "E26xxxx al arrancar (P36), acuerdos de varios envíos (P34).",
+                   f"{NOT_COMMITTED}",
+                   "Aceptación: respuestas escritas en docs/preguntas-abiertas.md con fecha; las tareas B01, B03 y "
+                   "D02 se desbloquean."),
+         evidence=None, links=[f"{DOC}#/preguntas"]),
+    dict(code="C03", title="Cristina: tarifa IRENEO 2026 o confirmación escrita de los precios 2025 (P28)", epic="E8",
+         type=T.ANALYSIS, sprint="S44", points=1, start=D(2026, 10, 28), due=D(2026, 11, 6), priority=P.HIGH,
+         deps=[], hours=1, who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Resultado: documento IRENEO 2026 (HAN, X-R, TTE-CON, SEG, FS) o confirmación escrita; las "
+                   "tarifas de 2025 no se prorrogan (Hoja1 H1-20).", f"{NOT_COMMITTED}",
+                   "Aceptación: documento en la carpeta NEW ODOO y tarifa nueva cargada (D02)."),
+         evidence=None, links=[f"{DOC}#/srv-TTE-CON"]),
+    dict(code="D01", title="Reunir los documentos de tarifa que faltan (lista del 07/10: aduanas, Hapag, Transglory, "
+                           "PFT, inspecciones, CES, navieras D&D, 2.º handler)", epic="E8", type=T.MIGRATION,
+         sprint="S44", points=3, start=D(2026, 10, 27), due=D(2026, 11, 4), priority=P.CRITICAL, deps=[], hours=6,
+         who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Resultado: en la carpeta NEW ODOO los documentos vigentes: Aducex y Ramos Vila (FAD), agente de "
+                   "exportación (DEX), gastos locales Hapag-Lloyd (T3, THC, CES), CFS Transglory (THC-LCL), "
+                   "acuerdos PFT de los agentes, precios por documento (ROH, SOI, INS, SAN, VET), cesión CES, "
+                   "D&D de ONE, MSK, ZIM y OOCL, y el segundo handler aéreo (IAS o SAASA: import y export).",
+                   "Fuente: Hoja1 filas 7 y 10; hoja «Documentos no encontrados» del 07/10 (37 servicios sin "
+                   "documento el 26/10: docs/revision-tarifas.md).",
+                   f"Responsable: Pendiente de asignar (propuesta del 07/10: Laura / operaciones; Cristina "
+                   f"coordina). {NOT_COMMITTED}",
+                   "Aceptación: cada documento con proveedor, edición y vigencia; lo que no exista se anota como "
+                   "«no existe» para usar coste manual con justificante."),
+         evidence=None, links=[f"{DOC}#/sin-precio"]),
+    dict(code="F03", title="Extraer de Odoo 17 la lista aerolínea / aeropuerto / handling y proponer la asociación "
+                           "(Hoja1 C10)", epic="E8", type=T.ANALYSIS, sprint="S44", points=3, start=D(2026, 10, 29),
+         due=D(2026, 10, 30), priority=P.HIGH, deps=[], hours=4, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: script de solo lectura sobre Odoo 17 (expedientes aéreos: aerolínea, aeropuerto, "
+                   "handler usado) y lista en .research (datos reales, fuera de Git) para que Cristina valide la "
+                   "asociación.",
+                   "Estado real 26/10: no implementado (H1-26).",
+                   "Aceptación: lista validada por Cristina; sirve de carga para F02."),
+         evidence=None, links=[]),
+    dict(code="N01", title="Alcance de la migración de Odoo 17: qué datos, qué expedientes abiertos, fecha de corte",
+         epic="E9", type=T.ANALYSIS, sprint="S44", points=2, start=D(2026, 10, 28), due=D(2026, 10, 30),
+         priority=P.CRITICAL, deps=[], hours=3, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Decisión de Belal con Cristina: maestros (clientes, proveedores, roles, puertos, tipos de "
+                   "contenedor, aerolíneas/handlers), expedientes abiertos a 1/1/2027 (y sus ofertas), histórico "
+                   "en Odoo 17 solo lectura; facturas y contabilidad se quedan en Odoo 17 (criterio del mapeo de "
+                   "Odoo 19, Q11) salvo que Ángel decida otra cosa.",
+                   "Estado real 26/10: no hay ningún script de migración en el repositorio; boss20 no tiene "
+                   "clientes ni proveedores reales.",
+                   "Aceptación: alcance escrito en docs/migracion.md con criterios de conciliación."),
+         evidence=None, links=[]),
+    # ===================================================================== S45 · 2–8 nov
+    dict(code="D02", title="Cargar y enviar a aprobación las tarifas recibidas (lote 1: aduanas, Hapag, Transglory, "
+                           "inspecciones, IRENEO 2026) con ejemplos de referencia", epic="E8", type=T.MIGRATION,
+         sprint="S45", points=8, start=D(2026, 11, 3), due=D(2026, 11, 6), priority=P.CRITICAL,
+         deps=["D01", "C03"], hours=12, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: cada documento recibido cargado como tarifa (precio con página, ámbito revisado), "
+                   "enviado a aprobación; ejemplo de referencia por servicio y prueba de referencias en verde.",
+                   "Fuente: Hoja1 H1-01 a H1-10, H1-12, H1-13, H1-18, H1-19, H1-20, H1-28.",
+                   "Aceptación: tarifas en «Esperando aprobación» en boss20; docs/ejemplos-referencia.md ampliado; "
+                   "aprobación de Cristina (C04)."),
+         evidence=None, links=[f"{DOC}#/tarifa-alta"]),
+    dict(code="F01", title="Campos NOA y ATA con fecha y hora en el expediente; alimentan el periodo de ALM/DEM/OCU "
+                           "(Hoja1 C8, D8)", epic="E6", type=T.DEV, sprint="S45", points=3, start=D(2026, 11, 3),
+         due=D(2026, 11, 4), priority=P.HIGH, deps=[], hours=6, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: NOA (fecha y hora) y ATA con hora en «Referencias y fechas» del expediente; al "
+                   "rellenarlos se propone el inicio del periodo real de los servicios por tiempo; evento en el "
+                   "expediente; recálculo.",
+                   "Estado real 26/10: ATA solo fecha; NOA solo como inicio del periodo del servicio (H1-21, H1-22).",
+                   "Aceptación: prueba automática (NOA → periodo ALM → coste recalculado) y captura en la guía."),
+         evidence=None, links=[f"{DOC}#/expediente"]),
+    dict(code="F02", title="Aerolínea y handling en el expediente, emparejados con el aeropuerto; asociación "
+                           "aerolínea → handler (Hoja1 B9, C9)", epic="E6", type=T.DEV, sprint="S45", points=5,
+         start=D(2026, 11, 4), due=D(2026, 11, 6), priority=P.HIGH, deps=["F03"], hours=10, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: modelo de asociación (aerolínea, aeropuerto → handler) cargado desde F03; en el "
+                   "expediente aéreo, al elegir aerolínea y aeropuerto se propone el handler (editable); el "
+                   "handler es el proveedor por defecto de HAN, ALM, AWB, ETX.",
+                   "Estado real 26/10: no implementado (H1-23, H1-24). Cristina 28/09: asociación «más adelante»; "
+                   "se hace ahora porque Hoja1 la pide.",
+                   "Aceptación: prueba automática y oferta [DEMO] aérea con handler propuesto."),
+         evidence=None, links=[f"{DOC}#/expediente"]),
+    dict(code="B01", title="Fase B1: venta única de ALM (tarifa de venta con el motor por tiempo + regla de lista; "
+                           "ADR-006)", epic="E4", type=T.DEV, sprint="S45", points=8, start=D(2026, 11, 3),
+         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=14, who="belal", dept="sys", status=None,
+         done=None,
+         desc=desc("Resultado: según docs/especificacion-alm-venta.md: tarifa de venta BOSS (aprobada por Cristina), "
+                   "base nueva de lista de precios «Tarifa de venta BOSS», precio con explicación en la oferta, "
+                   "foto al aceptar; pruebas E1–E6 del motor y una oferta con ALM.",
+                   "Bloqueo: necesita las respuestas D1–D7 de Cristina (C02). Los importes reales quedan fuera "
+                   "de Git.",
+                   "Aceptación: pruebas en verde; oferta [DEMO] con ALM muestra el precio y su explicación."),
+         evidence=None, links=[f"{DOC}#/almacenaje"]),
+    dict(code="B03", title="Fase B3: ETX (compra por AWB máster, venta por expediente) y DET (código propio o "
+                           "dentro de DEM)", epic="E4", type=T.DEV, sprint="S45", points=3, start=D(2026, 11, 5),
+         due=D(2026, 11, 6), priority=P.HIGH, deps=["C02"], hours=5, who="belal", dept="sys", status=None,
+         done=None,
+         desc=desc("Resultado: ETX y DET configurados (unidad, método, modo de coste) con el documento del "
+                   "proveedor; DET de MSC exportación cargado si procede (Hoja1 H1-17, H1-25).",
+                   "Aceptación: ejemplo de referencia por servicio y prueba en verde."),
+         evidence=None, links=[f"{DOC}#/catalogo"]),
+    dict(code="B02", title="Fase B2: QBR — factura en EUR de una oferta en USD con el tipo de la naviera y línea de "
+                           "quebranto", epic="E7", type=T.DEV, sprint="S45", points=5, start=D(2026, 11, 5),
+         due=D(2026, 11, 6), priority=P.MEDIUM, deps=["A04"], hours=8, who="belal", dept="sys", status=None,
+         done=None,
+         desc=desc("Resultado: asistente «Facturar servicios» con moneda de la factura; línea QBR con el porcentaje "
+                   "aprobado; diferencia de cambio registrada como decida Ángel.",
+                   "Bloqueo: porcentaje y tratamiento contable (A04).",
+                   "Aceptación: prueba con un pedido en USD facturado en EUR en BD desechable."),
+         evidence=None, links=[f"{DOC}#/iva-moneda"]),
+    dict(code="P01", title="Informe de previsiones: expedientes con venta, coste previsto y real, margen, fechas, "
+                           "por semana y mes (lista y pivot)", epic="E10", type=T.DEV, sprint="S45", points=5,
+         start=D(2026, 11, 4), due=D(2026, 11, 6), priority=P.HIGH, deps=[], hours=10, who="belal", dept="sys",
+         status=None, done=None,
+         desc=desc("Resultado: vista de lista y pivot sobre expedientes y sus servicios (venta acordada, coste en la "
+                   "aceptación, comprometido, real, previsto, márgenes, facturado, cobrado, pagado) filtrable por "
+                   "estado, cliente, modo y fechas (ETD/ETA/ATA/NOA); exportable.",
+                   "Fuente: Hoja1 «PREVISIONES» (A6); informe de previsiones de Odoo 17 (extensión).",
+                   "Estado real 26/10: las cifras existen por expediente («Resumen» y «Dónde salen las cifras»); no "
+                   "hay vista agregada.",
+                   "Aceptación: Cristina valida las columnas con los [DEMO]; cuadra con el resumen de cada expediente."),
+         evidence=None, links=[f"{DOC}#/rentabilidad"]),
+    dict(code="N02", title="Migración: mapeo de campos y script de lectura de Odoo 17 (maestros y expedientes "
+                           "abiertos) probado en la copia local", epic="E9", type=T.MIGRATION, sprint="S45",
+         points=8, start=D(2026, 11, 3), due=D(2026, 11, 6), priority=P.CRITICAL, deps=["N01"], hours=14,
+         who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: docs/migracion.md con el mapeo por grupo (clientes y proveedores con "
+                   "deduplicación por NIF y nombre, roles, puertos, tipos de contenedor, aerolíneas/handlers, "
+                   "expedientes abiertos con partes, contenedores, referencias y fechas); script de solo lectura "
+                   "de Odoo 17 y carga en la copia local con informe de calidad (duplicados, sin NIF, zonas).",
+                   "Aceptación: carga en la copia local sin errores; conteos legacy = nuevos; lista de revisión "
+                   "humana para los casos dudosos."),
+         evidence=None, links=[]),
+    dict(code="C04", title="Cristina: aprobación de las tarifas del lote 1 y validación de la lista aerolínea/handler",
+         epic="E8", type=T.ANALYSIS, sprint="S45", points=2, start=D(2026, 11, 5), due=D(2026, 11, 6),
+         priority=P.CRITICAL, deps=["D02", "F03"], hours=2, who="cristina", dept="com", status=None, done=None,
+         desc=desc("Resultado: tarifas del lote 1 aprobadas (o devueltas con corrección) y lista aerolínea / "
+                   "aeropuerto / handler validada.", f"{NOT_COMMITTED}",
+                   "Aceptación: estados cambiados en boss20; lista firmada."),
+         evidence=None, links=[f"{DOC}#/tarifa-aprobacion"]),
+    dict(code="D04", title="Probar el escenario de referencia de cada tarifa aprobada con una oferta en borrador",
+         epic="E8", type=T.TEST, sprint="S45", points=2, start=D(2026, 11, 5), due=D(2026, 11, 6),
+         priority=P.HIGH, deps=["C01"], hours=4, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: por cada tarifa aprobada, una oferta en borrador (cliente de prueba no DEMO) con los "
+                   "datos del ejemplo de referencia da el coste del ejemplo; la oferta no se envía.",
+                   "Fuente: condición 5 de docs/revision-tarifas.md.",
+                   "Aceptación: tabla tarifa → oferta → coste esperado = obtenido, en docs/ejemplos-referencia.md."),
+         evidence=None, links=[f"{DOC}#/seleccion"]),
+    # ===================================================================== S46 · 9–15 nov
+    dict(code="D03", title="Cargar el segundo handler aéreo (import y export) y HAN/AWB de exportación de WFS "
+                           "(Hoja1 B10, D10)", epic="E8", type=T.MIGRATION, sprint="S46", points=5,
+         start=D(2026, 11, 10), due=D(2026, 11, 12), priority=P.HIGH, deps=["D01"], hours=8, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: HAN, ETX, ALM y AWB del segundo handler (IAS o SAASA) para importación y "
+                   "exportación, y los códigos de exportación de WFS que faltan, cargados y enviados a aprobación.",
+                   "Estado real 26/10: solo WFS (import: HAN, ALM, AWB; export: ALM, X-R).",
+                   "Aceptación: tarifas esperando aprobación; ejemplos de referencia; aprobación de Cristina (C05)."),
+         evidence=None, links=[f"{DOC}#/srv-HAN"]),
+    dict(code="D05", title="Cargar D&D de ONE, MSK, ZIM y OOCL y gastos locales de otras navieras (lote 2) "
+                           "(Hoja1 E10)", epic="E8", type=T.MIGRATION, sprint="S46", points=5,
+         start=D(2026, 11, 10), due=D(2026, 11, 13), priority=P.HIGH, deps=["D01"], hours=8, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: OCU/DEM/DET de importación de las 5 navieras de Hoja1 (hoy solo MSC; CMA y Hapag "
+                   "adicionales) y los gastos locales recibidos, cargados con sus ejemplos.",
+                   "Aceptación: tarifas esperando aprobación y prueba de referencias en verde."),
+         evidence=None, links=[f"{DOC}#/srv-DEM"]),
+    dict(code="C05", title="Cristina: aprobación de las tarifas del lote 2 (handler 2, navieras)", epic="E8",
+         type=T.ANALYSIS, sprint="S46", points=2, start=D(2026, 11, 12), due=D(2026, 11, 13), priority=P.HIGH,
+         deps=["D03", "D05"], hours=2, who="cristina", dept="com", status=None, done=None,
+         desc=desc("Resultado: tarifas del lote 2 aprobadas o devueltas.", f"{NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/tarifa-aprobacion"]),
+    dict(code="B04", title="Fase B4/B5: almacenaje especial (condición de tipo de carga, código de almacén) y "
+                           "acuerdo de precio para varios envíos", epic="E4", type=T.DEV, sprint="S46", points=5,
+         start=D(2026, 11, 10), due=D(2026, 11, 13), priority=P.MEDIUM, deps=["C02"], hours=8, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: condición de tipo de carga en las tarifas de ALM, código del almacén fuera del "
+                   "aeropuerto si Cristina y Ángel lo aprueban (P44), y acuerdo de precio para varios envíos "
+                   "sobre el reparto entre expedientes (P34), si Cristina da los datos.",
+                   "Si no hay datos a 9/11, se pasa a la estabilización de diciembre (no es básico para la entrega)."),
+         evidence=None, links=[f"{DOC}#/almacenaje"]),
+    dict(code="N03", title="Migración de maestros en boss20: clientes, proveedores, roles, puertos, tipos de "
+                           "contenedor, aerolíneas y handlers, con validación", epic="E9", type=T.MIGRATION,
+         sprint="S46", points=8, start=D(2026, 11, 10), due=D(2026, 11, 12), priority=P.CRITICAL,
+         deps=["N02", "C04"], hours=12, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: maestros cargados en boss20 desde Odoo 17 con informe de conciliación (conteos, "
+                   "duplicados resueltos, NIF y zonas de IVA, legacy id en «Referencia»); lista de revisión para "
+                   "Cristina.",
+                   "Aceptación: conteos legacy = nuevos; sin duplicados por NIF; cada cliente con zona de IVA."),
+         evidence=None, links=[f"{DOC}#/contactos"]),
+    dict(code="U01", title="Permisos por rol, correo saliente y plantillas de oferta y factura (PDF) en boss20",
+         epic="E11", type=T.INFRA, sprint="S46", points=5, start=D(2026, 11, 11), due=D(2026, 11, 13),
+         priority=P.HIGH, deps=["W08"], hours=8, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: grupos y reglas comprobados con un usuario por rol (comercial, operaciones, "
+                   "compras, contabilidad); servidor de correo saliente de BOSS configurado y probado a una cuenta "
+                   "interna; plantillas de oferta y factura con los datos legales de BOSS (dirección, NIF, "
+                   "condiciones) revisadas por Ángel.",
+                   "Aceptación: captura por rol; correo de prueba recibido; PDF de oferta y factura aprobados."),
+         evidence=None, links=[f"{DOC}#/roles"]),
+    dict(code="P02", title="Informes de facturación y rentabilidad por expediente, cliente y periodo", epic="E10",
+         type=T.DEV, sprint="S46", points=3, start=D(2026, 11, 12), due=D(2026, 11, 13), priority=P.MEDIUM,
+         deps=["P01"], hours=6, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: facturado, cobrado, pagado y margen por expediente, cliente y mes, a partir de los "
+                   "mismos cálculos del resumen del expediente; exportable.",
+                   "Aceptación: Ángel valida las columnas con los [DEMO]."),
+         evidence=None, links=[f"{DOC}#/rentabilidad"]),
+    dict(code="N06", title="SII o VeriFactu: instalar y configurar según la decisión de Ángel (si aplica)", epic="E7",
+         type=T.INFRA, sprint="S46", points=5, start=D(2026, 11, 12), due=D(2026, 11, 13), priority=P.HIGH,
+         deps=["A03"], hours=8, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: módulo de la localización instalado y configurado en modo de pruebas; envío real "
+                   "solo tras el arranque y con la aprobación de Ángel.",
+                   "Si Ángel decide que no aplica en 2027, la tarea se cancela con su motivo."),
+         evidence=None, links=[]),
+    dict(code="Q01", title="Pruebas automáticas completas con todas las tarifas cargadas y corrección de defectos",
+         epic="E5", type=T.TEST, sprint="S46", points=3, start=D(2026, 11, 13), due=D(2026, 11, 13),
+         priority=P.HIGH, deps=["D02", "F01", "F02", "B01"], hours=6, who="belal", dept="sys", status=None,
+         done=None,
+         desc="Resultado: motor, referencias (con todas las muestras privadas) y pruebas de Odoo en verde; "
+              "defectos abiertos corregidos o registrados con prioridad. Aceptación: 0 fallos registrados en "
+              "docs/ciclo-operativo.md con el commit.",
+         evidence=None, links=[]),
+    dict(code="U02", title="Formación 1: comercial y operaciones (contactos, CRM, oferta, aceptación, expediente, "
+                           "compras)", epic="E11", type=T.TRAINING, sprint="S46", points=3, start=D(2026, 11, 13),
+         due=D(2026, 11, 13), priority=P.HIGH, deps=["W08", "N03"], hours=4, who="belal", dept="ops",
+         status=None, done=None,
+         desc=desc("Resultado: sesión de 2 h con la guía como material, sobre los [DEMO] y los maestros migrados; "
+                   "dudas registradas como tareas.", f"Participan las personas que indique Cristina. {NOT_COMMITTED}",
+                   "Aceptación: asistentes crean una oferta y la aceptan sin ayuda."),
+         evidence=None, links=[f"{DOC}#/inicio"]),
+    dict(code="I01", title="Entorno de desarrollo en Mac: traslado y verificación (pruebas y despliegue desde el Mac)",
+         epic="E12", type=T.INFRA, sprint="S46", points=3, start=D(2026, 11, 10), due=D(2026, 11, 11),
+         priority=P.MEDIUM, deps=["007"], hours=5, who="belal", dept="sys", status=None, done=None,
+         desc=desc("Resultado: el repositorio, Docker (dev/test.sh), los scripts de despliegue y las claves SSH "
+                   "funcionan desde el Mac; pruebas y un despliegue de prueba a la copia local hechos desde él.",
+                   "Estado real 26/10: no verificado (sin evidencia en el repositorio de que el traslado esté hecho).",
+                   "Aceptación: `dev/test.sh run boss_expediente` en verde desde el Mac; `dev/deploy.sh` "
+                   "ejecutado desde el Mac."),
+         evidence=None, links=[]),
+    # ===================================================================== S47 · 16–20 nov · Entrega
+    dict(code="N04", title="Ensayo completo de migración en la copia local: expedientes abiertos de Odoo 17 → "
+                           "Odoo 20 y conciliación", epic="E9", type=T.MIGRATION, sprint="S47", points=8,
+         start=D(2026, 11, 16), due=D(2026, 11, 18), priority=P.CRITICAL, deps=["N03"], hours=14, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: carga de los expedientes abiertos (partes, contenedores, referencias, fechas, "
+                   "servicios con coste previsto) en la copia local; informe de conciliación por expediente "
+                   "(conteos y sumas legacy = nuevos, diferencias explicadas); procedimiento repetible para "
+                   "cargar diferencias por fecha o id legacy sin duplicar.",
+                   "Aceptación: 0 diferencias sin explicar; procedimiento documentado en docs/migracion.md."),
+         evidence=None, links=[]),
+    dict(code="I02", title="Copias de seguridad automáticas de boss20 (BD y ficheros), restauración probada y plan "
+                           "de vuelta atrás", epic="E12", type=T.INFRA, sprint="S47", points=3,
+         start=D(2026, 11, 17), due=D(2026, 11, 17), priority=P.CRITICAL, deps=[], hours=5, who="belal",
+         dept="sys", status=None, done=None,
+         desc=desc("Resultado: copia diaria de la base de datos y del filestore de boss20 fuera del servidor, con "
+                   "retención; restauración probada en la copia local; plan de vuelta atrás escrito (Odoo 17 "
+                   "sigue intacto hasta el 1/1).",
+                   "Aceptación: una restauración completa verificada y documentada con fecha."),
+         evidence=None, links=[]),
+    dict(code="I03", title="Procedimiento de despliegue y vuelta atrás; rendimiento con datos migrados", epic="E12",
+         type=T.INFRA, sprint="S47", points=2, start=D(2026, 11, 18), due=D(2026, 11, 18), priority=P.HIGH,
+         deps=["N04", "I02"], hours=4, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: dev/deploy.sh con paso de copia previa y vuelta atrás documentado; medición de tiempos "
+              "con los datos migrados (objetivo: < 2 s por pantalla, como el 23/10). Aceptación: medidas en "
+              "docs/ciclo-operativo.md.",
+         evidence=None, links=[]),
+    dict(code="Q02", title="Documentación final: guía ES/EN, ADR, decisiones y migración actualizados", epic="E5",
+         type=T.DOCS, sprint="S47", points=3, start=D(2026, 11, 19), due=D(2026, 11, 19), priority=P.HIGH,
+         deps=["Q01"], hours=6, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: guía publicada con las pantallas definitivas; ADR-006 (venta ALM); "
+              "docs/preguntas-abiertas.md con todas las ratificaciones; docs/migracion.md. Aceptación: publicada y "
+              "verificada con curl.",
+         evidence=None, links=[DOC]),
+    dict(code="Q03", title="Verificación final de Hoja1 (28 requisitos) con evidencias", epic="E5", type=T.TEST,
+         sprint="S47", points=3, start=D(2026, 11, 19), due=D(2026, 11, 20), priority=P.CRITICAL,
+         deps=["D02", "D03", "D05", "F01", "F02", "B01", "B03", "P01"], hours=6, who="belal", dept="sys",
+         status=None, done=None,
+         desc="Resultado: docs/mapeo-hoja1.md con el estado final de cada requisito (Completo / Parcial / No "
+              "implementado) y su evidencia (prueba, captura o lectura de boss20); lo que siga Parcial dice qué "
+              "falta y de quién depende. Aceptación: ningún requisito «No verificado».",
+         evidence=None, links=[]),
+    dict(code="Q04", title="Entrega completa 20/11: acta con alcance entregado, pendientes y criterios de inicio de la "
+                           "operación en pruebas", epic="E5", type=T.DOCS, sprint="S47", points=2,
+         start=D(2026, 11, 20), due=D(2026, 11, 20), priority=P.CRITICAL, deps=["Q02", "Q03", "N04", "I02"],
+         hours=3, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Resultado: acta de entrega firmada por Belal y aceptada por Cristina y Ángel: alcance "
+                   "entregado (Hoja1, fase B según decisiones, ciclo, contabilidad, informes, datos, permisos, "
+                   "documentación, formación 1), pendientes con responsable y fecha, criterios de inicio de la "
+                   "operación en pruebas (T01).",
+                   "Hito aprobado por Belal el 26/10/2026: entrega completa el 20/11/2026."),
+         evidence=None, links=[]),
+    # ===================================================================== Operación en pruebas · 21 nov–1 dic
+    dict(code="T01", title="Criterios de inicio y fin de la operación en pruebas; plan de escenarios y registro de "
+                           "incidencias", epic="E11", type=T.TEST, sprint="PIL", points=2, start=D(2026, 11, 21),
+         due=D(2026, 11, 23), priority=P.CRITICAL, deps=["Q04"], hours=3, who="belal", dept="dir", status=None,
+         done=None,
+         desc=desc("Inicio: entrega aceptada, maestros migrados, usuarios formados, copia de seguridad diaria "
+                   "activa. Fin: todos los escenarios ejecutados por su responsable con resultado registrado, "
+                   "incidencias críticas corregidas y re-probadas, informe de cierre. Se distingue «pasa con "
+                   "[DEMO]» de «pasa con datos operativos representativos» (migrados y aprobados por Cristina).",
+                   "Registro: tareas de tipo Corrección en esta plataforma, una por incidencia."),
+         evidence=None, links=[]),
+    dict(code="T02", title="Escenario: importación marítima FCL completa (CRM → oferta → aceptación → expediente → "
+                           "compras → facturas → rentabilidad)", epic="E11", type=T.TEST, sprint="PIL", points=5,
+         start=D(2026, 11, 24), due=D(2026, 11, 26), priority=P.CRITICAL, deps=["T01"], hours=6, who="cristina",
+         dept="ops", status=None, done=None,
+         desc=desc("Con un envío real representativo (cliente migrado, naviera con tarifa aprobada) en el entorno "
+                   "de pruebas; resultado y observaciones registrados por el operador.",
+                   f"Responsable: Pendiente de asignar (operaciones; Cristina decide quién). {NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/demo-ciclo"]),
+    dict(code="T03", title="Escenario: importación aérea (handler, ALM con periodo real, AWB) y exportación aérea",
+         epic="E11", type=T.TEST, sprint="PIL", points=5, start=D(2026, 11, 24), due=D(2026, 11, 27),
+         priority=P.CRITICAL, deps=["T01"], hours=6, who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Con envíos reales representativos; comprueba NOA/ATA, periodo real y recálculo, handler "
+                   "propuesto.", f"Responsable: Pendiente de asignar (operaciones). {NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/almacenaje"]),
+    dict(code="T04", title="Escenario: exportación marítima y transporte terrestre (IRENEO 2026)", epic="E11",
+         type=T.TEST, sprint="PIL", points=3, start=D(2026, 11, 25), due=D(2026, 11, 27), priority=P.HIGH,
+         deps=["T01"], hours=4, who="cristina", dept="ops", status=None, done=None,
+         desc=desc("Con envíos reales representativos.", f"Responsable: Pendiente de asignar. {NOT_COMMITTED}"),
+         evidence=None, links=[]),
+    dict(code="T05", title="Escenario contable: facturas de cliente, abonos, facturas de proveedor por lo prestado, "
+                           "bloqueo de pago, suplidos, informes", epic="E11", type=T.TEST, sprint="PIL", points=5,
+         start=D(2026, 11, 26), due=D(2026, 11, 30), priority=P.CRITICAL, deps=["T01", "W06"], hours=6,
+         who="angel", dept="fin", status=None, done=None,
+         desc=desc("Sobre los expedientes de T02–T04 en el entorno de pruebas (nunca en los libros reales de "
+                   "boss20 antes del 1/1): contabilizar, pagar, abonar; comprobar cuentas, impuestos y los "
+                   "informes de facturación y rentabilidad.", f"{NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/facturacion"]),
+    dict(code="T06", title="Escenario comercial: oportunidad → oferta con clientes migrados, precios pactados, IVA "
+                           "por zona, envío de la oferta", epic="E11", type=T.TEST, sprint="PIL", points=3,
+         start=D(2026, 11, 24), due=D(2026, 11, 27), priority=P.HIGH, deps=["T01"], hours=4, who="cristina",
+         dept="com", status=None, done=None,
+         desc=desc("Con clientes reales migrados y las listas de precios que Cristina decida (P01/P02).",
+                   f"Responsable: Pendiente de asignar (comercial). {NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/oportunidad"]),
+    dict(code="T07", title="Corrección de incidencias de la operación en pruebas y re-prueba", epic="E5", type=T.FIX,
+         sprint="PIL", points=8, start=D(2026, 11, 23), due=D(2026, 12, 1), priority=P.CRITICAL, deps=["T01"],
+         hours=20, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: cada incidencia registrada como tarea, corregida con prueba, desplegada en el entorno de "
+              "pruebas y re-probada por quien la abrió. Aceptación: ninguna incidencia crítica abierta el 1/12.",
+         evidence=None, links=[]),
+    dict(code="T08", title="Informe de cierre de la operación en pruebas (1/12)", epic="E5", type=T.DOCS,
+         sprint="PIL", points=2, start=D(2026, 12, 1), due=D(2026, 12, 1), priority=P.CRITICAL,
+         deps=["T02", "T03", "T04", "T05", "T06", "T07"], hours=3, who="belal", dept="dir", status=None, done=None,
+         desc="Resultado: escenarios ejecutados y su resultado, incidencias abiertas y cerradas, lo que pasa con "
+              "[DEMO] frente a lo verificado con datos reales, y la lista de lo que entra en la estabilización. "
+              "Hito aprobado por Belal: operación en pruebas hasta el 1/12/2026.",
+         evidence=None, links=[]),
+    # ===================================================================== Estabilización · 2–31 dic
+    dict(code="S01", title="Corrección de las incidencias priorizadas de la operación en pruebas", epic="E5",
+         type=T.FIX, sprint="STA", points=8, start=D(2026, 12, 2), due=D(2026, 12, 11), priority=P.CRITICAL,
+         deps=["T08"], hours=24, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: incidencias del informe T08 corregidas por prioridad, con prueba y re-prueba. "
+              "Aceptación: lista cerrada y aprobada por Cristina y Ángel.",
+         evidence=None, links=[]),
+    dict(code="S02", title="Sistema de referencia en diciembre y traslado de novedades sin pérdida ni duplicados",
+         epic="E9", type=T.DOCS, sprint="STA", points=2, start=D(2026, 12, 2), due=D(2026, 12, 4),
+         priority=P.CRITICAL, deps=["N04"], hours=3, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Regla: hasta el 31/12 Odoo 17 es el único sistema de registro; Odoo 20 solo pruebas. Las "
+                   "novedades (expedientes nuevos o cambiados desde el último ensayo) se cargan por diferencias "
+                   "(fecha de modificación e id legacy guardado en «Referencia»), sin duplicar; procedimiento "
+                   "escrito y probado en el ensayo S04.",
+                   "Aceptación: documento aprobado por Belal y Cristina."),
+         evidence=None, links=[]),
+    dict(code="S03", title="Formación restante por rol (operaciones, comercial, finanzas) y guía de arranque",
+         epic="E11", type=T.TRAINING, sprint="STA", points=3, start=D(2026, 12, 9), due=D(2026, 12, 16),
+         priority=P.HIGH, deps=["S01"], hours=8, who="belal", dept="ops", status=None, done=None,
+         desc=desc("Resultado: cada persona ha hecho su escenario sin ayuda; guía de arranque de una página por "
+                   "rol.", f"Participantes según Cristina y Ángel. {NOT_COMMITTED}"),
+         evidence=None, links=[f"{DOC}#/inicio"]),
+    dict(code="S04", title="Ensayo del cambio definitivo: corte simulado, copia, carga de diferencias, conciliación",
+         epic="E9", type=T.TEST, sprint="STA", points=5, start=D(2026, 12, 14), due=D(2026, 12, 18),
+         priority=P.CRITICAL, deps=["S02"], hours=10, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: ensayo completo del procedimiento G01–G05 en la copia local con tiempos medidos; "
+              "conciliación de expedientes abiertos, saldos y numeración; lista de comprobación corregida. "
+              "Aceptación: 0 diferencias sin explicar; tiempo total conocido.",
+         evidence=None, links=[]),
+    dict(code="S05", title="Copias y restauración verificadas antes del cambio; plan de vuelta atrás aprobado",
+         epic="E12", type=T.INFRA, sprint="STA", points=2, start=D(2026, 12, 21), due=D(2026, 12, 22),
+         priority=P.CRITICAL, deps=["I02", "S04"], hours=3, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: restauración de la copia más reciente probada; plan de vuelta atrás (seguir en Odoo 17) "
+              "aprobado por Belal.",
+         evidence=None, links=[]),
+    dict(code="S06", title="Lista de comprobación del cambio definitivo aprobada por Cristina y Ángel", epic="E12",
+         type=T.DOCS, sprint="STA", points=1, start=D(2026, 12, 22), due=D(2026, 12, 23), priority=P.CRITICAL,
+         deps=["S04", "S05"], hours=2, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Resultado: lista G01–G06 con hora del corte, responsables, criterios de aceptación "
+                   "comprobables y plan ante cualquier obstáculo; aprobada por Cristina (operaciones) y Ángel "
+                   "(contabilidad).", f"{NOT_COMMITTED}"),
+         evidence=None, links=[]),
+    # ===================================================================== Cambio definitivo · 1–8 ene 2027
+    dict(code="G01", title="Corte: dejar de registrar operaciones nuevas en Odoo 17 (hora definida, propuesta "
+                           "31/12 18:00)", epic="E12", type=T.MIGRATION, sprint="GO", points=1,
+         start=D(2026, 12, 31), due=D(2026, 12, 31), priority=P.CRITICAL, deps=["S06"], hours=1, who="cristina",
+         dept="ops", status=None, done=None,
+         desc=desc("Aviso al equipo; desde la hora del corte ninguna alta ni cambio en Odoo 17.",
+                   f"Responsable: Cristina (operaciones). {NOT_COMMITTED}"),
+         evidence=None, links=[]),
+    dict(code="G02", title="Copia final de Odoo 17 y carga de diferencias en boss20 desde el último ensayo", epic="E9",
+         type=T.MIGRATION, sprint="GO", points=5, start=D(2026, 12, 31), due=D(2027, 1, 1), priority=P.CRITICAL,
+         deps=["G01"], hours=8, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: copia final de Odoo 17 archivada; diferencias cargadas en boss20 con el procedimiento "
+              "S02; informe de carga.",
+         evidence=None, links=[]),
+    dict(code="G03", title="Conciliación: expedientes abiertos, saldos, numeración, usuarios y permisos", epic="E9",
+         type=T.TEST, sprint="GO", points=3, start=D(2027, 1, 1), due=D(2027, 1, 2), priority=P.CRITICAL,
+         deps=["G02"], hours=6, who="belal", dept="fin", status=None, done=None,
+         desc=desc("Resultado: conteos y sumas legacy = nuevos; numeración de expedientes y facturas según la "
+                   "decisión (P36 y series de 2027); cada usuario con su rol.",
+                   f"Con Ángel para saldos y series de facturación. {NOT_COMMITTED}"),
+         evidence=None, links=[]),
+    dict(code="G04", title="Odoo 20 único sistema de registro; aviso al equipo; soporte de arranque (4–8 ene)",
+         epic="E12", type=T.INFRA, sprint="GO", points=3, start=D(2027, 1, 2), due=D(2027, 1, 8),
+         priority=P.CRITICAL, deps=["G03"], hours=16, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: comunicación del arranque; soporte presencial o inmediato la primera semana; "
+              "incidencias como tareas de Corrección con prioridad. Hito aprobado por Belal: 1/1/2027.",
+         evidence=None, links=[SYS]),
+    dict(code="G05", title="Odoo 17 en solo lectura (archivo) y copia de la base de datos conservada", epic="E12",
+         type=T.INFRA, sprint="GO", points=1, start=D(2027, 1, 2), due=D(2027, 1, 2), priority=P.HIGH,
+         deps=["G02"], hours=2, who="belal", dept="sys", status=None, done=None,
+         desc="Resultado: usuarios de Odoo 17 sin permisos de escritura; copia de la base de datos y del filestore "
+              "guardada; acceso de consulta conservado.",
+         evidence=None, links=[]),
+    dict(code="G06", title="Aceptación del arranque (acta de Cristina y Ángel)", epic="E12", type=T.DOCS,
+         sprint="GO", points=1, start=D(2027, 1, 8), due=D(2027, 1, 8), priority=P.CRITICAL, deps=["G04"],
+         hours=2, who="belal", dept="dir", status=None, done=None,
+         desc=desc("Resultado: acta con los criterios G01–G05 comprobados, incidencias abiertas y su plan.",
+                   f"{NOT_COMMITTED}"),
+         evidence=None, links=[]),
+]
+
+
+class Command(BaseCommand):
+    help = "Siembra idempotente del plan de lanzamiento BOSS Odoo 20 (26/10/2026): sprints semanales, epics, tareas."
+
+    def add_arguments(self, parser):
+        parser.add_argument("--dry-run", action="store_true", help="No guarda nada; muestra lo que haría.")
+
+    def handle(self, *args, **options):
+        dry = options["dry_run"]
+        with transaction.atomic():
+            self.apply()
+            if dry:
+                transaction.set_rollback(True)
+                self.stdout.write(self.style.WARNING("dry-run: nada guardado"))
+
+    def apply(self):
+        users = get_user_model().objects
+        people = {key: users.filter(username=username).first() for key, username in USERS.items()}
+        owner = people["belal"]
+        if owner is None:
+            raise CommandError("No existe el usuario de Belal en la plataforma.")
+        for key, user in people.items():
+            if user is None:
+                raise CommandError(f"No existe el usuario {USERS[key]}.")
+
+        for day, name in HOLIDAYS:
+            Holiday.objects.get_or_create(date=day, defaults={"name": name})
+        depts = {key: Department.objects.get_or_create(name=name, defaults={"icon": "📌"})[0]
+                 for key, name in DEPTS.items()}
+        epics = {key: Phase.objects.update_or_create(name=name, defaults={"order": order})[0]
+                 for order, (key, name) in enumerate(EPICS.items(), start=1)}
+
+        sprints = {}
+        for key, (name, start, end, status, goal, old_name) in SPRINTS.items():
+            sprint = Sprint.objects.filter(name=name).first()
+            if sprint is None and old_name:
+                sprint = Sprint.objects.filter(name=old_name).first()
+            if sprint is None:
+                sprint = Sprint(name=name)
+            sprint.name, sprint.start_date, sprint.end_date, sprint.status, sprint.goal = name, start, end, status, goal
+            sprint.save()
+            sprints[key] = sprint
+
+        tasks, created, updated, status_changes = {}, 0, 0, 0
+        for order, row in enumerate(TASKS, start=1):
+            code = f"BOSS20-{row['code']}"
+            plan = {
+                "title": row["title"], "description": row["desc"], "phase": epics[row["epic"]],
+                "task_type": row["type"], "sprint": sprints.get(row["sprint"]), "story_points": row["points"],
+                "start_date": row["start"], "due_date": row["due"], "priority": row["priority"],
+                "backlog_order": order * 10, "estimated_hours": row["hours"], "assigned_to": people[row["who"]],
+                "department": depts[row["dept"]], "related_links": "\n".join(row["links"]),
+            }
+            task = Task.objects.filter(code=code).first()
+            if task is None:
+                task = Task(code=code, created_by=owner, **plan)
+                if row.get("progress") is not None:
+                    task.progress = row["progress"]
+                if row["status"]:
+                    task.status = row["status"]
+                    if row["status"] == S.DONE and row["done"]:
+                        task.completed_at = mad(row["done"])
+                task.save()
+                log_activity(owner, task=task, change_type="creación",
+                             description=f"{owner.get_full_name()} creó la tarea (plan de lanzamiento del 26/10/2026).")
+                created += 1
+                self.stdout.write(f"  + {code} {row['title'][:70]}")
+            else:
+                snapshot = snapshot_task(task)
+                previous = (task.description or "").strip()
+                if previous and previous not in plan["description"]:
+                    plan["description"] += "\n\nDescripción original (plan del 21/10/2026): " + previous
+                for field, value in plan.items():
+                    setattr(task, field, value)
+                if row.get("progress") is not None and task.status != S.DONE:
+                    task.progress = row["progress"]
+                if row["status"] and task.status != row["status"]:
+                    task.status = row["status"]
+                    if row["status"] == S.DONE and row["done"]:
+                        task.completed_at = mad(row["done"])
+                    status_changes += 1
+                task.save()
+                log_task_changes(owner, task, snapshot)
+                updated += 1
+                self.stdout.write(f"  ~ {code} {row['title'][:70]}")
+            if row["evidence"] and not Comment.objects.filter(task=task, text=row["evidence"]).exists():
+                Comment.objects.create(task=task, author=owner, text=row["evidence"])
+            tasks[row["code"]] = task
+        for row in TASKS:
+            tasks[row["code"]].depends_on.set([tasks[d] for d in row["deps"]])
+
+        self.stdout.write("IDS " + " ".join(f"{row['code']}={tasks[row['code']].pk}" for row in TASKS))
+        self.stdout.write(self.style.SUCCESS(
+            f"{len(sprints)} sprints · {len(EPICS)} epics · {len(TASKS)} tareas ({created} nuevas, {updated} "
+            f"actualizadas, {status_changes} cambios de estado con evidencia)"))

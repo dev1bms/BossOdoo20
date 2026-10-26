@@ -61,6 +61,10 @@ contabilidad, analítica y actividades; BOSS añade tarifas, datos del envío, e
   el producto: propuesta aprobada por Belal el 23/10/2026 y aplicada a todos los servicios BOSS; pendiente de
   ratificación por Ángel (P32).
 
+## Plan de lanzamiento (26/10/2026)
+
+Hitos aprobados por Belal el 26/10/2026: entrega completa el **20/11/2026**, operación en pruebas hasta el **1/12/2026**, corrección y preparación del cambio del 2 al 31/12, Odoo 20 único sistema el **1/1/2027** (sustituyen al 30/11). El plan semanal (sprints S43 19–25 oct → cambio definitivo 1–8 ene; 99 tareas con estado, evidencia, responsable y dependencias) está en https://task.bosscontinental.com (`dev/boss_tasks/seed_launch.py`, siembra idempotente). Mapeo de Hoja1 de «Plan detallado previsiones»: `docs/mapeo-hoja1.md` (28 requisitos: 0 completos, 23 parciales, 5 no implementados).
+
 ## Plan de las decisiones aprobadas el 23/10/2026
 
 Decisiones y estado por pregunta: `docs/preguntas-abiertas.md` («Aprobadas el 23/10/2026», publicada en la guía,
