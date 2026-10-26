@@ -17,7 +17,7 @@
 
   function inline(s) {
     return esc(s)
-      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="shot" loading="lazy">')
+      .replace(/!\[((?:[^\[\]]|\[[^\[\]]*\])*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="shot" loading="lazy">')
       .replace(/\[([^\]]+)\]\((#\/[^)]+)\)/g, '<a href="$2">$1</a>')
       .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
