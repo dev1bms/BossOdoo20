@@ -219,7 +219,7 @@ Hecho hoy: periodo de cada servicio por tiempo según su tarifa (y fechas de cad
 ETX/VET/DET fuera de «pendiente»; previsión de cada servicio y su informe; D-3, D-4, D-5, D-6; IRENEO 2026 (precios
 2025 hasta el 14/07 por Ángel, +10 % desde el 15/07 por la carta) comprobado contra el PDF; WFS HAN de exportación y ETX;
 FAD de Aducex y Ramos Vila; DEM/OCU de ONE, Maersk, OOCL y MSC de la licitación Leroy; FuelEU Lejano Oriente. Todas las
-tarifas cargadas esperan la aprobación de Cristina (24 [MUESTRA] + las nuevas). Mapeo de Hoja1 en `docs/mapeo-hoja1.md`
+tarifas cargadas esperan la aprobación de Cristina (25 [MUESTRA] esperando aprobación). Mapeo de Hoja1 en `docs/mapeo-hoja1.md`
 (25 hechas, 3 parciales por documentos que no existen). Escenario para Belal: `docs/escenario-uat.md`.
 
 Pendiente de personas: entrar en boss20_uat (Claude no puede escribir contraseñas) para recorrer en la interfaz la parte

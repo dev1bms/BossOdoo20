@@ -117,7 +117,7 @@ marquen como confirmadas al llegar los documentos: implementado como **«Previsi
 lo que pide la celda (cargar o configurar) porque la aprobación es una decisión humana fuera del sistema; «Parcial» = la
 fracción hecha (H1-25 y H1-27: 1 de 2 handlers = 0,5; H1-28: 4 de 5 navieras, solo para un cliente en 3 de ellas = 0,5).
 Resultado: (25 + 0,5 + 0,5 + 0,5) / 28 = **26,5 / 28 ≈ 95 %** de lo que el Excel pide hacer en el sistema. Lo que no
-depende del sistema: **0 de 24 tarifas [MUESTRA] aprobadas** (decisión de Cristina).
+depende del sistema: **0 de 25 tarifas [MUESTRA] aprobadas** (decisión de Cristina).
 
 ## Documentos que no existen (búsqueda del 26/10/2026)
 
