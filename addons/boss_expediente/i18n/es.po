@@ -3032,3 +3032,9 @@ msgstr "Cada servicio a comprar de los expedientes abiertos con su coste previst
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Handler changed"
 msgstr "Cambio de handler"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/purchase_order.py:0
+msgid "%s: no service of this order is marked as performed yet, there is nothing to bill. Mark the performed services on the file first."
+msgstr "%s: ningún servicio de este pedido está marcado como realizado, no hay nada que facturar. Marque primero los servicios realizados en el expediente."

@@ -277,6 +277,8 @@ class TestFileFollowUp(CycleCommon):
         file.with_user(self.sales).action_create_rfqs()
         po = file.purchase_order_ids
         po.with_user(self.manager).button_confirm()
+        with self.assertRaises(UserError):  # nothing performed: no bill of zeros
+            po.with_user(self.accountant).action_create_invoice()
         self._need(file, self.thc).with_user(self.sales).action_mark_performed()
         po.with_user(self.accountant).action_create_invoice()
         bill = po.invoice_ids
