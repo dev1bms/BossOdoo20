@@ -202,5 +202,4 @@ expediente (ver registro).
 | Comprobación de boss20 **solo lectura** (no es una prueba) | Versiones instaladas iguales a `8ec4a2c`; 77 servicios BOSS activos con control «cantidades recibidas»; compañía con «tipo del día de la oferta» y «Bloquear el pago»; tabla de IVA con 6 filas (Art.22 y CAN incluidas); 0 asientos contabilizados; 10 tarifas de documentos reales esperando aprobación, ninguna aprobada; sin módulos SII ni VeriFactu; sin servidor de correo saliente | 26/10/2026 | `dev/readiness_probe.py` (sin escritura, rollback) |
 | Ensayo de la hoja de pruebas en la copia local aislada (una transacción deshecha al terminar) | C1–C6 y C8 dan el resultado de `docs/pruebas-angel.md`; C7 falla por D-2; el pago de C5 falla con líneas de cantidad 0 (D-1) | 26/10/2026 | `dev/uat_dryrun.py` |
 
-Desde `8ec4a2c` no ha cambiado código de los módulos; las pruebas del 23/10 no se han repetido. Commits locales: no
-hay remoto.
+Desde `8ec4a2c` no ha cambiado código de los módulos; las pruebas del 23/10 no se han repetido. Remoto: https://github.com/dev1bms/BossOdoo20 (privado), `main` publicado el 26/10/2026.
