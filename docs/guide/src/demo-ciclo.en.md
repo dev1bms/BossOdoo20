@@ -13,3 +13,12 @@ rebuilt with `dev/demo_cycle.py` (no duplicates; skipped numbers come from earli
 What can only be seen on the test database (never posted in the real books): confirmed purchase order, posted vendor
 bill, customer credit note, receipt without order and their effect on actual cost and margin. The automated tests of
 `boss_expediente` check them on a throw-away database.
+
+## Test environment with accounting (boss20_uat)
+
+Since 26/10/2026 a second database on the same server, **boss20_uat** (same code, [DEMO] data, no mail or external
+connections), is where posting and payments are tried. It holds the full cycle of Ángel's test sheet (VAT per case,
+tax ID, vendor bill by performed quantity, payment held until the customer is invoiced, partial invoice and credit
+note, amounts paid on behalf and profitability) and the quotation scenarios: mixed FCL 2×20' + 1×40' with 4 TEU, LCL
+with an inspection, air export, missing / expired / conflicting tariff, weight change after acceptance and
+demurrage by days. The same quotation scenarios are drafts on the main database (S00025–S00030).

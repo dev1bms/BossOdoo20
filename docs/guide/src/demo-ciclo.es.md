@@ -14,3 +14,12 @@ anteriores anulados).
 Lo que solo puede verse en la base de pruebas (no se contabiliza en los libros reales): pedido confirmado, factura de
 proveedor contabilizada, abono de cliente, recibo sin pedido y su efecto en el coste real y el margen. Las pruebas
 automáticas de `boss_expediente` lo comprueban en una base desechable.
+
+## Entorno de pruebas con contabilidad (boss20_uat)
+
+Desde el 26/10/2026 hay una segunda base en el mismo servidor, **boss20_uat** (mismo código, datos [DEMO], sin
+correo ni conexiones externas), donde sí se contabiliza y se paga. Tiene el ciclo completo de la hoja de pruebas de
+Ángel (IVA por caso, NIF, factura de proveedor por cantidad prestada, pago retenido hasta facturar al cliente,
+factura parcial y abono, suplidos y rentabilidad) y los escenarios de oferta: FCL mixto 2×20' + 1×40' con 4 TEU, LCL
+con inspección, exportación aérea, tarifa que falta / caducada / en conflicto, cambio de peso tras aceptar y
+demoras por días. Los mismos escenarios de oferta están como borradores en la base principal (S00025–S00030).

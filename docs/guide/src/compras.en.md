@@ -41,12 +41,15 @@ becomes the ordered one. If the product's bill control is "received quantities",
 
 ## Vendor bill
 
-It is created from the purchase order (**Create Bill**), with its analytic account. Before posting it, each BOSS service line needs the
-**tax shown on the supplier invoice** (0 % included).
+It is created from the purchase order (**Create Bill**), with its analytic account, only when some service is
+**marked as performed** (otherwise the system says so instead of creating a bill of zeros). Odoo copies every line of
+the order: those not performed come with quantity 0 and do not count. Before posting it, each BOSS service line needs
+the **tax shown on the supplier invoice** (0 % included).
 
 **Order of work** (proposal approved by Belal on 23/10/2026, P30; Ángel's and Cristina's ratification pending): the supplier bill is **posted on time**; its **payment** waits until the
 service is on a **posted** customer invoice. Meanwhile the vendor bill shows a yellow notice ("Before posting or paying")
-and the file lists it; registering the payment is blocked. Setting: **Settings › Sales › Supplier bill before the
+and the file lists it; registering the payment is blocked, both from the bill's button and from the payments wizard
+of a list or a bank statement. Lines with quantity 0 do not hold the payment. Setting: **Settings › Sales › Supplier bill before the
 customer invoice** = "Block payment (posting allowed)". No notice: cost covered by the price or borne by BOSS; **Paid in
 advance** (freight paid to an agent: the sale line is enough).
 
@@ -59,6 +62,11 @@ Amounts paid in the customer's name (ARA, IVA, PLA of the declaration) are not r
 pays them and bills them at cost. The service is **Billed without purchase order**, with the file's customs broker as
 supplier and the state "Bill without order expected". Its bill is entered with [[Cost without purchase order]] and
 matched to the service by product and analytic account (never counted twice).
+
+Accounts (as in Odoo 17, applied on 26/10/2026; Ángel ratifies them): current-liability sub-accounts of **419**, one
+for what is passed on to the customer and one for what the broker charges: VAT 419001 / 419003, duties (ARA) 419002 /
+419004, anti-dumping (DUM) 419005, plastic tax (PLA) 419006 / 419007. The customer invoice of the amount paid on behalf
+is exempt (not subject).
 
 ## Partial, cancelled orders and supplier replacement
 

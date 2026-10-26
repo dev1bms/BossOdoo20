@@ -16,14 +16,15 @@ rentabilidad. Está en la aplicación **Expedientes** (y en **Ventas → Pedidos
 
 ![Resumen del expediente E260001 [DEMO]](img/30-expediente-resumen.png)
 
-- **Quién**: cliente contratante, responsable, cargador, consignatario, agente, transportista; en **Referencias y
-  fechas**, notify, transportista terrestre y agente de aduanas.
+- **Quién**: cliente contratante, responsable, cargador, consignatario, agente, transportista y, en aéreo, **handler**
+  (ver «Aerolínea y handler»); en **Referencias y fechas**, notify, transportista terrestre y agente de aduanas.
 - **Ruta**: sentido, modo, tipo de carga, incoterm, origen y destino, puerto, país y lo que hace BOSS (recogida,
   aduana en origen, transporte principal, aduana en destino, entrega).
 - **Carga**: mercancía, bultos, peso, volumen, palés y un renglón por contenedor con número, precinto, recogida del
   lleno y devolución del vacío.
-- **Referencias y fechas**: booking, BL master/house (o AWB), buque/vuelo, viaje, DUA; ETD/ETA previstas y ATD/ATA
-  reales en campos distintos.
+- **Referencias y fechas**: booking, BL master/house (o AWB), buque/vuelo, viaje, DUA; ETD/ETA previstas y, con
+  **fecha y hora**, las reales: ATD, ATA, NOA (aviso de llegada del handler), FOH (mercancía recibida en la terminal,
+  exportación), recogida real y entrega real.
 - **Eventos**: hitos, incidencias y notas con fecha y usuario; además el chatter con actividades y adjuntos.
 
 Los datos del expediente se copian **una vez** de la oferta aceptada. Después cada uno guarda lo suyo: la oferta lo
@@ -59,6 +60,44 @@ Ejemplo: ALM cotizado con 5 días (2 libres, 25 €/día → 75 €); el contene
 contenedor de 40' en **Carga** → THC 2 × 240 € = 480 €.
 
 ![Recálculos de coste del expediente WFS [DEMO]: AWB 500 → 620 kg y almacenaje 3 días más](img/32-expediente-recalculos.png)
+
+## Fechas reales y periodo de los servicios por tiempo
+
+Cristina (26/10/2026): ATA y recogida real con fecha y hora, y el sistema calcula las fechas. Al guardar una fecha real
+del expediente, los servicios por tiempo (ALM, DEM, OCU) toman su **periodo real** y el coste previsto se recalcula
+solo (motivo «Cambio de fechas del expediente» en **Recálculos de coste** y un evento en **Eventos**):
+
+| Sentido | Inicio del periodo | Fin del periodo |
+|---|---|---|
+| Importación | **NOA** si está; si no, **ATA** | **Recogida real** |
+| Exportación | **FOH** | **ATD** |
+
+Los días o periodos de 24 h los cuenta el motor con las horas exactas. Si una persona escribe el periodo en la línea
+del servicio, se marca **Periodo escrito a mano** y las fechas del expediente ya no lo cambian; desmarcarlo vuelve a
+seguir las fechas. La venta aceptada no cambia.
+
+## Aerolínea y handler (aéreo)
+
+**Expedientes → Aerolíneas y handlers** dice qué handler atiende a cada aerolínea en cada aeropuerto (cargada de la
+configuración de Odoo 17 el 26/10/2026: MAD, BCN, VLC, AGP, BIO; la mantienen compras y el jefe de ventas). En un
+expediente aéreo:
+
+- con **un** handler conocido para la aerolínea y el aeropuerto, el campo **Handler** se rellena solo;
+- con **varios** (por ejemplo, una aerolínea servida por WFS o por Iberia en Madrid), no se elige por usted: el campo
+  solo ofrece esos handlers;
+- sin ninguno registrado, se elige libremente entre los contactos con rol «Handling aéreo / terminal»;
+- al cambiar de aerolínea o aeropuerto, el handler anterior se sustituye por el nuevo si solo hay uno.
+
+HAN, ALM, AWB, ETX y X-R se compran al handler: en la oferta, la línea toma el handler como proveedor cuando es único
+(solo su tarifa la valora); en el expediente, los servicios aún no pedidos pasan al handler elegido y su coste se
+recalcula (motivo «Cambio de handler»).
+
+## Previsión de costes
+
+**Expedientes → Previsión de costes** (también vista pivote y gráfico en **Servicios a comprar**) suma el coste previsto
+de los servicios a comprar de los expedientes abiertos, por proveedor y estado (sin proveedor, por pedir, solicitud,
+factura sin pedido esperada…). Se agrupa también por servicio, expediente o cliente. Es lo que el sistema prevé pagar,
+antes y después de los pedidos y las facturas.
 
 ## Una oferta, varios expedientes
 

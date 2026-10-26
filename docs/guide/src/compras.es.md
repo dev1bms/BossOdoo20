@@ -41,12 +41,16 @@ factura lo prestado: los servicios BOSS tienen el control «cantidades recibidas
 
 ## Factura de proveedor
 
-Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica. Antes de contabilizarla, cada línea de servicio BOSS
+Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica, solo cuando hay algún servicio
+**marcado como prestado** (si no, el sistema lo dice en vez de crear una factura de ceros). Odoo copia todas las líneas
+del pedido: las no prestadas van con cantidad 0 y no cuentan. Antes de contabilizarla, cada línea de servicio BOSS
 necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
 
 **Orden de trabajo** (propuesta aprobada por Belal el 23/10/2026, P30; pendiente de ratificación por Ángel y Cristina): la factura de proveedor se **contabiliza a tiempo**; su **pago**
 espera a que el servicio esté en una factura de cliente **contabilizada**. Mientras tanto la factura de proveedor muestra
-un aviso amarillo («Antes de contabilizar o pagar») y el expediente lo lista; registrar el pago se bloquea. Ajuste:
+un aviso amarillo («Antes de contabilizar o pagar») y el expediente lo lista; registrar el pago se bloquea, tanto desde
+el botón de la factura como desde el asistente de pagos de una lista o un extracto. Las líneas de cantidad 0 no
+retienen el pago. Ajuste:
 **Ajustes › Ventas › Factura de proveedor antes de la de cliente** = «Bloquear el pago (contabilizar permitido)». Sin
 aviso: coste cubierto por el precio o que asume BOSS; **Pagado por adelantado** (flete pagado a un agente: basta la
 línea de venta).
@@ -60,6 +64,11 @@ Los importes pagados en nombre del cliente (ARA, IVA, PLA del DUA) no se piden c
 de aduanas los paga y los factura al coste. El servicio queda **Facturado sin pedido de compra**, con el agente de
 aduanas del expediente como proveedor y el estado «Factura sin pedido esperada». Su factura se registra con
 [[Coste sin pedido de compra]] y se casa con el servicio por producto y cuenta analítica (sin contarse dos veces).
+
+Cuentas (como en Odoo 17, aplicadas el 26/10/2026; Ángel las ratifica): subcuentas de **419** de pasivo corriente, una
+para lo repercutido al cliente y otra para lo soportado del agente: IVA 419001 / 419003, aranceles (ARA) 419002 /
+419004, antidumping (DUM) 419005, impuesto del plástico (PLA) 419006 / 419007. La factura al cliente del suplido va
+exenta (no sujeto).
 
 ## Pedidos parciales, cancelados y cambio de proveedor
 

@@ -104,8 +104,10 @@ Pasos:
 
 1. **Oferta**: indicar peso cargable, aeropuerto y días estimados; ALM muestra la estimación y sus supuestos.
 2. **Aceptar**: se guarda la foto de la oferta (coste, venta y días) y se abre el expediente con la necesidad de compra.
-3. **Expediente**, pestaña «Servicios y costes»: en la línea ALM escribir **Inicio del periodo** (NOA o FOH) y **Fin del
-   periodo** (retirada o ETD) y pulsar **Recalcular coste previsto**. Cambian el coste previsto y los días; la venta
+3. **Expediente**: al poner NOA (o ATA) y la recogida real con hora (exportación: FOH y ATD), el periodo de la línea ALM
+   se rellena y el coste se recalcula solo (ver «Fechas reales» en Expediente). También se puede escribir en la línea
+   ALM (pestaña «Servicios y costes») el **Inicio del periodo** y el **Fin del periodo** y pulsar **Recalcular coste
+   previsto**; entonces queda como «Periodo escrito a mano». Cambian el coste previsto y los días; la venta
    aceptada no; el cambio queda en «Recálculos de coste». Si las lecturas sin decidir dan importes distintos, el coste
    previsto no cambia y el recálculo muestra todos los importes: escribir el «Coste unitario previsto» a mano.
 4. **Compra**: «Crear solicitudes de presupuesto» crea una sola línea ALM por expediente (1 × total) al proveedor; si

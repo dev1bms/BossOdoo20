@@ -105,8 +105,10 @@ Steps:
 
 1. **Quotation**: enter the chargeable weight, airport and estimated days; ALM shows the estimate and its assumptions.
 2. **Accept**: the quotation snapshot (cost, sale and days) is kept and the file opens with the purchase need.
-3. **File**, «Services and costs» tab: on the ALM line type the **Period start** (NOA or FOH) and the **Period end**
-   (pickup or ETD) and click **Recompute expected cost**. The expected cost and the days change; the accepted sale does
+3. **File**: when NOA (or ATA) and the actual pickup are entered with their time (export: FOH and ATD), the period of
+   the ALM line fills in and the cost is recomputed by itself (see «Actual dates» in File). The **Period start** and
+   **Period end** can also be typed on the ALM line («Services and costs» tab) followed by **Recompute expected
+   cost**; it is then flagged «Period set by hand». The expected cost and the days change; the accepted sale does
    not; the change is kept in «Cost recalculations». When the readings not decided give different amounts, the expected
    cost does not change and the recalculation shows every amount: type the «Expected unit cost» by hand.
 4. **Purchase**: «Create RFQs» creates one ALM line per file (1 × total) to the supplier; while the RFQ is a draft the
