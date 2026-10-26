@@ -605,7 +605,7 @@ TASKS = [
     dict(code="TP02", title="Create the quotation templates on boss20: air import FOB (Cofitel), sea FCL import, air "
                             "export; standard vs optional services per case", epic="E6", type=T.DEV, sprint="S44",
          points=3, start=D(2026, 10, 27), due=D(2026, 10, 29), priority=P.CRITICAL, deps=["TP01"], hours=5,
-         who="belal", dept="sys", status=S.IN_PROGRESS, done=None, progress=80,
+         who="belal", dept="sys", status=S.IN_PROGRESS, done=None, progress=90,
          desc="Result: [DEMO] templates on boss20, selectable (no default template for every quotation; no tariff or "
               "accounting setting changed). Done 26/10: «[DEMO] Importación aérea FOB» from the real Cofitel offer "
               "05570 (FAI, HAN, AWB, CSA, FAD, ETX, TTE-CON: 7 of the 8 lines of the offer; the 8th, origin pickup "
@@ -640,12 +640,19 @@ TASKS = [
     dict(code="TP04", title="Demo of the next meeting: Cofitel air import FOB end to end (quotation from template → "
                             "costs → confirm → file → ATA/Pickup → recompute), run by Cristina", epic="E5",
          type=T.TRAINING, sprint="S44", points=2, start=D(2026, 10, 29), due=D(2026, 10, 30), priority=P.CRITICAL,
-         deps=["TP02", "W08", "F01"], hours=3, who="belal", dept="dir", status=None, done=None,
+         deps=["TP02", "W08", "F01"], hours=3, who="belal", dept="dir", status=S.IN_PROGRESS, done=None, progress=60,
          desc=desc("Result: one-page demo script; environment ready BEFORE the meeting (templates, [DEMO] customer or "
                    "Cofitel entered as test customer, users for Cristina and Ángel, WFS tariff approved or [DEMO] "
                    "tariff); Cristina runs the flow herself; what works / what fails recorded; decisions TP03, C02 and "
                    "A02 taken in the meeting.", NOT_COMMITTED),
-         evidence=None, links=[f"{DOC}#/demo-ciclo"]),
+         evidence="Rehearsal on boss20 on 26/10/2026 (dev/tp04_accept_s00024.py): «Confirm» on S00024 as it comes from the "
+                  "template is blocked with the list of lines without sale price (expected); after completing shipment "
+                  "data, a manual freight cost, sale prices and the reason for the three services without tariff, the "
+                  "acceptance opened file E260013 with the 7 services once (none missing, none duplicated); recompute "
+                  "with AWB 500 → 620 kg changed the HAN need and kept the sale unchanged. Defect found and fixed on the "
+                  "way: with «Lock confirmed sales» on, acceptance failed (commit 5c83693, tests 16/16 on the server, "
+                  "deployed). Pending: Cristina runs it herself from the interface in the meeting.",
+         links=[f"{DOC}#/demo-ciclo", f"{SYS}/odoo/action-sale.action_quotations_with_onboarding/24"]),
     # ===================================================================== S45 · 2–8 nov
     dict(code="D02", title="Cargar y enviar a aprobación las tarifas recibidas (lote 1: aduanas, Hapag, Transglory, "
                            "inspecciones, IRENEO 2026) con ejemplos de referencia", epic="E8", type=T.MIGRATION,

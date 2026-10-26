@@ -13,23 +13,25 @@ assert env.cr.dbname in ("boss20", "boss_test", "boss_uat"), env.cr.dbname  # no
 env = env(context=dict(env.context, tracking_disable=True, mail_create_nosubscribe=True))  # noqa: F821
 P, Template = env["product.product"], env["sale.order.template"]
 TEMPLATES = {
-    "[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
+    "[DEMO] IAB FOB · Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
         ["FAI", "HAN", "AWB", "CSA", "FAD", "ETX", "TTE-CON"],
-    "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
+    "[DEMO] IMB FOB · Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
         ["FMI", "THC", "BL", "GLO-CCC", "FAD", "CSM", "TTE-FCL"],
-    "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
+    "[DEMO] EAB · Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
         ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
 }
 NOTE = ("Plantilla de servicios que aplican SIEMPRE en este caso. Los servicios que aplican A VECES (almacenaje ALM, "
         "inspecciones, seguro, caución, quebranto, extras) se añaden en la oferta con «Añadir servicios». Lista "
         "pendiente de confirmación por Cristina (tarea BOSS20-TP03).")
 made = {}
-OLD = {"[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
-       "Importación aérea FOB · servicios estándar (lista de la oferta Cofitel 02/2026; Cristina confirma)",
-       "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
-       "Importación marítima FCL · servicios estándar (propuesta 26/10; Cristina confirma)",
-       "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
-       "Exportación aérea · servicios estándar (propuesta 26/10; Cristina confirma)"}
+OLD = {
+    "[DEMO] IAB FOB · Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
+        "[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)",
+    "[DEMO] IMB FOB · Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
+        "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)",
+    "[DEMO] EAB · Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
+        "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)",
+}
 for new_name, old_name in OLD.items():
     Template.search([("name", "=", old_name)]).write({"name": new_name})
 env["sale.order"].search([("origin", "=", "[DEMO] Plantilla importación aérea FOB (26/10)")]).write({"origin": "[DEMO] Caso Cofitel — Importación aérea"})
@@ -47,7 +49,7 @@ for name, codes in TEMPLATES.items():
 
 # [DEMO] draft quotation from the air import template (DEMO customer, DEMO tariffs); never sent or confirmed
 customer = env["res.partner"].search([("name", "=", "[DEMO] Cliente UE Ejemplo GmbH")], limit=1)
-air = made[next(n for n in TEMPLATES if n.startswith("[DEMO] Importación aérea"))]
+air = made[next(n for n in TEMPLATES if n.startswith("[DEMO] IAB"))]
 origin = "[DEMO] Caso Cofitel — Importación aérea"
 order = env["sale.order"].search([("origin", "=", origin)], limit=1)
 if customer and not order:
