@@ -28,10 +28,11 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
   Source strings in English, translations in `i18n/es.po`. No new Arabic content (existing `ar.po` left as is).
 - Business-owner docs and the user guide in Spanish and English.
 - Commits: Conventional Commits, no `Co-Authored-By` trailer.
-- Tests at the strict minimum that protects the work. **Never run Odoo, Docker or test suites on the local machine**
-  (Belal, 26/10/2026: slow machine). Review the code (reading, `python -m py_compile`), commit, push to GitHub, deploy
-  to boss20 with `dev/deploy.sh` and test there: boss20 is the testing server. Engine unit tests (`python -m unittest`,
-  pure Python, seconds) are the only local run allowed.
+- Tests at the strict minimum that protects the work. **No test of any kind runs on the local machine** (Belal,
+  26/10/2026, confirmed 26/10 evening: no Odoo, Docker, databases, builds or test suites, the engine unit tests
+  included). Locally: read, edit, `python -m py_compile`, Git and Chrome only. Commit, push to GitHub, then run the tests
+  on the server: `dev/server_test.sh <modules>` (throw-away DB `boss20_test_*`, engine tests included), deploy with
+  `dev/deploy.sh`, persistent UAT copy `boss20_uat` (`dev/server_uat.sh`) for posting and payments.
 
 ## Interface
 - UI decisions (Odoo-standard patterns, units next to amounts, badges, widths, icon names): `.interface-design/system.md`.
@@ -39,6 +40,10 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
   commits listed in `.interface-design/system.md`.
 
 ## Commands
-- Engine tests (local, pure Python): `python -m unittest discover -s addons/boss_pricing/engine/tests -t addons/boss_pricing`
-- Deploy: `dev/deploy.sh update <modules>` (ships committed files, upgrades with the web stopped). Odoo tests run on the
-  server after deploying, never locally (`dev/test.sh` and `dev/uat.sh` are kept for reference only).
+- Tests (server only): `dev/server_test.sh boss_expediente` (Odoo tests, throw-away DB); engine tests run on the server
+  with `dev/server_test.sh --engine`. Never `python -m unittest`, `dev/test.sh` or `dev/uat.sh` locally (kept for
+  reference only).
+- Deploy: `dev/deploy.sh update <modules>` (ships committed files, upgrades with the web stopped), then
+  `dev/server_uat.sh update <modules>`.
+- UAT checks with evidence: `dev/uat_run.sh <script>` (runs on boss20_uat, saves the output with the tested commit in
+  `docs/evidencias/`).

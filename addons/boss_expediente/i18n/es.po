@@ -3038,3 +3038,89 @@ msgstr "Cambio de handler"
 #: code:addons/boss_expediente/models/purchase_order.py:0
 msgid "%s: no service of this order is marked as performed yet, there is nothing to bill. Mark the performed services on the file first."
 msgstr "%s: ningún servicio de este pedido está marcado como realizado, no hay nada que facturar. Marque primero los servicios realizados en el expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__discharge_date
+msgid "Vessel discharge"
+msgstr "Descarga del buque"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__discharge_date
+msgid "Sea: discharge of the vessel. Start of the carrier periods that count from it (Hapag-Lloyd demurrage and detention «DIFU»)."
+msgstr "Marítimo: descarga del buque. Inicio de los periodos de naviera que cuentan desde ella (demoras y detention de Hapag-Lloyd «DIFU»)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__empty_out_date
+msgid "Empty pickup"
+msgstr "Retirada del vacío"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_container__empty_out_date
+msgid "Export: empty container picked up (start of the detention)."
+msgstr "Exportación: contenedor vacío retirado (inicio de la detention)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__gate_in_date
+msgid "Full in terminal"
+msgstr "Entrada del lleno en terminal"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_container__gate_in_date
+msgid "Export: full container delivered to the port terminal."
+msgstr "Exportación: contenedor lleno entregado en la terminal del puerto."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_container__pickup_date
+msgid "Import: full container out of the terminal."
+msgstr "Importación: salida del contenedor lleno de la terminal."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_container__return_date
+msgid "Import: empty container returned to the carrier."
+msgstr "Importación: contenedor vacío devuelto a la naviera."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__period_rule
+msgid "Period from"
+msgstr "Periodo según"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__period_rule
+msgid "Events of the file that open and close the period of this service: those of its supplier price, else the default of the service for the direction."
+msgstr "Hechos del expediente que abren y cierran el periodo de este servicio: los de su precio de proveedor o, si no tiene, los de defecto del servicio para el sentido."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "Typed by hand"
+msgstr "Escrito a mano"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "No rule: typed by hand"
+msgstr "Sin regla: se escribe a mano"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "supplier price"
+msgstr "precio de proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "default of the service"
+msgstr "defecto del servicio"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_cost.py:0
+msgid "Per container: %s"
+msgstr "Por contenedor: %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Period from the file dates: %s"
+msgstr "Periodo según las fechas del expediente: %s"

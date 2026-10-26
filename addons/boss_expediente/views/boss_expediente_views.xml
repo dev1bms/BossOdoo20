@@ -174,6 +174,7 @@
                                     <field name="period_end" optional="show" invisible="cost_method != 'time'"
                                            width="98px"/>
                                     <field name="period_manual" optional="hide"/>
+                                    <field name="period_rule" optional="hide" invisible="cost_method != 'time'"/>
                                     <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
                                     <field name="uom_id" string="Unit" readonly="purchase_line_ids" options="{'no_create': True}"/>
                                     <field name="currency_id" readonly="purchase_line_ids" optional="hide"
@@ -259,6 +260,8 @@
                                     <field name="number"/>
                                     <field name="seal"/>
                                     <field name="gross_kg" optional="show"/>
+                                    <field name="empty_out_date" optional="hide"/>
+                                    <field name="gate_in_date" optional="hide"/>
                                     <field name="pickup_date" optional="show"/>
                                     <field name="return_date" optional="show"/>
                                 </list>
@@ -282,6 +285,7 @@
                                     <field name="foh" invisible="direction != 'export'"/>
                                     <field name="eta"/>
                                     <field name="ata" invisible="direction == 'export'"/>
+                                    <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"/>
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
                                     <field name="pickup_date" invisible="direction == 'export'"/>
                                     <field name="delivery_date"/>

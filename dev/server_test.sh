@@ -4,9 +4,16 @@
 #   dev/server_test.sh boss_pricing,boss_pricing_sale,boss_expediente
 # The committed HEAD of addons/ goes to a temporary folder; a throw-away database boss20_test_<time> is created,
 # tested and dropped. The boss20 database, its addons folder and the running web are never touched.
+#   dev/server_test.sh --engine                   pure-Python engine tests of boss_pricing (never run locally either)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 MODULES="${1:?modules}"
+if [ "$MODULES" = "--engine" ]; then
+  git archive --format=tar HEAD addons/boss_pricing | ssh -o BatchMode=yes -o ConnectTimeout=15 boss@100.87.98.15     'set -e; D=$(mktemp -d ~/tmp/boss-engine-XXXX); tar -x -C $D --strip-components=1; chmod -R a+rX $D;
+     cd ~/BossOdoo20 && docker compose run --rm -T -v $D:/mnt/engine:ro --entrypoint python3 odoo        -m unittest discover -s /mnt/engine/boss_pricing/engine/tests -t /mnt/engine/boss_pricing 2>&1 | tail -4;
+     rm -rf $D'
+  exit 0
+fi
 TAGS=$(echo "$MODULES" | sed 's/[^,]*/\/&/g')
 HOST=boss@100.87.98.15
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"

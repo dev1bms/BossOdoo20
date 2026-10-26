@@ -194,6 +194,8 @@
                         <field name="free_mode"/>
                     </group>
                     <group>
+                        <field name="period_start_event"/>
+                        <field name="period_end_event"/>
                         <field name="tier_mode"/>
                         <field name="friday_monday_free"/>
                         <field name="saturday_until_monday"/>

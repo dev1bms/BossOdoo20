@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, time
 
 from markupsafe import Markup
 from psycopg2 import errors as pg_errors
@@ -13,6 +14,26 @@ from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, 
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
+
+FILE_EVENT_FIELDS = {"ata": "ata", "discharge": "discharge_date", "noa": "noa", "foh": "foh", "departure": "atd",
+                     "pickup": "pickup_date", "delivery": "delivery_date"}
+CONTAINER_EVENT_FIELDS = {"container_empty_out": "empty_out_date", "container_gate_in": "gate_in_date",
+                          "container_full_out": "pickup_date", "container_empty_return": "return_date"}
+# Period of a time-based service when its supplier price states no events (or it has no supplier price yet).
+# Sources: Cristina e-mail 25/09/2026 (ALM: air import NOA -> pickup, air export delivery -> ETD; BossOdoo19
+# DECISIONS.md:139) and the MSC local charges of 01/09/2026 (demurrage p.18 «llegada buque hasta devolución del vacío»,
+# occupancy p.17 «llegada buque hasta fecha entrega», export p.9-10 «entrada lleno», detention «salida vacío ->
+# entrada lleno»). Export storage ends at the ACTUAL departure (Cristina says ETD: the actual one is used once known,
+# the estimate of days until then). DET is only an export charge in the MSC documents (import: inside DEM, Hapag).
+DEFAULT_PERIOD_EVENTS = {
+    ("ALM", "import"): ("noa_or_ata", "pickup"),
+    ("ALM", "export"): ("foh", "departure"),
+    ("DEM", "import"): ("ata", "container_empty_return"),
+    ("DEM", "export"): ("container_gate_in", "departure"),
+    ("OCU", "import"): ("ata", "container_full_out"),
+    ("OCU", "export"): ("container_gate_in", "departure"),
+    ("DET", "export"): ("container_empty_out", "container_gate_in"),
+}
 
 STATES = [
     ("open", "Open"),
@@ -154,6 +175,9 @@ class BossExpediente(models.Model):
                                "instead of the ATA (WFS counts from the NOA).")
     foh = fields.Datetime("FOH (goods in the terminal)", tracking=True,
                           help="Export: freight on hand at the handler or terminal. Start of the export storage.")
+    discharge_date = fields.Datetime("Vessel discharge", tracking=True,
+                                     help="Sea: discharge of the vessel. Start of the carrier periods that count from "
+                                          "it (Hapag-Lloyd demurrage and detention «DIFU»).")
     pickup_date = fields.Datetime("Pickup (actual)", tracking=True)
     delivery_date = fields.Datetime("Delivery (actual)", tracking=True)
     event_ids = fields.One2many("boss.expediente.event", "expediente_id", "Events", copy=False)
@@ -384,17 +408,21 @@ class BossExpediente(models.Model):
             lambda n: n.product_id.default_code in HANDLER_SERVICE_CODES
             and not n.purchase_line_ids and n.state not in ("closed", "billed", "performed"))
 
-    # Actual period of the time-based services, from the file's dates (Cristina, 26/10/2026)
-    PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date")
+    # Actual period of the time-based services, from the file's and containers' dates (Cristina 26/10/2026: ATA and
+    # pickup with date and time, the system computes the dates). Each service follows the events of the supplier price
+    # that prices it (PERIOD_EVENTS on the tariff line, as the supplier document states them), else its default below.
+    PERIOD_FIELDS = ("ata", "noa", "foh", "atd", "pickup_date", "delivery_date", "discharge_date")
 
-    def _boss_period_bounds(self):
-        """(start, end) of the actual period of a time-based service of this file, from its dates. Import: arrival
-        (NOA when the handler counts from it, else ATA) → pickup. Export: goods in the terminal (FOH) → actual
-        departure. None while a bound is not known: the service keeps its estimate of days."""
+    def _boss_event_date(self, event, container=None):
+        """Datetime (UTC) of an event of this file, or of one of its containers for the per-container events.
+        Container dates are days: taken at noon UTC so that the calendar day is the same in every Spanish time zone."""
         self.ensure_one()
-        if self.direction == "export":
-            return self.foh, self.atd
-        return self.noa or self.ata, self.pickup_date
+        if event.startswith("container_"):
+            day = container and container[CONTAINER_EVENT_FIELDS[event]]
+            return day and datetime.combine(day, time(12, 0))
+        if event == "noa_or_ata":
+            return self.noa or self.ata
+        return self[FILE_EVENT_FIELDS[event]] or None
 
     def write(self, vals):
         res = super().write(vals)
@@ -409,22 +437,24 @@ class BossExpediente(models.Model):
         return res
 
     def _boss_apply_dates(self):
-        """The time-based services whose period is not set by hand follow the file's dates; a milestone records
-        it and the expected cost is recomputed (the sale never changes)."""
+        """The time-based services whose period is not set by hand follow the file's dates, each with the events of
+        its own supplier price; a milestone records it and the expected cost is recomputed (the sale never changes)."""
+        fmt = lambda file, d: fields.Datetime.context_timestamp(file, d).strftime("%d/%m/%Y %H:%M") if d else "—"  # noqa: E731
         for file in self:
-            start, end = file._boss_period_bounds()
-            needs = file.cost_ids.filtered(
-                lambda n: n.product_id.boss_cost_method == "time" and not n.period_manual and not n.closed
-                and (n.period_start != start or n.period_end != end))
-            if not needs:
+            changed = []
+            for need in file.cost_ids.filtered(lambda n: n.product_id.boss_cost_method == "time" and not n.period_manual
+                                               and not n.closed):
+                start, end = need._boss_period_bounds()
+                if (need.period_start, need.period_end) != (start, end):
+                    need.with_context(boss_period_from_file=True).write({"period_start": start, "period_end": end})
+                    changed.append(need)
+            if not changed:
                 continue
-            needs.with_context(boss_period_from_file=True).write({"period_start": start, "period_end": end})
-            fmt = lambda d: fields.Datetime.context_timestamp(file, d).strftime("%d/%m/%Y %H:%M") if d else "—"  # noqa: E731
             file.event_ids.create({
                 "expediente_id": file.id, "kind": "milestone",
-                "name": self.env._("Period of %(services)s from the file dates: %(start)s → %(end)s",
-                                   services=", ".join(needs.mapped("product_id.default_code")),
-                                   start=fmt(start), end=fmt(end))})
+                "name": self.env._("Period from the file dates: %s", "; ".join(
+                    f"{n.product_id.default_code} {fmt(file, n.period_start)} → {fmt(file, n.period_end)}"
+                    for n in changed))})
             file.with_context(boss_reason=self.env._("File dates changed")).action_recompute_costs()
 
     def action_recompute_costs(self):
@@ -831,8 +861,25 @@ class BossExpedienteContainer(models.Model):
     number = fields.Char("Container number")
     seal = fields.Char()
     gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2))
-    pickup_date = fields.Date("Full pickup")
-    return_date = fields.Date("Empty return")
+    empty_out_date = fields.Date("Empty pickup", help="Export: empty container picked up (start of the detention).")
+    gate_in_date = fields.Date("Full in terminal", help="Export: full container delivered to the port terminal.")
+    pickup_date = fields.Date("Full pickup", help="Import: full container out of the terminal.")
+    return_date = fields.Date("Empty return", help="Import: empty container returned to the carrier.")
+
+    DATE_FIELDS = ("empty_out_date", "gate_in_date", "pickup_date", "return_date")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        containers = super().create(vals_list)
+        dated = containers.filtered(lambda c: any(c[f] for f in self.DATE_FIELDS))
+        dated.expediente_id._boss_apply_dates()
+        return containers
+
+    def write(self, vals):
+        res = super().write(vals)
+        if any(f in vals for f in self.DATE_FIELDS):
+            self.expediente_id._boss_apply_dates()
+        return res
 
 
 class BossExpedienteEvent(models.Model):

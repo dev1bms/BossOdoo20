@@ -422,3 +422,48 @@ class TestFileFollowUp(CycleCommon):
             self.assertEqual(form.handler_id, wfs)  # LH at MAD: two handlers, the previous one (WFS) is among them
             form.port_id = bcn
             self.assertEqual(form.handler_id, iberia)  # LH at BCN: only Iberia
+
+    def test_each_time_service_follows_its_own_period_events(self):
+        """Each time-based service takes its period from the events of ITS supplier price (MSC occupancy: vessel
+        arrival -> full container out, p.17) or, without them, from the default of the service (demurrage: arrival ->
+        empty container returned, MSC p.18; storage: NOA or ATA -> pickup, Cristina 25/09). Containers with different
+        dates are priced one by one. A period typed by hand is kept."""
+        ref = self.env.ref
+        dem = ref("boss_services.service_dem").product_variant_id
+        ocu = ref("boss_services.service_ocu").product_variant_id
+        time_line = {"method": "time", "basis": "containers", "free_mode": "deduct", "period_unit": "calendar"}
+        self._tariff(self.carrier, dem, dict(time_line, free_days=7, bracket_ids=[
+            Command.create({"up_to": 0, "unit_price": 30.0})]), carrier_id=self.carrier.id)
+        self._tariff(self.carrier, ocu, dict(time_line, free_days=4, period_start_event="ata",
+                                             period_end_event="container_full_out",
+                                             bracket_ids=[Command.create({"up_to": 0, "unit_price": 20.0})]),
+                     carrier_id=self.carrier.id)
+        order, file = self._accepted(
+            self.alm | dem | ocu, {self.alm: 120.0, dem: 200.0, ocu: 100.0}, boss_storage_days=5,
+            boss_container_ids=[Command.create({"size": "40", "container_type_id": self.hc.id, "quantity": 2})])
+        alm, dem_need, ocu_need = (self._need(file, p) for p in (self.alm, dem, ocu))
+        self.assertEqual(len(file.container_ids), 2)
+        self.assertIn("ATA", dem_need.period_rule)
+        file.write({"ata": datetime(2026, 11, 2, 8, 0), "pickup_date": datetime(2026, 11, 10, 10, 0)})
+        (alm | dem_need | ocu_need).invalidate_recordset()
+        self.assertEqual(alm.period_start, datetime(2026, 11, 2, 8, 0))  # storage: ATA -> pickup
+        self.assertEqual(alm.expected_amount, 175.0)  # 9 calendar days - 2 free = 7 x 25
+        self.assertFalse(dem_need.period_end)  # waits for the containers' dates
+        first, second = file.container_ids
+        first.write({"pickup_date": date(2026, 11, 5), "return_date": date(2026, 11, 12)})
+        second.write({"pickup_date": date(2026, 11, 7), "return_date": date(2026, 11, 20)})
+        (dem_need | ocu_need).invalidate_recordset()
+        # occupancy (its supplier price): 2/11 -> 5/11 = 4 days, all free; 2/11 -> 7/11 = 6 days - 4 = 2 x 20
+        self.assertEqual(ocu_need.period_end, datetime(2026, 11, 7, 12, 0))
+        self.assertEqual(ocu_need.expected_amount, 40.0)
+        # demurrage (default): 2/11 -> 12/11 = 11 days - 7 = 4 x 30; 2/11 -> 20/11 = 19 days - 7 = 12 x 30
+        self.assertEqual(dem_need.period_end, datetime(2026, 11, 20, 12, 0))
+        self.assertEqual(dem_need.expected_amount, 480.0)
+        self.assertIn("Per container", dem_need.revision_ids.sorted("id")[-1:].explanation)
+        self.assertEqual(self._line(order, dem).price_unit, 200.0)  # the sale never changes
+        # typed by hand: kept when the containers change
+        dem_need.period_end = datetime(2026, 11, 14, 12, 0)
+        second.return_date = date(2026, 11, 25)
+        dem_need.invalidate_recordset()
+        self.assertTrue(dem_need.period_manual)
+        self.assertEqual(dem_need.period_end, datetime(2026, 11, 14, 12, 0))

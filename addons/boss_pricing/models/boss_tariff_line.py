@@ -24,6 +24,22 @@ BASES = [
     ("pallets", "Pallets"),
     ("km", "Kilometres"),
 ]
+# Events that open and close the chargeable period of a time-based price, as the supplier document states them (Odoo 19
+# kept them per tariff line too, decision B09: they belong to each supplier price, import and export never mirrored).
+PERIOD_EVENTS = [
+    ("ata", "Arrival of the vessel or flight (ATA)"),
+    ("discharge", "Discharge of the vessel"),
+    ("noa", "Arrival notice of the handler (NOA)"),
+    ("noa_or_ata", "NOA, or ATA when there is no NOA"),
+    ("foh", "Goods delivered to the handler or terminal (FOH)"),
+    ("departure", "Actual departure (ATD)"),
+    ("pickup", "Pickup of the shipment (port, airport, handler)"),
+    ("delivery", "Delivery to the consignee / out of the warehouse"),
+    ("container_empty_out", "Empty container picked up (each container)"),
+    ("container_gate_in", "Full container in the port terminal (each container)"),
+    ("container_full_out", "Full container out of the terminal (each container)"),
+    ("container_empty_return", "Empty container returned (each container)"),
+]
 PERCENT_BASES = [
     ("goods_value", "Goods value"),
     ("duties_amount", "Customs duties of the declaration"),
@@ -104,6 +120,15 @@ class BossTariffLine(models.Model):
     saturday_until_monday = fields.Boolean(
         help="Free until the following Monday included when the period starts on a Saturday, whatever the hours. "
         "It needs the actual exit date: never assumed in an estimate.")
+    period_start_event = fields.Selection(
+        PERIOD_EVENTS, "Period starts at",
+        help="Event of the shipment file that opens the chargeable period, as the supplier document says (e.g. WFS "
+        "«desde el NOA», MSC demurrage «fecha llegada buque»). Empty: the default of the service for the direction.")
+    period_end_event = fields.Selection(
+        PERIOD_EVENTS, "Period ends at",
+        help="Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del "
+        "vacío»). Events of each container price each container with its own dates. Empty: the default of the "
+        "service for the direction.")
     min_amount = fields.Float("Minimum", min_display_digits="Product Price",
                               help="Minimum of the line total (all units of this charge together).")
     min_per_day = fields.Boolean(

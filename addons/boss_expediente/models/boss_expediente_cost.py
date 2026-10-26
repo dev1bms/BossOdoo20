@@ -1,3 +1,5 @@
+from dataclasses import replace as dataclass_replace
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare
@@ -6,7 +8,7 @@ from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 from odoo.addons.boss_pricing_sale.models.sale_order_line import COST_KINDS
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
-from .boss_expediente import COST_GROUPS, account_share
+from .boss_expediente import COST_GROUPS, DEFAULT_PERIOD_EVENTS, account_share
 
 NEED_STATES = [
     ("no_supplier", "Supplier missing"),
@@ -104,6 +106,9 @@ class BossExpedienteCost(models.Model):
         "Period end", copy=False,
         help="Actual end. Airport storage: import pickup of the goods, export ETD (Cristina 25/09). With the start, "
         "'Recompute expected cost' prices the actual period: exact hours, weekdays and the supplier's exceptions.")
+    period_rule = fields.Char("Period from", compute="_compute_period_rule",
+                              help="Events of the file that open and close the period of this service: those of its "
+                                   "supplier price, else the default of the service for the direction.")
     period_manual = fields.Boolean(
         "Period set by hand", copy=False,
         help="The period was typed on this service: the file dates (ATA, NOA, FOH, pickup, departure) no longer "
@@ -372,6 +377,64 @@ class BossExpedienteCost(models.Model):
             revisions |= need._boss_apply(res, quantity, inputs, reason)
         return revisions
 
+    @api.depends("tariff_line_id.period_start_event", "tariff_line_id.period_end_event", "product_id",
+                 "expediente_id.direction", "period_manual")
+    def _compute_period_rule(self):
+        labels = dict(self.env["boss.tariff.line"]._fields["period_start_event"]._description_selection(self.env))
+        for need in self:
+            start, end, source = need._boss_period_events() if need.product_id.boss_cost_method == "time" else (
+                False, False, False)
+            if need.period_manual:
+                need.period_rule = self.env._("Typed by hand")
+            elif not start:
+                need.period_rule = self.env._("No rule: typed by hand")
+            else:
+                need.period_rule = "%s → %s (%s)" % (labels[start], labels[end], self.env._("supplier price")
+                                                     if source == "tariff" else self.env._("default of the service"))
+
+    def _boss_period_events(self):
+        """(start event, end event, source) of the period of this time-based service: the events of the supplier
+        price that prices it, else the default of the service for the file's direction."""
+        self.ensure_one()
+        line = self.tariff_line_id
+        if line.period_start_event and line.period_end_event:
+            return line.period_start_event, line.period_end_event, "tariff"
+        start, end = DEFAULT_PERIOD_EVENTS.get((self.product_id.default_code, self.expediente_id.direction),
+                                               (False, False))
+        return start, end, "default" if start else False
+
+    def _boss_containers(self):
+        """Containers of the file this service is for (its container size and type; all when the line has none)."""
+        self.ensure_one()
+        line = self.sale_line_id or self.rebill_line_id
+        size, ctype = line.boss_container_size, line.boss_container_type_id
+        return self.expediente_id.container_ids.filtered(
+            lambda c: (not size or c.size == size) and (not ctype or c.container_type_id == ctype))
+
+    def _boss_container_periods(self):
+        """[(container, start, end)] when the events are per container, else []."""
+        start_event, end_event, _source = self._boss_period_events()
+        if not start_event or not (start_event.startswith("container_") or end_event.startswith("container_")):
+            return []
+        file = self.expediente_id
+        return [(c, file._boss_event_date(start_event, c), file._boss_event_date(end_event, c))
+                for c in self._boss_containers()]
+
+    def _boss_period_bounds(self):
+        """Actual period of this service from the file dates: (start, end), None while a bound is not known. With
+        per-container events: the first start and the last end, once every container has both."""
+        self.ensure_one()
+        start_event, end_event, _source = self._boss_period_events()
+        if not start_event:
+            return None, None
+        periods = self._boss_container_periods()
+        if periods:
+            if all(s and e for _c, s, e in periods):
+                return min(s for _c, s, _e in periods), max(e for _c, _s, e in periods)
+            return None, None
+        file = self.expediente_id
+        return file._boss_event_date(start_event), file._boss_event_date(end_event)
+
     def _boss_price_now(self, related_costs=None):
         self.ensure_one()
         file = self.expediente_id
@@ -382,14 +445,38 @@ class BossExpedienteCost(models.Model):
             quantity = self.quantity  # entered by a person (declarations, AWB...)
         inputs = dict(file._boss_inputs(), line_qty=quantity, container_size=size or None,
                       container_type_id=ctype.id or None, supplier_id=self.partner_id.id or None)
+        Pricing = self.env["boss.pricing"]
         if self.product_id.boss_cost_method == "time":
             inputs["storage_days"] = self.days  # estimate while the period has not ended
-            inputs.update(self.env["boss.pricing"]._warehouse_period(self.period_start, self.period_end, file.port_id))
+            periods = [] if self.period_manual else self._boss_container_periods()
+            if periods and all(s and e for _c, s, e in periods) and len({(s, e) for _c, s, e in periods}) > 1:
+                return self._boss_price_per_container(periods, quantity, inputs)
+            inputs.update(Pricing._warehouse_period(self.period_start, self.period_end, file.port_id))
         if related_costs is not None:
             inputs["related_costs"] = related_costs
-        res = self.env["boss.pricing"].price_cost(self.product_id, self.uom_id, inputs, file._boss_pricing_date(),
-                                                  file.company_id)
+        res = Pricing.price_cost(self.product_id, self.uom_id, inputs, file._boss_pricing_date(), file.company_id)
         return res, quantity, inputs
+
+    def _boss_price_per_container(self, periods, quantity, inputs):
+        """Containers with different dates: each one priced on its own period (MSC demurrage runs until each empty
+        container is returned), the cost of the service is the sum."""
+        file = self.expediente_id
+        Pricing = self.env["boss.pricing"]
+        fmt = lambda d: fields.Datetime.context_timestamp(file, d).strftime("%d/%m/%Y")  # noqa: E731
+        total, results, rows = 0.0, [], []
+        for container, start, end in periods:
+            one = dict(inputs, line_qty=1, containers=[{"size": container.size, "type_id": container.container_type_id.id,
+                                                        "quantity": 1}],
+                       **Pricing._warehouse_period(start, end, file.port_id))
+            res = Pricing.price_cost(self.product_id, self.uom_id, one, file._boss_pricing_date(), file.company_id)
+            if res.status != "ok":
+                return res, quantity, one
+            total += res.amount
+            results.append(res)
+            rows.append(f"{container.number or container.size + chr(39)} {fmt(start)} → {fmt(end)}: {res.amount:.2f}")
+        longest = max(results, key=lambda r: dict(r.steps or []).get("time", {}).get("days", 0))
+        inputs = dict(inputs, container_periods=self.env._("Per container: %s", "; ".join(rows)))
+        return dataclass_replace(longest, amount=total), quantity, inputs
 
     def _boss_apply(self, res, quantity, inputs, reason):
         self.ensure_one()
@@ -419,6 +506,8 @@ class BossExpedienteCost(models.Model):
             self._boss_update_draft_rfqs()
         explanation = self.env["boss.pricing"].explain(
             self.product_id, self.uom_id, res.status, res.amount, res.line, res.candidates, res.missing, res.steps)
+        if inputs.get("container_periods"):
+            explanation = f"{explanation}\n{inputs['container_periods']}"
         last = self.revision_ids.sorted(lambda r: (r.date, r.id))[-1:]
         if not changed and last and (last.status, last.explanation) == (status, explanation):
             return self.env["boss.expediente.cost.revision"]  # the same result again: history is not repeated

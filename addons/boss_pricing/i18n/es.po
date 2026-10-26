@@ -2862,3 +2862,95 @@ msgstr "toda la estancia al tramo alcanzado"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "x %(count)s containers = %(amount)s"
 msgstr "x %(count)s contenedores = %(amount)s"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__ata
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__ata
+msgid "Arrival of the vessel or flight (ATA)"
+msgstr "Llegada del buque o vuelo (ATA)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__discharge
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__discharge
+msgid "Discharge of the vessel"
+msgstr "Descarga del buque"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa
+msgid "Arrival notice of the handler (NOA)"
+msgstr "Aviso de llegada del handler (NOA)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa_or_ata
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa_or_ata
+msgid "NOA, or ATA when there is no NOA"
+msgstr "NOA, o ATA si no hay NOA"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__foh
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__foh
+msgid "Goods delivered to the handler or terminal (FOH)"
+msgstr "Mercancía entregada al handler o la terminal (FOH)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__departure
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__departure
+msgid "Actual departure (ATD)"
+msgstr "Salida real (ATD)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__pickup
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__pickup
+msgid "Pickup of the shipment (port, airport, handler)"
+msgstr "Retirada del envío (puerto, aeropuerto, handler)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__delivery
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__delivery
+msgid "Delivery to the consignee / out of the warehouse"
+msgstr "Entrega al destinatario / salida del almacén"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_out
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_out
+msgid "Empty container picked up (each container)"
+msgstr "Retirada del contenedor vacío (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_gate_in
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_gate_in
+msgid "Full container in the port terminal (each container)"
+msgstr "Entrada del contenedor lleno en la terminal (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_full_out
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_full_out
+msgid "Full container out of the terminal (each container)"
+msgstr "Salida del contenedor lleno de la terminal (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_return
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_return
+msgid "Empty container returned (each container)"
+msgstr "Devolución del contenedor vacío (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_start_event
+msgid "Period starts at"
+msgstr "El periodo empieza en"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_end_event
+msgid "Period ends at"
+msgstr "El periodo termina en"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_start_event
+msgid "Event of the shipment file that opens the chargeable period, as the supplier document says (e.g. WFS «desde el NOA», MSC demurrage «fecha llegada buque»). Empty: the default of the service for the direction."
+msgstr "Hecho del expediente que abre el periodo facturable, como dice el documento del proveedor (p. ej. WFS «desde el NOA», demoras MSC «fecha llegada buque»). Vacío: el de defecto del servicio para el sentido."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_end_event
+msgid "Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del vacío»). Events of each container price each container with its own dates. Empty: the default of the service for the direction."
+msgstr "Hecho del expediente que cierra el periodo facturable (p. ej. demoras MSC «devolución del vacío»). Con los hechos de cada contenedor, cada contenedor se valora con sus propias fechas. Vacío: el de defecto del servicio para el sentido."
