@@ -1,0 +1,43 @@
+# Evidence: dev/uat_scenarios.py on boss20_uat
+# Date: 2026-10-26 19:03    
+# Commit tested: da0d0b68a13d (dev: UAT scenarios S1-S7 with explicit checks and fresh records per run; evidence of the end-to-end )
+# Installed on boss20_uat: boss_expediente 20.0.1.6.0 boss_pricing 20.0.1.6.0 boss_pricing_sale 20.0.1.7.0 boss_services 20.0.1.3.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-26 18:03:28,035 1 WARNING boss20_uat odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-26 18:03:28,096 1 WARNING boss20_uat odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+CHECK PASS S1 THC 20' DV: 2 containers x 180: expected (2.0, 180.0, 'ok') got (2.0, 180.0, 'ok')
+CHECK PASS S1 THC 40' HC: 240 (the 300 € line is reefer only): expected (1.0, 240.0) got (1.0, 240.0)
+CHECK PASS S1 BL 60 per file: expected (1.0, 60.0) got (1.0, 60.0)
+CHECK PASS S1 GLO-FUELEU TEU: 2 x 20' = 2 TEU and 1 x 40' = 2 TEU: expected [2.0, 2.0] got [2.0, 2.0]
+CHECK PASS S1 GLO-FUELEU 25 €/TEU from the approved [DEMO] tariff: expected [25.0, 25.0] got [25.0, 25.0]
+CHECK PASS S1 FAD without approved tariff: missing price, cost 0 not taken as free: expected True got True
+CHECK PASS S1 GLO-CCC without approved tariff: missing price, cost 0 not taken as free: expected True got True
+CHECK PASS S1 TTE-FCL without approved tariff: missing price, cost 0 not taken as free: expected True got True
+CHECK PASS S1 FMI freight: manual cost expected: expected True got True
+CHECK PASS S1 CSM done by BOSS: no supplier cost: expected ('ok', 'boss') got ('ok', 'boss')
+CHECK PASS S2 THC-LCL quantity W/M = max(1.8 t, 4.5 m3): expected 4.5 got 4.5
+CHECK PASS S2 THC-LCL, DOC, FAD, SOI: missing price (no LCL tariff): expected True got True
+CHECK PASS S3 HAN quantity = AWB chargeable kg: expected 350.0 got 350.0
+CHECK PASS S3 TTE-CON, HAN, AWB, DEX: no export tariff -> missing: expected True got True
+CHECK PASS S3 CSA by BOSS: expected 'boss' got 'boss'
+CHECK PASS S4 a second approved BL price of the same scope exists (December): expected 'approved' got 'approved'
+CHECK PASS S4 BL: conflict, no cost chosen: expected ('conflict', 0.0) got ('conflict', 0.0)
+CHECK PASS S4 CES and TTE-CON: missing price: expected True got True
+CHECK PASS S4b same quotation in November: only one BL price valid -> 60: expected ('ok', 60.0) got ('ok', 60.0)
+CHECK PASS S5 HAN 500 kg x 0.05 (minimum 20 not reached) = 25: expected 25.0 got 25.0
+CHECK PASS S5 file 620 kg: HAN need 620 kg x 0.05 = 31: expected (620.0, 31.0) got (620.0, 31.0)
+CHECK PASS S5 one revision 25 -> 31: expected [(25.0, 31.0)] got [(25.0, 31.0)]
+CHECK PASS S5 accepted sale unchanged (0.12 €/kg): expected 0.12 got 0.12
+CHECK PASS S6 DEM 12 days: 12 - 7 free = 5 x 30 (first tier) per container: expected (2.0, 150.0) got (2.0, 150.0)
+CHECK PASS S6 THC 40' DV 240: expected 240.0 got 240.0
+CHECK PASS S7 data: Cathay at MAD -> WFS, Qatar at MAD -> Iberia (Odoo 17 HandlingConfig): expected ('WFS', 'Iberia (handling)') got ('WFS', 'Iberia (handling)')
+CHECK PASS S7 quotation: HAN and AWB bought from the only handler of Cathay at MAD: expected [res.partner(19,), res.partner(19,)] got [res.partner(19,), res.partner(19,)]
+CHECK PASS S7 file: handler proposed (WFS): expected res.partner(19,) got res.partner(19,)
+CHECK PASS S7 needs bought from WFS: expected [res.partner(19,), res.partner(19,)] got [res.partner(19,), res.partner(19,)]
+CHECK PASS S7 airline changed to Qatar: only handler offered = Iberia: expected res.partner(21,) got res.partner(21,)
+CHECK PASS S7 needs not ordered follow the new handler: expected [res.partner(21,), res.partner(21,)] got [res.partner(21,), res.partner(21,)]
+RESULT 31 passed, 0 failed | run [UAT] escenarios 20261026-180330 | S00027, S00028, S00029, S00030, S00031, S00032, S00033, S00034 | files E260014, E260015
+# Exit status: 0

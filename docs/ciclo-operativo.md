@@ -210,6 +210,19 @@ expediente (ver registro).
 
 Remoto: https://github.com/dev1bms/BossOdoo20 (privado), `main` al día (último commit del 26/10 por la tarde).
 
-## Punto de reanudación (26/10/2026, tarde)
+## Punto de reanudación (26/10/2026, noche)
 
-Hecho: F01, F02, F03, W09, W10 cerradas con evidencia en la plataforma; Hoja1: 4 requisitos completos (H1-26 pendiente de que Cristina valide la lista), 22 parciales (faltan documentos y aprobaciones), 2 sin decidir (VET, DET). Pendiente de Belal: entrar en boss20_uat desde Chrome (Claude no puede iniciar sesión) y fijar contraseñas de `uat_*`; ratificación de Ángel (A02) y aprobaciones de Cristina (C01–C04). Siguiente trabajo técnico: plantillas por caso restantes (IAB EXW, IMB CIF, EMB…) cuando Cristina confirme la lista; listas de precios por cliente (P01) cuando haya regla; verificación final de Hoja1 (Q03).
+Desplegado en boss20 y boss20_uat: boss_services 20.0.1.3.0, boss_pricing 20.0.1.6.0, boss_pricing_sale 20.0.1.7.0,
+boss_expediente 20.0.1.7.0 (`7143284`). Pruebas en el servidor: Odoo 36/36 (cuatro módulos) y 20/20 (boss_expediente tras
+el último cambio), motor 23/23; boss20_uat: ciclo de punta a punta 64/64 y escenarios 31/31 (`docs/evidencias/`).
+Hecho hoy: periodo de cada servicio por tiempo según su tarifa (y fechas de cada contenedor, descarga, vaciado LCL);
+ETX/VET/DET fuera de «pendiente»; previsión de cada servicio y su informe; D-3, D-4, D-5, D-6; IRENEO 2026 (precios
+2025 hasta el 14/07 por Ángel, +10 % desde el 15/07 por la carta) comprobado contra el PDF; WFS HAN de exportación y ETX;
+FAD de Aducex y Ramos Vila; DEM/OCU de ONE, Maersk, OOCL y MSC de la licitación Leroy; FuelEU Lejano Oriente. Todas las
+tarifas cargadas esperan la aprobación de Cristina (24 [MUESTRA] + las nuevas). Mapeo de Hoja1 en `docs/mapeo-hoja1.md`
+(25 hechas, 3 parciales por documentos que no existen). Escenario para Belal: `docs/escenario-uat.md`.
+
+Pendiente de personas: entrar en boss20_uat (Claude no puede escribir contraseñas) para recorrer en la interfaz la parte
+contable; aprobación de tarifas (Cristina); ratificación de las cuentas de suplidos (Ángel, A02). Pendiente de documentos:
+2.º handler, D&D general de ONE/Maersk/OOCL y cualquier tarifa de ZIM, agente de exportación, Hapag gastos locales, CFS,
+PFT, ROH/SOI/INS/SAN, CES, transporte de contenedor y FS.

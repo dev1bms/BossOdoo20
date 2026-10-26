@@ -50,7 +50,8 @@ necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
 espera a que el servicio esté en una factura de cliente **contabilizada**. Mientras tanto la factura de proveedor muestra
 un aviso amarillo («Antes de contabilizar o pagar») y el expediente lo lista; registrar el pago se bloquea, tanto desde
 el botón de la factura como desde el asistente de pagos de una lista o un extracto. Las líneas de cantidad 0 no
-retienen el pago. Ajuste:
+retienen el pago. Un abono al cliente posterior no retiene para siempre el pago al proveedor: el servicio ya se
+facturó una vez (el proveedor sigue siendo acreedor). Ajuste:
 **Ajustes › Ventas › Factura de proveedor antes de la de cliente** = «Bloquear el pago (contabilizar permitido)». Sin
 aviso: coste cubierto por el precio o que asume BOSS; **Pagado por adelantado** (flete pagado a un agente: basta la
 línea de venta).

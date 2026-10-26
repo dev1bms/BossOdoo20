@@ -63,18 +63,28 @@ contenedor de 40' en **Carga** → THC 2 × 240 € = 480 €.
 
 ## Fechas reales y periodo de los servicios por tiempo
 
-Cristina (26/10/2026): ATA y recogida real con fecha y hora, y el sistema calcula las fechas. Al guardar una fecha real
-del expediente, los servicios por tiempo (ALM, DEM, OCU) toman su **periodo real** y el coste previsto se recalcula
-solo (motivo «Cambio de fechas del expediente» en **Recálculos de coste** y un evento en **Eventos**):
+Cristina (26/10/2026): ATA y recogida real con fecha y hora, y el sistema calcula las fechas. Cada servicio por tiempo
+(ALM, DEM, OCU, DET) toma su periodo de **los hechos que dice su tarifa** (campos «El periodo empieza en» y «El periodo
+termina en» del precio de proveedor) o, si la tarifa no los dice, de los de su servicio. Al guardar una fecha del
+expediente o de un contenedor, el coste previsto se recalcula solo (motivo «Cambio de fechas del expediente» en
+**Recálculos de coste** y un evento):
 
-| Sentido | Inicio del periodo | Fin del periodo |
-|---|---|---|
-| Importación | **NOA** si está; si no, **ATA** | **Recogida real** |
-| Exportación | **FOH** | **ATD** |
+| Servicio | Empieza | Termina | Fuente |
+|---|---|---|---|
+| ALM aéreo importación | NOA (o ATA si no hay NOA) | Retirada (recogida real) | Cristina 25/09; WFS «desde el NOA» |
+| ALM aéreo exportación | FOH | Salida real (ATD) | Cristina 25/09 (ETD; se usa la real cuando existe) |
+| ALM grupaje importación | Vaciado (LCL) | Retirada | Cristina 25/09 |
+| DEM importación | Llegada del buque (ATA); Hapag: descarga del buque | Devolución del vacío **de cada contenedor** | MSC p.18; Hapag MHD/DTD |
+| OCU importación | Llegada del buque | Salida del lleno **de cada contenedor** | MSC p.17 |
+| DET exportación | Retirada del vacío de cada contenedor | Entrada del lleno en la terminal | MSC p.10 |
 
-Los días o periodos de 24 h los cuenta el motor con las horas exactas. Si una persona escribe el periodo en la línea
-del servicio, se marca **Periodo escrito a mano** y las fechas del expediente ya no lo cambian; desmarcarlo vuelve a
-seguir las fechas. La venta aceptada no cambia.
+Las fechas de cada contenedor están en **Carga** (retirada del vacío, entrada del lleno, salida del lleno, devolución
+del vacío). Si los contenedores tienen fechas distintas, cada uno se valora con su periodo y el coste es la suma (el
+recálculo lo detalla «Por contenedor: …»). La columna «Periodo según» de **Servicios y costes** dice qué hechos se
+usan. Si una persona escribe el periodo en la línea del servicio, se marca **Periodo escrito a mano** y las fechas ya no
+lo cambian. La venta aceptada no cambia.
+
+![Expediente E260015: demoras por contenedor tras guardar ATA y las fechas de los contenedores](img/43-periodo-por-contenedor.png)
 
 ## Aerolínea y handler (aéreo)
 
@@ -95,9 +105,12 @@ recalcula (motivo «Cambio de handler»).
 ## Previsión de costes
 
 **Expedientes → Previsión de costes** (también vista pivote y gráfico en **Servicios a comprar**) suma el coste previsto
-de los servicios a comprar de los expedientes abiertos, por proveedor y estado (sin proveedor, por pedir, solicitud,
-factura sin pedido esperada…). Se agrupa también por servicio, expediente o cliente. Es lo que el sistema prevé pagar,
-antes y después de los pedidos y las facturas.
+de los servicios a comprar de los expedientes abiertos, por proveedor y **previsión**: *Estimada (oferta)* → *Recalculada
+con los datos del expediente* → *Pedida al proveedor* → *Confirmada por la factura del proveedor*. Así se ve qué
+previsiones son aún estimaciones y cuáles ya confirmó un documento («Nuevo Odoo», hoja previsiones). Se agrupa también
+por servicio, expediente, cliente o estado.
+
+![Previsión de costes por proveedor y previsión](img/44-prevision-costes.png)
 
 ## Una oferta, varios expedientes
 

@@ -61,18 +61,28 @@ container in **Cargo** → THC 2 × 240 € = 480 €.
 
 ## Actual dates and the period of time-based services
 
-Cristina (26/10/2026): ATA and actual pickup with date and time, and the system computes the dates. When an actual date
-of the file is saved, the time-based services (ALM, DEM, OCU) take their **actual period** and the expected cost is
-recomputed by itself (reason «File dates changed» in **Cost recalculations** and an event in **Events**):
+Cristina (26/10/2026): ATA and actual pickup with date and time, and the system computes the dates. Each time-based
+service (ALM, DEM, OCU, DET) takes its period from **the events its tariff states** («Period starts at» and «Period ends
+at» of the supplier price) or, when the tariff states none, from those of its service. When a date of the file or of a
+container is saved, the expected cost is recomputed by itself (reason «File dates changed» in **Cost recalculations**
+and an event):
 
-| Direction | Period start | Period end |
-|---|---|---|
-| Import | **NOA** when set; otherwise **ATA** | **Actual pickup** |
-| Export | **FOH** | **ATD** |
+| Service | Starts | Ends | Source |
+|---|---|---|---|
+| ALM air import | NOA (or ATA without NOA) | Actual pickup | Cristina 25/09; WFS «from the NOA» |
+| ALM air export | FOH | Actual departure (ATD) | Cristina 25/09 (ETD; the actual one once known) |
+| ALM groupage import | Emptying (LCL) | Pickup | Cristina 25/09 |
+| DEM import | Vessel arrival (ATA); Hapag: vessel discharge | Empty return **of each container** | MSC p.18; Hapag MHD/DTD |
+| OCU import | Vessel arrival | Full out **of each container** | MSC p.17 |
+| DET export | Empty pickup of each container | Full gate-in at the terminal | MSC p.10 |
 
-The engine counts days or 24-hour periods with the exact hours. When a person types the period on the service line,
-it is flagged **Period set by hand** and the file dates no longer change it; untick it to follow the file dates again.
-The accepted sale does not change.
+The dates of each container are in **Cargo** (empty pickup, full in terminal, full pickup, empty return). When the
+containers have different dates, each one is priced on its own period and the cost is the sum (the recalculation shows
+«Per container: …»). The «Period from» column of **Services and costs** says which events are used. When a person types
+the period on the service line, it is flagged **Period set by hand** and the dates no longer change it. The accepted
+sale does not change.
+
+![File E260015: demurrage per container after saving the ATA and the container dates](img/43-periodo-por-contenedor.png)
 
 ## Airline and handler (air)
 
@@ -93,9 +103,12 @@ their cost is recomputed (reason «Handler changed»).
 ## Cost forecast
 
 **Shipment files → Cost forecast** (also pivot and graph views in **Services to buy**) adds up the expected cost of the
-services to buy of the open files, by supplier and state (no supplier, to order, RFQ, bill without order expected…).
-It can also be grouped by service, file or customer. It is what the system forecasts to pay, before and after the
-orders and bills.
+services to buy of the open files, by supplier and **forecast**: *Estimated (quotation)* → *Recomputed with the file
+data* → *Ordered to the supplier* → *Confirmed by the supplier bill*. It shows which forecasts are still estimates and
+which a document already confirmed («Nuevo Odoo», previsiones sheet). It can also be grouped by service, file, customer
+or state.
+
+![Cost forecast by supplier and forecast](img/44-prevision-costes.png)
 
 ## One quotation, several files
 

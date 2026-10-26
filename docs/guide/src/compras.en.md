@@ -49,7 +49,8 @@ the **tax shown on the supplier invoice** (0 % included).
 **Order of work** (proposal approved by Belal on 23/10/2026, P30; Ángel's and Cristina's ratification pending): the supplier bill is **posted on time**; its **payment** waits until the
 service is on a **posted** customer invoice. Meanwhile the vendor bill shows a yellow notice ("Before posting or paying")
 and the file lists it; registering the payment is blocked, both from the bill's button and from the payments wizard
-of a list or a bank statement. Lines with quantity 0 do not hold the payment. Setting: **Settings › Sales › Supplier bill before the
+of a list or a bank statement. Lines with quantity 0 do not hold the payment. A later credit note
+to the customer does not hold the supplier's payment for ever: the service was invoiced once (the supplier is still owed). Setting: **Settings › Sales › Supplier bill before the
 customer invoice** = "Block payment (posting allowed)". No notice: cost covered by the price or borne by BOSS; **Paid in
 advance** (freight paid to an agent: the sale line is enough).
 
