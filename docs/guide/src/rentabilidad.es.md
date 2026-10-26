@@ -37,7 +37,7 @@ que no es el beneficio neto.
 ## Quién ve qué
 
 Las cifras se calculan con todos los documentos, pero cada una solo la ve quien puede ver esos documentos en Odoo
-(estándar de Odoo por rol, confirmado el 23/10/2026, P35):
+(estándar de Odoo por rol, confirmado por Belal el 23/10/2026, pendiente de ratificación por Cristina, P35):
 
 | Rol | Expedientes | Cifras |
 |---|---|---|

@@ -26,7 +26,7 @@ Dos pasos:
 «Odoo 17» es su asistente de facturación (acción «Create Invoice»), que elige el impuesto por clase, tipo de cliente
 y tipo de factura. Solo hay fila cuando las reglas de Ángel, Odoo 17 y la naturaleza legal del impuesto coinciden.
 
-### Decididos el 23/10/2026 (P17)
+### Aprobados por Belal el 23/10/2026, pendientes de ratificación por Ángel (P17)
 
 | Caso | Impuesto | Fuente |
 |---|---|---|
@@ -48,5 +48,5 @@ En ese caso la línea dice «IVA pendiente» con el motivo, y la oferta no se pu
 - **Tipo de cambio de Odoo de la fecha de la oferta**: se convierte con el tipo de Odoo; el tipo usado se guarda en la
   foto al aceptar.
 
-> Política aprobada el 23/10/2026 (P03): tipo de cambio de Odoo de la fecha de la oferta, activo en el servidor. El
+> Política aprobada por Belal el 23/10/2026, pendiente de ratificación por Ángel (P03): tipo de cambio de Odoo de la fecha de la oferta, activo en el servidor. El
 > quebranto bancario (QBR) se cobra solo cuando una oferta en USD se factura en EUR: en desarrollo (fase B).

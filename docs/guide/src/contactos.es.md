@@ -27,4 +27,4 @@ Se puede crear un contacto **preliminar** con solo el nombre y hacerle ofertas. 
 muestra en amarillo **Falta para facturar**: NIF, dirección (calle, ciudad, país) y correo.
 
 La factura de un cliente de **España (o sin país)** no se contabiliza sin NIF u otra identificación de la localización
-española (práctica de Odoo 17, confirmada el 23/10/2026; P31). La dirección que falta se avisa, sin bloquear.
+española (práctica de Odoo 17, confirmada por Belal el 23/10/2026, pendiente de ratificación por Ángel; P31). La dirección que falta se avisa, sin bloquear.

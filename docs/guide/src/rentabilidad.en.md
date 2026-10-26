@@ -36,7 +36,7 @@ profit.
 ## Who sees what
 
 Figures are computed with all documents, but each one is only shown to who can see those documents in Odoo (standard
-Odoo by role, confirmed 23/10/2026, P35):
+Odoo by role, confirmed by Belal on 23/10/2026, Cristina's ratification pending, P35):
 
 | Role | Files | Figures |
 |---|---|---|

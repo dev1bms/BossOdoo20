@@ -130,7 +130,7 @@ Screenshots of the local test database with [DEMO] data (fictitious amounts; tha
   bill.
 - Needs a person: approving the tariff (P19), typing the cost when the readings not decided differ, the ALM sale (P43),
   special cargo (P44) and deciding what to do with a difference.
-- Decided 23/10/2026 and applied to the WFS [MUESTRA] prices: P40 periods of 24 h, P41 per 100 kg or fraction, P29
+- Approved by Belal on 23/10/2026 (Cristina's ratification pending) and applied to the WFS [MUESTRA] prices: P40 periods of 24 h, P41 per 100 kg or fraction, P29
   tiers by day number, P42 minimum per stay. The [DEMO] price «readings not decided» stays to show that state.
 - Pending: P43 (single sale, values of 25/09; phase B) and P44 (special storage and warehouse outside the airport).
 

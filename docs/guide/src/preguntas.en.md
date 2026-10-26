@@ -4,36 +4,54 @@ last column says — never an invented value. Amounts are illustrative.
 
 ## Approved on 23/10/2026
 
-On 23/10/2026 Belal approved the proposed answers to the open questions. Implementation plan in three phases, on the
-project structure (services, tariffs, quotation, shipment file; standard Odoo first): **A** configuration or small code
-(done), **B** development, **C** data only people can give (the system already takes it). No real tariff is approved on
-Cristina's behalf.
+On 23/10/2026 **Belal approved** the proposed answers to the open questions and the system works that way since then.
+**None has been ratified yet by Ángel or Cristina**: each decision in their area (Ángel: finance, VAT, accounts;
+Cristina: services, prices, operations) stays «ratification pending» until they confirm it, with date and source. If an
+owner decides otherwise, the setting or the data is changed, never interpreted.
+Implementation plan in three phases, on the project structure (services, tariffs, quotation, shipment file; standard
+Odoo first): **A** configuration or small code (done), **B** development, **C** data only people can give (the system
+already takes it). No real tariff is approved on Cristina's behalf.
 
-| Id | Approved decision | Phase | Status in the system |
+| Id | Decision approved by Belal | Phase | Status in the system | Ratification |
+|---|---|---|---|---|
+| P17 | VAT of a Spanish customer on EX services: «0% Exent Art.22» (exempt, art. 22, 303 [60]). Canaries, Ceuta and Melilla: «0% S NS» (not subject by place of supply, 303 [120]); Ceuta and Melilla in zone CAN | A | Done: BOSS VAT table and zone rules. Still open: NS services that are not paid on behalf (CAU, QBR) for Spanish customers | Ángel: pending |
+| P03 | Cost in another currency: Odoo rate of the quotation date, frozen on acceptance. QBR only when a USD quotation is invoiced in EUR | A + B | Rate done (company setting). QBR: phase B (Odoo invoices in the order currency; a EUR invoice of a USD order must be designed) | Ángel: pending |
+| P30 | The supplier bill **can be posted** when it arrives; what waits is its **payment**, until the customer invoice of the service is posted (exceptions: cost borne by BOSS or covered, freight paid in advance) | A | Done: setting «Block payment (posting allowed)», default. The setting also offers «Warn only» and «Block posting and payment» | Ángel and Cristina: pending |
+| P32 | Supplier bills of services by **performed** quantities | A | Done: BOSS services with bill control «received quantities»; «Mark as performed» on the file | Ángel: pending |
+| P18 · P37 | Amounts paid on behalf (ARA, IVA, PLA, DUM) on their own account (proposal: 419000); the other accounts per category are set by Ángel | A + C | Set on 23/10 on 419000, but in Odoo it is a **payable** account: the broker's bill cannot be recorded nor the amount invoiced to the customer (checked on 26/10 on the local copy; boss20 has the same setup, defect D-2, not fixed). Odoo 17 does not use 419000 but sub-accounts 419001–419007 (current liabilities). Other accounts: not decided | Ángel: pending |
+| P40 | WFS «per 24 hours»: periods of 24 h from arrival | A | Done on the WFS [MUESTRA] prices (still waiting for approval, P19) | Cristina: pending |
+| P41 | WFS «per 100 kg»: per 100 kg **or fraction** | A | Done, same | Cristina: pending |
+| P29 | WFS tiers: the higher price only on the following days (by day number) | A | Done, same | Cristina: pending |
+| P42 | WFS minimum per AWB stay | A | Done, same | Cristina: pending |
+| P31 · P38 · P39 · P11 (THC VAT) | What the system already does is confirmed: NIF or other identification of a Spanish customer to post (address only a notice); margin «after external costs» (no internal cost); no Odoo Expenses; THC VAT all EX | A | No change: already in place | Ángel: pending |
+| P33 · P35 · P36 · P05 · P06 · P07 · P11 (PAD) · P12 · P14 | What the system already does is confirmed: purchase order for supplier services and paid-on-behalf without order; standard visibility by role; numbering E26xxxx; quotation with a pending cost sent with a notice; re-pricing by the sales manager with a reason; PAD under T3; DEM/OCU/VGM/GLO sold and PFT never; chargeable weight from the AWB or the tariff | A | No change: already in place | Cristina: pending (P33 also Ángel) |
+| P43 | Single ALM sale with the values of 25/09 (per 100 kg or fraction and day after 48 h; minimum; from day 8 another price from day 1) | B | Missing: the amounts of 25/09 (Odoo 19, customer storage conditions) and the time-based sale rule. Specification: `docs/especificacion-alm-venta.md` | Cristina: pending |
+| P10 · P09 | ETX: bought per master AWB, sold per file. DET: own code when the supplier bills it separately | B | Set up both services (units and pricing method) with the supplier document | Cristina: pending |
+| P44 | Special storage with a cargo-type condition; new code for the warehouse outside the airport | B + C | Missing: special tariffs and approval of the code | Cristina and Ángel: pending |
+| P19 | Cristina reviews each tariff with its PDF and the examples and approves it | C | Waiting for Cristina. Review table: `docs/revision-tarifas.md` | Cristina |
+| P28 | Ask IRENEO for the 2026 tariff or a written confirmation | C | Waiting for Cristina. The IRENEO 2025 tariffs are not extended | Cristina |
+| P01 · P02 | Prices agreed per customer in its pricelist; minimum margin with the value set by Ángel | C | Mechanism ready; values missing | Cristina (prices) and Ángel (minimum) |
+| P24 | List of «Far East» countries (FuelEU) and «short sea» trades | C | Waiting for Cristina | Cristina |
+| P16 | Define the services really used (unit, supplier, document) and retire the rest | C | Waiting for Cristina | Cristina |
+| P34 | Closed price for several shipments: customers, duration and maximum quantities of each agreement | C + B | Waiting for Cristina; then the agreement in the system | Cristina |
+| P13 | Guarantee (CAU) and insurance (SEG): each value as a tariff with its document | C | Waiting for Cristina + Ángel | Cristina and Ángel |
+
+### Open accounting and tax questions
+
+None has an assumed answer: while they are open, the system does what the last column says.
+
+| Id | Question | Who | Meanwhile (in the system) |
 |---|---|---|---|
-| P17 | VAT of a Spanish customer on EX services: «0% Exent Art.22» (exempt, art. 22, 303 [60]). Canaries, Ceuta and Melilla: «0% S NS» (not subject by place of supply, 303 [120]); Ceuta and Melilla in zone CAN | A | Done: BOSS VAT table and zone rules. Still open: NS services that are not paid on behalf (CAU, QBR) for Spanish customers |
-| P03 | Cost in another currency: Odoo rate of the quotation date, frozen on acceptance. QBR only when a USD quotation is invoiced in EUR | A + B | Rate done (company setting). QBR: phase B (Odoo invoices in the order currency; a EUR invoice of a USD order must be designed) |
-| P30 | The supplier bill is posted on time; its **payment** waits for the customer invoice (exceptions: cost borne by BOSS or covered, freight paid in advance) | A | Done: setting «Block payment (posting allowed)», default |
-| P32 | Supplier bills of services by **performed** quantities | A | Done: BOSS services with bill control «received quantities»; «Mark as performed» on the file |
-| P18 · P37 | Amounts paid on behalf (ARA, IVA, PLA, DUM) on account 419000, as in Odoo 17; the other accounts per category are set by Ángel | A + C | 419000 done. Rest: Ángel |
-| P40 | WFS «per 24 hours»: periods of 24 h from arrival | A | Done on the WFS [MUESTRA] prices (still waiting for approval, P19) |
-| P41 | WFS «per 100 kg»: per 100 kg **or fraction** | A | Done, same |
-| P29 | WFS tiers: the higher price only on the following days (by day number) | A | Done, same |
-| P42 | WFS minimum per AWB stay | A | Done, same |
-| P31 · P33 · P35 · P36 · P38 · P39 · P11 · P05 · P06 · P07 · P12 · P14 | What the system already does is confirmed: NIF of a Spanish customer to post (address only a notice); purchase order for supplier services and paid-on-behalf without order; standard visibility by role; numbering E26xxxx; margin «after external costs»; no Odoo Expenses; PAD under T3 and THC VAT all EX; quotation with a pending cost sent with a notice; re-pricing by the sales manager with a reason; DEM/OCU/VGM/GLO sold and PFT never; chargeable weight from the AWB or the tariff | A | No change: already in place |
-| P43 | Single ALM sale with the values of 25/09 (per 100 kg or fraction and day after 48 h; minimum; from day 8 another price from day 1) | B | Missing: the amounts of 25/09 (Odoo 19, customer storage conditions) and the time-based sale rule |
-| P10 · P09 | ETX: bought per master AWB, sold per file. DET: own code when the supplier bills it separately | B | Set up both services (units and pricing method) with the supplier document |
-| P44 | Special storage with a cargo-type condition; new code for the warehouse outside the airport | B + C | Missing: special tariffs and approval of the code (Cristina + Ángel) |
-| P19 | Cristina reviews each tariff with its PDF and the examples and approves it | C | Waiting for Cristina |
-| P28 | Ask IRENEO for the 2026 tariff or a written confirmation | C | Waiting for Cristina |
-| P01 · P02 | Prices agreed per customer in its pricelist; minimum margin with the value set by Ángel | C | Mechanism ready; values missing |
-| P24 | List of «Far East» countries (FuelEU) and «short sea» trades | C | Waiting for Cristina |
-| P16 | Define the services really used (unit, supplier, document) and retire the rest | C | Waiting for Cristina |
-| P34 | Closed price for several shipments: customers, duration and maximum quantities of each agreement | C + B | Waiting for Cristina; then the agreement in the system |
-| P13 | Guarantee (CAU) and insurance (SEG): each value as a tariff with its document | C | Waiting for Cristina + Ángel |
+| P17 (part) | VAT of NS services that are not paid on behalf (CAU, QBR) for a Spanish customer | Ángel | «VAT pending»: the quotation cannot be sent or confirmed |
+| P18 | Accounts for amounts paid on behalf, sale and purchase, per concept. 419000 does not work (payable account, D-2); Odoo 17 uses 419001 VAT charged, 419002 duties charged, 419003 VAT borne, 419004 duties borne, 419005 anti-dumping, 419006 and 419007 plastic tax charged and borne | Ángel | ARA, IVA, PLA and DUM on 419000: their supplier bill and their customer invoice cannot be recorded |
+| P37 | Income and expense accounts per service or category | Ángel | Those of the product category; nothing invented |
+| P03 (QBR) | Bank-loss percentage and how a USD order is invoiced in EUR (exchange difference) | Ángel | Odoo invoices in the order currency; no QBR line |
+| P01 · P02 | Value of the minimum margin and who approves selling below it | Ángel (+ Cristina) | No minimum margin |
+| P13 | Percentages, rates and minimums of guarantee (CAU) and insurance (SEG) | Cristina + Ángel | No approved values |
+| P38 | Internal cost of BOSS own services | Ángel | Margin «after external costs»: not net profit |
+| P45 | Sending invoices to the tax agency (SII or VeriFactu) and returns Odoo 20 must prepare from go-live | Ángel | No SII or VeriFactu module installed on boss20 (checked 26/10/2026); nothing is sent |
 
-Still open (not among the proposals): P17 for NS of Spanish customers (CAU, QBR) and P20–P23 · P26. The tables below
-keep the context of each question.
+Still open (not among the proposals): P20–P23 · P26. The tables below keep the context of each question.
 
 ## Closed with a documented answer
 

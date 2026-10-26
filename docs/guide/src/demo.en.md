@@ -52,9 +52,9 @@ approval.
 
 | Case | Today | Question |
 |---|---|---|
-| EX for a Spanish or Canary customer (THC, T3, freight, SEG…) | VAT pending: the quotation is not confirmed | Exempt tax with its article (21/22 → «Exempt Art.22», box 60) or Odoo 17's practice «0% S» (subject at 0 %, box 150)? Canaries as not subject by place of supply? |
+| EX for a Spanish or Canary customer (THC, T3, freight, SEG…) | Approved by Belal on 23/10 (P17), Ángel pending: «0% Exent Art.22»; Canaries «0% S NS» | Exempt tax with its article (21/22 → «Exempt Art.22», box 60) or Odoo 17's practice «0% S» (subject at 0 %, box 150)? Canaries as not subject by place of supply? |
 | NS that is not paid on behalf (CAU, QBR) | VAT pending | Not subject (0% EXEMPT NS) or the customer-based 0 % as in Odoo 17? |
-| Ceuta and Melilla | Zone CAN (decided 23/10, P17) | — |
+| Ceuta and Melilla | Zone CAN (approved by Belal on 23/10, P17; Ángel pending) | — |
 | EU customer without VAT number | VAT pending | Invoice with Spanish VAT (business rule does not apply)? |
 | Paid on behalf without declaration | VAT pending | Confirm that the declaration in the customer's name is the condition |
 

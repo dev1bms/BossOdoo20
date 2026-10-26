@@ -18,7 +18,7 @@ A customer invoice is not posted if:
 
 - a line has its **VAT pending** (BOSS VAT table; rule of Ángel: a missing zone is never guessed) or no tax;
 - the customer is in **Spain (or has no country)** and has no **NIF** nor another identification of the Spanish
-  localization (passport, foreign ID, residence certificate): Odoo 17 practice, confirmed 23/10/2026 (P31). A
+  localization (passport, foreign ID, residence certificate): Odoo 17 practice, confirmed by Belal on 23/10/2026, Ángel's ratification pending (P31). A
   foreign customer without VAT number is not blocked here (an EU business customer without VAT number already leaves the
   VAT pending). A missing address is shown on the contact, not blocking.
 

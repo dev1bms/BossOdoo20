@@ -52,9 +52,9 @@ aplica a **clientes de demostración**, aunque un cliente real no tenga otro pre
 
 | Caso | Hoy | Pregunta |
 |---|---|---|
-| EX de un cliente español o canario (THC, T3, fletes, SEG…) | Decidido 23/10 (P17): «0% Exent Art.22»; Canarias «0% S NS» | ¿Impuesto exento con su artículo (21/22 → «Exento Art.22», casilla 60) o la práctica de Odoo 17 «0% S» (sujeta al 0 %, casilla 150)? ¿Canarias como no sujeta por localización? |
+| EX de un cliente español o canario (THC, T3, fletes, SEG…) | Aprobado por Belal el 23/10 (P17), pendiente de Ángel: «0% Exent Art.22»; Canarias «0% S NS» | ¿Impuesto exento con su artículo (21/22 → «Exento Art.22», casilla 60) o la práctica de Odoo 17 «0% S» (sujeta al 0 %, casilla 150)? ¿Canarias como no sujeta por localización? |
 | NS que no son suplidos (CAU, QBR) | IVA pendiente | ¿No sujeto (0% Exent NS) o el 0 % según el cliente como en Odoo 17? |
-| Ceuta y Melilla | Zona CAN (decidido 23/10, P17) | — |
+| Ceuta y Melilla | Zona CAN (aprobado por Belal el 23/10, P17; pendiente de Ángel) | — |
 | Cliente UE sin NIF-IVA | IVA pendiente | ¿Se factura con IVA español (no aplica la regla entre empresas)? |
 | Suplido sin DUA indicado | IVA pendiente | Confirmar que el DUA a nombre del cliente es la condición |
 

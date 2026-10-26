@@ -26,7 +26,7 @@ Two steps:
 «Odoo 17» is its invoicing assistant (action «Create Invoice»), which picks the tax by class, customer type and
 invoice type. A row exists only where Ángel's rules, Odoo 17 and the legal nature of the tax agree.
 
-### Decided on 23/10/2026 (P17)
+### Approved by Belal on 23/10/2026, Ángel's ratification pending (P17)
 
 | Case | Tax | Source |
 |---|---|---|
@@ -47,5 +47,5 @@ In that case the line says «VAT pending» with the reason, and the quotation ca
   the quotation cost.
 - **Odoo rate of the quotation date**: converted with Odoo's rate; the rate used is kept in the acceptance snapshot.
 
-> Policy approved 23/10/2026 (P03): Odoo exchange rate of the quotation date, active on the server. The bank-loss
+> Policy approved by Belal on 23/10/2026, Ángel's ratification pending (P03): Odoo exchange rate of the quotation date, active on the server. The bank-loss
 > charge (QBR) applies only when a USD quotation is invoiced in EUR: in development (phase B).

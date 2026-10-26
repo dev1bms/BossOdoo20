@@ -9,35 +9,54 @@ by impact. Amounts are illustrative.
 
 ## Aprobadas el 23/10/2026 · Approved on 23/10/2026
 
-Belal aprobó el 23/10/2026 las propuestas de respuesta a las preguntas abiertas. Plan de implantación en tres fases,
-sobre la estructura del proyecto (servicios, tarifas, oferta, expediente; Odoo estándar primero):
-**A** configuración o código pequeño (hecho), **B** desarrollo, **C** datos que solo pueden dar las personas (el sistema
-ya los admite). Ninguna tarifa real se aprueba en nombre de Cristina.
+El 23/10/2026 **Belal aprobó** las propuestas de respuesta a las preguntas abiertas y el sistema funciona así desde
+entonces. **Ninguna ha sido ratificada todavía por Ángel ni por Cristina**: cada decisión de su ámbito (Ángel: finanzas,
+IVA, cuentas; Cristina: servicios, precios, operaciones) queda «pendiente de ratificación» hasta que la confirmen, con
+fecha y fuente. Si un responsable decide otra cosa, se cambia el ajuste o el dato, no se interpreta.
+Plan de implantación en tres fases, sobre la estructura del proyecto (servicios, tarifas, oferta, expediente; Odoo
+estándar primero): **A** configuración o código pequeño (hecho), **B** desarrollo, **C** datos que solo pueden dar las
+personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de Cristina.
 
-| Id | Decisión aprobada | Fase | Estado en el sistema |
+| Id | Decisión aprobada por Belal | Fase | Estado en el sistema | Ratificación |
+|---|---|---|---|---|
+| P17 | IVA de un cliente español en servicios EX: «0% Exent Art.22» (exento art. 22, 303 [60]). Canarias, Ceuta y Melilla: «0% S NS» (no sujeta por localización, 303 [120]); Ceuta y Melilla en la zona CAN | A | Hecho: tabla de IVA BOSS y reglas de zona. Sigue abierto: NS que no son suplidos (CAU, QBR) de cliente español | Ángel: pendiente |
+| P03 | Coste en otra moneda: tipo de Odoo del día de la oferta, congelado al aceptar. QBR solo cuando una oferta en USD se factura en EUR | A + B | Tipo de cambio hecho (ajuste de la compañía). QBR: fase B (Odoo factura en la moneda del pedido; hay que diseñar la factura en EUR de un pedido en USD) | Ángel: pendiente |
+| P30 | La factura de proveedor **se puede contabilizar** a su llegada; lo que espera es su **pago**, hasta que la factura de cliente del servicio esté contabilizada (excepciones: coste que asume BOSS o cubierto, flete pagado por adelantado) | A | Hecho: ajuste «Bloquear el pago (contabilizar permitido)», por defecto. El ajuste admite también «Solo avisar» y «Bloquear contabilización y pago» | Ángel y Cristina: pendiente |
+| P32 | Factura de proveedor de servicios por cantidades **prestadas** | A | Hecho: servicios BOSS con control «cantidades recibidas»; botón «Marcar como prestado» en el expediente | Ángel: pendiente |
+| P18 · P37 | Suplidos (ARA, IVA, PLA, DUM) en una cuenta propia de suplidos (propuesta: 419000); el resto de cuentas por categoría las fija Ángel | A + C | Configurado el 23/10 en 419000, pero en Odoo es una cuenta **a pagar**: impide registrar la factura del agente y facturar el suplido al cliente (comprobado el 26/10 en la copia local; boss20 tiene la misma configuración, defecto D-2, sin corregir). Odoo 17 no usa la 419000 sino las subcuentas 419001–419007 (pasivo corriente). Resto de cuentas: sin decidir | Ángel: pendiente |
+| P40 | WFS «por 24 horas»: periodos de 24 h desde la llegada | A | Hecho en los precios WFS [MUESTRA] (siguen pendientes de aprobación, P19) | Cristina: pendiente |
+| P41 | WFS «por 100 kg»: por 100 kg **o fracción** | A | Hecho, ídem | Cristina: pendiente |
+| P29 | Tramos WFS: el precio alto solo en los días siguientes (por número de día) | A | Hecho, ídem | Cristina: pendiente |
+| P42 | Mínimo de WFS por estancia de la AWB | A | Hecho, ídem | Cristina: pendiente |
+| P31 · P38 · P39 · P11 (IVA de THC) | Se confirma lo que ya hace el sistema: NIF u otra identificación del cliente de España para contabilizar (dirección solo aviso); margen «tras costes externos» (sin coste interno); sin «Gastos» de Odoo; IVA de THC todo EX | A | Sin cambios: ya implantado | Ángel: pendiente |
+| P33 · P35 · P36 · P05 · P06 · P07 · P11 (PAD) · P12 · P14 | Se confirma lo que ya hace el sistema: pedido de compra para servicios de proveedor y suplidos sin pedido; visibilidad estándar por rol; numeración E26xxxx; oferta con coste pendiente con aviso; recotizar solo el gestor con motivo; PAD bajo T3; DEM/OCU/VGM/GLO vendibles y PFT nunca; peso tasable de la AWB o de la tarifa | A | Sin cambios: ya implantado | Cristina: pendiente (P33 también Ángel) |
+| P43 | Venta única de ALM con los valores del 25/09 (por 100 kg o fracción y día superadas 48 h; mínimo; desde el 8.º día otro precio desde el día 1) | B | Falta: los importes del 25/09 (Odoo 19, condiciones de almacenaje de clientes) y la regla de venta por tiempo. Especificación: `docs/especificacion-alm-venta.md` | Cristina: pendiente |
+| P10 · P09 | ETX: compra por AWB máster y venta por expediente. DET: código propio cuando el proveedor lo factura aparte | B | Configurar los dos servicios (unidades y forma de cotizar) con el documento del proveedor | Cristina: pendiente |
+| P44 | Almacenaje especial con condición de tipo de carga; código nuevo para el almacén fuera del aeropuerto | B + C | Falta: tarifas especiales y aprobación del código | Cristina y Ángel: pendiente |
+| P19 | Cristina revisa cada tarifa con su PDF y los ejemplos y la aprueba | C | Pendiente de Cristina. Tabla de revisión: `docs/revision-tarifas.md` | Cristina |
+| P28 | Pedir a IRENEO la tarifa 2026 o una confirmación escrita | C | Pendiente de Cristina. Las tarifas IRENEO 2025 no se prorrogan | Cristina |
+| P01 · P02 | Precios pactados por cliente en su lista de precios; margen mínimo con el valor que fije Ángel | C | Mecanismo listo; faltan los valores | Cristina (precios) y Ángel (mínimo) |
+| P24 | Lista de países «Lejano Oriente» (FuelEU) y tráficos «short sea» | C | Pendiente de Cristina | Cristina |
+| P16 | Definir los servicios de uso real (unidad, proveedor, documento) y retirar el resto | C | Pendiente de Cristina | Cristina |
+| P34 | Precio cerrado para varios envíos: clientes, duración y cantidades máximas de cada acuerdo | C + B | Pendiente de Cristina; después, el acuerdo en el sistema | Cristina |
+| P13 | Caución (CAU) y seguro (SEG): cada valor como tarifa con su documento | C | Pendiente de Cristina + Ángel | Cristina y Ángel |
+
+### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions
+
+Ninguna tiene una respuesta supuesta: mientras sigan abiertas, el sistema hace lo que dice la última columna.
+
+| Id | Cuestión | Quién | Mientras tanto (en el sistema) |
 |---|---|---|---|
-| P17 | IVA de un cliente español en servicios EX: «0% Exent Art.22» (exento art. 22, 303 [60]). Canarias, Ceuta y Melilla: «0% S NS» (no sujeta por localización, 303 [120]); Ceuta y Melilla en la zona CAN | A | Hecho: tabla de IVA BOSS y reglas de zona. Sigue abierto: NS que no son suplidos (CAU, QBR) de cliente español |
-| P03 | Coste en otra moneda: tipo de Odoo del día de la oferta, congelado al aceptar. QBR solo cuando una oferta en USD se factura en EUR | A + B | Tipo de cambio hecho (ajuste de la compañía). QBR: fase B (Odoo factura en la moneda del pedido; hay que diseñar la factura en EUR de un pedido en USD) |
-| P30 | La factura de proveedor se contabiliza a tiempo; su **pago** espera a la factura de cliente (excepciones: coste que asume BOSS o cubierto, flete pagado por adelantado) | A | Hecho: ajuste «Bloquear el pago (contabilizar permitido)», por defecto |
-| P32 | Factura de proveedor de servicios por cantidades **prestadas** | A | Hecho: servicios BOSS con control «cantidades recibidas»; botón «Marcar como prestado» en el expediente |
-| P18 · P37 | Suplidos (ARA, IVA, PLA, DUM) en la cuenta 419000, como en Odoo 17; el resto de cuentas por categoría las fija Ángel | A + C | 419000 hecho. Resto: Ángel |
-| P40 | WFS «por 24 horas»: periodos de 24 h desde la llegada | A | Hecho en los precios WFS [MUESTRA] (siguen pendientes de aprobación, P19) |
-| P41 | WFS «por 100 kg»: por 100 kg **o fracción** | A | Hecho, ídem |
-| P29 | Tramos WFS: el precio alto solo en los días siguientes (por número de día) | A | Hecho, ídem |
-| P42 | Mínimo de WFS por estancia de la AWB | A | Hecho, ídem |
-| P31 · P33 · P35 · P36 · P38 · P39 · P11 · P05 · P06 · P07 · P12 · P14 | Se confirma lo que ya hace el sistema: NIF del cliente de España para contabilizar (dirección solo aviso); pedido de compra para servicios de proveedor y suplidos sin pedido; visibilidad estándar por rol; numeración E26xxxx; margen «tras costes externos»; sin «Gastos» de Odoo; PAD bajo T3 e IVA de THC todo EX; oferta con coste pendiente con aviso; recotizar solo el gestor con motivo; DEM/OCU/VGM/GLO vendibles y PFT nunca; peso tasable de la AWB o de la tarifa | A | Sin cambios: ya implantado |
-| P43 | Venta única de ALM con los valores del 25/09 (por 100 kg o fracción y día superadas 48 h; mínimo; desde el 8.º día otro precio desde el día 1) | B | Falta: los importes del 25/09 (Odoo 19, condiciones de almacenaje de clientes) y la regla de venta por tiempo |
-| P10 · P09 | ETX: compra por AWB máster y venta por expediente. DET: código propio cuando el proveedor lo factura aparte | B | Configurar los dos servicios (unidades y forma de cotizar) con el documento del proveedor |
-| P44 | Almacenaje especial con condición de tipo de carga; código nuevo para el almacén fuera del aeropuerto | B + C | Falta: tarifas especiales y aprobación del código (Cristina + Ángel) |
-| P19 | Cristina revisa cada tarifa con su PDF y los ejemplos y la aprueba | C | Pendiente de Cristina |
-| P28 | Pedir a IRENEO la tarifa 2026 o una confirmación escrita | C | Pendiente de Cristina |
-| P01 · P02 | Precios pactados por cliente en su lista de precios; margen mínimo con el valor que fije Ángel | C | Mecanismo listo; faltan los valores |
-| P24 | Lista de países «Lejano Oriente» (FuelEU) y tráficos «short sea» | C | Pendiente de Cristina |
-| P16 | Definir los servicios de uso real (unidad, proveedor, documento) y retirar el resto | C | Pendiente de Cristina |
-| P34 | Precio cerrado para varios envíos: clientes, duración y cantidades máximas de cada acuerdo | C + B | Pendiente de Cristina; después, el acuerdo en el sistema |
-| P13 | Caución (CAU) y seguro (SEG): cada valor como tarifa con su documento | C | Pendiente de Cristina + Ángel |
+| P17 (parte) | IVA de los servicios NS que no son suplidos (CAU, QBR) para un cliente español | Ángel | «IVA pendiente»: la oferta no se puede enviar ni confirmar |
+| P18 | Cuentas de los suplidos, de venta y de compra, por concepto. 419000 no sirve (cuenta a pagar, D-2); Odoo 17 usa 419001 IVA repercutido, 419002 aranceles repercutidos, 419003 IVA soportado, 419004 aranceles soportados, 419005 antidumping, 419006 y 419007 plástico repercutido y soportado | Ángel | ARA, IVA, PLA y DUM en 419000: su factura de proveedor y su facturación al cliente no se pueden registrar |
+| P37 | Cuentas de ingreso y gasto por servicio o categoría | Ángel | Las de la categoría del producto; nada inventado |
+| P03 (QBR) | Porcentaje del quebranto y cómo se factura en EUR un pedido en USD (diferencia de cambio) | Ángel | Odoo factura en la moneda del pedido; sin línea QBR |
+| P01 · P02 | Valor del margen mínimo y quién aprueba vender por debajo | Ángel (+ Cristina) | Sin margen mínimo |
+| P13 | Porcentajes, tasas y mínimos de caución (CAU) y seguro (SEG) | Cristina + Ángel | Sin valores aprobados |
+| P38 | Coste interno de los servicios propios de BOSS | Ángel | Margen «tras costes externos»: no es beneficio neto |
+| P45 | Envío de facturas a la AEAT (SII o VeriFactu) y declaraciones que debe preparar Odoo 20 desde el arranque | Ángel | Ningún módulo SII ni VeriFactu instalado en boss20 (comprobado el 26/10/2026); nada se envía |
 
-Siguen abiertas (no estaban entre las propuestas): P17 en la parte NS de cliente español (CAU, QBR) y P20–P23 · P26.
+Siguen abiertas (no estaban entre las propuestas): P20–P23 · P26.
 Las tablas siguientes conservan el contexto de cada pregunta.
 
 ## Cerradas con respuesta documentada · Closed
@@ -88,9 +107,9 @@ práctica observada de Odoo 17/19, **B** abierta.
 
 | Id | Pregunta | Fuente y estado | Quién | Mientras tanto (en el sistema) |
 |---|---|---|---|---|
-| P30 | ¿Se impide **contabilizar o pagar** una factura de proveedor antes de facturar el servicio al cliente, o es solo el orden de trabajo? | R: «Facturacion» A3, «Facturacion y costes» A11 (con excepción: flete pagado por adelantado a un agente). Odoo 17/19 no lo bloqueaban (C) | Cristina + Ángel | Aviso en la factura de proveedor y en el expediente; bloqueo solo si la compañía elige «Bloquear» en Ajustes |
+| P30 | ¿Se impide **contabilizar o pagar** una factura de proveedor antes de facturar el servicio al cliente, o es solo el orden de trabajo? | R: «Facturacion» A3, «Facturacion y costes» A11 (con excepción: flete pagado por adelantado a un agente). Odoo 17/19 no lo bloqueaban (C) | Cristina + Ángel | Desde el 23/10 (propuesta aprobada por Belal, pendiente de Ángel y Cristina): la factura de proveedor se puede contabilizar; su pago se bloquea hasta que la factura de cliente del servicio esté contabilizada (aviso en la factura y en el expediente) |
 | P31 | **Datos del cliente** obligatorios para contabilizar una factura | C: Odoo 17 bloqueaba clientes de España (o sin país) sin NIF; no bloqueaba extranjeros. A: zona que falta → IVA pendiente (Ángel 31/08). Sin decisión sobre dirección | Ángel | Bloqueo: IVA pendiente y cliente de España sin NIF u otra identificación de la localización; dirección solo se avisa |
-| P32 | Control de facturas de proveedor de servicios: ¿cantidades **pedidas o prestadas**? | B | Ángel | Estándar (pedidas); «Marcar como prestado» disponible; es un ajuste del producto |
+| P32 | Control de facturas de proveedor de servicios: ¿cantidades **pedidas o prestadas**? | B | Ángel | Desde el 23/10 (propuesta aprobada por Belal, pendiente de Ángel): cantidades recibidas (prestadas) en todos los servicios BOSS; «Marcar como prestado» en el expediente; es un ajuste del producto |
 | P33 | ¿Qué costes van con **pedido de compra** y cuáles como previsión? | B10 (Cristina + Ángel), abierta | Cristina + Ángel | Pedido para servicios de proveedor; los suplidos (derechos e IVA del DUA) sin pedido, como en Odoo 17/19 (C) |
 | P34 | ¿Precio cerrado para **varios envíos** (tipo Leroy)? | B (acta 26/08, opción B). A?: una oferta aceptada puede abrir varios expedientes repartiendo sus cantidades (propietario, 26/08) | Cristina | Reparto de cantidades entre expedientes («Mover servicios a otro expediente»); un acuerdo de precios para envíos futuros no está decidido |
 | P35 | ¿Quién ve **costes, márgenes y facturas** del expediente? | R: «cada comercial ve solo sus clientes» (CRM A19); costes/márgenes sin decisión (P20) | Cristina | Estándar de Odoo por rol: comercial su expediente, la venta y el coste de la oferta; compras el lado proveedor; gestor comercial y contabilidad todo |

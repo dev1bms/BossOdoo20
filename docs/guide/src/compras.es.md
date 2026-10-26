@@ -37,14 +37,14 @@ en el pedido de compra.
 
 Cuando el proveedor ha hecho el servicio, pulse el icono ✓ (**Marcar como prestado**) en la línea: la cantidad
 recibida pasa a ser la pedida. Si la política de control de facturas del producto es «cantidades recibidas», solo se
-factura lo prestado: los servicios BOSS tienen el control «cantidades recibidas» (aprobado el 23/10/2026, P32).
+factura lo prestado: los servicios BOSS tienen el control «cantidades recibidas» (propuesta aprobada por Belal el 23/10/2026, P32; pendiente de ratificación por Ángel).
 
 ## Factura de proveedor
 
 Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica. Antes de contabilizarla, cada línea de servicio BOSS
 necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
 
-**Orden de trabajo** (aprobado el 23/10/2026, P30): la factura de proveedor se **contabiliza a tiempo**; su **pago**
+**Orden de trabajo** (propuesta aprobada por Belal el 23/10/2026, P30; pendiente de ratificación por Ángel y Cristina): la factura de proveedor se **contabiliza a tiempo**; su **pago**
 espera a que el servicio esté en una factura de cliente **contabilizada**. Mientras tanto la factura de proveedor muestra
 un aviso amarillo («Antes de contabilizar o pagar») y el expediente lo lista; registrar el pago se bloquea. Ajuste:
 **Ajustes › Ventas › Factura de proveedor antes de la de cliente** = «Bloquear el pago (contabilizar permitido)». Sin

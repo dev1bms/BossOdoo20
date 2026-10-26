@@ -52,22 +52,26 @@ contabilidad, analítica y actividades; BOSS añade tarifas, datos del envío, e
 | 23/10 (2ª ronda) | Una oferta, varios expedientes (reparto de cantidades, nunca más de lo aceptado; facturación y analítica por expediente) | `boss_expediente` | test + boss20 E260009/E260010 |
 | 23/10 (2ª ronda) | Reglas al contabilizar revisadas con las fuentes (P30 aviso por defecto, P31 identificación según Odoo 17 y la localización); suplidos sin pedido de compra; acceso por rol y compañía; cifras con su origen | `boss_expediente` | tests (23 métodos: 0 fallos) |
 | 23/10 (2ª ronda) | Rendimiento medido en Chrome visible con sesión normal: 0,95–1,47 s hasta poder usar el formulario o la lista (5 cargas); una primera carga tras el despliegue 8,2 s (hueco de 4 s sin red ni tareas largas, no repetido). Las esperas de 20–50 s eran del panel de navegador interno oculto (`requestAnimationFrame` no se ejecuta). Descartado: el tour de bienvenida (comparación local con y sin tour, también con el paso 2 guardado) | — | `dev/perf_probe.py`, medidas en Chrome |
+| 26/10 | Comprobación de boss20 solo lectura (estado de las tarifas, servicios, ajustes, asientos); hoja de pruebas para Ángel; copia local aislada para contabilizar y pagar (`dev/test.sh uat`, sin tareas, correo ni servicios en línea); revisión de tarifas para Cristina; especificación de la venta de ALM (P43) con los valores del 25/09 leídos en Odoo 19 | `docs/pruebas-angel.md`, `docs/revision-tarifas.md`, `docs/especificacion-alm-venta.md` | `dev/readiness_probe.py`, `dev/tariff_review_probe.py`, ensayo `dev/uat_dryrun.py` en la copia local (deshecho al terminar): dos defectos, D-1 y D-2 |
 
 ## Decisiones tomadas en esta fase (técnicas)
 - Expediente propio (no `project`), una cuenta analítica por expediente, necesidades de compra explícitas (ADR-005).
 - Pedido de compra: borrador por proveedor y moneda; confirmación y envío por una persona.
 - Control de facturas de proveedor de servicios BOSS «según cantidades recibidas» (servicio prestado), reversible en
-  el producto; pendiente de confirmar por Ángel (P32).
+  el producto: propuesta aprobada por Belal el 23/10/2026 y aplicada a todos los servicios BOSS; pendiente de
+  ratificación por Ángel (P32).
 
 ## Plan de las decisiones aprobadas el 23/10/2026
 
 Decisiones y estado por pregunta: `docs/preguntas-abiertas.md` («Aprobadas el 23/10/2026», publicada en la guía,
-«Decisiones pendientes»). Fases:
+«Decisiones pendientes»). Son propuestas **aprobadas por Belal**; ninguna está ratificada todavía por Ángel (finanzas,
+IVA, cuentas) ni por Cristina (servicios, precios, operaciones): la columna «Ratificación» de ese fichero dice de quién
+depende cada una. Fases:
 
 | Fase | Qué | Dónde (estructura del proyecto) | Estado |
 |---|---|---|---|
-| A | IVA P17 (Art.22; Canarias, Ceuta y Melilla «0% S NS», zona CAN), tipo de cambio P03, pago de facturas de proveedor P30, control por cantidades prestadas P32, suplidos en 419000 P18, lecturas WFS P40/P41/P29/P42 | `boss_pricing_sale` (`vat_rules`), `boss_expediente` (ajuste de compañía, control de compra), configuración en boss20 (`dev/setup_vat_mapping.py`, `dev/setup_decisions_2310.py`) | Hecho |
-| B1 | Venta única de ALM por tiempo (P43) con los valores del 25/09 | `boss_pricing`: una tarifa de **venta** con el mismo motor por tiempo (franquicia, tramos por número de día, mínimo) y una regla de lista de precios que la usa; ADR-006 | Primero leer los valores del 25/09 en Odoo 19 (solo lectura) y confirmarlos |
+| A | IVA P17 (Art.22; Canarias, Ceuta y Melilla «0% S NS», zona CAN), tipo de cambio P03, pago de facturas de proveedor P30, control por cantidades prestadas P32, suplidos en 419000 P18 (no funciona, defecto D-2), lecturas WFS P40/P41/P29/P42 | `boss_pricing_sale` (`vat_rules`), `boss_expediente` (ajuste de compañía, control de compra), configuración en boss20 (`dev/setup_vat_mapping.py`, `dev/setup_decisions_2310.py`) | Hecho (pendiente de ratificación de Ángel y Cristina, cada uno en su ámbito) |
+| B1 | Venta única de ALM por tiempo (P43) con los valores del 25/09 | `boss_pricing`: una tarifa de **venta** con el mismo motor por tiempo (franquicia, tramos por número de día, mínimo) y una regla de lista de precios que la usa; ADR-006 | Valores del 25/09 encontrados en Odoo 19 (nunca anotados como confirmados); especificación con 14 puntos por decidir (`docs/especificacion-alm-venta.md`); espera a Cristina (D1–D7) |
 | B2 | QBR (P03): factura en EUR de una oferta en USD con el tipo de la naviera y la línea de quebranto | `boss_expediente` (asistente «Facturar servicios»: moneda de la factura) y servicio QBR | Falta el porcentaje de QBR aprobado (Odoo 19 usaba 1 %, sin confirmar) |
 | B3 | ETX (compra por AWB máster, venta por expediente) y DET (código propio) (P10, P09) | `boss_services` (servicios, unidades) | Con el documento del proveedor |
 | B4 | Almacenaje especial y almacén fuera del aeropuerto (P44) | `boss_pricing` (condición de tipo de carga) y `boss_services` (código nuevo) | Tras las tarifas y la aprobación del código |
@@ -122,20 +126,56 @@ Qué se distingue en Odoo 20:
   la cantidad aceptada, cada expediente factura su parte y la analítica se reparte en proporción.
 
 ## Bloqueos y decisiones de negocio abiertas
-Ver `docs/preguntas-abiertas.md` (P30–P39 del ciclo). No bloquean el desarrollo: las cuentas quedan como
-están, el IVA de compra lo elige quien registra la factura según el documento del proveedor.
+Ver `docs/preguntas-abiertas.md`: las propuestas aprobadas por Belal el 23/10/2026 con su ratificación pendiente, y
+«Cuestiones contables y fiscales sin decidir». No bloquean el desarrollo: mientras siguen abiertas, el sistema hace lo
+que dice cada fila, sin suponer la respuesta.
 
-Aplicadas y pendientes de confirmar:
-- Ángel: el NIF y la dirección del cliente son obligatorios para contabilizar una factura de servicios BOSS (clientes
-  empresa). En Odoo 20 «es empresa» = tiene NIF.
-- Ángel / Cristina: la factura de proveedor de un servicio del expediente se contabiliza después de facturarlo al
-  cliente (requisito de Cristina, «Nuevo Odoo», hoja Facturación A3), salvo coste «cubierto» o «lo asume BOSS».
-- Ángel (P32): control de facturas de proveedor por cantidades pedidas (estándar) o recibidas (servicio prestado):
-  es un ajuste del producto, sin código.
-- Numeración E26xxxx: igual que Odoo 19; mantenerla o reiniciarla al arrancar sigue abierto (Q6).
+Comportamiento actual en boss20 (propuestas aprobadas por Belal el 23/10/2026, **no ratificadas** todavía):
+- Factura de proveedor de un servicio del expediente antes de facturarlo al cliente (P30; requisito de Cristina en
+  «Nuevo Odoo», hoja Facturación A3): **se puede contabilizar**; lo que se bloquea es su **pago**, hasta que la factura
+  de cliente de ese servicio esté contabilizada. Excepciones: coste «cubierto», «lo asume BOSS» o flete pagado por
+  adelantado. Ajuste de la compañía «Factura de proveedor antes de la factura de cliente» = «Bloquear el pago
+  (contabilizar permitido)»; las otras opciones son «Solo avisar» y «Bloquear contabilización y pago». Ratifican Ángel
+  y Cristina.
+- Datos del cliente para contabilizar (P31): un cliente de España (o sin país) sin NIF ni otra identificación de la
+  localización no se puede facturar (contabilizar); la dirección que falta solo se avisa. Ratifica Ángel.
+- Control de facturas de proveedor (P32): cantidades recibidas (servicio prestado) en todos los servicios BOSS.
+  Ratifica Ángel.
+- Suplidos (P18): configurados el 23/10 en la cuenta 419000, que en Odoo es **a pagar**: no funciona (defecto D-2).
+  Odoo 17 usa subcuentas 419001–419007 de pasivo corriente. Decide Ángel.
+- Numeración de expedientes E26xxxx, como en Odoo 19 (P36). Ratifica Cristina.
 
-Pendiente técnico: ninguno conocido en el ciclo; el coste previsto se recalcula con los datos del expediente (ver registro).
+Cuestiones contables y fiscales **sin decidir** (sin respuesta supuesta; detalle en `docs/preguntas-abiertas.md`): IVA
+de los NS que no son suplidos para un cliente español (CAU, QBR), cuentas por categoría (P37), QBR (P03), margen mínimo
+(P01/P02), caución y seguro (P13), coste interno de los servicios propios (P38), SII o VeriFactu (P45).
 
-Último commit desplegado: `fdb4cbd` (main con la revisión ALM fusionada; boss_expediente 20.0.1.2.0, boss_pricing 20.0.1.5.0, boss_pricing_sale 20.0.1.7.0), 23/10/2026. Guía publicada desde `b388a67` (`?v=20261023f`). Commits locales: no hay remoto.
+Defectos conocidos (encontrados el 26/10 en el ensayo de la copia local, **sin corregir**):
+- **D-1** Una factura de proveedor creada desde el pedido lleva todas sus líneas, también las de cantidad 0 (servicios
+  aún no prestados: Odoo 20 las incluye siempre). El bloqueo de pago (P30) las cuenta y el pago sigue bloqueado aunque
+  lo facturado ya esté facturado al cliente. Corrección propuesta: no contar las líneas de cantidad 0
+  (`boss_expediente/models/account_move.py`, `_boss_bill_needs`) con su prueba. Mientras tanto, borrar esas líneas
+  antes de contabilizar.
+- **D-2** Configuración del 23/10 (P18, `dev/setup_decisions_2310.py`): ARA, IVA, PLA y DUM tienen la cuenta 419000, que
+  en el plan de Odoo (y en Odoo 17) es **a pagar**. Odoo rechaza la factura del agente («debe tener una fecha de
+  vencimiento») y la factura al cliente («es de tipo por pagar, pero se está utilizando en una operación de venta»),
+  también en boss20. Odoo 17 usa subcuentas propias de pasivo corriente (419001–419007, repercutido y soportado por
+  concepto). Corrección: decisión de Ángel sobre las cuentas; mientras tanto, volver a las cuentas de la categoría
+  (estado anterior al 23/10). Es un cambio contable en boss20: necesita el visto bueno de Belal.
 
-Pruebas en `fdb4cbd`: motor 21/21; Odoo 27 métodos (boss_expediente 13, boss_pricing_sale 13, boss_pricing 1 de referencias con las muestras privadas actualizadas): 0 fallos.
+Pendiente técnico (fase B): QBR, venta única de ALM (P43; especificación en `docs/especificacion-alm-venta.md`), ETX y
+DET, almacenaje especial, acuerdo de precio para varios envíos. El coste previsto ya se recalcula con los datos del
+expediente (ver registro).
+
+## Despliegue y comprobaciones
+
+| Qué | Referencia | Fecha | Evidencia |
+|---|---|---|---|
+| Último despliegue en boss20 | `8ec4a2c`: boss_pricing_sale y boss_expediente (boss_expediente 20.0.1.3.0; instalados también boss_pricing 20.0.1.5.0, boss_pricing_sale 20.0.1.7.0, boss_services 20.0.1.2.0) | 23/10/2026 | `dev/deploy.sh` |
+| Configuración de las decisiones del 23/10 | `dev/setup_vat_mapping.py`, `dev/setup_decisions_2310.py` | 23/10/2026 | salida de los scripts en boss20 |
+| Guía publicada | `0192e66` (`?v=20261023g`) | 23/10/2026 | doc.bosscontinental.com/new |
+| Pruebas automáticas (BD desechable, nunca boss20) | `8ec4a2c`: motor 21/21; Odoo 27 métodos (boss_expediente 13, boss_pricing_sale 13, boss_pricing 1): 0 fallos | 23/10/2026 | `dev/test.sh run`, `python -m unittest` |
+| Comprobación de boss20 **solo lectura** (no es una prueba) | Versiones instaladas iguales a `8ec4a2c`; 77 servicios BOSS activos con control «cantidades recibidas»; compañía con «tipo del día de la oferta» y «Bloquear el pago»; tabla de IVA con 6 filas (Art.22 y CAN incluidas); 0 asientos contabilizados; 10 tarifas de documentos reales esperando aprobación, ninguna aprobada; sin módulos SII ni VeriFactu; sin servidor de correo saliente | 26/10/2026 | `dev/readiness_probe.py` (sin escritura, rollback) |
+| Ensayo de la hoja de pruebas en la copia local aislada (una transacción deshecha al terminar) | C1–C6 y C8 dan el resultado de `docs/pruebas-angel.md`; C7 falla por D-2; el pago de C5 falla con líneas de cantidad 0 (D-1) | 26/10/2026 | `dev/uat_dryrun.py` |
+
+Desde `8ec4a2c` no ha cambiado código de los módulos; las pruebas del 23/10 no se han repetido. Commits locales: no
+hay remoto.
