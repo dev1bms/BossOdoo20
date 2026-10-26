@@ -397,12 +397,14 @@ class TestFileFollowUp(CycleCommon):
         self.assertEqual(file.handler_id, wfs)
         self.assertEqual(self._need(file, han).partner_id, wfs)
 
-        # Two handlers known: the user chooses on the file; the need waits for that choice.
+        # Two handlers known: nothing is chosen for the user; the quotation line has no supplier restriction, so the
+        # only tariff that fits (handler A) prices it. The file offers both handlers; choosing one moves the handling
+        # needs not ordered yet to it.
         order2, file2 = self._accepted(han, {han: 200.0}, **dict(air, boss_carrier_id=lh.id))
         self.assertFalse(self._line(order2, han).boss_supplier_id)
         self.assertFalse(file2.handler_id)
         self.assertEqual(file2.handler_candidate_ids, wfs | iberia)
-        self.assertFalse(self._need(file2, han).partner_id)
+        self.assertEqual(self._need(file2, han).partner_id, wfs)
         file2.handler_id = iberia
         self.assertEqual(self._need(file2, han).partner_id, iberia)
         # Another airport without a known handler: no candidates, free choice.

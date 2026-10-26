@@ -378,9 +378,10 @@ class BossExpediente(models.Model):
                 file.handler_id = False
 
     def _boss_handler_needs(self):
-        """Needs bought from the handler (air handling services) still without supplier and not ordered."""
+        """Needs bought from the handler (air handling services) not ordered yet: they follow the handler chosen on
+        the file, whichever supplier priced them on the quotation."""
         return self.cost_ids.filtered(
-            lambda n: n.product_id.default_code in HANDLER_SERVICE_CODES and not n.partner_id
+            lambda n: n.product_id.default_code in HANDLER_SERVICE_CODES
             and not n.purchase_line_ids and n.state not in ("closed", "billed", "performed"))
 
     # Actual period of the time-based services, from the file's dates (Cristina, 26/10/2026)
