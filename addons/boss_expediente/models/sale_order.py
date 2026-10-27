@@ -79,7 +79,7 @@ class SaleOrder(models.Model):
                                                            fields.Date.to_date(self.date_order) or fields.Date.today())
         values.update({
             "partner_id": self.partner_id.commercial_partner_id.id, "user_id": self.user_id.id,
-            "company_id": self.company_id.id,
+            "company_id": self.company_id.id, "haulier_id": self.boss_haulier_id.id,
             "container_ids": [Command.create({"size": c.size, "container_type_id": c.container_type_id.id})
                               for c in self.boss_container_ids for _ in range(c.quantity)],
         })

@@ -24,6 +24,12 @@ def spanish_side(direction):
     return {"import": "destination", "export": "origin"}.get(direction)
 
 
+def chargeable_by_mode(gross_kg, volume_m3):
+    """Chargeable weight for each transport mode (a road leg of a sea shipment is charged with the road factor):
+    {mode: kg or 0.0 when a measure is unknown}."""
+    return {mode: chargeable_kg(mode, gross_kg, volume_m3)[1] for mode in MODE_VOLUMETRIC_FACTORS}
+
+
 def chargeable_kg(mode, gross_kg, volume_m3):
     """(volume weight, chargeable weight) of a shipment: volume × factor of the mode, and the higher of gross and
     volume weight. Both measures are needed: with one of them unknown nothing is assumed (0, 0 = not known)."""
@@ -200,6 +206,11 @@ class BossShipmentRoute(models.AbstractModel):
             self.boss_consignee_id = party
         elif self.boss_direction == "export" and not self.boss_shipper_id:
             self.boss_shipper_id = party
+
+    def _boss_chargeable_by_mode(self):
+        """Engine input: chargeable weight per mode (None where a measure is unknown)."""
+        self.ensure_one()
+        return {mode: kg or None for mode, kg in chargeable_by_mode(self.boss_gross_kg, self.boss_volume_m3).items()}
 
     def _boss_awb_weight(self):
         """AWB weight for pricing: the one written on the AWB, else the estimated chargeable weight (air)."""

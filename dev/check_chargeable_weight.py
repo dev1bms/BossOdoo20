@@ -47,13 +47,13 @@ supplier = env["res.partner"].create({"name": "[PRUEBA] Transportista tasable", 
                                       "country_id": ref("base.es").id})
 road_uom = U.with_context(lang="es_ES").search([("name", "=", "kg tasable terrestre")], limit=1)
 check("road charge basis exists", True, bool(road_uom))
-road_uom.boss_quantity_source = "chargeable_kg"  # the data change proposed in dev/setup_chargeable_uom.py
+road_uom.boss_quantity_source = "chargeable_road_kg"  # the data change of dev/setup_chargeable_uom.py
 tte = product("TTE-CON")
 zaragoza = env["res.country.state"].search([("country_id.code", "=", "ES"), ("code", "=", "Z")], limit=1)
 # supplier price per chargeable kg WITHOUT a factor in the document: the mode factor applies (road 333)
 tariff = env["boss.tariff"].create({
     "name": "[PRUEBA] transporte por kg tasable", "partner_id": supplier.id, "valid_from": date(2026, 1, 1),
-    "transport_mode": "road", "scope_confirmed": True,
+    "scope_confirmed": True,  # no mode in the scope: a haulier serves road, air and sea shipments (IRENEO)
     "document": BinaryBytes(b"[PRUEBA] tarifa por kg tasable", filename="tarifa.txt"), "document_name": "tarifa.txt",
     "line_ids": [Command.create({"product_id": tte.id, "uom_id": road_uom.id, "method": "per_unit",
                                  "basis": "chargeable_kg", "unit_price": 0.10})]})
@@ -114,6 +114,19 @@ check("file without measures: nothing assumed", 0.0, file.chargeable_kg)
 file.write({"gross_kg": 500.0, "volume_m3": 2.0})
 check("file measures completed later: 666", (666.0, 666.0), (file.volume_weight_kg, file.chargeable_kg))
 check("file quantity for a chargeable basis", 666.0, file._boss_quantity("chargeable_kg"))
+# 6. the road leg of a SEA import is charged with the road factor (333), both selling and buying
+sea_road = env["sale.order"].create({
+    "partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "lcl",
+    "boss_origin_country_id": ref("base.cn").id, "boss_destination_country_id": ref("base.es").id,
+    "boss_inland_state_id": zaragoza.id, "boss_eta": date(2026, 11, 16), "boss_gross_kg": 500.0, "boss_volume_m3": 2.0,
+    "order_line": [Command.create({"product_id": tte.id, "product_uom_id": road_uom.id, "boss_supplier_id": supplier.id})]})
+sr = sea_road.order_line
+check("sea import, road delivery: shipment chargeable uses sea (2000) but the road line uses road (666)",
+      (2000.0, 666.0), (sea_road.boss_chargeable_kg, sr.product_uom_qty))
+tariff.line_ids.volumetric_factor = 0.0
+sr._boss_recompute_cost()
+check("sea import, road delivery: supplier price per chargeable kg without factor uses the road factor (666 x 0.10)",
+      ("ok", 66.6), (sr.boss_cost_status, round(sr.boss_cost_amount, 2)))
 
 # 5. history: accepted quotations keep their stored values
 accepted = env["sale.order"].search([("state", "=", "sale"), ("boss_pricing_frozen", "=", True), ("boss_transport_mode", "=", "air")], limit=1)

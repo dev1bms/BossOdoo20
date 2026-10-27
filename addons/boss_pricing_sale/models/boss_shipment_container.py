@@ -6,10 +6,11 @@ TEU = {"20": 1, "40": 2, "45": 2}
 
 
 def shipment_quantity(source, containers, gross_kg, volume_m3, pallets, awb_kg, size=False, ctype=False,
-                      chargeable_kg=None):
+                      chargeable_kg=None, chargeable_by_mode=None):
     """Quantity of a charge basis taken from shipment data (quotation or file), or None when it is entered on the
     line. containers: [(size, container type, quantity)]. One function for every screen (ADR-003/005).
-    chargeable_kg: the shipment's chargeable weight (higher of gross and volume × factor of the mode)."""
+    chargeable_kg: the shipment's chargeable weight (its main transport mode); chargeable_by_mode: {mode: kg} for a
+    charge basis of a given mode (the road leg of a sea import is charged with the road factor, 333)."""
     rows = [(s, t, q) for s, t, q in containers if (not size or s == size) and (not ctype or t == ctype)]
     values = {
         "shipment": 1.0,
@@ -22,6 +23,9 @@ def shipment_quantity(source, containers, gross_kg, volume_m3, pallets, awb_kg, 
         "pallets": float(pallets),
         "awb_kg": awb_kg or None,  # empty: the quantity stays the one typed on the line
         "chargeable_kg": chargeable_kg or None,  # empty (a measure unknown): the quantity stays as typed
+        "chargeable_air_kg": (chargeable_by_mode or {}).get("air") or None,
+        "chargeable_road_kg": (chargeable_by_mode or {}).get("road") or None,
+        "chargeable_sea_kg": (chargeable_by_mode or {}).get("sea") or None,
     }
     return values.get(source)
 

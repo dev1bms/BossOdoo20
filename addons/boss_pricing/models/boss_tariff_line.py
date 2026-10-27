@@ -258,6 +258,8 @@ class BossTariffLine(models.Model):
         params["brackets"] = [{"up_to": b.up_to, "fixed_amount": b.fixed_amount, "unit_price": b.unit_price}
                               for b in self.bracket_ids]
         params["base_product_ids"] = self.base_product_ids.ids
+        params["transport_mode"] = self.transport_mode  # effective mode of the price (its line or its tariff)
+        params["uom_quantity_source"] = self.uom_id.boss_quantity_source  # a unit that names its mode decides
         params["supplier_id"] = self.tariff_id.partner_id.id
         params["currency"] = self.tariff_id.currency_id.name
         return params

@@ -48,10 +48,12 @@
                             <field name="boss_transport_mode" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
                             <field name="incoterm" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
+                            <field name="incoterm_location" readonly="state in ('sale', 'cancel')" placeholder="Named place of the incoterm"/>
                             <field name="boss_traffic_code" invisible="not boss_traffic_code"/>
                         </group>
                         <group string="Carrier" name="boss_carrier">
                             <field name="boss_carrier_id" readonly="state in ('sale', 'cancel')"/>
+                            <field name="boss_haulier_id" invisible="not boss_haulier_id"/>
                             <field name="boss_pricing_frozen" invisible="1"/>
                             <field name="boss_port_kind" invisible="1"/>
                             <field name="boss_port_id" invisible="1"/>
@@ -117,9 +119,11 @@
             <xpath expr="//field[@name='order_line']//list//column[@name='sol_qty']" position="before">
                 <field name="boss_pricing_mode" column_invisible="1"/>
                 <field name="boss_price_frozen" column_invisible="1"/>
-                <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen" width="50px"/>
+                <field name="boss_quantity_source" column_invisible="1"/>
+                <field name="boss_container_size" optional="show" string="Size" readonly="boss_price_frozen" width="50px"
+                       invisible="boss_quantity_source not in ('container', 'teu')"/>
                 <field name="boss_container_type_id" optional="hide" string="Type" readonly="boss_price_frozen"
-                       options="{'no_create': True}"/>
+                       options="{'no_create': True}" invisible="boss_quantity_source not in ('container', 'teu')"/>
                 <field name="boss_execution" optional="show" string="By" readonly="boss_price_frozen" width="80px"
                        invisible="not boss_pricing_mode"/>
                 <field name="boss_supplier_id" optional="show" readonly="boss_price_frozen" width="95px"
