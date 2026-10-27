@@ -24,12 +24,18 @@ class BossRepriceWizard(models.TransientModel):
         order = self.order_id
         before = [line._boss_snapshot_values() for line in order.order_line.filtered("boss_price_frozen")]
         ctx_self = self.with_context(boss_reprice=True)
+        # Odoo refuses price changes on a locked order: unlock for the re-pricing only (D-9, found in Chrome on boss20)
+        locked = order.locked
+        if locked:
+            order.action_unlock()
         for wl in ctx_self.line_ids:
             line = wl.sale_line_id
             if wl.recompute_cost:
                 line._boss_recompute_cost()
             if line.currency_id.compare_amounts(wl.new_price, line.price_unit):
                 line.price_unit = wl.new_price
+        if locked:
+            order.action_lock()
         self.env["boss.pricing.snapshot"].sudo()._take(order, "repricing", self.reason, before)
         order.message_post(body=self.env._("Prices re-priced. Reason: %s", self.reason))
         return {"type": "ir.actions.act_window_close"}
