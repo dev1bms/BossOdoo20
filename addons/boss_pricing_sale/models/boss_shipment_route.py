@@ -107,6 +107,10 @@ class BossShipmentRoute(models.AbstractModel):
         "Chargeable weight (kg)", digits=(12, 2), compute="_compute_boss_chargeable_kg", store=True,
         help="Air: the higher of the gross weight and the volume weight. Used as the AWB weight until the AWB is known.")
 
+    def _valid_field_parameter(self, field, name):
+        # tracking applies on the models that use this route (quotation, opportunity: both are mail threads)
+        return name == "tracking" or super()._valid_field_parameter(field, name)
+
     @api.depends("boss_direction", "boss_transport_mode", "boss_business")
     def _compute_boss_traffic_code(self):
         for record in self:
