@@ -130,6 +130,14 @@
    }
   },
   {
+   "id": "inicio-rapido",
+   "section": "inicio",
+   "title": {
+    "es": "Inicio rápido — Servicios, proveedores, tarifas y primera cotización",
+    "en": "Quick start — services, suppliers, tariffs and first quotation"
+   }
+  },
+  {
    "id": "demo",
    "section": "inicio",
    "title": {

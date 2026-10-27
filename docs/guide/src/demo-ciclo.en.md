@@ -1,3 +1,5 @@
+> **27/10/2026:** the demo tariffs and the demo pricelist are archived (the test quotations that used them still show them). The walk-through with real data is in [Quick start](#/inicio-rapido).
+
 The system holds example files, with **[DEMO]** customers and tariffs only (illustrative amounts). Nothing is posted or
 confirmed to a supplier: purchases are draft RFQs and invoices are drafts. The server has no outgoing mail. They are
 rebuilt with `dev/demo_cycle.py` (no duplicates; skipped numbers come from earlier cancelled attempts).

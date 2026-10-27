@@ -1,3 +1,5 @@
+> **27/10/2026:** las tarifas y la lista de precios de demostración están archivadas (las ofertas de prueba que las usaron las siguen mostrando). El recorrido con datos reales está en [Inicio rápido](#/inicio-rapido).
+
 En el sistema hay expedientes de ejemplo, solo con clientes y tarifas **[DEMO]** (importes ilustrativos). Nada está
 contabilizado ni confirmado a un proveedor: las compras son solicitudes en borrador y las facturas, borradores. El
 servidor no tiene correo saliente. Se rehacen con `dev/demo_cycle.py` (no duplica; los números saltados son de intentos

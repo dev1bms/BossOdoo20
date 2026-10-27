@@ -1,3 +1,5 @@
+> **27/10/2026:** the demo tariffs and the demo pricelist are archived (the test quotations that used them still show them). The walk-through with real data is in [Quick start](#/inicio-rapido).
+
 Demonstration on **https://system.bosscontinental.com** with the three suppliers of the system (**MSC**, **WFS**,
 **IRENEO**). **[DEMO]** tariffs, customers and sale rules: illustrative amounts, approved only for this demonstration and
 limited to the [DEMO] customers; they never price real quotations: they are **demo tariffs** («Demo» ribbon) and the
