@@ -489,7 +489,7 @@ TASKS = [
          desc=desc("Resultado: docs/pruebas-angel.md cumplimentada (resultado real por caso) y las decisiones de "
                    "Ángel registradas: P17, P30, P31, P32, P03, P11, P38, P39, P33; cuentas de suplidos (D-2); IVA "
                    "de CAU/QBR; impuestos de compra por tipo de factura; QBR; margen mínimo; SII/VeriFactu (P45).",
-                   "Entornos: boss20 solo borradores; contabilizar y pagar en la copia local aislada.",
+                   "Entorno: boss20 (política de Belal del 27/10: contabilizar, abonar y pagar con registros [PRUEBA] en boss20; sin copias ni bases de prueba). Recorrido de referencia: docs/escenario-uat.md.",
                    f"Convoca Belal; participa Ángel. {NOT_COMMITTED}",
                    "Aceptación: hoja firmada y docs/preguntas-abiertas.md actualizado con fecha y fuente."),
          evidence=None, links=[f"{DOC}#/preguntas"]),
@@ -1047,6 +1047,19 @@ TASKS = [
                    "la fila ARA de E260001 no se puede facturar en boss20 (defecto D-2).",
                    "Aceptación: lectura de boss20 con las cuentas y el mapa; factura borrador de ARA creada."),
          links=[f"{DOC}#/facturacion"]),
+    dict(code="W11", title="Ciclo contable completo en Chrome en boss20 y corrección de lo encontrado (D-7, D-8, D-9)",
+         epic="E7", type=T.TEST, sprint="S44", points=3, start=D(2026, 10, 27), due=D(2026, 10, 27),
+         priority=P.CRITICAL, deps=["W09"], hours=4, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 27),
+         evidence="27/10 en boss20 desde Chrome: S00031/E260015 con facturas de MSC (pago rechazado antes de facturar "
+                  "al cliente), facturación parcial, abono del BL, ocupación refacturada, pagos y casación bancaria; "
+                  "margen final 240 € = 3.090 − 2.850. Corregidos y desplegados: D-7 (nota interna en facturas), D-8 "
+                  "(margen final con lo facturado neto), D-9 («Recotizar» desde la interfaz); boss_expediente 20.0.1.8.0, "
+                  "boss_pricing_sale 20.0.1.8.2. Detalle: docs/escenario-uat.md, docs/preguntas-abiertas.md.",
+         desc=desc("Resultado: oferta → aceptación y expediente → compras y servicios prestados → facturas de proveedor "
+                   "y cliente → facturación parcial y abono → pagos y casación → rentabilidad, recorrido en la "
+                   "interfaz de boss20 con registros [PRUEBA]; defectos corregidos y vueltos a probar.",
+                   "Aceptación: todas las facturas «Pagado», banco casado, margen final explicado cifra a cifra."),
+         links=[f"{SYS}/odoo/action-656/15", f"{SYS}/odoo/action-sale.action_orders/31", f"{DOC}#/facturacion"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
