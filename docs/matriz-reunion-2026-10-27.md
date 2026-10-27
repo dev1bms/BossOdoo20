@@ -56,4 +56,5 @@ de Belal** (commit `064891c`; las filas marcadas «WIP» están ya en boss20: `c
 Pruebas del cierre: `dev/check_meeting_matrix.py` (23/23), `dev/check_chargeable_weight.py` (38/38),
 `dev/check_quote_flow.py` (40/40), `dev/check_route_cases.py` (36/36; 53/53 con los casos cruzado y nacional),
 `dev/check_default_markup.py` (22/22). «WIP 2» = segunda tanda del 27/10 por la tarde (X/N, fecha clave, +20 %),
-probada montada en boss20 y pendiente de despliegue.
+**desplegada a las 16:43** (commit `5cf2918`); el 20 % está activado en Ajustes y visto en S00311
+(`docs/evidencias/20261027_1646_chrome_s00311_venta_coste_mas_20.md`).

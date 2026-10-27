@@ -294,9 +294,11 @@ cerradas). **Venta por defecto = coste + 20 %** como ajuste de Ventas que crea u
 (X) y nacional (N)**: España se propone y nunca se fuerza; entradas de tarificación e IVA por los dos lados de la ruta;
 fecha clave = ETA en importación, ETD en el resto, nunca la fecha de vaciado (R-A2 y R-A5 cerradas; ADR-006 enmienda 2;
 `dev/check_route_cases.py` 53/53). **TTE-CON comprobado** antes de tocar el motor: unidad «kg tasable terrestre», 6
-precios de IRENEO por tramos con factor 333 del documento; sin cambios en el motor. Probado montado en boss20
-(`docs/evidencias/*_wip2_*.txt`); **pendiente de despliegue** (boss_pricing 20.0.1.10.0, boss_pricing_sale 20.0.1.12.0,
-boss_expediente 20.0.1.11.0) y de activar el ajuste del 20 % en pantalla.
+precios de IRENEO por tramos con factor 333 del documento; sin cambios en el motor. **Desplegado el 27/10 a las 16:43** con la
+aprobación de Belal (commit `5cf2918`; boss_pricing 20.0.1.10.0, boss_pricing_sale 20.0.1.12.0, boss_expediente
+20.0.1.11.0; guía v=20261027i); **ajuste del 20 % activado en Ajustes** por Belal (regla 27 en Tarifa general) y
+probado en Chrome con S00311 (THC 253 → 303,60; `docs/evidencias/20261027_1646_chrome_s00311_venta_coste_mas_20.md`);
+`check_default_markup` 22/22 y `check_route_cases` 53/53 sobre el código desplegado.
 
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas

@@ -1130,7 +1130,7 @@ TASKS = [
          priority=P.HIGH, deps=["W16"], hours=6, who="belal", dept="sys", status=S.IN_PROGRESS,
          evidence="27/10: ADR-008 y ADR-006 enmienda 2; check_default_markup 22/22, check_route_cases 53/53, "
                   "check_quote_flow 40/40, check_meeting_matrix 23/23, check_chargeable_weight 38/38 (código montado en boss20); "
-                  "pendiente: despliegue y activación del 20 % en Ajustes.",
+                  "desplegado 27/10 16:43 (5cf2918); 20 % activado en Ajustes por Belal y visto en S00311.",
          desc=desc("Resultado: cada servicio con coste conocido propone venta = coste + 20 % (editable, desactivable); una oferta "
                    "cruzada o nacional se describe sin que España sea parte; la fecha de vaciado nunca elige tarifa.",
                    "Aceptación: Belal activa el ajuste en pantalla y Ángel ve el 20 % en una oferta nueva."),
