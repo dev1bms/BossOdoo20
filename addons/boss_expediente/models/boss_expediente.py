@@ -12,6 +12,7 @@ from odoo.tools.misc import formatLang
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
+from odoo.addons.boss_pricing_sale.models.boss_shipment_route import BUSINESSES, chargeable_kg, spanish_side, traffic_code
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
 
@@ -48,10 +49,14 @@ SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
 # Shipment data copied ONCE from the accepted quotation (file field: quotation field). From then on the file holds
 # the actual data and the quotation keeps what was agreed; differences are shown, never synchronised.
 FROM_ORDER = {
-    "direction": "boss_direction", "transport_mode": "boss_transport_mode", "load_type": "boss_load_type",
-    "carrier_id": "boss_carrier_id", "port_id": "boss_port_id", "country_id": "boss_country_id",
-    "inland_state_id": "boss_inland_state_id", "incoterm_id": "incoterm", "origin_place": "boss_origin_place",
-    "destination_place": "boss_destination_place", "shipper_id": "boss_shipper_id",
+    "business": "boss_business", "direction": "boss_direction", "transport_mode": "boss_transport_mode",
+    "load_type": "boss_load_type", "carrier_id": "boss_carrier_id", "port_id": "boss_port_id",
+    "country_id": "boss_country_id", "inland_state_id": "boss_inland_state_id", "incoterm_id": "incoterm",
+    "origin_country_id": "boss_origin_country_id", "origin_port_id": "boss_origin_port_id",
+    "pickup_address_id": "boss_pickup_address_id", "origin_place": "boss_origin_place",
+    "destination_country_id": "boss_destination_country_id", "destination_port_id": "boss_destination_port_id",
+    "delivery_address_id": "boss_delivery_address_id", "destination_place": "boss_destination_place",
+    "etd": "boss_etd", "eta": "boss_eta", "shipper_id": "boss_shipper_id",
     "consignee_id": "boss_consignee_id", "goods_description": "boss_goods_description", "packages": "boss_packages",
     "gross_kg": "boss_gross_kg", "volume_m3": "boss_volume_m3", "awb_kg": "boss_awb_kg", "pallets": "boss_pallets",
     **{f"scope_{scope}": f"boss_scope_{scope}" for scope in SCOPES},
@@ -108,8 +113,12 @@ class BossExpediente(models.Model):
     company_id = fields.Many2one("res.company", required=True, default=lambda self: self.env.company, index=True)
     currency_id = fields.Many2one(related="company_id.currency_id")
     partner_id = fields.Many2one(
-        "res.partner", "Customer", required=True, tracking=True, index=True, check_company=True,
-        help="Contracting customer: who orders the shipment and is invoiced.")
+        "res.partner", "Ordered by", required=True, tracking=True, index=True, check_company=True,
+        help="Who orders the shipment and is invoiced: a BOSS client, or an agent (a forwarder abroad) for its own "
+        "client.")
+    business = fields.Selection(BUSINESSES, "Business of", default="boss", tracking=True)
+    traffic_code = fields.Char("Traffic", compute="_compute_traffic_code", store=True,
+                               help="Direction (I/E), mode (M sea, A air, T road) and whose client (B BOSS, A agent).")
     user_id = fields.Many2one("res.users", "Responsible", default=lambda self: self.env.user, tracking=True)
     state = fields.Selection(STATES, default="open", required=True, tracking=True, copy=False)
     preliminary = fields.Boolean(
@@ -121,7 +130,7 @@ class BossExpediente(models.Model):
     consignee_id = fields.Many2one("res.partner", "Consignee", tracking=True)
     notify_id = fields.Many2one("res.partner", "Notify party")
     agent_id = fields.Many2one("res.partner", "Agent abroad", tracking=True)
-    carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True, help="Shipping line, airline or haulier.")
+    carrier_id = fields.Many2one("res.partner", "Main carrier", tracking=True, help="Shipping line or airline.")
     handler_id = fields.Many2one(
         "res.partner", "Handler", tracking=True,
         help="Air handling agent of the airline at the airport (HAN, ALM, AWB, ETX, X-R are bought from it). "
@@ -136,12 +145,27 @@ class BossExpediente(models.Model):
     transport_mode = fields.Selection(TRANSPORT_MODES, "Transport mode", tracking=True)
     load_type = fields.Selection(LOAD_TYPES, "Load type", tracking=True)
     incoterm_id = fields.Many2one("account.incoterms", "Incoterm", tracking=True)
-    port_id = fields.Many2one("boss.port", "Spanish port / airport", tracking=True)
-    country_id = fields.Many2one("res.country", "Country abroad", tracking=True)
-    inland_state_id = fields.Many2one("res.country.state", "Inland province",
-                                      domain="[('country_id.code', '=', 'ES')]")
-    origin_place = fields.Char("Origin (place)")
-    destination_place = fields.Char("Destination (place)")
+    # origin and destination (ADR-006); the Spanish port, country abroad and province are derived from them
+    port_kind = fields.Char(compute="_compute_port_kind")
+    origin_country_id = fields.Many2one("res.country", "Origin country", tracking=True)
+    origin_port_id = fields.Many2one("boss.port", "Origin port / airport", tracking=True,
+                                     domain="[('country_id', '=?', origin_country_id), ('kind', '=?', port_kind)]")
+    pickup_address_id = fields.Many2one("res.partner", "Pickup address", tracking=True)
+    origin_place = fields.Char("Origin place", compute="_compute_places", store=True, readonly=False)
+    destination_country_id = fields.Many2one("res.country", "Destination country", tracking=True)
+    destination_port_id = fields.Many2one(
+        "boss.port", "Destination port / airport", tracking=True,
+        domain="[('country_id', '=?', destination_country_id), ('kind', '=?', port_kind)]")
+    delivery_address_id = fields.Many2one("res.partner", "Delivery address", tracking=True)
+    destination_place = fields.Char("Destination place", compute="_compute_places", store=True, readonly=False)
+    port_id = fields.Many2one("boss.port", "Spanish port / airport", tracking=True, compute="_compute_pricing_route",
+                              store=True, readonly=False,
+                              help="The destination of an import, the origin of an export.")
+    country_id = fields.Many2one("res.country", "Country abroad", tracking=True, compute="_compute_pricing_route",
+                                 store=True, readonly=False)
+    inland_state_id = fields.Many2one("res.country.state", "Inland province", domain="[('country_id.code', '=', 'ES')]",
+                                      compute="_compute_inland_state", store=True, readonly=False,
+                                      help="Province of the delivery (import) or pickup (export) address in Spain.")
     scope_pickup = fields.Boolean("Pickup")
     scope_origin_customs = fields.Boolean("Customs at origin")
     scope_main = fields.Boolean("Main carriage")
@@ -153,7 +177,14 @@ class BossExpediente(models.Model):
     gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2), tracking=True)
     volume_m3 = fields.Float("Volume (m³)", digits=(12, 3), tracking=True)
     awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2))
+    volume_weight_kg = fields.Float("Volume weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg", store=True,
+                                    help="Air: volume × 167 kg per m³ (IATA 1:6000).")
+    chargeable_kg = fields.Float("Chargeable weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg",
+                                 store=True, help="Air: the higher of the gross weight and the volume weight.")
     pallets = fields.Integer()
+    goods_value = fields.Monetary("Goods value", currency_field="currency_id", tracking=True,
+                                  help="Commercial value of the goods, when known (often only after the quotation).")
+    duties_amount = fields.Monetary("Customs duties (estimate)", currency_field="currency_id")
     container_ids = fields.One2many("boss.expediente.container", "expediente_id", "Containers", copy=False)
     # references
     booking_ref = fields.Char("Booking", tracking=True)
@@ -366,7 +397,8 @@ class BossExpediente(models.Model):
     def _boss_quantity(self, source, size=False, ctype=False):
         self.ensure_one()
         return shipment_quantity(source, [(c.size, c.container_type_id, 1) for c in self.container_ids],
-                                 self.gross_kg, self.volume_m3, self.pallets, self.awb_kg, size, ctype)
+                                 self.gross_kg, self.volume_m3, self.pallets, self.awb_kg or self.chargeable_kg,
+                                 size, ctype)
 
     def _boss_inputs(self):
         """Shipment inputs of boss.pricing taken from the file (what really happens), like
@@ -385,11 +417,68 @@ class BossExpediente(models.Model):
             "tariff_use": "demo" if partner.boss_demo else "real",
             "containers": [{"size": size, "type_id": type_id, "quantity": quantity}
                            for (size, type_id), quantity in containers.items()],
-            "gross_kg": self.gross_kg or None, "awb_kg": self.awb_kg or None, "volume_m3": self.volume_m3 or None,
-            "pallets": self.pallets or None, "goods_value": order.boss_goods_value or None,
-            "duties_amount": order.boss_duties_amount or None, "storage_days": None,
+            "gross_kg": self.gross_kg or None, "awb_kg": self.awb_kg or self.chargeable_kg or None,
+            "volume_m3": self.volume_m3 or None, "pallets": self.pallets or None,
+            "goods_value": self.goods_value or order.boss_goods_value or None,
+            "duties_amount": self.duties_amount or order.boss_duties_amount or None, "storage_days": None,
             "start_weekday": day.weekday() if day else None,
         }
+
+    # Route (ADR-006): same rules as the quotation (boss.shipment.route)
+    @api.depends("direction", "transport_mode", "business")
+    def _compute_traffic_code(self):
+        for file in self:
+            file.traffic_code = traffic_code(file.direction, file.transport_mode, file.business)
+
+    @api.depends("transport_mode")
+    def _compute_port_kind(self):
+        for file in self:
+            file.port_kind = {"sea": "sea", "air": "air"}.get(file.transport_mode, False)
+
+    @api.depends("pickup_address_id.city", "delivery_address_id.city")
+    def _compute_places(self):
+        for file in self:
+            file.origin_place = file.pickup_address_id.city or file.origin_place
+            file.destination_place = file.delivery_address_id.city or file.destination_place
+
+    @api.depends("direction", "origin_country_id", "origin_port_id", "destination_country_id", "destination_port_id")
+    def _compute_pricing_route(self):
+        for file in self:
+            side = spanish_side(file.direction)
+            known = file.origin_country_id or file.origin_port_id or file.destination_country_id or file.destination_port_id
+            if not side or not known:
+                file.port_id, file.country_id = file.port_id, file.country_id
+                continue
+            abroad = "origin" if side == "destination" else "destination"
+            file.port_id = file[f"{side}_port_id"]
+            file.country_id = file[f"{abroad}_country_id"]
+
+    @api.depends("direction", "pickup_address_id.state_id", "delivery_address_id.state_id")
+    def _compute_inland_state(self):
+        for file in self:
+            side = spanish_side(file.direction)
+            address = file.delivery_address_id if side == "destination" else file.pickup_address_id
+            spanish = side and address.state_id.country_id.code == "ES"
+            file.inland_state_id = address.state_id if spanish else file.inland_state_id
+
+    @api.depends("transport_mode", "gross_kg", "volume_m3")
+    def _compute_chargeable_kg(self):
+        for file in self:
+            file.volume_weight_kg, file.chargeable_kg = chargeable_kg(file.transport_mode, file.gross_kg,
+                                                                      file.volume_m3)
+
+    @api.onchange("direction")
+    def _onchange_direction_spain(self):
+        """The Spanish side of the route is Spain; the side abroad cannot be Spain."""
+        spain = self.env.ref("base.es")
+        side = spanish_side(self.direction)
+        if not side:
+            return
+        abroad = "origin" if side == "destination" else "destination"
+        if not self[f"{side}_country_id"]:
+            self[f"{side}_country_id"] = spain
+        if self[f"{abroad}_country_id"] == spain:
+            self[f"{abroad}_country_id"] = False
 
     # Handler of the airline at the airport (Hoja1 B9/C9/C10)
     @api.depends("carrier_id", "port_id", "transport_mode")
@@ -784,7 +873,6 @@ class BossExpediente(models.Model):
         for fname, order_field in FROM_ORDER.items():
             value = self[fname]
             context[f"default_{order_field}"] = value.id if isinstance(value, models.BaseModel) else value
-        context["default_boss_planned_date"] = (self.eta if self.direction == "import" else self.etd) or False
         return {"type": "ir.actions.act_window", "res_model": "sale.order", "view_mode": "form",
                 "views": [(False, "form")], "name": self.env._("New quotation"), "context": context}
 

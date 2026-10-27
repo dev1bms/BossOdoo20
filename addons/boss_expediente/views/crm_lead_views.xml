@@ -10,35 +10,57 @@
                     <p class="text-muted">What the customer asks for. Fill in what is known; «New Quotation» takes it
                         once to the quotation.</p>
                     <group>
-                        <group string="Route">
+                        <group string="Case">
+                            <field name="boss_business"/>
                             <field name="boss_direction"/>
                             <field name="boss_transport_mode"/>
                             <field name="boss_load_type"/>
                             <field name="boss_incoterm_id"/>
-                            <field name="boss_origin_place"/>
-                            <field name="boss_destination_place"/>
-                            <field name="boss_port_id" options="{'no_create': True}"/>
-                            <field name="boss_country_id" options="{'no_create': True}"/>
-                            <field name="boss_inland_state_id" options="{'no_create': True}"/>
+                            <field name="boss_traffic_code" invisible="not boss_traffic_code"/>
                         </group>
-                        <group string="Scope and parties">
+                        <group string="BOSS handles">
                             <field name="boss_scope_pickup"/>
                             <field name="boss_scope_origin_customs"/>
                             <field name="boss_scope_main"/>
                             <field name="boss_scope_destination_customs"/>
                             <field name="boss_scope_delivery"/>
-                            <field name="boss_shipper_id"/>
-                            <field name="boss_consignee_id"/>
                             <field name="boss_carrier_id"/>
-                            <field name="boss_planned_date"/>
+                            <field name="boss_port_kind" invisible="1"/>
                         </group>
+                    </group>
+                    <group>
+                        <group string="Origin">
+                            <field name="boss_shipper_id"/>
+                            <field name="boss_origin_country_id" options="{'no_create': True}"/>
+                            <field name="boss_origin_port_id" options="{'no_create': True}"/>
+                            <field name="boss_pickup_address_id"
+                                   context="{'default_parent_id': boss_shipper_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
+                                   options="{'always_reload': True}"/>
+                            <field name="boss_origin_place"/>
+                            <field name="boss_inland_state_id" options="{'no_create': True}" invisible="boss_direction != 'export'"/>
+                            <field name="boss_etd"/>
+                        </group>
+                        <group string="Destination">
+                            <field name="boss_consignee_id"/>
+                            <field name="boss_destination_country_id" options="{'no_create': True}"/>
+                            <field name="boss_destination_port_id" options="{'no_create': True}"/>
+                            <field name="boss_delivery_address_id"
+                                   context="{'default_parent_id': boss_consignee_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
+                                   options="{'always_reload': True}"/>
+                            <field name="boss_destination_place"/>
+                            <field name="boss_inland_state_id" options="{'no_create': True}" invisible="boss_direction == 'export'"/>
+                            <field name="boss_eta"/>
+                        </group>
+                    </group>
+                    <group>
                         <group string="Cargo">
                             <field name="boss_goods_description"/>
                             <field name="boss_packages"/>
                             <field name="boss_gross_kg"/>
                             <field name="boss_volume_m3" invisible="boss_load_type == 'fcl'"/>
+                            <field name="boss_chargeable_kg" invisible="boss_transport_mode != 'air'"/>
                             <field name="boss_awb_kg" invisible="boss_transport_mode != 'air'"/>
-                            <field name="boss_pallets"/>
+                            <field name="boss_pallets" invisible="boss_load_type == 'fcl'"/>
                             <field name="boss_goods_value"/>
                         </group>
                         <group string="Requested services">

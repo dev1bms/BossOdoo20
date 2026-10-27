@@ -2,22 +2,18 @@ from odoo import Command, api, fields, models
 from odoo.exceptions import ValidationError
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
-from .boss_expediente import FROM_ORDER, with_accounts
+from .boss_expediente import FROM_ORDER, SCOPES, with_accounts
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    # Route and scope agreed with the customer (the quotation basis); the file keeps the actual data.
-    boss_origin_place = fields.Char("Origin (place)")
-    boss_destination_place = fields.Char("Destination (place)")
+    # Scope agreed with the customer (the quotation basis; route: boss.shipment.route); the file keeps the actual data.
     boss_scope_pickup = fields.Boolean("Pickup")
     boss_scope_origin_customs = fields.Boolean("Customs at origin")
     boss_scope_main = fields.Boolean("Main carriage")
     boss_scope_destination_customs = fields.Boolean("Customs at destination")
     boss_scope_delivery = fields.Boolean("Delivery")
-    boss_shipper_id = fields.Many2one("res.partner", "Shipper")
-    boss_consignee_id = fields.Many2one("res.partner", "Consignee")
     boss_goods_description = fields.Char("Goods")
     boss_packages = fields.Integer("Packages")
     boss_requested_service_ids = fields.Many2many(
@@ -29,6 +25,14 @@ class SaleOrder(models.Model):
         domain="[('state', '!=', 'cancel'), ('financial_closed', '=', False)]",
         help="Shipment file of this order. Empty: opened when the quotation is accepted. Choose a file to add a "
         "service sold later or to link a file opened before the quotation (pre-alert).")
+
+    def _boss_apply_template_case(self):
+        """The template also says what BOSS handles in this case (pickup, customs, main carriage, delivery)."""
+        super()._boss_apply_template_case()
+        template = self.sale_order_template_id
+        if any(template[f"boss_scope_{scope}"] for scope in SCOPES):
+            for scope in SCOPES:
+                self[f"boss_scope_{scope}"] = template[f"boss_scope_{scope}"]
 
     def _boss_handler_candidates(self):
         """Handlers known for the airline at the airport of an air quotation (empty otherwise)."""
@@ -67,10 +71,15 @@ class SaleOrder(models.Model):
         for file_field, order_field in FROM_ORDER.items():
             value = self[order_field]
             values[file_field] = value.id if isinstance(value, models.BaseModel) else value
-        planned = "eta" if self.boss_direction != "export" else "etd"
+        if not (self.boss_etd or self.boss_eta) and self.boss_planned_date:
+            values["etd" if self.boss_direction == "export" else "eta"] = self.boss_planned_date
+        company_currency = self.company_id.currency_id
+        for file_field, order_field in (("goods_value", "boss_goods_value"), ("duties_amount", "boss_duties_amount")):
+            values[file_field] = self.currency_id._convert(self[order_field], company_currency, self.company_id,
+                                                           fields.Date.to_date(self.date_order) or fields.Date.today())
         values.update({
             "partner_id": self.partner_id.commercial_partner_id.id, "user_id": self.user_id.id,
-            "company_id": self.company_id.id, planned: self.boss_planned_date,
+            "company_id": self.company_id.id,
             "container_ids": [Command.create({"size": c.size, "container_type_id": c.container_type_id.id})
                               for c in self.boss_container_ids for _ in range(c.quantity)],
         })

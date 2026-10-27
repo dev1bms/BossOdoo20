@@ -58,7 +58,8 @@ class BossPricingTest(models.TransientModel):
     goods_value = fields.Float()
     duties_amount = fields.Float("Customs duties")
     storage_days = fields.Integer("Days")
-    storage_days_known = fields.Boolean("Days known", help="Unticked: the days are not known yet (not zero).")
+    storage_days_known = fields.Boolean("Days known", default=True,
+                                        help="Unticked: the days are not known yet (not zero).")
     storage_start = fields.Datetime(
         "Period start", help="Actual start of a time-based service (storage: arrival notice NOA or freight on hand "
         "FOH; demurrage: the carrier's event). With the end, it replaces the days: exact hours and weekdays.")

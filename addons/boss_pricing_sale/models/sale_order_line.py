@@ -33,7 +33,7 @@ COST_FIELDS = ("boss_cost_status", "boss_cost_amount", "boss_cost_currency_id", 
 SHIPMENT_DEPENDS = (
     "order_id.partner_id", "order_id.boss_direction", "order_id.boss_transport_mode", "order_id.boss_load_type",
     "order_id.boss_carrier_id", "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_planned_date",
-    "order_id.boss_inland_state_id", "order_id.boss_awb_kg",
+    "order_id.boss_inland_state_id", "order_id.boss_awb_kg", "order_id.boss_chargeable_kg",
     "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
     "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
     "order_id.boss_pallets", "order_id.boss_goods_value", "order_id.boss_duties_amount",
@@ -308,7 +308,8 @@ class SaleOrderLine(models.Model):
             })
 
     @api.depends("boss_cost_status", "boss_cost_amount", "boss_manual_cost", "boss_cost_steps",
-                 "boss_cost_is_estimate", "boss_days", "boss_days_source")
+                 "boss_cost_is_estimate", "boss_days", "boss_days_source", "order_id.boss_awb_kg",
+                 "order_id.boss_chargeable_kg")
     def _compute_boss_cost_explanation(self):
         pricing = self.env["boss.pricing"]
         for line in self:
@@ -338,6 +339,14 @@ class SaleOrderLine(models.Model):
             elif (line.boss_days_source == "actual" and line.boss_cost_status == "ok"
                   and line.boss_tariff_line_id.method == "time"):
                 text = self.env._("ACTUAL period of %s days.", line.boss_days) + "\n" + text
+            order = line.order_id
+            if (line.boss_tariff_line_id.basis == "awb_kg" and not order.boss_awb_kg and order.boss_chargeable_kg
+                    and line.boss_cost_status == "ok"):
+                text = self.env._(
+                    "No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) "
+                    "and the volume weight (%(volume)s m³ × 167 = %(volume_kg)s kg).", kg=order.boss_chargeable_kg,
+                    gross=order.boss_gross_kg, volume=order.boss_volume_m3,
+                    volume_kg=order.boss_volume_weight_kg) + "\n" + text
             line.boss_cost_explanation = text
 
     def _boss_unit_cost(self):

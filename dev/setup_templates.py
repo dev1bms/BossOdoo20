@@ -24,6 +24,20 @@ EN_NAMES = dict(zip(TEMPLATES, [
     "IMB FOB · Sea import FCL · fixed services",
     "EAB · Air export · fixed services",
 ]))
+# The case of each template (ADR-006, meeting with Ángel 27/10/2026: the template fills the quotation). Direction, mode
+# and whose client come from the case code (IAB = import · air · BOSS client, decision B13); the incoterm from the name;
+# what BOSS handles is read from the services of the template (freight = main carriage, FAD = customs at destination,
+# DEX = customs at origin, TTE = delivery on an import / pickup on an export). PROPOSAL until Cristina confirms (S1/S2
+# in docs/reunion-angel-2026-10-27.md).
+CASES = {
+    "IAB FOB": dict(boss_business="boss", boss_direction="import", boss_transport_mode="air", boss_load_type="air",
+                    incoterm="FOB", scope=("main", "destination_customs", "delivery")),
+    "IMB FOB": dict(boss_business="boss", boss_direction="import", boss_transport_mode="sea", boss_load_type="fcl",
+                    incoterm="FOB", scope=("main", "destination_customs", "delivery")),
+    "EAB": dict(boss_business="boss", boss_direction="export", boss_transport_mode="air", boss_load_type="air",
+                incoterm=False, scope=("pickup", "origin_customs", "main")),
+}
+SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
 OLD_NOTE = "Plantilla de servicios que aplican SIEMPRE"
 made = {}
 # a template is found by its case code (the start of its name), in any earlier name
@@ -54,6 +68,12 @@ for name, codes in TEMPLATES.items():
     template.with_context(lang="en_US").name = EN_NAMES[name]
     if any(OLD_NOTE in (template.with_context(lang=lang).note or "") for lang in ("es_ES", "en_US")):
         template.note = False
+    case = dict(CASES[name.split(" · ")[0]])
+    incoterm, scope = case.pop("incoterm"), case.pop("scope")
+    case["boss_incoterm_id"] = incoterm and env["account.incoterms"].search([("code", "=", incoterm)], limit=1).id  # noqa: F821
+    case.update({f"boss_scope_{s}": s in scope for s in SCOPES})
+    template.write(case)
     made[name] = template
-    print("TEMPLATE", template.id, name[:40], [l.product_id.default_code for l in template.sale_order_template_line_ids])
+    print("TEMPLATE", template.id, name[:40], template.boss_traffic_code, template.boss_incoterm_id.code or "-",
+          [s for s in SCOPES if template[f"boss_scope_{s}"]], [l.product_id.default_code for l in template.sale_order_template_line_ids])
 env.cr.commit()

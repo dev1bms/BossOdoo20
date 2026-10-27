@@ -30,20 +30,20 @@
                 </group>
                 <group string="Measures">
                     <group>
-                        <label for="container_qty" string="Containers"/>
-                        <div class="o_row">
+                        <label for="container_qty" string="Containers" invisible="transport_mode in ('air', 'road') or load_type in ('air', 'lcl', 'road')"/>
+                        <div class="o_row" invisible="transport_mode in ('air', 'road') or load_type in ('air', 'lcl', 'road')">
                             <field name="container_qty" class="oe_inline"/> ×
                             <field name="container_size" class="oe_inline" placeholder="Size"/>
                             <field name="container_type_id" class="oe_inline" placeholder="Type" options="{'no_create': True}"/>
                         </div>
                         <field name="gross_kg"/>
                         <field name="volume_m3"/>
-                        <field name="awb_kg"/>
+                        <field name="awb_kg" invisible="transport_mode != 'air'"/>
                         <field name="pallets"/>
                     </group>
                     <group>
                         <field name="storage_days"/>
-                        <field name="storage_days_known"/>
+                        <field name="storage_days_known" invisible="1"/>
                         <field name="storage_start"/>
                         <field name="storage_end"/>
                         <field name="goods_value"/>

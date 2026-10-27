@@ -15,32 +15,24 @@
                     </div>
                 </button>
             </xpath>
-            <xpath expr="//page[@name='boss_shipment']/group" position="after">
-                <group>
-                    <group string="Scope">
-                        <field name="incoterm" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_origin_place" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_destination_place" readonly="state in ('sale', 'cancel')"/>
-                        <label for="boss_scope_pickup" string="BOSS handles"/>
-                        <div class="d-flex flex-wrap gap-3">
-                            <span><field name="boss_scope_pickup" nolabel="1" readonly="state in ('sale', 'cancel')"/> Pickup</span>
-                            <span><field name="boss_scope_origin_customs" nolabel="1" readonly="state in ('sale', 'cancel')"/> Customs origin</span>
-                            <span><field name="boss_scope_main" nolabel="1" readonly="state in ('sale', 'cancel')"/> Main carriage</span>
-                            <span><field name="boss_scope_destination_customs" nolabel="1" readonly="state in ('sale', 'cancel')"/> Customs destination</span>
-                            <span><field name="boss_scope_delivery" nolabel="1" readonly="state in ('sale', 'cancel')"/> Delivery</span>
-                        </div>
-                    </group>
-                    <group string="Parties and goods">
-                        <field name="boss_shipper_id" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_consignee_id" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_goods_description" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_packages" readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_requested_service_ids" widget="many2many_tags" options="{'no_create': True}"
-                               readonly="state in ('sale', 'cancel')"/>
-                        <field name="boss_expediente_id" readonly="state in ('sale', 'cancel')"
-                               options="{'no_create': True}"/>
-                    </group>
-                </group>
+            <xpath expr="//group[@name='boss_carrier']" position="inside">
+                <label for="boss_scope_pickup" string="BOSS handles"/>
+                <div class="d-flex flex-wrap gap-3">
+                    <span><field name="boss_scope_pickup" nolabel="1" readonly="state in ('sale', 'cancel')"/> Pickup</span>
+                    <span><field name="boss_scope_origin_customs" nolabel="1" readonly="state in ('sale', 'cancel')"/> Customs origin</span>
+                    <span><field name="boss_scope_main" nolabel="1" readonly="state in ('sale', 'cancel')"/> Main carriage</span>
+                    <span><field name="boss_scope_destination_customs" nolabel="1" readonly="state in ('sale', 'cancel')"/> Customs destination</span>
+                    <span><field name="boss_scope_delivery" nolabel="1" readonly="state in ('sale', 'cancel')"/> Delivery</span>
+                </div>
+                <field name="boss_expediente_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
+            </xpath>
+            <xpath expr="//group[@name='boss_cargo']/field[@name='boss_gross_kg']" position="before">
+                <field name="boss_goods_description" readonly="state in ('sale', 'cancel')"/>
+                <field name="boss_packages" readonly="state in ('sale', 'cancel')"/>
+            </xpath>
+            <xpath expr="//group[@name='boss_estimates']" position="inside">
+                <field name="boss_requested_service_ids" widget="many2many_tags" options="{'no_create': True}"
+                       readonly="state in ('sale', 'cancel')"/>
             </xpath>
         </field>
     </record>

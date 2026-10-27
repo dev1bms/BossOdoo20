@@ -73,9 +73,8 @@
                     <group>
                         <group string="Who">
                             <field name="partner_id" readonly="sale_count" options="{'no_create': True}"/>
+                            <field name="business"/>
                             <field name="user_id"/>
-                            <field name="shipper_id"/>
-                            <field name="consignee_id"/>
                             <field name="agent_id"/>
                             <field name="carrier_id"/>
                             <field name="handler_candidate_ids" invisible="1"/>
@@ -86,15 +85,13 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
-                        <group string="Route">
+                        <group string="Case">
                             <field name="direction"/>
                             <field name="transport_mode"/>
                             <field name="load_type"/>
                             <field name="incoterm_id"/>
-                            <field name="origin_place"/>
-                            <field name="destination_place"/>
-                            <field name="port_id" options="{'no_create': True}"/>
-                            <field name="country_id" options="{'no_create': True}"/>
+                            <field name="traffic_code" invisible="not traffic_code"/>
+                            <field name="port_kind" invisible="1"/>
                             <label for="scope_pickup" string="BOSS handles"/>
                             <div class="d-flex flex-wrap gap-3">
                                 <span><field name="scope_pickup" nolabel="1"/> Pickup</span>
@@ -103,6 +100,30 @@
                                 <span><field name="scope_destination_customs" nolabel="1"/> Customs destination</span>
                                 <span><field name="scope_delivery" nolabel="1"/> Delivery</span>
                             </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Origin">
+                            <field name="shipper_id"/>
+                            <field name="origin_country_id" options="{'no_create': True}"/>
+                            <field name="origin_port_id" options="{'no_create': True}"/>
+                            <field name="pickup_address_id"
+                                   context="{'default_parent_id': shipper_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
+                                   options="{'always_reload': True}"/>
+                            <field name="origin_place"/>
+                            <field name="inland_state_id" options="{'no_create': True}" invisible="direction != 'export'"/>
+                            <field name="etd"/>
+                        </group>
+                        <group string="Destination">
+                            <field name="consignee_id"/>
+                            <field name="destination_country_id" options="{'no_create': True}"/>
+                            <field name="destination_port_id" options="{'no_create': True}"/>
+                            <field name="delivery_address_id"
+                                   context="{'default_parent_id': consignee_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
+                                   options="{'always_reload': True}"/>
+                            <field name="destination_place"/>
+                            <field name="inland_state_id" options="{'no_create': True}" invisible="direction == 'export'"/>
+                            <field name="eta"/>
                         </group>
                     </group>
                     <notebook>
@@ -252,7 +273,11 @@
                                 <group>
                                     <field name="gross_kg"/>
                                     <field name="volume_m3"/>
+                                    <field name="volume_weight_kg" invisible="transport_mode != 'air'"/>
+                                    <field name="chargeable_kg" invisible="transport_mode != 'air'"/>
                                     <field name="awb_kg" invisible="transport_mode != 'air'"/>
+                                    <field name="goods_value"/>
+                                    <field name="duties_amount"/>
                                 </group>
                             </group>
                             <field name="container_ids" invisible="load_type != 'fcl'">
@@ -282,10 +307,8 @@
                                     <field name="customs_ref"/>
                                 </group>
                                 <group string="Dates">
-                                    <field name="etd"/>
                                     <field name="atd" invisible="direction != 'export'"/>
                                     <field name="foh" invisible="direction != 'export'"/>
-                                    <field name="eta"/>
                                     <field name="ata" invisible="direction == 'export'"/>
                                     <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"/>
                                     <field name="emptying_date" invisible="direction == 'export' or load_type != 'lcl'"/>
@@ -297,7 +320,6 @@
                                     <field name="notify_id"/>
                                     <field name="haulier_id"/>
                                     <field name="customs_broker_id"/>
-                                    <field name="inland_state_id" options="{'no_create': True}"/>
                                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                                 </group>
                             </group>
@@ -327,13 +349,16 @@
             <list>
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="direction" optional="show"/>
-                <field name="transport_mode" optional="show"/>
+                <field name="traffic_code" optional="show"/>
+                <field name="direction" optional="hide"/>
+                <field name="transport_mode" optional="hide"/>
                 <field name="load_type" optional="hide"/>
-                <field name="port_id" optional="show"/>
-                <field name="country_id" optional="show"/>
+                <field name="origin_port_id" optional="show"/>
+                <field name="destination_port_id" optional="show"/>
+                <field name="port_id" optional="hide"/>
+                <field name="country_id" optional="hide"/>
+                <field name="etd" optional="show"/>
                 <field name="eta" optional="show"/>
-                <field name="etd" optional="hide"/>
                 <field name="booking_ref" optional="hide"/>
                 <field name="mbl_ref" optional="hide"/>
                 <field name="user_id" optional="show" widget="many2one_avatar_user"/>
@@ -365,9 +390,13 @@
                 <separator/>
                 <filter name="import" string="Import" domain="[('direction', '=', 'import')]"/>
                 <filter name="export" string="Export" domain="[('direction', '=', 'export')]"/>
+                <separator/>
+                <filter name="boss_business" string="BOSS clients" domain="[('business', '=', 'boss')]"/>
+                <filter name="agent_business" string="Agents' clients" domain="[('business', '=', 'agent')]"/>
                 <group>
                     <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
-                    <filter name="by_customer" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="by_customer" string="Ordered by" context="{'group_by': 'partner_id'}"/>
+                    <filter name="by_traffic" string="Traffic" context="{'group_by': 'traffic_code'}"/>
                     <filter name="by_mode" string="Transport mode" context="{'group_by': 'transport_mode'}"/>
                 </group>
             </search>

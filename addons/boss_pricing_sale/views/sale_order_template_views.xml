@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- A template is a BOSS case: a quotation made from it starts with this data (ADR-006). -->
+    <record id="sale_order_template_view_form" model="ir.ui.view">
+        <field name="name">sale.order.template.form.boss.case</field>
+        <field name="model">sale.order.template</field>
+        <field name="inherit_id" ref="sale_management.sale_order_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sale_info']" position="after">
+                <group name="boss_case">
+                    <group string="Case" name="boss_case_route">
+                        <field name="boss_business"/>
+                        <field name="boss_direction"/>
+                        <field name="boss_transport_mode"/>
+                        <field name="boss_load_type"/>
+                        <field name="boss_incoterm_id" options="{'no_create': True}"/>
+                        <field name="boss_traffic_code" invisible="not boss_traffic_code"/>
+                    </group>
+                    <group name="boss_case_scope"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

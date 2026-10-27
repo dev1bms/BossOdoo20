@@ -1,52 +1,39 @@
 from odoo import Command, fields, models
 
-from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
-
 # Opportunity field -> quotation field (same names, one meaning). Passed once to a new quotation, never synchronised.
+# Route (ADR-006): the stored inputs only; the quotation derives its Spanish port, country abroad, province and date.
+ROUTE_FIELDS = ("boss_business", "boss_direction", "boss_transport_mode", "boss_load_type", "boss_carrier_id",
+                "boss_shipper_id", "boss_origin_country_id", "boss_origin_port_id", "boss_pickup_address_id",
+                "boss_origin_place", "boss_consignee_id", "boss_destination_country_id", "boss_destination_port_id",
+                "boss_delivery_address_id", "boss_destination_place", "boss_inland_state_id", "boss_etd", "boss_eta",
+                "boss_gross_kg",
+                "boss_volume_m3", "boss_awb_kg")
 TO_QUOTATION = {
-    "boss_direction": "boss_direction", "boss_transport_mode": "boss_transport_mode",
-    "boss_load_type": "boss_load_type", "boss_carrier_id": "boss_carrier_id", "boss_port_id": "boss_port_id",
-    "boss_country_id": "boss_country_id", "boss_planned_date": "boss_planned_date",
-    "boss_inland_state_id": "boss_inland_state_id", "boss_gross_kg": "boss_gross_kg",
-    "boss_volume_m3": "boss_volume_m3", "boss_awb_kg": "boss_awb_kg", "boss_pallets": "boss_pallets",
-    "boss_packages": "boss_packages", "boss_goods_value": "boss_goods_value",
+    **{name: name for name in ROUTE_FIELDS},
+    "boss_pallets": "boss_pallets", "boss_packages": "boss_packages", "boss_goods_value": "boss_goods_value",
     "boss_goods_description": "boss_goods_description", "boss_incoterm_id": "incoterm",
-    "boss_origin_place": "boss_origin_place", "boss_destination_place": "boss_destination_place",
-    "boss_shipper_id": "boss_shipper_id", "boss_consignee_id": "boss_consignee_id",
     "boss_scope_pickup": "boss_scope_pickup", "boss_scope_origin_customs": "boss_scope_origin_customs",
     "boss_scope_main": "boss_scope_main", "boss_scope_destination_customs": "boss_scope_destination_customs",
     "boss_scope_delivery": "boss_scope_delivery",
 }
+# Opportunities written before ADR-006 have no origin/destination: their pricing inputs are passed as they are.
+LEGACY_TO_QUOTATION = ("boss_port_id", "boss_country_id", "boss_planned_date")
 
 
 class CrmLead(models.Model):
-    _inherit = "crm.lead"
+    _name = "crm.lead"
+    _inherit = ["crm.lead", "boss.shipment.route"]
 
-    # What the customer asks for, completed little by little; the quotation receives it once.
-    boss_direction = fields.Selection(DIRECTIONS, "Direction")
-    boss_transport_mode = fields.Selection(TRANSPORT_MODES, "Transport mode")
-    boss_load_type = fields.Selection(LOAD_TYPES, "Load type")
-    boss_carrier_id = fields.Many2one("res.partner", "Carrier")
-    boss_port_id = fields.Many2one("boss.port", "Spanish port / airport")
-    boss_country_id = fields.Many2one("res.country", "Country abroad")
-    boss_planned_date = fields.Date("Planned date", help="ETA for imports, ETD for exports.")
-    boss_inland_state_id = fields.Many2one("res.country.state", "Inland province",
-                                           domain="[('country_id.code', '=', 'ES')]")
+    # What the customer asks for, completed little by little; the quotation receives it once. Route, dates and
+    # weights: boss.shipment.route (ADR-006).
     boss_incoterm_id = fields.Many2one("account.incoterms", "Incoterm")
-    boss_origin_place = fields.Char("Origin (place)")
-    boss_destination_place = fields.Char("Destination (place)")
     boss_scope_pickup = fields.Boolean("Pickup")
     boss_scope_origin_customs = fields.Boolean("Customs at origin")
     boss_scope_main = fields.Boolean("Main carriage")
     boss_scope_destination_customs = fields.Boolean("Customs at destination")
     boss_scope_delivery = fields.Boolean("Delivery")
-    boss_shipper_id = fields.Many2one("res.partner", "Shipper")
-    boss_consignee_id = fields.Many2one("res.partner", "Consignee")
     boss_goods_description = fields.Char("Goods")
     boss_packages = fields.Integer("Packages")
-    boss_gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2))
-    boss_volume_m3 = fields.Float("Volume (m³)", digits=(12, 3))
-    boss_awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2))
     boss_pallets = fields.Integer("Pallets")
     boss_goods_value = fields.Monetary("Goods value", currency_field="company_currency")
     boss_container_ids = fields.One2many("boss.shipment.container", "lead_id", "Containers")
@@ -57,7 +44,10 @@ class CrmLead(models.Model):
 
     def _prepare_opportunity_quotation_context(self):
         context = super()._prepare_opportunity_quotation_context()
-        for lead_field, order_field in TO_QUOTATION.items():
+        fields_map = dict(TO_QUOTATION)
+        if not self._boss_route_known():
+            fields_map.update({name: name for name in LEGACY_TO_QUOTATION})
+        for lead_field, order_field in fields_map.items():
             value = self[lead_field]
             if isinstance(value, models.BaseModel):
                 value = value.id

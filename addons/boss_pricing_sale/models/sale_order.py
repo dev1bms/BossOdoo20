@@ -1,36 +1,20 @@
 from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
-
 from .boss_shipment_container import shipment_quantity
+
+# Case data a quotation template gives to the quotation (ADR-006): what the template is for.
+TEMPLATE_CASE_FIELDS = {"boss_business": "boss_business", "boss_direction": "boss_direction",
+                        "boss_transport_mode": "boss_transport_mode", "boss_load_type": "boss_load_type",
+                        "boss_incoterm_id": "incoterm"}
 
 
 class SaleOrder(models.Model):
-    _inherit = "sale.order"
+    _name = "sale.order"
+    _inherit = ["sale.order", "boss.shipment.route"]
 
-    # Shipment data needed to price the quotation (ADR-003). One place: the quotation.
-    boss_direction = fields.Selection(DIRECTIONS, "Direction", tracking=True)
-    boss_transport_mode = fields.Selection(TRANSPORT_MODES, "Transport mode", tracking=True)
-    boss_load_type = fields.Selection(LOAD_TYPES, "Load type", tracking=True)
-    boss_carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True,
-                                      help="Shipping line, airline or haulier.")
-    boss_port_id = fields.Many2one("boss.port", "Spanish port / airport", tracking=True,
-                                   help="Port or airport in Spain where BOSS handles the cargo.")
-    boss_country_id = fields.Many2one(
-        "res.country", "Country abroad", tracking=True,
-        help="Origin country of an import or destination country of an export. Used by tariffs and VAT.")
-    boss_planned_date = fields.Date(
-        "Planned date", tracking=True,
-        help="ETA for imports, ETD for exports. It chooses the version of each supplier tariff.")
+    # Shipment data needed to price the quotation (ADR-003); route, dates and weights: boss.shipment.route (ADR-006).
     boss_container_ids = fields.One2many("boss.shipment.container", "order_id", "Containers", copy=True)
-    boss_inland_state_id = fields.Many2one(
-        "res.country.state", "Inland province", domain="[('country_id.code', '=', 'ES')]", tracking=True,
-        help="Province of the pickup (export) or delivery (import) place in Spain; hauliers price by zone.")
-    boss_gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2))
-    boss_awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2),
-                               help="Chargeable weight written on the air waybill; air handlers price on it.")
-    boss_volume_m3 = fields.Float("Volume (m³)", digits=(12, 3))
     boss_pallets = fields.Integer("Pallets")
     boss_goods_value = fields.Monetary("Goods value", currency_field="currency_id",
                                        help="Commercial value of the goods (insurance, value brackets).")
@@ -38,13 +22,14 @@ class SaleOrder(models.Model):
                                          help="Duties and taxes of the customs declaration, for the guarantee fee.")
     boss_storage_days = fields.Integer(
         "Days in storage (estimate)",
-        help="Days assumed for storage, demurrage and port occupancy in the quotation. The actual cost is "
-        "only known when the period ends.")
-    # An integer cannot be empty in Odoo: this flag tells 'not indicated yet' from a deliberate 0 days.
+        help="Days assumed for storage, demurrage and port occupancy in the quotation; normally 0 (BOSS does not "
+        "plan storage unless the customer says the cargo will wait). The actual cost is known when the period ends.")
+    # An integer cannot be empty in Odoo: this flag told 'not indicated yet' from a deliberate 0 days. Since the
+    # meeting of 27/10/2026 the estimate is 0 days unless another figure is entered (ADR-006): set by default.
     boss_storage_days_known = fields.Boolean(
-        "Days indicated",
-        help="Set when the days are entered (tick it to confirm 0 days). Until then time-based services "
-        "(storage, demurrage, port occupancy) show 'missing shipment data' instead of a zero cost.")
+        "Days indicated", default=True,
+        help="Cleared only by code that has no estimate yet: time-based services then show 'missing shipment "
+        "data'.")
     boss_pricing_frozen = fields.Boolean(
         "Prices frozen", readonly=True, copy=False,
         help="Set when the quotation is accepted: prices only change through Re-price, with a reason.")
@@ -68,7 +53,7 @@ class SaleOrder(models.Model):
             "containers": [{"size": c.size, "type_id": c.container_type_id.id, "quantity": c.quantity}
                            for c in self.boss_container_ids],
             "gross_kg": self.boss_gross_kg or None,
-            "awb_kg": self.boss_awb_kg or None,
+            "awb_kg": self._boss_awb_weight(),
             "volume_m3": self.boss_volume_m3 or None,
             "pallets": self.boss_pallets or None,
             "goods_value": self.boss_goods_value or None,
@@ -110,6 +95,7 @@ class SaleOrder(models.Model):
         of the template that are missing are added, and the user is told which."""
         if not self.sale_order_template_id:
             return None
+        self._boss_apply_template_case()
         existing = self.order_line.filtered(lambda l: l.product_id and not l.display_type)
         if existing:
             return self._boss_merge_template(existing)
@@ -127,6 +113,15 @@ class SaleOrder(models.Model):
         if added:
             self.update({"order_line": added})
         return None
+
+    def _boss_apply_template_case(self):
+        """The template says which case it is (air import FOB, sea import FCL...): its direction, mode, load type,
+        incoterm and whose client fill the quotation; what it leaves empty stays as it is."""
+        template = self.sale_order_template_id
+        for template_field, order_field in TEMPLATE_CASE_FIELDS.items():
+            if template[template_field]:
+                self[order_field] = template[template_field]
+        self._onchange_boss_direction_spain()
 
     def _boss_merge_template(self, existing):
         _ = self.env._
@@ -166,7 +161,7 @@ class SaleOrder(models.Model):
         self.ensure_one()
         return shipment_quantity(
             source, [(c.size, c.container_type_id, c.quantity) for c in self.boss_container_ids], self.boss_gross_kg,
-            self.boss_volume_m3, self.boss_pallets, self.boss_awb_kg, size, ctype)
+            self.boss_volume_m3, self.boss_pallets, self._boss_awb_weight(), size, ctype)
 
     @api.depends("order_line.boss_cost_status", "order_line.boss_sale_status", "order_line.boss_vat_status",
                  "order_line.boss_manual_cost")

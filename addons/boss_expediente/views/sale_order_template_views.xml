@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_template_view_form" model="ir.ui.view">
+        <field name="name">sale.order.template.form.boss.scope</field>
+        <field name="model">sale.order.template</field>
+        <field name="inherit_id" ref="boss_pricing_sale.sale_order_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='boss_case_scope']" position="attributes">
+                <attribute name="string">BOSS handles</attribute>
+            </xpath>
+            <xpath expr="//group[@name='boss_case_scope']" position="inside">
+                <field name="boss_scope_pickup"/>
+                <field name="boss_scope_origin_customs"/>
+                <field name="boss_scope_main"/>
+                <field name="boss_scope_destination_customs"/>
+                <field name="boss_scope_delivery"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
