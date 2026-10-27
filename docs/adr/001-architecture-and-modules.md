@@ -21,6 +21,8 @@ Three addons with one-way dependencies:
 | `boss_pricing` | Supplier tariffs (document + page, validity, versions, approval), pure-Python engine, the single matching + compute service | `boss_services`, `mail` |
 | `boss_pricing_sale` | Shipment inputs on the quotation, cost and sale per line with explanation, missing-price actions, sale-price base "BOSS cost", lock + snapshot on acceptance, explicit re-pricing | `boss_pricing`, `sale_management`, `sale_crm`, `sale_margin` |
 
+| `boss_web` | Web-client only: the chatter always below the form (BOSS forms need the width; Belal 27/10/2026). One patch of `FormRenderer.mailLayout`, no models | `mail` |
+
 - No module per service. Differences between services are **data** (tariff lines with a method and
   conditions); shared arithmetic lives once in `boss_pricing/engine`.
 - A service-specific addon is created only when a service needs behaviour that data cannot express,
