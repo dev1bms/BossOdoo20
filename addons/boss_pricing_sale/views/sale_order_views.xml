@@ -137,8 +137,8 @@
                        decoration-danger="boss_cost_status in ('no_tariff', 'conflict')"/>
                 <button name="action_boss_pricing_details" type="object" icon="info" title="How the cost is computed" aria-label="How the cost is computed"
                         invisible="not boss_pricing_mode"/>
-                <button name="action_boss_add_supplier_price" type="object" icon="add_circle" title="Add supplier price" aria-label="Add supplier price"
-                        invisible="boss_cost_status != 'no_tariff'" groups="boss_pricing.group_tariff_user"/>
+                <button name="action_boss_add_supplier_price" type="object" icon="add_circle" title="Add supplier price (for this route, with its validity)" aria-label="Add supplier price"
+                        invisible="boss_cost_status not in ('no_tariff', 'manual') or boss_execution == 'boss'" groups="boss_pricing.group_tariff_user"/>
                 <button name="action_boss_open_tariffs" type="object" icon="check_box" title="Review the supplier price" aria-label="Review the supplier price"
                         invisible="boss_cost_status not in ('pending_approval', 'conflict')"/>
                 <button name="action_boss_open_service" type="object" icon="help" title="Open the service" aria-label="Open the service"

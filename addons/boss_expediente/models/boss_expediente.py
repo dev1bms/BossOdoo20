@@ -413,6 +413,7 @@ class BossExpediente(models.Model):
         return {
             "direction": self.direction, "transport_mode": self.transport_mode, "load_type": self.load_type,
             "carrier_id": self.carrier_id.id, "port_id": self.port_id.id, "country_id": self.country_id.id,
+            "foreign_port_id": (self.origin_port_id if self.direction == "import" else self.destination_port_id).id,
             "state_id": self.inland_state_id.id, "customer_id": partner.id,
             "tariff_use": "demo" if partner.boss_demo else "real",
             "containers": [{"size": size, "type_id": type_id, "quantity": quantity}
@@ -466,6 +467,17 @@ class BossExpediente(models.Model):
         for file in self:
             file.volume_weight_kg, file.chargeable_kg = chargeable_kg(file.transport_mode, file.gross_kg,
                                                                       file.volume_m3)
+
+    @api.onchange("partner_id", "direction", "business")
+    def _onchange_orderer_party(self):
+        """BOSS business: who orders is the consignee of an import or the shipper of an export (Ángel, 27/10/2026)."""
+        if self.business != "boss" or not self.partner_id:
+            return
+        party = self.partner_id.commercial_partner_id
+        if self.direction == "import" and not self.consignee_id:
+            self.consignee_id = party
+        elif self.direction == "export" and not self.shipper_id:
+            self.shipper_id = party
 
     @api.onchange("direction")
     def _onchange_direction_spain(self):

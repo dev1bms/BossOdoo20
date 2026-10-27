@@ -5,7 +5,8 @@
         <field name="model">boss.supplier.price.wizard</field>
         <field name="arch" type="xml">
             <form>
-                <p class="text-muted">The price is saved in a supplier tariff (never on the quotation) and is used once it is approved.</p>
+                <p class="text-muted">The price is saved in a supplier tariff (never on the quotation), with its route and validity, and is used once it is approved. Earlier prices stay as history.</p>
+                <field name="spot_rate" invisible="1"/>
                 <group>
                     <group string="Price">
                         <field name="sale_line_id" invisible="1"/>
@@ -42,6 +43,7 @@
                     <group>
                         <field name="carrier_id"/>
                         <field name="port_ids" widget="many2many_tags"/>
+                        <field name="foreign_port_ids" widget="many2many_tags"/>
                         <field name="country_ids" widget="many2many_tags"/>
                         <field name="only_this_customer"/>
                     </group>

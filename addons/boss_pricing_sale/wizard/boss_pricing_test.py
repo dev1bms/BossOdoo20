@@ -13,7 +13,7 @@ ORDER_FIELDS = {
     "goods_value": "boss_goods_value", "duties_amount": "boss_duties_amount", "storage_days": "boss_storage_days",
     "storage_days_known": "boss_storage_days_known", "customer_id": "partner_id",
 }
-INPUT_FIELDS = (*ORDER_FIELDS, "product_id", "uom_id", "supplier_id", "simulate_tariff_ids", "container_size",
+INPUT_FIELDS = (*ORDER_FIELDS, "foreign_port_id", "product_id", "uom_id", "supplier_id", "simulate_tariff_ids", "container_size",
                 "container_type_id", "container_qty", "line_qty", "base_amount", "pricelist_id", "storage_start",
                 "storage_end")
 
@@ -41,6 +41,7 @@ class BossPricingTest(models.TransientModel):
     load_type = fields.Selection(LOAD_TYPES)
     carrier_id = fields.Many2one("res.partner", "Carrier")
     port_id = fields.Many2one("boss.port", "Spanish port / airport")
+    foreign_port_id = fields.Many2one("boss.port", "Port / airport abroad")
     country_id = fields.Many2one("res.country", "Country abroad")
     state_id = fields.Many2one("res.country.state", "Province (inland)", domain="[('country_id.code', '=', 'ES')]")
     customer_id = fields.Many2one("res.partner", "Customer", help="Optional: for prices agreed with a customer "
@@ -136,6 +137,9 @@ class BossPricingTest(models.TransientModel):
         values = {ofield: self[name].id if hasattr(self[name], "ids") else self[name]
                   for name, ofield in ORDER_FIELDS.items()}
         values["company_id"] = self.env.company.id
+        if self.foreign_port_id:
+            side = "boss_origin_port_id" if self.direction == "import" else "boss_destination_port_id"
+            values[side] = self.foreign_port_id.id
         if self.container_size and self.container_qty:
             # no type given: the containers count as dry standard (a price for any type still applies)
             ctype = self.container_type_id or self.env.ref("boss_pricing.container_type_dv")

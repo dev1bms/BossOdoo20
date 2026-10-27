@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
@@ -23,7 +25,8 @@ class BossSupplierPriceWizard(models.TransientModel):
     # New tariff: header and scope, pre-filled from the quotation (editable).
     tariff_name = fields.Char("Tariff name", compute="_compute_tariff_name", store=True, readonly=False, precompute=True)
     valid_from = fields.Date(compute="_compute_valid_from", store=True, readonly=False, precompute=True)
-    valid_to = fields.Date()
+    valid_to = fields.Date(compute="_compute_valid_to", store=True, readonly=False, precompute=True,
+                           help="A freight offer is valid for days, not a year: a week by default.")
     currency_id = fields.Many2one("res.currency", compute="_compute_currency_id", store=True, readonly=False, precompute=True)
     document = fields.Binary("Supplier document")
     document_name = fields.Char()
@@ -34,6 +37,11 @@ class BossSupplierPriceWizard(models.TransientModel):
     carrier_id = fields.Many2one("res.partner", "Carrier", compute="_compute_carrier_id", store=True, readonly=False, precompute=True)
     port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_port_ids", store=True,
                                 readonly=False, precompute=True)
+    foreign_port_ids = fields.Many2many(
+        "boss.port", "boss_supplier_price_wizard_foreign_port_rel", "wizard_id", "port_id", "Ports / airports abroad",
+        compute="_compute_foreign_port_ids", store=True, readonly=False, precompute=True,
+        help="The route of this price: origin port of an import, destination port of an export. Empty: any.")
+    spot_rate = fields.Boolean(compute="_compute_spot_rate", help="Freight offer valid for a short time.")
     country_ids = fields.Many2many("res.country", string="Countries abroad", compute="_compute_country_ids",
                                    store=True, readonly=False, precompute=True)
     container_size = fields.Selection(related="sale_line_id.boss_container_size", string="Container size")
@@ -71,6 +79,21 @@ class BossSupplierPriceWizard(models.TransientModel):
     def _compute_valid_from(self):
         for wiz in self:
             wiz.valid_from = wiz.sale_line_id.order_id.boss_planned_date or fields.Date.today()
+
+    @api.depends("sale_line_id")
+    def _compute_spot_rate(self):
+        for wiz in self:
+            wiz.spot_rate = wiz.sale_line_id.product_id.boss_pricing_mode == "manual"
+
+    @api.depends("valid_from", "spot_rate")
+    def _compute_valid_to(self):
+        for wiz in self:
+            wiz.valid_to = (wiz.valid_from + timedelta(days=6)) if wiz.spot_rate and wiz.valid_from else wiz.valid_to
+
+    @api.depends("sale_line_id")
+    def _compute_foreign_port_ids(self):
+        for wiz in self:
+            wiz.foreign_port_ids = wiz.sale_line_id.order_id._boss_foreign_port()
 
     @api.depends("sale_line_id")
     def _compute_currency_id(self):
@@ -119,6 +142,7 @@ class BossSupplierPriceWizard(models.TransientModel):
             "document_name": self.document_name, "document_reference": self.document_reference,
             "direction": self.direction, "transport_mode": self.transport_mode, "load_type": self.load_type,
             "carrier_id": self.carrier_id.id, "port_ids": [(6, 0, self.port_ids.ids)],
+            "foreign_port_ids": [(6, 0, self.foreign_port_ids.ids)],
             "country_ids": [(6, 0, self.country_ids.ids)],
             "customer_id": order.partner_id.commercial_partner_id.id if self.only_this_customer else False,
             # the scope was shown and edited here (taken from the quotation): reviewed

@@ -74,6 +74,8 @@ class BossTariffLine(models.Model):
     line_load_type = fields.Selection(LOAD_TYPES, "Load type of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
     line_port_ids = fields.Many2many("boss.port", "boss_tariff_line_port_rel", "line_id", "port_id",
                                      "Ports of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_foreign_port_ids = fields.Many2many("boss.port", "boss_tariff_line_foreign_port_rel", "line_id", "port_id",
+                                             "Ports / airports abroad of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
     line_country_ids = fields.Many2many("res.country", "boss_tariff_line_country_rel", "line_id", "country_id",
                                         "Countries abroad of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
     line_state_ids = fields.Many2many("res.country.state", "boss_tariff_line_state_rel", "line_id", "state_id",
@@ -170,15 +172,15 @@ class BossTariffLine(models.Model):
             if self.product_id.boss_cost_method in dict(METHOD_SELECTION):
                 self.method = self.product_id.boss_cost_method
 
-    @api.constrains("line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "line_country_ids",
-                    "line_state_ids", "tariff_id")
+    @api.constrains("line_direction", "line_transport_mode", "line_load_type", "line_port_ids",
+                    "line_foreign_port_ids", "line_country_ids", "line_state_ids", "tariff_id")
     def _check_line_scope(self):
         """A price may narrow its tariff, never widen it (the tariff states what the whole document covers)."""
         for line in self:
             tariff = line.tariff_id
             wider = [name for name in ("direction", "transport_mode", "load_type")
                      if line[f"line_{name}"] and tariff[name] and line[f"line_{name}"] != tariff[name]]
-            wider += [name for name in ("port_ids", "country_ids", "state_ids")
+            wider += [name for name in ("port_ids", "foreign_port_ids", "country_ids", "state_ids")
                       if line[f"line_{name}"] and tariff[name] and line[f"line_{name}"] - tariff[name]]
             if wider:
                 raise ValidationError(self.env._(
@@ -193,8 +195,8 @@ class BossTariffLine(models.Model):
         for name in ("direction", "transport_mode", "load_type"):
             if self[f"line_{name}"]:
                 conditions[name] = {self[f"line_{name}"]}
-        for fname, key in (("line_port_ids", "port_id"), ("line_country_ids", "country_id"),
-                           ("line_state_ids", "state_id")):
+        for fname, key in (("line_port_ids", "port_id"), ("line_foreign_port_ids", "foreign_port_id"),
+                           ("line_country_ids", "country_id"), ("line_state_ids", "state_id")):
             if self[fname]:
                 conditions[key] = set(self[fname].ids)
         if self.container_size:
@@ -419,7 +421,8 @@ class BossTariffLineWorkspace(models.Model):
                  "tariff_id.valid_from", "tariff_id.valid_to", "tariff_id.direction", "tariff_id.transport_mode",
                  "tariff_id.load_type", "tariff_id.port_ids", "tariff_id.state_ids", "tariff_id.customer_id",
                  "container_size", "container_type_ids", "tariff_id.currency_id", "tariff_id.country_ids",
-                 "line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "line_country_ids",
+                 "line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "line_foreign_port_ids",
+                 "line_country_ids", "tariff_id.foreign_port_ids",
                  "line_state_ids")
     @api.depends_context("lang")
     def _compute_workspace_display(self):
@@ -479,6 +482,7 @@ class BossTariffLineWorkspace(models.Model):
             mode = line.line_transport_mode or tariff.transport_mode
             load = line.line_load_type or tariff.load_type
             ports = line.line_port_ids or tariff.port_ids
+            foreign = line.line_foreign_port_ids or tariff.foreign_port_ids
             countries = line.line_country_ids or tariff.country_ids
             provinces = line.line_state_ids or tariff.state_ids
             scope = [line._ws_label("direction", direction, tariff) or _("Import/export"),
@@ -487,6 +491,8 @@ class BossTariffLineWorkspace(models.Model):
                 scope.append(line._ws_label("load_type", load, tariff))
             if ports:
                 scope.append(", ".join(ports.mapped("code")))
+            if foreign:
+                scope.append(", ".join(foreign.mapped("code")))
             if countries:
                 scope.append(", ".join(countries.mapped("name")))
             if provinces:

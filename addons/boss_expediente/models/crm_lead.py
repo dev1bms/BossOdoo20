@@ -1,4 +1,4 @@
-from odoo import Command, fields, models
+from odoo import Command, api, fields, models
 
 # Opportunity field -> quotation field (same names, one meaning). Passed once to a new quotation, never synchronised.
 # Route (ADR-006): the stored inputs only; the quotation derives its Spanish port, country abroad, province and date.
@@ -41,6 +41,10 @@ class CrmLead(models.Model):
         "product.product", string="Requested services",
         domain="[('boss_pricing_mode', '!=', False), ('sale_ok', '=', True)]",
         help="Services the customer asks for; proposed when services are added to the quotation.")
+
+    @api.onchange("partner_id", "boss_direction", "boss_business")
+    def _onchange_boss_orderer_party(self):
+        self._boss_apply_orderer_party()
 
     def _prepare_opportunity_quotation_context(self):
         context = super()._prepare_opportunity_quotation_context()
