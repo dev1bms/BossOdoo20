@@ -181,9 +181,16 @@ class BossShipmentRoute(models.AbstractModel):
         """BOSS business: the party who orders (partner_id of the quotation or opportunity) is the consignee of an
         import or the shipper of an export (Ángel, 27/10/2026). Only fills an empty field; an agent's business never
         copies the agent. Called by the onchange of the models that use this route."""
-        if self.boss_business != "boss" or not self.partner_id:
+        if not self.partner_id:
             return
         party = self.partner_id.commercial_partner_id
+        if self.boss_business != "boss":
+            # an agent is neither the shipper nor the consignee: undo a proposal made while the business was BOSS
+            if self.boss_consignee_id == party:
+                self.boss_consignee_id = False
+            if self.boss_shipper_id == party:
+                self.boss_shipper_id = False
+            return
         if self.boss_direction == "import" and not self.boss_consignee_id:
             self.boss_consignee_id = party
         elif self.boss_direction == "export" and not self.boss_shipper_id:

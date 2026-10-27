@@ -7,6 +7,7 @@ from datetime import date, timedelta
 
 from odoo.exceptions import UserError
 from odoo.tests import Form
+from odoo.tools.binary import BinaryBytes
 
 assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True, lang="en_US"))  # noqa: F821
@@ -57,6 +58,12 @@ with Form(env["sale.order"]) as form:
 imb = form.save()
 qty = lambda o: {l.product_id.default_code: l.product_uom_qty for l in o.order_line.filtered("product_id")}  # noqa: E731
 check("1 quantities with 1x40': per container 1, per shipment 1", (1.0, 1.0, 1.0), (qty(imb)["THC"], qty(imb)["BL"], qty(imb)["FMI"]))
+# the demo order of steps (template, then the container): per-container services take the 40' of the shipment
+sized = {l.product_id.default_code: (l.boss_container_size, l.boss_container_type_id.code)
+         for l in imb.order_line.filtered(lambda l: l.product_id.default_code in ("THC", "T3-PAD", "GLO-CCC"))}
+check("1 containers entered after the template: per-container lines take the 40' DV", {"THC": ("40", "DV"), "T3-PAD": ("40", "DV"), "GLO-CCC": ("40", "DV")}, sized)
+t3 = imb.order_line.filtered(lambda l: l.product_id.default_code == "T3-PAD")
+check("1 size-dependent price (T3-PAD 40') found", "ok", t3.boss_cost_status)
 with Form(imb) as form:
     with form.boss_container_ids.edit(0) as container:
         container.quantity = 2
@@ -89,7 +96,10 @@ check("5 wizard pre-filled: MSC, ESVLC, Shanghai abroad, valid one week", (msc, 
       (wiz.partner_id, wiz.port_ids.mapped("code")[0], wiz.foreign_port_ids.mapped("code")[0],
        (wiz.valid_to - wiz.valid_from).days))
 wiz.write({"unit_price": 1500.0, "tariff_name": "[PRUEBA] MSC flete Shanghái-Valencia semana", "submit": False,
-           "valid_from": date(2026, 12, 7), "document_reference": "[PRUEBA] oferta semanal"})
+           "valid_from": date(2026, 12, 7), "document_reference": "[PRUEBA] oferta semanal",
+           # the weekly offer (e-mail or PDF of the carrier) is the document every price must be traceable to
+           "document": BinaryBytes(b"[PRUEBA] oferta semanal MSC Shanghai-Valencia 1500 EUR/40'", filename="oferta-semanal.txt"),
+           "document_name": "oferta-semanal.txt"})
 wiz.action_save()
 rate = env["boss.tariff"].search([("name", "=", "[PRUEBA] MSC flete Shanghái-Valencia semana")], limit=1)
 check("5 draft tariff with the route and validity", ("draft", "CNSHA", "ESVLC", date(2026, 12, 13)),
@@ -116,6 +126,21 @@ missing = [l.product_id.default_code for l in imb.order_line.filtered(lambda l: 
 print("   sale prices missing before typing:", missing)
 for line in imb.order_line.filtered(lambda l: l.boss_sale_status == "missing"):
     line.price_unit = 100.0
+# the cost gate (decision B22): every bought service needs a known cost, a BOSS execution or a manager's reason
+fad = imb.order_line.filtered(lambda l: l.product_id.default_code == "FAD")
+fad.boss_supplier_id = Partner.search([("name", "=", "RAMOS VILA, S.L.")], limit=1)
+tte = imb.order_line.filtered(lambda l: l.product_id.default_code == "TTE-FCL")
+tte.with_user(belal).boss_unknown_cost_reason = "[PRUEBA] haulier quote pending, accepted at the customer's request"
+try:
+    imb.action_confirm()
+    gate = ""
+except UserError as e:
+    gate = str(e)
+print("   cost gate before reasons:", gate.replace("\n", " | ")[:200] or "none")
+unknown = imb.order_line.filtered(lambda l: l.boss_cost_kind == "unknown" and not l.boss_unknown_cost_reason)
+print("   still unknown:", unknown.mapped("product_id.default_code"))
+for line in unknown:
+    line.with_user(belal).boss_unknown_cost_reason = "[PRUEBA] accepted without cost for the test"
 try:
     imb.action_confirm()
     confirm_error = ""
@@ -142,7 +167,8 @@ print("   to buy:", to_buy)
 
 # 9. history: a new MSC rate does not change the accepted quotation
 frozen_before = costs(imb)
-newer = rate.copy({"name": "[PRUEBA] MSC flete semana siguiente", "valid_from": date(2026, 12, 7), "valid_to": date(2026, 12, 13)})
+newer = rate.copy({"name": "[PRUEBA] MSC flete semana siguiente", "valid_from": date(2026, 12, 7), "valid_to": date(2026, 12, 13),
+                   "document": rate.document, "document_name": rate.document_name})
 newer.line_ids.unit_price = 1800.0
 newer.action_submit()
 newer.with_user(belal).action_approve()
