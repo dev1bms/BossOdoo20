@@ -235,7 +235,9 @@ para pruebas tras comparar cada línea con su documento (`dev/approve_verified_t
 `.research/evidencia_tarifas_20261027_1058.txt`); plantillas por caso sin [DEMO] (`dev/setup_templates.py`); lista de
 precios de COFITEL creada en Chrome; precisión de precio 4 decimales; tipos del BCE cargados. Ofertas probadas en
 Chrome: **S00032** (COFITEL, aérea, aceptada → E260016) y **S00033** (AGUILERA, FCL 20'+40', aceptada → E260017; FuelEU «Sin cargo»
-como en la factura real F26 10-0072, a decidir por ventas). Defectos D-10, D-11 corregidos; D-12 documentado como limitación; excepciones en
+como en la factura real F26 10-0072, a decidir por ventas). E260017 completo hasta facturas: pedidos P00007 (PORTEVER), P00008 (MSC), P00009 (ADUCEX)
+confirmados; servicios prestados salvo el arrastre (sin coste); factura al cliente INV/2026/00004 y de proveedor
+FACTURA/2026/10/0003–0005 contabilizadas, sin pagos; D-13 corregido (boss_expediente 20.0.1.8.1). Defectos D-10, D-11 corregidos; D-12 documentado como limitación; excepciones en
 `docs/preguntas-abiertas.md`. Inicio rápido publicado: doc.bosscontinental.com/new/#/inicio-rapido (`?v=20261027b`).
 
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
