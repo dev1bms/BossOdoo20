@@ -206,23 +206,34 @@ expediente (ver registro).
 | Pruebas de Odoo en BD desechable del servidor | boss_expediente 18/18 en verde para `9a87b94`, la corrección del formulario + D-3, y `966ebb0` (BD boss20_test_162239, _164023, _164514) | 26/10/2026 | `dev/server_test.sh boss_expediente` |
 | Entorno UAT persistente | `boss20_uat` creado en el servidor (dbfilter `^boss20(_uat)?$`), aislado (crons 0, sin correo, IAP a puerto cerrado), módulos 20.0.1.5.0; ciclo C1–C8 ejecutado y guardado; escenarios S1–S6; usuarios por rol | 26/10/2026 | `dev/server_uat.sh build`, `dev/uat_cycle.py`, `dev/uat_scenarios.py`, `dev/uat_users.py`; `docs/escenario-uat.md` |
 | Configuración en boss20 | Cuentas de suplidos 419001–419007 (D-2, Ángel ratifica); tarifa «IRENEO distribución nacional zona 3 2026 (+10 % transporte, carta 14/07/2026)» esperando aprobación con la carta adjunta | 26/10/2026 | `dev/setup_suplidos_accounts.py` (con `dev/apply-on-boss20.txt`), `dev/setup_ireneo_2026.py` |
+| Despliegue en boss20 (27/10) | `1958bb0` boss_expediente 20.0.1.8.0 (D-7, D-8); boss_pricing_sale 20.0.1.8.0 → 20.0.1.8.2 (D-9); logs `deploy_20261027_090237.log`, `_090615`, `_090754` y el último, exit 0 | 27/10/2026 | `dev/deploy.sh update` |
+| Ciclo contable en Chrome en boss20 | S00031/E260015 de punta a punta; margen final 240 € | 27/10/2026 | `docs/escenario-uat.md` |
 | Comprobación desde Chrome en boss20 | Menú «Aerolíneas y handlers» (47 relaciones por aeropuerto); «Previsión de costes» (pivote por proveedor y estado); E260011: Cathay → WFS, Qatar → Iberia (handling); S00025 con 4 TEU y THC por tamaño | 26/10/2026 | capturas de la sesión del 26/10 |
 
 Remoto: https://github.com/dev1bms/BossOdoo20 (privado), `main` al día (último commit del 26/10 por la tarde).
 
-## Punto de reanudación (26/10/2026, noche)
+## Punto de reanudación (27/10/2026)
 
-Desplegado en boss20 y boss20_uat: boss_services 20.0.1.3.0, boss_pricing 20.0.1.6.0, boss_pricing_sale 20.0.1.7.0,
-boss_expediente 20.0.1.7.0 (`7143284`). Pruebas en el servidor: Odoo 36/36 (cuatro módulos) y 20/20 (boss_expediente tras
-el último cambio), motor 23/23; boss20_uat: ciclo de punta a punta 64/64 y escenarios 31/31 (`docs/evidencias/`).
-Hecho hoy: periodo de cada servicio por tiempo según su tarifa (y fechas de cada contenedor, descarga, vaciado LCL);
-ETX/VET/DET fuera de «pendiente»; previsión de cada servicio y su informe; D-3, D-4, D-5, D-6; IRENEO 2026 (precios
-2025 hasta el 14/07 por Ángel, +10 % desde el 15/07 por la carta) comprobado contra el PDF; WFS HAN de exportación y ETX;
-FAD de Aducex y Ramos Vila; DEM/OCU de ONE, Maersk, OOCL y MSC de la licitación Leroy; FuelEU Lejano Oriente. Todas las
-tarifas cargadas esperan la aprobación de Cristina (25 [MUESTRA] esperando aprobación). Mapeo de Hoja1 en `docs/mapeo-hoja1.md`
-(25 hechas, 3 parciales por documentos que no existen). Escenario para Belal: `docs/escenario-uat.md`.
+**Política desde el 27/10 (Belal):** todo el trabajo, las pruebas y las comprobaciones se hacen en **boss20** en el
+servidor; nada en el equipo local, ninguna base desechable ni copia (`dev/server_test.sh`, `boss20_test_*` y
+`boss20_uat` ya no se usan; dbfilter `^boss20$`). En boss20 se permite crear, modificar y borrar registros de prueba,
+confirmar ventas y compras, ejecutar servicios, contabilizar facturas de cliente y proveedor, abonos, registrar pagos y
+casar, aunque se consuman números y queden asientos de prueba; anular o borrar solo por las vías de Odoo. Actualizar
+módulos y ajustes, desplegar y reiniciar sin pedir permiso de nuevo. Comunicaciones externas desactivadas
+(`dev/boss20_isolate.py`). Odoo 17 y 19 solo lectura. Nada de esto convierte una propuesta o una tarifa en decisión
+aprobada por Cristina o Ángel.
 
-Pendiente de personas: entrar en boss20_uat (Claude no puede escribir contraseñas) para recorrer en la interfaz la parte
-contable; aprobación de tarifas (Cristina); ratificación de las cuentas de suplidos (Ángel, A02). Pendiente de documentos:
-2.º handler, D&D general de ONE/Maersk/OOCL y cualquier tarifa de ZIM, agente de exportación, Hapag gastos locales, CFS,
-PFT, ROH/SOI/INS/SAN, CES, transporte de contenedor y FS.
+Desplegado en boss20: boss_services 20.0.1.3.0, boss_pricing 20.0.1.6.0, boss_pricing_sale **20.0.1.8.2**,
+boss_expediente **20.0.1.8.0**. Ciclo contable completo recorrido en Chrome en boss20 (S00031/E260015: facturas de
+MSC, facturación parcial al cliente, abono, coste extra refacturado, pagos, casación bancaria, rentabilidad); registros y
+pasos en `docs/escenario-uat.md`. Defectos encontrados y corregidos en el recorrido: D-7, D-8, D-9
+(`docs/preguntas-abiertas.md`).
+
+Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
+avance del proyecto: para usarlo en producción faltan las aprobaciones (0 de 25 tarifas [MUESTRA] aprobadas por
+Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de
+Cristina sobre la venta y el margen «en la aceptación» tras una recotización.
+
+Pendiente de personas: aprobación de tarifas (Cristina); ratificación de suplidos, P30 y P32 (Ángel). Pendiente de
+documentos: 2.º handler, D&D general de ONE/Maersk/OOCL y cualquier tarifa de ZIM, agente de exportación, Hapag gastos
+locales, CFS, PFT, ROH/SOI/INS/SAN, CES, transporte de contenedor y FS.

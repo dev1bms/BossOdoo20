@@ -28,8 +28,17 @@ expediente.
 
 ## Abonos
 
-El abono es el estándar (**Factura rectificativa** desde la factura contabilizada). El servicio abonado vuelve a quedar
-por facturar y el expediente resta el abono de lo facturado.
+El abono es el estándar (**Factura rectificativa** desde la factura contabilizada, con el motivo). El servicio abonado vuelve
+a quedar por facturar y el expediente resta el abono de lo facturado. Mientras quede venta por facturar, el margen del
+expediente es **previsto** y el Resumen dice cuánto falta. Si el servicio se volverá a facturar, factúrelo; si no (por
+ejemplo, se cobró de más), en el pedido pulse **Recotizar**, ponga el precio nuevo (0 = **sin cargo**) con el motivo y
+desmarque «Recalcular el coste» en las líneas que no cambian; después **⚙ → Cerrar facturación**. Entonces el margen es
+**definitivo**: facturado (abonos descontados) menos coste real.
+
+## Cobros, pagos y banco
+
+**Registrar pago** en la factura (diario Banco) deja la factura «En proceso de pago». En **Contabilidad → Banco**, cada
+movimiento del extracto se casa con su pago (Odoo lo propone por importe y referencia) y la factura pasa a **Pagado**.
 
 ## Coste adicional tras la aceptación
 

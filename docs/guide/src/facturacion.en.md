@@ -27,8 +27,17 @@ file.
 
 ## Credit notes
 
-The credit note is the standard one (**Credit Note** from the posted invoice). The credited service is to invoice again
-and the file subtracts the credit note from what was invoiced.
+The credit note is the standard one (**Credit Note** from the posted invoice, with the reason). The credited service is
+to invoice again and the file subtracts the credit note from what was invoiced. While some sale is left to invoice, the
+file margin is a **forecast** and the Summary says how much is missing. If the service will be invoiced again, invoice
+it; if not (for example, it was overcharged), click **Re-price** on the order, enter the new price (0 = **free of
+charge**) with the reason and untick «Recompute cost» on the lines that do not change; then **⚙ → Close Invoicing**. The
+margin is then **final**: invoiced (credit notes deducted) minus actual cost.
+
+## Receipts, payments and bank
+
+**Register Payment** on the invoice (Bank journal) leaves the invoice «In Payment». In **Accounting → Bank**, each
+statement line is matched with its payment (Odoo proposes it by amount and reference) and the invoice becomes **Paid**.
 
 ## Extra cost after acceptance
 

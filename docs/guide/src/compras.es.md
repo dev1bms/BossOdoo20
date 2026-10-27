@@ -41,10 +41,13 @@ factura lo prestado: los servicios BOSS tienen el control «cantidades recibidas
 
 ## Factura de proveedor
 
-Se crea desde el pedido de compra (**Crear factura**), con su cuenta analítica, solo cuando hay algún servicio
-**marcado como prestado** (si no, el sistema lo dice en vez de crear una factura de ceros). Odoo copia todas las líneas
-del pedido: las no prestadas van con cantidad 0 y no cuentan. Antes de contabilizarla, cada línea de servicio BOSS
-necesita el **impuesto que figura en la factura del proveedor** (también 0 %).
+En Odoo 20 el formulario del pedido ya no tiene el botón de factura: en **Compras → Pedidos**, marque el pedido (o
+varios del mismo proveedor) y pulse **Crear facturas**; o use **Subir factura** con el PDF del proveedor. La factura
+lleva la cuenta analítica del expediente y solo se crea cuando hay algún servicio **marcado como prestado** (si no, el
+sistema lo dice en vez de crear una factura de ceros). Odoo copia todas las líneas del pedido: las no prestadas van con
+cantidad 0 y no cuentan; el aviso **Eliminar líneas vacías** del borrador las borra. Ponga la **referencia de la factura
+del proveedor** y, antes de contabilizarla, en cada línea de servicio BOSS el **impuesto que figura en la factura del
+proveedor** (también 0 %).
 
 **Orden de trabajo** (propuesta aprobada por Belal el 23/10/2026, P30; pendiente de ratificación por Ángel y Cristina): la factura de proveedor se **contabiliza a tiempo**; su **pago**
 espera a que el servicio esté en una factura de cliente **contabilizada**. Mientras tanto la factura de proveedor muestra

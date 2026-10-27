@@ -41,10 +41,12 @@ becomes the ordered one. If the product's bill control is "received quantities",
 
 ## Vendor bill
 
-It is created from the purchase order (**Create Bill**), with its analytic account, only when some service is
-**marked as performed** (otherwise the system says so instead of creating a bill of zeros). Odoo copies every line of
-the order: those not performed come with quantity 0 and do not count. Before posting it, each BOSS service line needs
-the **tax shown on the supplier invoice** (0 % included).
+In Odoo 20 the purchase order form has no bill button: in **Purchase → Orders**, select the order (or several of the
+same supplier) and click **Create Bills**; or use **Upload Bill** with the supplier's PDF. The bill gets the file's
+analytic account and is only created when some service is **marked as performed** (otherwise the system says so instead
+of creating a bill of zeros). Odoo copies every line of the order: those not performed come with quantity 0 and do not
+count; the draft's **Remove empty lines** notice deletes them. Enter the **supplier's invoice reference** and, before
+posting, on each BOSS service line the **tax shown on the supplier invoice** (0 % included).
 
 **Order of work** (proposal approved by Belal on 23/10/2026, P30; Ángel's and Cristina's ratification pending): the supplier bill is **posted on time**; its **payment** waits until the
 service is on a **posted** customer invoice. Meanwhile the vendor bill shows a yellow notice ("Before posting or paying")
