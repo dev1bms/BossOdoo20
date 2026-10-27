@@ -8,6 +8,8 @@ import math
 from .methods_base import MissingInput, dec
 
 TEU = {"20": 1, "40": 2, "45": 2}
+# A charge basis unit that names its mode (kg tasable terrestre...) decides the factor of a chargeable price.
+CHARGEABLE_UNIT_MODES = {"chargeable_air_kg": "air", "chargeable_road_kg": "road", "chargeable_sea_kg": "sea"}
 
 
 def _containers(inputs):
@@ -45,9 +47,16 @@ def raw_measure(basis, inputs, params):
     if basis == "chargeable_kg":
         factor = params.get("volumetric_factor")
         if not factor:
-            # no factor stated by the document: the chargeable weight of the shipment, computed with the factor
-            # of its transport mode (air 167, road 333, sea 1000 kg/m³; Ángel 27/10/2026)
-            return _required(inputs, "chargeable_kg")
+            # no factor stated by the document: the chargeable weight computed with the factor of the mode of the
+            # price (its tariff) or, failing that, of the shipment (air 167, road 333, sea 1000; Ángel 27/10/2026):
+            # the road leg of a sea import is charged with the road factor
+            mode = (CHARGEABLE_UNIT_MODES.get(params.get("uom_quantity_source")) or params.get("transport_mode")
+                    or inputs.get("transport_mode"))
+            by_mode = inputs.get("chargeable_kg_by_mode") or {}
+            value = by_mode.get(mode) if mode in by_mode else inputs.get("chargeable_kg")
+            if value in (None, False, ""):
+                raise MissingInput("chargeable_kg")
+            return dec(value)
         return max(_required(inputs, "gross_kg"), _required(inputs, "volume_m3") * dec(factor))
     if basis == "awb_kg":
         return _required(inputs, "awb_kg")

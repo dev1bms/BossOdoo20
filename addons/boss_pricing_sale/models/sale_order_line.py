@@ -59,6 +59,7 @@ class SaleOrderLine(models.Model):
         help="Supplier of this service. Only its tariffs price the line (handling, storage or road transport often "
         "come from another supplier than the carrier). Empty: any supplier whose tariff fits the shipment.")
     boss_cost_method = fields.Selection(related="product_id.boss_cost_method")
+    boss_quantity_source = fields.Selection(related="product_uom_id.boss_quantity_source")
     boss_execution = fields.Selection(
         EXECUTIONS, "Executed by", compute="_compute_boss_execution", store=True, readonly=False, precompute=True,
         copy=True,

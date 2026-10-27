@@ -4,6 +4,8 @@ from odoo.exceptions import UserError
 from .boss_shipment_container import shipment_quantity
 
 # Case data a quotation template gives to the quotation (ADR-006): what the template is for.
+# Road transport services (inland leg): their supplier is the haulier, the inland carrier (Ángel, 27/10/2026).
+ROAD_SERVICE_CODES = ("TTE-CON", "TTE-FCL")
 TEMPLATE_CASE_FIELDS = {"boss_business": "boss_business", "boss_direction": "boss_direction",
                         "boss_transport_mode": "boss_transport_mode", "boss_load_type": "boss_load_type",
                         "boss_incoterm_id": "incoterm"}
@@ -15,6 +17,10 @@ class SaleOrder(models.Model):
 
     # Shipment data needed to price the quotation (ADR-003); route, dates and weights: boss.shipment.route (ADR-006).
     boss_container_ids = fields.One2many("boss.shipment.container", "order_id", "Containers", copy=True)
+    boss_haulier_id = fields.Many2one(
+        "res.partner", "Inland carrier (haulier)", compute="_compute_boss_haulier_id",
+        help="Supplier of the road transport line (pickup or delivery): chosen on that line, as any supplier. The "
+        "main carrier is the shipping line or airline.")
     boss_pallets = fields.Integer("Pallets")
     boss_goods_value = fields.Monetary("Goods value", currency_field="currency_id",
                                        help="Commercial value of the goods (insurance, value brackets).")
@@ -56,6 +62,7 @@ class SaleOrder(models.Model):
             "gross_kg": self.boss_gross_kg or None,
             "awb_kg": self._boss_awb_weight(),
             "chargeable_kg": self.boss_chargeable_kg or None,
+            "chargeable_kg_by_mode": self._boss_chargeable_by_mode(),
             "volume_m3": self.boss_volume_m3 or None,
             "pallets": self.boss_pallets or None,
             "goods_value": self.boss_goods_value or None,
@@ -82,6 +89,15 @@ class SaleOrder(models.Model):
         if "boss_container_ids" in vals:
             self.filtered(lambda o: not o.boss_pricing_frozen)._boss_assign_container_groups()
         return res
+
+    @api.depends("order_line.boss_supplier_id", "order_line.product_id")
+    def _compute_boss_haulier_id(self):
+        for order in self:
+            order.boss_haulier_id = order._boss_road_lines().boss_supplier_id[:1]
+
+    def _boss_road_lines(self):
+        """Road transport services of the quotation (inland leg), whatever the main mode of the shipment."""
+        return self.order_line.filtered(lambda l: l.product_id.default_code in ROAD_SERVICE_CODES)
 
     def _boss_container_groups(self):
         return sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
@@ -186,7 +202,7 @@ class SaleOrder(models.Model):
         return shipment_quantity(
             source, [(c.size, c.container_type_id, c.quantity) for c in self.boss_container_ids], self.boss_gross_kg,
             self.boss_volume_m3, self.boss_pallets, self._boss_awb_weight(), size, ctype,
-            chargeable_kg=self.boss_chargeable_kg)
+            chargeable_kg=self.boss_chargeable_kg, chargeable_by_mode=self._boss_chargeable_by_mode())
 
     @api.depends("order_line.boss_cost_status", "order_line.boss_sale_status", "order_line.boss_vat_status",
                  "order_line.boss_manual_cost", "partner_id.commercial_partner_id.country_id")

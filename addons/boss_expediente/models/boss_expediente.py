@@ -12,7 +12,8 @@ from odoo.tools.misc import formatLang
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
-from odoo.addons.boss_pricing_sale.models.boss_shipment_route import BUSINESSES, chargeable_kg, spanish_side, traffic_code
+from odoo.addons.boss_pricing_sale.models.boss_shipment_route import (BUSINESSES, chargeable_by_mode, chargeable_kg,
+                                                                      spanish_side, traffic_code)
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
 
@@ -138,7 +139,8 @@ class BossExpediente(models.Model):
     handler_candidate_ids = fields.Many2many(
         "res.partner", compute="_compute_handler_candidate_ids",
         string="Handlers known for this airline at this airport")
-    haulier_id = fields.Many2one("res.partner", "Haulier")
+    haulier_id = fields.Many2one("res.partner", "Inland carrier (haulier)", tracking=True,
+                                 help="Road transport supplier of the pickup or delivery; from the accepted quotation.")
     customs_broker_id = fields.Many2one("res.partner", "Customs broker")
     # route and scope
     direction = fields.Selection(DIRECTIONS, tracking=True)
@@ -398,7 +400,8 @@ class BossExpediente(models.Model):
         self.ensure_one()
         return shipment_quantity(source, [(c.size, c.container_type_id, 1) for c in self.container_ids],
                                  self.gross_kg, self.volume_m3, self.pallets, self.awb_kg or self.chargeable_kg,
-                                 size, ctype, chargeable_kg=self.chargeable_kg)
+                                 size, ctype, chargeable_kg=self.chargeable_kg,
+                                 chargeable_by_mode=chargeable_by_mode(self.gross_kg, self.volume_m3))
 
     def _boss_inputs(self):
         """Shipment inputs of boss.pricing taken from the file (what really happens), like
@@ -420,6 +423,7 @@ class BossExpediente(models.Model):
                            for (size, type_id), quantity in containers.items()],
             "gross_kg": self.gross_kg or None, "awb_kg": self.awb_kg or self.chargeable_kg or None,
             "chargeable_kg": self.chargeable_kg or None,
+            "chargeable_kg_by_mode": {m: kg or None for m, kg in chargeable_by_mode(self.gross_kg, self.volume_m3).items()},
             "volume_m3": self.volume_m3 or None, "pallets": self.pallets or None,
             "goods_value": self.goods_value or order.boss_goods_value or None,
             "duties_amount": self.duties_amount or order.boss_duties_amount or None, "storage_days": None,
