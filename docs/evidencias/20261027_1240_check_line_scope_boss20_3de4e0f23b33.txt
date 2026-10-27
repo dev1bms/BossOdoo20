@@ -1,0 +1,51 @@
+# Evidence: dev/check_line_scope.py on boss20
+# Date: 2026-10-27 12:40    
+# Commit tested: 3de4e0f23b33 (fix(pricing): effective scope fields computed consistently as superuser; dev: read-only check of the)
+# Installed on boss20: boss_expediente 20.0.1.8.1 boss_pricing 20.0.1.8.1 boss_pricing_sale 20.0.1.9.3 boss_services 20.0.1.3.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-27 11:40:17,997 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-27 11:40:18,058 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-27 11:40:18,895 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+2026-10-27 11:40:20,341 1 WARNING boss20 py.warnings: /opt/odoo-src/odoo/orm/registry.py:633: UserWarning: boss.tariff.line: inconsistent 'store' for computed fields, accessing port_ids may recompute and update direction, transport_mode, load_type. Use distinct compute methods for stored and non-stored fields.
+  File "/opt/odoo-src/setup/odoo", line 6, in <module>
+    odoo.cli.main()
+  File "/opt/odoo-src/odoo/cli/command.py", line 139, in main
+    command().run(args)
+  File "/opt/odoo-src/odoo/cli/shell.py", line 161, in run
+    self.shell(dbnames[0])
+  File "/opt/odoo-src/odoo/cli/shell.py", line 139, in shell
+    ctx = api.Environment(cr, uid, {})['res.users'].context_get()
+  File "/opt/odoo-src/odoo/orm/cache.py", line 86, in lookup
+    return self.lookup(*args, **kwargs)
+  File "/opt/odoo-src/odoo/orm/cache.py", line 176, in lookup
+    value = self.method(*args, **kwargs)
+  File "/opt/odoo-src/odoo/addons/base/models/res_users.py", line 797, in context_get
+    context = self.env.user.read(['lang', 'tz'], load=False)[0]
+  File "/opt/odoo-src/odoo/orm/models.py", line 2818, in read
+    self._origin.fetch(fields)
+  File "/opt/odoo-src/odoo/orm/models.py", line 3152, in fetch
+    fetched.mapped(field_name)
+  File "/opt/odoo-src/odoo/orm/models.py", line 5644, in mapped
+    return [getter(record) for record in records]
+  File "/opt/odoo-src/odoo/orm/fields.py", line 1924, in __get__
+    self.compute_value(recs)
+  File "/opt/odoo-src/odoo/orm/fields.py", line 2089, in compute_value
+    fields = records.pool.field_computed[self]
+  File "/usr/lib/python3.12/functools.py", line 995, in __get__
+    val = self.func(instance)
+  File "/opt/odoo-src/odoo/orm/registry.py", line 633, in field_computed
+    warnings.warn(
+CHECK PASS HAN import uses the import section: expected 100.0 got 100.0
+CHECK PASS HAN export uses the export section: expected 200.0 got 200.0
+CHECK PASS TTE-CON Madrid province: expected 10.0 got 10.0
+CHECK PASS TTE-CON Valencia province: expected 20.0 got 20.0
+CHECK PASS TTE-CON other province: expected no_tariff got no_tariff
+CHECK PASS checklist: no overlap between the sections: expected False got False
+CHECK PASS price list shows the line scope: expected True got True
+CHECK FAIL checklist reports an overlapping price: expected True got False
+CHECK PASS a price cannot widen its tariff (BCN outside MAD): expected refused got refused
+RESULT 8 passed, 1 failed
+# Exit status: 0

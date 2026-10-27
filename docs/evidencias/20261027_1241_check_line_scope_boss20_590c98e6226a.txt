@@ -1,0 +1,22 @@
+# Evidence: dev/check_line_scope.py on boss20
+# Date: 2026-10-27 12:42    
+# Commit tested: 590c98e6226a (fix(pricing): separate compute for the effective ports (not stored); dev: line-scope check reads the)
+# Installed on boss20: boss_expediente 20.0.1.8.1 boss_pricing 20.0.1.8.2 boss_pricing_sale 20.0.1.9.3 boss_services 20.0.1.3.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-27 11:42:06,611 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-27 11:42:06,672 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-27 11:42:07,503 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS HAN import uses the import section: expected 100.0 got 100.0
+CHECK PASS HAN export uses the export section: expected 200.0 got 200.0
+CHECK PASS TTE-CON Madrid province: expected 10.0 got 10.0
+CHECK PASS TTE-CON Valencia province: expected 20.0 got 20.0
+CHECK PASS TTE-CON other province: expected no_tariff got no_tariff
+CHECK PASS checklist: no overlap between the sections: expected False got False
+CHECK PASS price list shows the line scope: expected True got True
+CHECK PASS checklist reports an overlapping price: expected True got True
+CHECK PASS a price cannot widen its tariff (BCN outside MAD): expected refused got refused
+RESULT 9 passed, 0 failed
+# Exit status: 0
