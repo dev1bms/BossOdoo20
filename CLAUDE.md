@@ -28,11 +28,18 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
   Source strings in English, translations in `i18n/es.po`. No new Arabic content (existing `ar.po` left as is).
 - Business-owner docs and the user guide in Spanish and English.
 - Commits: Conventional Commits, no `Co-Authored-By` trailer.
-- Tests at the strict minimum that protects the work. **No test of any kind runs on the local machine** (Belal,
-  26/10/2026, confirmed 26/10 evening: no Odoo, Docker, databases, builds or test suites, the engine unit tests
-  included). Locally: read, edit, `python -m py_compile`, Git and Chrome only. Commit, push to GitHub, then run the tests
-  on the server: `dev/server_test.sh <modules>` (throw-away DB `boss20_test_*`, engine tests included), deploy with
-  `dev/deploy.sh`, persistent UAT copy `boss20_uat` (`dev/server_uat.sh`) for posting and payments.
+- Tests at the strict minimum that protects the work. **Policy of Belal, 27/10/2026: all work, execution, trials and
+  checks happen on the server database `boss20` only.** No test of any kind on the local machine (no Odoo, Docker,
+  databases, builds or test suites, the engine unit tests included; locally only read, edit, `python -m py_compile`, Git
+  and Chrome). No throw-away or copy databases on the server either (`dev/server_test.sh`, `boss20_test_*` and the UAT copy
+  `boss20_uat` are no longer used). On boss20 it is allowed to create, change and delete clearly named test records,
+  confirm sales and purchases, perform services, post customer and vendor bills and credit notes, register payments and
+  reconcile inside Odoo; test entries may consume document numbers and stay in boss20. Test records are cancelled or
+  deleted only the ways Odoo supports, never by disabling accounting safety rules. Module updates, settings, deploys and
+  restarts on boss20 need no new approval. External effects stay off: no real bank transfer, no documents to tax
+  authorities, no messages to customers or suppliers (outgoing mail and external connectors disabled during tests).
+  Odoo 17 and Odoo 19 stay read-only. This permission covers execution and testing: it never turns a business proposal or
+  a tariff into a decision approved by Cristina or Ángel.
 
 ## Interface
 - UI decisions (Odoo-standard patterns, units next to amounts, badges, widths, icon names): `.interface-design/system.md`.
@@ -40,10 +47,8 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
   commits listed in `.interface-design/system.md`.
 
 ## Commands
-- Tests (server only): `dev/server_test.sh boss_expediente` (Odoo tests, throw-away DB); engine tests run on the server
-  with `dev/server_test.sh --engine`. Never `python -m unittest`, `dev/test.sh` or `dev/uat.sh` locally (kept for
-  reference only).
-- Deploy: `dev/deploy.sh update <modules>` (ships committed files, upgrades with the web stopped), then
-  `dev/server_uat.sh update <modules>`.
-- UAT checks with evidence: `dev/uat_run.sh <script>` (runs on boss20_uat, saves the output with the tested commit in
-  `docs/evidencias/`).
+- Deploy: `dev/deploy.sh update <modules>` (ships committed files, upgrades boss20 with the web stopped).
+- Checks with evidence on boss20: `dev/uat_run.sh <script> boss20` (saves the output with the tested commit in
+  `docs/evidencias/`); scripts via `dev/server_shell.sh` (DB boss20). UI checks with Chrome on
+  https://system.bosscontinental.com.
+- `dev/server_test.sh`, `dev/server_uat.sh`, `dev/test.sh`, `dev/uat.sh`: kept for reference only, not used (policy 27/10).
