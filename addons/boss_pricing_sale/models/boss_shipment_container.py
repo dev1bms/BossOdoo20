@@ -28,7 +28,9 @@ class BossShipmentContainer(models.Model):
     _description = "Planned containers of a quotation"
 
     order_id = fields.Many2one("sale.order", required=True, ondelete="cascade", index=True)
-    size = fields.Selection(CONTAINER_SIZES, required=True, default="40")
+    # No default size: an added row that keeps every default is dropped by the list when the user leaves it without
+    # typing (the containers «were not there» in the demo of 27/10/2026); choosing the size keeps the row.
+    size = fields.Selection(CONTAINER_SIZES, required=True)
     container_type_id = fields.Many2one("boss.container.type", "Type", required=True,
                                         default=lambda self: self.env.ref("boss_pricing.container_type_dv",
                                                                           raise_if_not_found=False))
