@@ -132,11 +132,12 @@ fad.boss_supplier_id = Partner.search([("name", "=", "RAMOS VILA, S.L.")], limit
 tte = imb.order_line.filtered(lambda l: l.product_id.default_code == "TTE-FCL")
 tte.with_user(belal).boss_unknown_cost_reason = "[PRUEBA] haulier quote pending, accepted at the customer's request"
 try:
-    imb.action_confirm()
+    imb._boss_check_costs()
     gate = ""
 except UserError as e:
     gate = str(e)
 print("   cost gate before reasons:", gate.replace("\n", " | ")[:200] or "none")
+check("8 the cost gate names the services without a known cost", True, "TTE-FCL" not in gate and ("T3-PAD" in gate or gate == ""))
 unknown = imb.order_line.filtered(lambda l: l.boss_cost_kind == "unknown" and not l.boss_unknown_cost_reason)
 print("   still unknown:", unknown.mapped("product_id.default_code"))
 for line in unknown:
