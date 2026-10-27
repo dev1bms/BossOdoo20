@@ -1,0 +1,42 @@
+# check_quote_flow.py on boss20 with the local addons mounted (dev/server_shell_wip.sh), code of commit fd09e6b + header address sync: NOT deployed
+CHECK PASS 1 orderer of a BOSS import is proposed as consignee: expected res.partner(258,) got res.partner(258,)
+CHECK PASS 1 shipper stays empty (it is the foreign supplier of the customer): expected False got False
+CHECK PASS 1 quantities with 1x40': per container 1, per shipment 1: expected (1.0, 1.0, 1.0) got (1.0, 1.0, 1.0)
+CHECK PASS 1 containers entered after the template: per-container lines take the 40' DV: expected {'THC': ('40', 'DV'), 'T3-PAD': ('40', 'DV'), 'GLO-CCC': ('40', 'DV')} got {'THC': ('40', 'DV'), 'GLO-CCC': ('40', 'DV'), 'T3-PAD': ('40', 'DV')}
+CHECK PASS 1 size-dependent price (T3-PAD 40') found: expected 'ok' got 'ok'
+CHECK PASS 1 containers persisted 2x40': expected [('40', 'DV', 2)] got [('40', 'DV', 2)]
+CHECK PASS 1 quantities with 2x40': per container 2, per shipment 1: expected (2.0, 1.0, 2.0) got (2.0, 1.0, 2.0)
+CHECK PASS 1 THC cost = 2 x 253 from MSC (buying), sale typed separately: expected ('ok', 506.0) got ('ok', 506.0)
+CHECK PASS 1 THC cost source auditable: expected True got True
+CHECK PASS 1 freight (FMI) is a manual amount when no rate exists: expected 'manual' got 'manual'
+CHECK PASS 6 BOSS own fee: no supplier, cost ok 0: expected ('boss', 'ok', 0.0) got ('boss', 'ok', 0.0)
+CHECK PASS 7 WFS on an ocean freight: warning: expected True got True
+CHECK PASS 7 WFS on an ocean freight: still a manual amount (no rate of WFS): expected 'manual' got 'manual'
+CHECK PASS 5 wizard pre-filled: MSC, ESVLC, Shanghai abroad, valid one week: expected (res.partner(6,), 'ESVLC', 'CNSHA', 6) got (res.partner(6,), 'ESVLC', 'CNSHA', 6)
+CHECK PASS 5 draft tariff with the route and validity: expected ('draft', 'CNSHA', 'ESVLC', datetime.date(2026, 12, 13)) got ('draft', 'CNSHA', 'ESVLC', datetime.date(2026, 12, 13))
+CHECK PASS 5 not approved yet: the freight stays manual: expected 'manual' got 'manual'
+CHECK PASS 5 approved: the freight is priced from the rate, 2 x 1500: expected ('ok', 3000.0) got ('ok', 3000.0)
+CHECK PASS 5 source names the rate and its week: expected True got True
+CHECK PASS 5 another origin port (Ningbo) is not priced by the Shanghai rate: expected 'manual' got 'manual'
+CHECK PASS 5 outside the week: manual again: expected 'manual' got 'manual'
+CHECK PASS 8 the cost gate names the services without a known cost: expected True got True
+CHECK PASS 8 complete customer and prices: Confirm succeeds: expected '' got ''
+CHECK PASS 8 accepted and frozen: expected ('sale', True) got ('sale', True)
+CHECK PASS 8 one file opened and linked: expected True got True
+CHECK PASS 8 confirming twice does not open a second file: expected 1 got 1
+CHECK PASS 8 still one file after a second Confirm: expected (1, boss.expediente(39,)) got (1, boss.expediente(39,))
+CHECK PASS 8 file receives orderer, consignee, route, containers: expected (res.partner(258,), res.partner(258,), 'CNSHA', 'ESVLC', 2) got (res.partner(258,), res.partner(258,), 'CNSHA', 'ESVLC', 2)
+CHECK PASS 8 no purchase order created by the acceptance: expected 0 got 0
+CHECK PASS 8 no invoice created by the acceptance: expected 0 got 0
+CHECK PASS 8 costs to buy carried into the file: THC from MSC 506, FMI 3000: expected (('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 506.0), ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 3000.0)) got (('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 506.0), ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 3000.0))
+CHECK PASS 9 accepted quotation keeps its costs after a new rate: expected [('FMI', 'ok', 3000.0, 100.0), ('THC', 'ok', 506.0, 100.0), ('BL', 'ok', 79.0, 100.0), ('GLO-CCC', 'ok', 54.0, 100.0), ('T3-PAD', 'ok', 100.0, 100.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)] got [('FMI', 'ok', 3000.0, 100.0), ('THC', 'ok', 506.0, 100.0), ('BL', 'ok', 79.0, 100.0), ('GLO-CCC', 'ok', 54.0, 100.0), ('T3-PAD', 'ok', 100.0, 100.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)]
+CHECK PASS 9 accepted quotation keeps its cost after the rate is archived: expected [('FMI', 'ok', 3000.0, 100.0), ('THC', 'ok', 506.0, 100.0), ('BL', 'ok', 79.0, 100.0), ('GLO-CCC', 'ok', 54.0, 100.0), ('T3-PAD', 'ok', 100.0, 100.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)] got [('FMI', 'ok', 3000.0, 100.0), ('THC', 'ok', 506.0, 100.0), ('BL', 'ok', 79.0, 100.0), ('GLO-CCC', 'ok', 54.0, 100.0), ('T3-PAD', 'ok', 100.0, 100.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)]
+CHECK PASS 9 accepted quotation still names its source: expected True got True
+CHECK PASS 8b contact without country: one message naming the cause: expected True got True
+CHECK PASS 8b the message is short (grouped by cause, not one line per service): expected True got True
+CHECK PASS 8b pricing alert says why VAT is pending: expected True got True
+CHECK PASS 2 orderer of a BOSS export is proposed as shipper: expected res.partner(258,) got res.partner(258,)
+CHECK PASS 2 consignee stays empty: expected False got False
+CHECK PASS 3 agent business: consignee not copied from the agent: expected False got False
+CHECK PASS 3 traffic code IMA, orderer = agent, parties kept: expected ('IMA', res.partner(261,), res.partner(258,)) got ('IMA', res.partner(261,), res.partner(258,))
+RESULT 40 passed, 0 failed

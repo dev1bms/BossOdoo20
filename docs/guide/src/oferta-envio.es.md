@@ -9,8 +9,8 @@ Todo se puede cambiar después.
 
 | Bloque | Campos | Para qué se usa |
 |---|---|---|
-| Caso | Negocio de (cliente de BOSS / cliente del agente), Sentido, Modo, Forma de carga, Incoterm | Eligen las tarifas. **Tráfico** se calcula: IMB = importación marítima, cliente de BOSS; IMA = la encarga un agente para su cliente |
-| Transportista | Transportista principal (naviera o aerolínea), BOSS gestiona (recogida, aduanas, transporte principal, entrega) | Tarifas de esa naviera o aerolínea. El camionero es el proveedor de la recogida o entrega |
+| Caso | Negocio de (cliente de BOSS / cliente del agente), Sentido, Modo, Forma de carga, Incoterm y su **lugar convenido** | Eligen las tarifas. **Tráfico** se calcula: IMB = importación marítima, cliente de BOSS; IMA = la encarga un agente para su cliente |
+| Transportista | Transportista principal (naviera o aerolínea), **Transportista terrestre** (se muestra solo: es el proveedor de la línea de transporte terrestre y pasa al expediente), BOSS gestiona (recogida, aduanas, transporte principal, entrega) | Tarifas de esa naviera o aerolínea; el transportista terrestre se elige en la línea TTE |
 | Origen (izquierda) | Expedidor, país, puerto/aeropuerto, dirección de recogida, lugar, **ETD** | En exportación, España es el origen: el puerto de origen es el puerto español y la dirección de recogida da la provincia |
 | Destino (derecha) | Destinatario, país, puerto/aeropuerto, dirección de entrega, lugar, **ETA** | En importación, España es el destino: el puerto de destino es el puerto español y la dirección de entrega da la provincia |
 | Carga | Peso bruto, volumen, palés, valor | Servicios por kg, tonelada, m³, W/M o palé. Todo es opcional: se puede completar después en el expediente |

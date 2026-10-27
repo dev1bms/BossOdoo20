@@ -1115,6 +1115,16 @@ TASKS = [
                    "guarda por ruta desde la oferta y los históricos no cambian.",
                    "Aceptación: Ángel repite su demo (plantilla IMB FOB, 1×40', Confirmar) sin «so much error»."),
          links=[f"{SYS}/odoo/sales/80", f"{DOC}#/sin-precio"]),
+    dict(code="W16", title="Cierre de la lista de revisión de la reunión (42 puntos): matriz de evidencias, recorrido solo por pantalla, peso tasable por tramo",
+         epic="E8", type=T.TEST, sprint="S44", points=3, start=D(2026, 10, 27), due=D(2026, 10, 28),
+         priority=P.HIGH, deps=["W15"], hours=5, who="belal", dept="sys", status=S.IN_PROGRESS,
+         evidence="27/10: docs/matriz-reunion-2026-10-27.md (42 filas con código, prueba y pantalla); S00162 → E260038 "
+                  "tecleado íntegramente en Chrome; check_meeting_matrix 23/23, check_chargeable_weight 38/38, "
+                  "check_quote_flow 40/40, check_route_cases 36/36 con el código WIP; pendiente: aprobación de "
+                  "despliegue de fd09e6b (tramo terrestre 333, transportista terrestre, lugar del incoterm).",
+         desc=desc("Resultado: cada punto de la reunión con estado y evidencia; lo que falta son decisiones de negocio.",
+                   "Aceptación: Belal aprueba el despliegue y Ángel repite su demo sin incidencias."),
+         links=[f"{SYS}/odoo/sales/162", f"{DOC}#/oferta-envio"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",

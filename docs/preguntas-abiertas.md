@@ -47,6 +47,9 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | R2-A1 | ¿Un coste de flete tecleado solo para una oferta debe guardarse también como precio reutilizable (ruta y semana)? (reunión parte 2) | C | Dos vías: coste manual en la línea o precio semanal desde ⊕ con ruta y validez | Cristina y Ángel |
 | R2-A2 | ¿Quién aprueba los precios semanales de flete? (P19) | C | Aprobador de tarifas; el asistente los deja en borrador o los envía a aprobación | Ángel |
 | R2-A3 | Venta por defecto: ¿+20 % sobre el coste o 20 % de margen sobre la venta? | C | Nada activo; venta de la lista del cliente o tecleada | Cristina y Ángel |
+| R2-A4 | «Super cubic meter» (Ángel: «I will explain that on Teams later») | C | Sin dato; nada implementado | Ángel |
+| R2-A5 | «PP» en las plantillas de venta («menos el PP que se pone caso por caso»): ¿flete prepagado (prepaid)? ¿otra cosa? | C | Sin definir; la venta se teclea o viene de la lista del cliente | Cristina / Ángel |
+| R2-A6 | ¿Se usa el transporte convencional por kg tasable (TTE-CON) en envíos FCL? Si sí, el volumen debe verse también en FCL | C | En FCL el volumen está oculto en la pestaña Envío | Cristina |
 | R-S1 | Caso de las plantillas IAB FOB, IMB FOB, EAB (sentido, modo, carga, incoterm, cliente de BOSS) y lo que gestiona BOSS deducido de sus servicios | C | Cargado como **propuesta** (`dev/setup_templates.py`); se cambia en la plantilla | Cristina |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions
