@@ -300,6 +300,10 @@ aprobación de Belal (commit `5cf2918`; boss_pricing 20.0.1.10.0, boss_pricing_s
 probado en Chrome con S00311 (THC 253 → 303,60; `docs/evidencias/20261027_1646_chrome_s00311_venta_coste_mas_20.md`);
 `check_default_markup` 22/22 y `check_route_cases` 53/53 sobre el código desplegado.
 
+**Chatter debajo del formulario (27/10, 17:05):** módulo `boss_web` (solo cliente web) instalado en boss20; los formularios
+ocupan el ancho estándar máximo (1400 px) y el chatter va debajo en cualquier pantalla
+(`docs/evidencias/20261027_1705_chrome_chatter_debajo_boss_web.md`).
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de
