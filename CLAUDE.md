@@ -18,6 +18,7 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
   matching/compute service. No dependency on sales.
 - `boss_pricing_sale`: shipment inputs on the quotation, cost/sale per line, missing-price actions,
   acceptance snapshot and explicit re-pricing.
+- `boss_web`: web client only (chatter below the form on every screen size); no models.
 
 ## Rules
 - Standard Odoo first; every customisation is justified in an ADR (docs/adr).

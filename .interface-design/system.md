@@ -69,6 +69,7 @@ Checked at 1366×768: quotation lines 1318/1318 px, no horizontal scroll.
 | «Alcance revisado» required to send | Distinguishes «applies to any» from «not filled in» | 2026-10-22 |
 | Zero needs «Sin coste» | A missing price is never a valid zero | 2026-10-22 |
 | Readiness not stored | It depends on today's date; searchable through a search method | 2026-10-22 |
+| Chatter below the form, never beside it (`boss_web`) | BOSS forms are wide (quotation, file, tariff); on an XXL screen Odoo halves the form for the chatter. One JS patch of the standard layout choice; attachment previews keep their place | 2026-10-27 |
 
 ## Performance note
 
