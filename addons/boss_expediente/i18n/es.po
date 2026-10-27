@@ -1815,6 +1815,11 @@ msgid "Lead"
 msgstr "Oportunidad"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "Link to an existing file"
+msgstr "Vincular a un expediente existente"
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_is_customer
 #: model:ir.model.fields,help:boss_expediente.field_res_users__boss_is_customer
 msgid "Listed in Customers. Set automatically by its first sale or invoice."
@@ -2037,6 +2042,18 @@ msgstr "Aún no hay expedientes"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost_revision__status__no_tariff
 msgid "No supplier price"
 msgstr "Sin precio de proveedor"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid "None: acceptance opens the file"
+msgstr "Ninguno: la aceptación abre el expediente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
+msgid ""
+"Normally empty: accepting the quotation opens its shipment file. Choose a file only to add a service sold later, or to link a file opened before the quotation (pre-alert)."
+msgstr ""
+"Normalmente vacío: aceptar la oferta abre su expediente. Elija un expediente solo para añadir un servicio vendido después, o para vincular un expediente abierto antes de la oferta (preaviso)."
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search

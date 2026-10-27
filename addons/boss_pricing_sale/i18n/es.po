@@ -27,10 +27,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid ""
-"%(order)s is not ready to send or accept:\n"
+"%(order)s is not ready to send or accept.\n"
+"\n"
 "%(details)s"
 msgstr ""
-"%(order)s no está lista para enviar o aceptar:\n"
+"%(order)s no está lista para enviar o aceptar.\n"
+"\n"
 "%(details)s"
 
 #. module: boss_pricing_sale
@@ -38,6 +40,14 @@ msgstr ""
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "%(price)s · %(tariff)s v%(version)s · %(state)s"
 msgstr "%(price)s · %(tariff)s v%(version)s · %(state)s"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"%(supplier)s has no supplier price for %(service)s (no tariff at all). The line will show «no supplier price» until one is entered: choose the supplier that performs this service, or add its price."
+msgstr ""
+"%(supplier)s no tiene ningún precio de %(service)s (ninguna tarifa). La línea mostrará «sin precio de proveedor» hasta que se introduzca uno: elija el proveedor que presta este servicio, o añada su precio."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -93,6 +103,11 @@ msgid ""
 "A VAT class (NS, EX, NR) and customer zone without a row keeps the quotation VAT pending."
 msgstr ""
 "Una clase de IVA (NS, EX, NR) y zona de cliente sin fila deja el IVA de la oferta pendiente."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__valid_to
+msgid "A freight offer is valid for days, not a year: a week by default."
+msgstr "Una oferta de flete vale días, no un año: una semana por defecto."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -214,6 +229,11 @@ msgstr "Añadir servicios"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Add supplier price"
 msgstr "Añadir precio de proveedor"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Add supplier price (for this route, with its validity)"
+msgstr "Añadir precio de proveedor (para esta ruta, con su validez)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
@@ -1084,6 +1104,11 @@ msgid "Free of charge, confirmed by a person."
 msgstr "Sin cargo, confirmado por una persona."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__spot_rate
+msgid "Freight offer valid for a short time."
+msgstr "Oferta de flete válida poco tiempo."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__sale_line_id
 msgid "From quotation line"
 msgstr "Desde la línea de oferta"
@@ -1372,6 +1397,12 @@ msgstr ""
 
 #. module: boss_pricing_sale
 #. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "No price of this supplier for this service"
+msgstr "Este proveedor no tiene precio para este servicio"
+
+#. module: boss_pricing_sale
+#. odoo-python
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "No rule: sales price of the product"
 msgstr "Sin regla: precio de venta del producto"
@@ -1621,6 +1652,11 @@ msgid "Planned date"
 msgstr "Fecha prevista"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__foreign_port_id
+msgid "Port / airport abroad"
+msgstr "Puerto / aeropuerto extranjero"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_port_id
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_port_id
 msgid ""
@@ -1644,6 +1680,11 @@ msgstr "Puerto o aeropuerto de carga."
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__port_ids
 msgid "Ports"
 msgstr "Puertos"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__foreign_port_ids
+msgid "Ports / airports abroad"
+msgstr "Puertos / aeropuertos extranjeros"
 
 #. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ports
@@ -1906,6 +1947,14 @@ msgid "Sale price missing"
 msgstr "Falta precio de venta"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
+"Sale price missing on %(count)s services: %(codes)s. Type it on the line or set it in the customer's pricelist."
+msgstr ""
+"Falta el precio de venta en %(count)s servicios: %(codes)s. Escríbalo en la línea o póngalo en la lista de precios del cliente."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__price_unit
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__sale_unit
 msgid "Sale price per unit"
@@ -2083,6 +2132,11 @@ msgid "Spanish port / airport"
 msgstr "Puerto / aeropuerto en España"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__spot_rate
+msgid "Spot Rate"
+msgstr "Oferta puntual"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__status
 msgid "Status"
 msgstr "Estado"
@@ -2218,6 +2272,11 @@ msgstr ""
 "Tarifas aún sin aprobar que cuentan como aprobadas solo en esta prueba. Las ofertas nunca las usan."
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Template (case)"
+msgstr "Plantilla (caso)"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid "Template applied without removing anything"
@@ -2282,9 +2341,9 @@ msgstr "El número de contenedores debe ser positivo."
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
 msgid ""
-"The price is saved in a supplier tariff (never on the quotation) and is used once it is approved."
+"The price is saved in a supplier tariff (never on the quotation), with its route and validity, and is used once it is approved. Earlier prices stay as history."
 msgstr ""
-"El precio se guarda en una tarifa de proveedor (nunca en la oferta) y se usa cuando se aprueba."
+"El precio se guarda en una tarifa de proveedor (nunca en la oferta), con su ruta y su validez, y se usa cuando se aprueba. Los precios anteriores quedan como histórico."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__simulated
@@ -2292,6 +2351,13 @@ msgid ""
 "The price used is not approved: the result is a simulation, not usable in quotations until the tariff is approved."
 msgstr ""
 "El precio usado no está aprobado: el resultado es una simulación, no utilizable en ofertas hasta que se apruebe la tarifa."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__foreign_port_ids
+msgid ""
+"The route of this price: origin port of an import, destination port of an export. Empty: any."
+msgstr ""
+"La ruta de este precio: puerto de origen de una importación, de destino de una exportación. Vacío: cualquiera."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope_confirmed
@@ -2305,6 +2371,13 @@ msgstr ""
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "The supplier price cannot be saved, missing: %s."
 msgstr "No se puede guardar el precio de proveedor; falta: %s."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid ""
+"The template is the case (air import FOB, sea import FCL...): it fills the direction, mode, load type, incoterm, whose client, what BOSS handles and the services."
+msgstr ""
+"La plantilla es el caso (importación aérea FOB, importación marítima FCL…): rellena el sentido, el modo, el tipo de carga, el incoterm, de quién es el cliente, lo que gestiona BOSS y los servicios."
 
 #. module: boss_pricing_sale
 #: model:ir.model.constraint,message:boss_pricing_sale.constraint_boss_vat_tax_case_unique
@@ -2458,6 +2531,30 @@ msgstr "IVA de los servicios BOSS"
 #: code:addons/boss_pricing_sale/models/sale_order.py:0
 msgid "VAT pending"
 msgstr "IVA pendiente"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "VAT pending (customer without country: set it on the contact)"
+msgstr "IVA pendiente (cliente sin país: póngalo en el contacto)"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
+"VAT pending on %(count)s services because the customer «%(customer)s» has no country: set the country (and tax ID) on the contact, then the VAT follows."
+msgstr ""
+"IVA pendiente en %(count)s servicios porque el cliente «%(customer)s» no tiene país: ponga el país (y el NIF) en el contacto y el IVA se resuelve."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
+"VAT pending on %(count)s services:\n"
+"%(details)s"
+msgstr ""
+"IVA pendiente en %(count)s servicios:\n"
+"%(details)s"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__valid_from
@@ -2627,12 +2724,6 @@ msgstr "venta"
 
 #. module: boss_pricing_sale
 #. odoo-python
-#: code:addons/boss_pricing_sale/models/sale_order.py:0
-msgid "sale price missing"
-msgstr "falta el precio de venta"
-
-#. module: boss_pricing_sale
-#. odoo-python
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "simulated (not approved)"
 msgstr "simulada (sin aprobar)"
@@ -2660,19 +2751,3 @@ msgstr "precio unitario"
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "valid from"
 msgstr "válida desde"
-
-#. module: boss_pricing_sale
-#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
-msgid "Template (case)"
-msgstr "Plantilla (caso)"
-
-#. module: boss_pricing_sale
-#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
-msgid ""
-"The template is the case (air import FOB, sea import FCL...): it fills the "
-"direction, mode, load type, incoterm, whose client, what BOSS handles and the "
-"services."
-msgstr ""
-"La plantilla es el caso (importación aérea FOB, importación marítima FCL…): "
-"rellena el sentido, el modo, el tipo de carga, el incoterm, de quién es el "
-"cliente, lo que gestiona BOSS y los servicios."
