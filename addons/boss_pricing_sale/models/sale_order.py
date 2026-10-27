@@ -2,6 +2,7 @@ from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
 
 from .boss_shipment_container import shipment_quantity
+from .boss_shipment_route import spanish_side
 
 # Case data a quotation template gives to the quotation (ADR-006): what the template is for.
 # Road transport services (inland leg): their supplier is the haulier, the inland carrier (Ángel, 27/10/2026).
@@ -162,6 +163,16 @@ class SaleOrder(models.Model):
     @api.onchange("partner_id", "boss_direction", "boss_business")
     def _onchange_boss_orderer_party(self):
         self._boss_apply_orderer_party()
+
+    @api.onchange("boss_delivery_address_id", "boss_pickup_address_id", "boss_direction")
+    def _onchange_boss_spanish_address(self):
+        """Odoo's own «Delivery Address» of the quotation (invoicing, standard) follows the BOSS address of the
+        Spanish side when it belongs to the ordering party (the warehouse chosen among the customer's addresses), so
+        the header and the Shipment tab never show two different addresses of the same customer."""
+        side = spanish_side(self.boss_direction)
+        address = self.boss_delivery_address_id if side == "destination" else self.boss_pickup_address_id
+        if address and address.commercial_partner_id == self.partner_id.commercial_partner_id:
+            self.partner_shipping_id = address
 
     def _boss_merge_template(self, existing):
         _ = self.env._
