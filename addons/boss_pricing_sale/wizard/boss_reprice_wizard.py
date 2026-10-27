@@ -33,7 +33,8 @@ class BossRepriceWizard(models.TransientModel):
             if wl.recompute_cost:
                 line._boss_recompute_cost()
             if line.currency_id.compare_amounts(wl.new_price, line.price_unit):
-                line.price_unit = wl.new_price
+                # a zero set here is on purpose, with the reason: free of charge, not a missing price
+                line.write({"price_unit": wl.new_price, "boss_sale_free": line.currency_id.is_zero(wl.new_price)})
         if locked:
             order.action_lock()
         self.env["boss.pricing.snapshot"].sudo()._take(order, "repricing", self.reason, before)
