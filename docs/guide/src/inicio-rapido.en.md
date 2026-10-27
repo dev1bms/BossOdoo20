@@ -48,12 +48,13 @@ Odoo 17). The user may change it on the line (step 9).
 | | |
 |---|---|
 | Menu | Tariffs and suppliers › **Tariffs and documents** › [[New]] |
-| Records used | «WFS importación MAD/BCN desde 01/06/2026», «MSC gastos locales importación (origen China) 09-12/2026», «ADUCEX, S.L. FAD importación FCL» |
+| Records used | «WFS importación MAD/BCN desde 01/06/2026», «MSC gastos locales importación (origen China) 09-12/2026», «ADUCEX, S.L. FAD importación FCL», «IRENEO Tarifas MAD 2026» (one document with sections) |
 | Header | Name, **Supplier**, **Supplier document** (PDF), **Document reference**, currency, **Valid from / Valid to** |
-| Applies to tab | Only what the document limits: direction, mode, load type, carrier, ports, countries abroad, provinces, customer. Empty = any. Tick **Scope reviewed** |
+| Applies to tab | Only what limits the whole document: direction, mode, load type, carrier, ports, countries abroad, provinces, customer. Empty = any. Tick **Scope reviewed** |
 | Prices tab | One line per service: service, **charge basis**, **calculation**, **priced on**, unit price, minimum, maximum, brackets / day tiers, free days, container size and types, **page** of the document |
+| Section of the document | One PDF = one tariff. When a section is only for import, export, a port or some provinces, in the price, group **Applies to**: direction, mode, load type, ports, countries, provinces (empty = «As the tariff»). The list shows it in the **Applies to** column |
 | Result | The line shows its **Price**, its **Calculation** and an **Example** computed by the engine |
-| Check | The example equals the hand calculation from the PDF |
+| Check | The example equals the hand calculation from the PDF, and **Before sending for approval** reports no conflicting prices |
 
 ## 5. Review, approve and check it can be used
 

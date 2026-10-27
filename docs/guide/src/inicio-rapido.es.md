@@ -48,12 +48,13 @@ MAD → Iberia, según Odoo 17). El usuario puede cambiarlo en la línea (paso 9
 | | |
 |---|---|
 | Menú | Tarifas y proveedores › **Tarifas y documentos** › [[Nuevo]] |
-| Registro usado | «WFS importación MAD/BCN desde 01/06/2026», «MSC gastos locales importación (origen China) 09-12/2026», «ADUCEX, S.L. FAD importación FCL» |
+| Registro usado | «WFS importación MAD/BCN desde 01/06/2026», «MSC gastos locales importación (origen China) 09-12/2026», «ADUCEX, S.L. FAD importación FCL», «IRENEO Tarifas MAD 2026» (un documento con secciones) |
 | Campos de cabecera | Nombre, **Proveedor**, **Documento del proveedor** (el PDF), **Referencia del documento** (título y edición), Moneda, **Válida desde / Válida hasta** |
-| Pestaña Se aplica a | Solo lo que dice el documento: Sentido, Modo de transporte, Forma de carga, Transportista / naviera, Puertos, Países en el extranjero, Provincias (interior), Cliente. Vacío = cualquiera. Marque **Alcance revisado** |
+| Pestaña Se aplica a | Solo lo que limita todo el documento: Sentido, Modo de transporte, Forma de carga, Transportista / naviera, Puertos, Países en el extranjero, Provincias (interior), Cliente. Vacío = cualquiera. Marque **Alcance revisado** |
 | Pestaña Precios | Una línea por servicio: Servicio, **Base de cobro**, **Forma de cálculo**, **Se cobra por**, Precio unitario, Mínimo, Máximo, Tramos / tramos de días, Días libres, Tamaño y Tipos de contenedor, **Página** del documento |
+| Sección del documento | Un PDF = una tarifa. Si una sección vale solo para importación, exportación, un puerto o unas provincias, en el precio, grupo **Se aplica a**: Sentido, Modo, Forma de carga, Puertos, Países, Provincias (vacío = «Como la tarifa»). La lista lo muestra en la columna **Se aplica a** |
 | Resultado | La línea muestra su **Precio**, su **Cálculo** y un **Ejemplo** calculado con el motor |
-| Comprobación | El ejemplo coincide con la cuenta hecha a mano con el PDF |
+| Comprobación | El ejemplo coincide con la cuenta hecha a mano con el PDF, y **Antes de enviar a aprobación** no avisa de precios en conflicto |
 
 Ejemplos del documento: WFS punto 12 (manipulación por kg tasable de la AWB, con mínimo por AWB); MSC p.12 (THC por
 contenedor; PAD distinto para 20' y 40'; FuelEU por TEU); ocupación MSC p.17 (tramos de días por tamaño).

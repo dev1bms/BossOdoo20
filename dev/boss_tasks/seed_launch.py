@@ -1074,6 +1074,20 @@ TASKS = [
                    "que falta.",
                    "Aceptación: Inicio rápido seguible por Belal sin ayuda; tarifas sin fuente siguen sin aprobar."),
          links=[f"{SYS}/odoo/sales/32", f"{SYS}/odoo/sales/33", f"{DOC}#/inicio-rapido"]),
+    dict(code="W13", title="Un documento de proveedor = una tarifa: alcance por precio e IRENEO 2026 en una sola tarifa",
+         epic="E8", type=T.DEV, sprint="S44", points=3, start=D(2026, 10, 27), due=D(2026, 10, 27),
+         priority=P.HIGH, deps=["W12"], hours=5, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 27),
+         evidence="27/10 en boss20 (aprobado por Belal, enmienda de ADR-002): cada precio restringe el alcance de su "
+                  "tarifa (sentido, modo, forma de carga, puertos, países, provincias) y «Antes de enviar a aprobación» "
+                  "avisa de precios solapados; boss_pricing 20.0.1.8.2, boss_pricing_sale 20.0.1.9.3; check_line_scope "
+                  "9/9. «IRENEO Tarifas MAD 2026» v1 (01/01) y v2 (15/07, zona 3 +10 %) aprobadas por delegación de "
+                  "Belal para pruebas; almacenaje de exportación p.4 dado de alta en Chrome; 5 tarifas por sección "
+                  "archivadas; comprobación privada 34/34. Guía e Inicio rápido actualizados (?v=20261027d).",
+         desc=desc("Resultado: Ángel y los responsables dan de alta un PDF de proveedor como una sola tarifa y "
+                   "eligen, en cada precio, a qué sección del documento se aplica.",
+                   "Aceptación: dos precios del mismo servicio con alcances distintos conviven; si se solapan, el aviso "
+                   "lo dice antes de enviar; un precio no puede ampliar su tarifa."),
+         links=[f"{SYS}/odoo/action-boss_pricing.boss_tariff_action/56", f"{DOC}#/tarifa-alta"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
