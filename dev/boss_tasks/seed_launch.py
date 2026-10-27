@@ -1125,6 +1125,16 @@ TASKS = [
          desc=desc("Resultado: cada punto de la reunión con estado y evidencia; lo que falta son decisiones de negocio.",
                    "Aceptación: Belal aprueba el despliegue y Ángel repite su demo sin incidencias."),
          links=[f"{SYS}/odoo/sales/162", f"{DOC}#/oferta-envio"]),
+    dict(code="W17", title="Venta por defecto coste + 20 % (ajuste), sentidos cruzado y nacional sin forzar España, fecha clave sin vaciado, TTE-CON comprobado",
+         epic="E8", type=T.FEATURE, sprint="S44", points=5, start=D(2026, 10, 27), due=D(2026, 10, 28),
+         priority=P.HIGH, deps=["W16"], hours=6, who="belal", dept="sys", status=S.IN_PROGRESS,
+         evidence="27/10: ADR-008 y ADR-006 enmienda 2; check_default_markup 22/22, check_route_cases 53/53, "
+                  "check_quote_flow 40/40, check_meeting_matrix 23/23, check_chargeable_weight 38/38 (código montado en boss20); "
+                  "pendiente: despliegue y activación del 20 % en Ajustes.",
+         desc=desc("Resultado: cada servicio con coste conocido propone venta = coste + 20 % (editable, desactivable); una oferta "
+                   "cruzada o nacional se describe sin que España sea parte; la fecha de vaciado nunca elige tarifa.",
+                   "Aceptación: Belal activa el ajuste en pantalla y Ángel ve el 20 % en una oferta nueva."),
+         links=[f"{SYS}/odoo/action-sale.action_orders", f"{DOC}#/inicio-rapido"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",

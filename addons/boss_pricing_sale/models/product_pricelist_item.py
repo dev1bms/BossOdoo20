@@ -79,10 +79,18 @@ class ProductPricelistItem(models.Model):
         if self.base != BOSS_LINE_COST:
             return super()._compute_base_price(product, quantity, uom, currency=currency, depth=depth,
                                                base_prices=base_prices, **kwargs)
+        if not product.boss_pricing_mode:
+            # a global «cost + %» rule meets a product that is not a BOSS service: its sales price, like the
+            # standard list-price rule
+            price = product._price_compute("list_price", uom=uom)[product.id]
+            return self._convert_price(price, product.currency_id, currency=currency, **kwargs)
         # Unit cost of the quotation line, already in the order currency (sale.order.line passes it).
         return kwargs.get("boss_unit_cost") or 0.0
 
     def _compute_price(self, product, quantity, uom, **kwargs):
+        if self.base == BOSS_LINE_COST and not product.boss_pricing_mode:
+            # the «expected cost + %» rule says nothing about a product that is not a BOSS service: its list price
+            return self._compute_base_price(product, quantity, uom or product._get_main_uom(), **kwargs)
         if self.base != BOSS_LINE_COST or not self.boss_sale_margin or self.compute_price == "fixed":
             return super()._compute_price(product, quantity, uom, **kwargs)
         # Same steps as the standard rule (rounding, extra fee, min/max margin over the cost), with the

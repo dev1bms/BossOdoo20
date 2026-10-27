@@ -1017,8 +1017,8 @@ msgstr "Vacío: cualquier puerto."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__direction
-msgid "Empty: import and export."
-msgstr "Vacío: importación y exportación."
+msgid "Empty: any direction (import, export, cross-trade, national)."
+msgstr "Vacío: cualquier sentido (importación, exportación, cruzado, nacional)."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__valid_to
@@ -1339,15 +1339,15 @@ msgstr "Importación"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
-msgid "Import and export"
-msgstr "Importación y exportación"
+msgid "Any direction"
+msgstr "Cualquier sentido"
 
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
-msgid "Import/export"
-msgstr "Importación/exportación"
+msgid "any direction"
+msgstr "cualquier sentido"
 
 #. module: boss_pricing
 #. odoo-python
@@ -3106,3 +3106,13 @@ msgstr ""
 "kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: "
 "el factor del modo de transporte del envío (aéreo 167, terrestre 333, "
 "marítimo 1000)."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__cross
+msgid "Cross-trade"
+msgstr "Cruzado"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__national
+msgid "National"
+msgstr "Nacional"

@@ -403,13 +403,18 @@ class SaleOrderLine(models.Model):
     # --- VAT: Ángel's rules give the class; the BOSS VAT table gives the Odoo tax (ADR-004) ------------------
 
     def _boss_zones(self):
+        """(origin zone, destination zone, customer zone): the two sides of the route as described (so a cross-trade
+        or a national shipment has its own pair); records without a route keep the import/export reading of the
+        Spanish port and the country abroad."""
         order = self.order_id
         eu = set(self.env.ref("base.europe").country_ids.mapped("code"))
+        customer = order.partner_id.commercial_partner_id
+        cust_zone = vat_rules.zone(customer.country_id.code, customer.state_id.code, eu_codes=eu)
+        if order._boss_route_known():
+            return order._boss_side_zone("origin", eu), order._boss_side_zone("destination", eu), cust_zone
         port = order.boss_port_id
         spain = vat_rules.zone(port.country_id.code, canary=port.canary_islands) if port else None
         abroad = vat_rules.zone(order.boss_country_id.code, eu_codes=eu) if order.boss_country_id else None
-        customer = order.partner_id.commercial_partner_id
-        cust_zone = vat_rules.zone(customer.country_id.code, customer.state_id.code, eu_codes=eu)
         if order.boss_direction == "import":
             return abroad, spain, cust_zone
         if order.boss_direction == "export":
@@ -417,7 +422,9 @@ class SaleOrderLine(models.Model):
         return None, None, cust_zone
 
     @api.depends("product_id", "product_id.boss_paid_on_behalf", "boss_manual_cost_note", "order_id.partner_id",
-                 "order_id.partner_id.vat", "order_id.boss_direction", "order_id.boss_port_id", "order_id.boss_country_id")
+                 "order_id.partner_id.vat", "order_id.boss_direction", "order_id.boss_port_id", "order_id.boss_country_id",
+                 "order_id.boss_origin_port_id", "order_id.boss_origin_country_id", "order_id.boss_destination_port_id",
+                 "order_id.boss_destination_country_id")
     def _compute_boss_vat(self):
         frozen = self._boss_skip()
         frozen._boss_keep("boss_vat_class", "boss_vat_status", "boss_vat_trace", "boss_vat_tax_id")
@@ -488,9 +495,9 @@ class SaleOrderLine(models.Model):
 
     def _get_pricelist_price(self):
         item = self.pricelist_item_id
-        if item.base != BOSS_LINE_COST:
-            return super()._get_pricelist_price()
-        if not self.product_id.boss_pricing_mode or not self._boss_cost_known():
+        if item.base != BOSS_LINE_COST or not self.product_id.boss_pricing_mode:
+            return super()._get_pricelist_price()  # a product that is not a BOSS service: its list price
+        if not self._boss_cost_known():
             return 0.0  # no cost yet: the sale price stays missing, never built on a zero cost
         return item._compute_price(
             product=self.product_id.with_context(**self._get_product_price_context()),
@@ -508,7 +515,10 @@ class SaleOrderLine(models.Model):
         for line in self:
             currency = line.currency_id or line.company_id.currency_id
             item = line.pricelist_item_id
-            from_rule = item and not currency.compare_amounts(line.technical_price_unit, line.price_unit)
+            # price_unit first: its pending recompute (cost just typed) rewrites the technical price as well, so
+            # reading the technical price before it would compare a stale value and call the price «typed»
+            price_unit = line.price_unit
+            from_rule = item and not currency.compare_amounts(line.technical_price_unit, price_unit)
             cost_rule = from_rule and item.base == BOSS_LINE_COST
             if line.display_type or not line.product_id.boss_pricing_mode:
                 status, text = False, False

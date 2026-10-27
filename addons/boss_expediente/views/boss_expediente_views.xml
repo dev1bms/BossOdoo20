@@ -390,6 +390,8 @@
                 <separator/>
                 <filter name="import" string="Import" domain="[('direction', '=', 'import')]"/>
                 <filter name="export" string="Export" domain="[('direction', '=', 'export')]"/>
+                <filter name="cross" string="Cross-trade" domain="[('direction', '=', 'cross')]"/>
+                <filter name="national" string="National" domain="[('direction', '=', 'national')]"/>
                 <separator/>
                 <filter name="boss_business" string="BOSS clients" domain="[('business', '=', 'boss')]"/>
                 <filter name="agent_business" string="Agents' clients" domain="[('business', '=', 'agent')]"/>

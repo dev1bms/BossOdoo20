@@ -16,11 +16,15 @@ Todo se puede cambiar después.
 | Carga | Peso bruto, volumen, palés, valor | Servicios por kg, tonelada, m³, W/M o palé. Todo es opcional: se puede completar después en el expediente |
 | Estimaciones | Días de almacenaje (0 por defecto), derechos de aduana | Servicios por tiempo y porcentajes |
 
-- **El lado extranjero nunca es España** y el lado español se pone en España al elegir el sentido.
+- **España se propone, no se impone**: en importación y exportación el lado español se pone en España al elegir el
+  sentido y el lado extranjero nunca es España; en un envío **Nacional** los dos lados son España; en un **Cruzado** (ni
+  origen ni destino en España) no se rellena nada y solo aplican precios de proveedor sin puerto español ni país en su
+  ámbito. El tráfico lo dice: IMB, EAB, **XMB**, **NTB**…
 - **Direcciones**: un cliente con varios almacenes (p. ej. Leroy Merlin) tiene una dirección de entrega por almacén;
   elija la que toca. Si no tiene, créela desde el mismo campo («Crear y editar»): queda como dirección del cliente.
 - **Fechas**: ETD (salida del puerto de origen) y ETA (llegada al de destino). La fecha clave —ETA en importación, ETD
-  en exportación— es la **fecha de tarifa**: elige la versión de cada tarifa de proveedor. La «Entrega final al
+  en exportación, cruzado y nacional— es la **fecha de tarifa**: elige la versión de cada tarifa de proveedor. La fecha
+  de vaciado de un LCL (en el expediente) nunca elige la tarifa. La «Entrega final al
   cliente» de la cabecera es otra cosa: la entrega en el almacén, que puede ser semanas después de la ETA.
 - **Peso real, peso volumen y peso tasable** (Ángel, 27/10/2026): peso volumen = m³ × factor del modo (**aéreo 167,
   terrestre 333, marítimo 1000** kg/m³); peso tasable = **el mayor** del bruto y el volumen. Los proveedores cobran a

@@ -1,6 +1,7 @@
 """Check of ADR-006 on boss20 with the cases of the meeting with Ángel (27/10/2026): sea import FCL from Shanghai to a
 warehouse in Madrid through Valencia (template «IMB FOB»), sea export from Zaragoza through Barcelona to Tunis, air
-import without AWB (chargeable weight 167 kg/m³), agent's client, the file and the opportunity. Every record is made
+import without AWB (chargeable weight 167 kg/m³), agent's client, the file and the opportunity, a cross-trade and a
+national shipment (no Spain forced, key date never the unloading date). Every record is made
 here and rolled back. Prints «CHECK PASS|FAIL …» and «RESULT n passed, m failed».
     dev/uat_run.sh check_route_cases.py boss20"""
 from datetime import date
@@ -157,6 +158,62 @@ from_lead = env["sale.order"].with_context(**ctx).create({"partner_id": customer
 check("E6 quotation from the opportunity", ("CNNGB", "ESVLC", "CN", "M", date(2026, 12, 1)),
       (from_lead.boss_origin_port_id.code, from_lead.boss_port_id.code, from_lead.boss_country_id.code,
        from_lead.boss_inland_state_id.code, from_lead.boss_planned_date))
+
+# E8 cross-trade: Shanghai -> Rotterdam, Spain is not a party and is not forced; only unscoped tariffs; VAT TER->TER
+rotterdam = port("NLRTM", "sea") or env["boss.port"].search([("country_id.code", "=", "NL"), ("kind", "=", "sea")], limit=1)
+with Form(env["sale.order"]) as form:
+    form.partner_id = customer
+    form.boss_direction = "cross"
+    form.boss_transport_mode = "sea"
+    form.boss_load_type = "fcl"
+    check("E8 cross-trade: no country proposed", (False, False),
+          (bool(form.boss_origin_country_id), bool(form.boss_destination_country_id)))
+    form.boss_origin_country_id = ref("base.cn")
+    form.boss_origin_port_id = port("CNSHA", "sea")
+    form.boss_destination_country_id = rotterdam.country_id
+    form.boss_destination_port_id = rotterdam
+    form.boss_etd = date(2026, 11, 20)
+    form.boss_eta = date(2026, 12, 15)
+    with form.order_line.new() as line:
+        line.product_id = env["product.product"].search([("default_code", "=", "FAD")], limit=1)
+cross = form.save()
+check("E8 traffic code", "XMB", cross.boss_traffic_code)
+check("E8 sides kept as typed (CN -> NL)", ("CN", "NL"),
+      (cross.boss_origin_country_id.code, cross.boss_destination_country_id.code))
+check("E8 no Spanish port, no country abroad for tariffs", (False, False), (bool(cross.boss_port_id), bool(cross.boss_country_id)))
+check("E8 no port abroad for tariffs either", False, bool(cross._boss_foreign_port()))
+check("E8 key date = ETD, never an unloading date", date(2026, 11, 20), cross.boss_planned_date)
+fad = cross.order_line.filtered(lambda l: l.product_id.default_code == "FAD")
+check("E8 VAT from the route: China (TER) -> Netherlands (COM) is an NR pair, Spanish customer -> NR", "NR", fad.boss_vat_class)
+check("E8 orderer not proposed as a party of a cross-trade", (False, False), (bool(cross.boss_shipper_id), bool(cross.boss_consignee_id)))
+
+# E9 national: Zaragoza -> Madrid by road, both sides Spain, province from the delivery address, VAT PRO->PRO -> NR
+with Form(env["sale.order"]) as form:
+    form.partner_id = customer
+    form.boss_direction = "national"
+    form.boss_transport_mode = "road"
+    form.boss_load_type = "road"
+    check("E9 national: both sides proposed as Spain", ("ES", "ES"),
+          (form.boss_origin_country_id.code, form.boss_destination_country_id.code))
+    form.boss_pickup_address_id = zaragoza
+    form.boss_delivery_address_id = warehouse
+    form.boss_etd = date(2026, 11, 20)
+    form.boss_gross_kg = 500
+    form.boss_volume_m3 = 2
+    with form.order_line.new() as line:
+        line.product_id = env["product.product"].search([("default_code", "=", "FAD")], limit=1)
+national = form.save()
+check("E9 traffic code", "NTB", national.boss_traffic_code)
+check("E9 no country abroad; no Spanish port without ports", (False, False), (bool(national.boss_country_id), bool(national.boss_port_id)))
+check("E9 province from the delivery address", "M", national.boss_inland_state_id.code)
+check("E9 key date = ETD", date(2026, 11, 20), national.boss_planned_date)
+check("E9 road chargeable weight 2 m3 x 333 = 666 > 500", 666.0, national.boss_chargeable_kg)
+fad = national.order_line.filtered(lambda l: l.product_id.default_code == "FAD")
+check("E9 VAT from the route: PRO -> PRO, Spanish customer -> NR", "NR", fad.boss_vat_class)
+file = env["boss.expediente"].create(national._boss_file_values())
+check("E9 file: national, ETD as key date, province, no country abroad", ("NTB", date(2026, 11, 20), "M", False),
+      (file.traffic_code, file._boss_pricing_date(), file.inland_state_id.code, bool(file.country_id)))
+check("E9 file pricing inputs: no port abroad", False, bool(file._boss_inputs()["foreign_port_id"]))
 
 # E7 accepted quotations keep their stored values (frozen lines are never recomputed by the route)
 accepted = env["sale.order"].search([("state", "=", "sale"), ("boss_pricing_frozen", "=", True)], limit=1)

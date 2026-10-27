@@ -13,7 +13,7 @@ from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import (BUSINESSES, chargeable_by_mode, chargeable_kg,
-                                                                      spanish_side, traffic_code)
+                                                                      abroad_side, key_date, spanish_side, traffic_code)
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
 
@@ -389,7 +389,7 @@ class BossExpediente(models.Model):
         """Actual date when known (ATA / ATD), else the estimate, else the quotation's planned date: it chooses the
         version of each supplier tariff."""
         self.ensure_one()
-        if self.direction == "export":
+        if key_date(self.direction) == "etd":
             day = self.atd and self.atd.date() or self.etd
         else:
             day = self.ata and self.ata.date() or self.eta
@@ -416,7 +416,8 @@ class BossExpediente(models.Model):
         return {
             "direction": self.direction, "transport_mode": self.transport_mode, "load_type": self.load_type,
             "carrier_id": self.carrier_id.id, "port_id": self.port_id.id, "country_id": self.country_id.id,
-            "foreign_port_id": (self.origin_port_id if self.direction == "import" else self.destination_port_id).id,
+            "foreign_port_id": (self[f"{abroad_side(self.direction)}_port_id"].id if abroad_side(self.direction)
+                                else False),
             "state_id": self.inland_state_id.id, "customer_id": partner.id,
             "tariff_use": "demo" if partner.boss_demo else "real",
             "containers": [{"size": size, "type_id": type_id, "quantity": quantity}
@@ -450,14 +451,13 @@ class BossExpediente(models.Model):
     @api.depends("direction", "origin_country_id", "origin_port_id", "destination_country_id", "destination_port_id")
     def _compute_pricing_route(self):
         for file in self:
-            side = spanish_side(file.direction)
+            side, abroad = spanish_side(file.direction), abroad_side(file.direction)
             known = file.origin_country_id or file.origin_port_id or file.destination_country_id or file.destination_port_id
-            if not side or not known:
+            if not file.direction or not known:
                 file.port_id, file.country_id = file.port_id, file.country_id
                 continue
-            abroad = "origin" if side == "destination" else "destination"
-            file.port_id = file[f"{side}_port_id"]
-            file.country_id = file[f"{abroad}_country_id"]
+            file.port_id = file[f"{side}_port_id"] if side else False
+            file.country_id = file[f"{abroad}_country_id"] if abroad else False
 
     @api.depends("direction", "pickup_address_id.state_id", "delivery_address_id.state_id")
     def _compute_inland_state(self):
@@ -492,12 +492,17 @@ class BossExpediente(models.Model):
 
     @api.onchange("direction")
     def _onchange_direction_spain(self):
-        """The Spanish side of the route is Spain; the side abroad cannot be Spain."""
+        """Import and export: the Spanish side is Spain and the side abroad cannot be. National: both sides are Spain.
+        Cross-trade: nothing is proposed or cleared."""
         spain = self.env.ref("base.es")
-        side = spanish_side(self.direction)
-        if not side:
+        if self.direction == "national":
+            for side in ("origin", "destination"):
+                if not self[f"{side}_country_id"]:
+                    self[f"{side}_country_id"] = spain
             return
-        abroad = "origin" if side == "destination" else "destination"
+        side, abroad = spanish_side(self.direction), abroad_side(self.direction)
+        if not side or not abroad:
+            return
         if not self[f"{side}_country_id"]:
             self[f"{side}_country_id"] = spain
         if self[f"{abroad}_country_id"] == spain:
@@ -657,7 +662,7 @@ class BossExpediente(models.Model):
                               agreed=self._boss_containers_text(agreed_containers) or "-",
                               actual=self._boss_containers_text(actual_containers) or "-"))
             planned = order.boss_planned_date
-            actual_date = file.ata if file.direction == "import" else file.atd
+            actual_date = file.ata if key_date(file.direction) == "eta" else file.atd
             actual_date = actual_date and actual_date.date()
             if planned and actual_date and planned != actual_date:
                 rows.append(_("Date: planned %(planned)s, actual %(actual)s", planned=planned, actual=actual_date))
