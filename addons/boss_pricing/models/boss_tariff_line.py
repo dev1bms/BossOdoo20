@@ -328,7 +328,7 @@ class BossTariffLineWorkspace(models.Model):
     direction = fields.Selection(DIRECTIONS, compute="_compute_effective_scope", store=True, compute_sudo=True)
     transport_mode = fields.Selection(TRANSPORT_MODES, compute="_compute_effective_scope", store=True, compute_sudo=True)
     load_type = fields.Selection(LOAD_TYPES, compute="_compute_effective_scope", store=True, compute_sudo=True)
-    port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_effective_scope", compute_sudo=True)
+    port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_effective_ports", compute_sudo=True)
     version = fields.Integer(related="tariff_id.version")
     document_reference = fields.Char(related="tariff_id.document_reference")
     company_id = fields.Many2one(related="tariff_id.company_id", store=True)
@@ -387,15 +387,19 @@ class BossTariffLineWorkspace(models.Model):
                 empty = not any(b.unit_price or b.fixed_amount for b in line.bracket_ids)
             line.ws_is_empty = empty
 
-    @api.depends("line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "tariff_id.direction",
-                 "tariff_id.transport_mode", "tariff_id.load_type", "tariff_id.port_ids")
+    @api.depends("line_direction", "line_transport_mode", "line_load_type", "tariff_id.direction",
+                 "tariff_id.transport_mode", "tariff_id.load_type")
     def _compute_effective_scope(self):
         for line in self:
             tariff = line.tariff_id
             line.direction = line.line_direction or tariff.direction
             line.transport_mode = line.line_transport_mode or tariff.transport_mode
             line.load_type = line.line_load_type or tariff.load_type
-            line.port_ids = line.line_port_ids or tariff.port_ids
+
+    @api.depends("line_port_ids", "tariff_id.port_ids")
+    def _compute_effective_ports(self):
+        for line in self:
+            line.port_ids = line.line_port_ids or line.tariff_id.port_ids
 
     def _ws_label(self, fname, value, record=None):
         record = record or self

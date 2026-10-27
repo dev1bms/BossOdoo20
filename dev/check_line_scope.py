@@ -54,13 +54,15 @@ check("TTE-CON Valencia province", 20.0, cost(tte, direction="import", state_id=
 check("TTE-CON other province", "no_tariff",
       cost(tte, direction="import", state_id=env["res.country.state"].search(  # noqa: F821
           [("country_id.code", "=", "ES"), ("code", "=", "Z")], limit=1).id))
-check("checklist: no overlap between the sections", False, "would conflict" in (tariff.ws_checklist or ""))
+# the checklist speaks the user's language (es_ES on boss20): look for the message in English and Spanish
+conflict = lambda t: any(w in (t.ws_checklist or "") for w in ("would conflict", "estarían en conflicto"))  # noqa: E731
+check("checklist: no overlap between the sections", False, conflict(tariff))
 check("price list shows the line scope", True, "Exportación" in tariff.with_context(lang="es_ES").line_ids[1].scope_display
       or "Export" in tariff.line_ids[1].scope_display)
 tariff.line_ids = [Command.create({"product_id": han.id, "uom_id": han.uom_id.id, "method": "per_unit",
                                    "basis": "awb_kg", "unit_price": 3.0})]
 tariff.invalidate_recordset(["ws_checklist"])
-check("checklist reports an overlapping price", True, "would conflict" in (tariff.ws_checklist or ""))
+check("checklist reports an overlapping price", True, conflict(tariff))
 try:
     with env.cr.savepoint():  # noqa: F821
         tariff.line_ids[0].line_port_ids = [Command.set(env["boss.port"].search([("code", "=", "BCN")]).ids)]  # noqa: F821
