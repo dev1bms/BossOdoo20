@@ -101,6 +101,14 @@ class ProductPricelistItem(models.Model):
             price = min(price, cost + product_uom._compute_price(self.price_max_margin, uom))
         return price
 
+    @api.onchange("product_tmpl_id", "product_id")
+    def _onchange_boss_service_uom(self):
+        """A BOSS service price needs its charge basis: start from the service's own unit (the form shows «per <unit>»
+        next to the price but left the unit empty, so saving failed; found in Chrome on boss20, 27/10/2026)."""
+        template = self.product_id.product_tmpl_id or self.product_tmpl_id
+        if template.boss_pricing_mode and not self.uom_id:
+            self.uom_id = template.uom_id
+
     # Standard pricelists hold agreed sale prices of BOSS services, with two guards (spike T2b, T3):
     # a price says its charge basis, and two prices for the same case never overlap silently.
     @api.constrains("product_tmpl_id", "product_id", "uom_id", "pricelist_id", "min_quantity",
