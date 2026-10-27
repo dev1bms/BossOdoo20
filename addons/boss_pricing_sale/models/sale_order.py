@@ -77,7 +77,10 @@ class SaleOrder(models.Model):
     def write(self, vals):
         if "boss_storage_days" in vals and "boss_storage_days_known" not in vals:
             vals = dict(vals, boss_storage_days_known=True)
-        return super().write(vals)
+        res = super().write(vals)
+        if "boss_container_ids" in vals:
+            self.filtered(lambda o: not o.boss_pricing_frozen)._boss_assign_container_groups()
+        return res
 
     def _boss_container_groups(self):
         return sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
@@ -101,19 +104,33 @@ class SaleOrder(models.Model):
         if existing:
             return self._boss_merge_template(existing)
         super()._onchange_sale_order_template_id()
-        groups = self._boss_container_groups()
-        if not groups:
-            return None
-        added = []
-        for line in self.order_line:
-            if not line.boss_container_size and self._boss_per_container(line.product_id, line.product_uom_id):
+        self._boss_assign_container_groups()
+        return None
+
+    def _boss_assign_container_groups(self):
+        """Per-container services without a size take the containers of the shipment: the first size and type on the
+        existing line, one more line per other size and type, like the template and «Add services» do. Lines already
+        sized, frozen or not priced per container are left alone. Also run when the containers are entered after the
+        services (Ángel's order of steps on 27/10/2026: template first, then 1×40'): otherwise size-dependent prices
+        (T3-PAD, GLO-CCC) stay «missing shipment data»."""
+        for order in self:
+            groups = order._boss_container_groups()
+            if not groups:
+                continue
+            added = []
+            for line in order.order_line.filtered(
+                    lambda l: l.product_id and not l.display_type and not l.boss_price_frozen
+                    and not l.boss_container_size and self._boss_per_container(l.product_id, l.product_uom_id)):
                 (line.boss_container_size, line.boss_container_type_id), *rest = groups
                 added += [Command.create({"product_id": line.product_id.id, "product_uom_id": line.product_uom_id.id,
                                           "boss_container_size": size, "boss_container_type_id": ctype.id,
                                           "sequence": line.sequence}) for size, ctype in rest]
-        if added:
-            self.update({"order_line": added})
-        return None
+            if added:
+                order.update({"order_line": added})
+
+    @api.onchange("boss_container_ids")
+    def _onchange_boss_container_ids(self):
+        self._boss_assign_container_groups()
 
     def _boss_apply_template_case(self):
         """The template says which case it is (air import FOB, sea import FCL...): its direction, mode, load type,

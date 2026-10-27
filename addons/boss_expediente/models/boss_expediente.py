@@ -471,9 +471,15 @@ class BossExpediente(models.Model):
     @api.onchange("partner_id", "direction", "business")
     def _onchange_orderer_party(self):
         """BOSS business: who orders is the consignee of an import or the shipper of an export (Ángel, 27/10/2026)."""
-        if self.business != "boss" or not self.partner_id:
+        if not self.partner_id:
             return
         party = self.partner_id.commercial_partner_id
+        if self.business != "boss":
+            if self.consignee_id == party:
+                self.consignee_id = False
+            if self.shipper_id == party:
+                self.shipper_id = False
+            return
         if self.direction == "import" and not self.consignee_id:
             self.consignee_id = party
         elif self.direction == "export" and not self.shipper_id:
