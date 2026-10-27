@@ -73,6 +73,14 @@ msgstr "%(rate)s%% de %(base_kind)s %(base)s = %(amount)s"
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"%(service)s: «%(fields)s» of this price is outside its tariff. A price can narrow the tariff's scope, not widen it: leave it empty, or change the tariff."
+msgstr ""
+"%(service)s: «%(fields)s» de este precio queda fuera de su tarifa. Un precio puede restringir el alcance de la tarifa, no ampliarlo: déjelo vacío o cambie la tarifa."
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "%s days free"
@@ -214,6 +222,12 @@ msgid "Active"
 msgstr "Activo"
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__departure
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__departure
+msgid "Actual departure (ATD)"
+msgstr "Salida real (ATD)"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "Actual period %(start)s → %(end)s (%(hours)s h): %(days)s %(unit)s"
@@ -243,12 +257,16 @@ msgstr "Añadir precio de proveedor"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__air
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_transport_mode__air
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__transport_mode__air
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Air"
 msgstr "Aéreo"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__air
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_load_type__air
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__load_type__air
 msgid "Air cargo"
 msgstr "Carga aérea"
 
@@ -407,6 +425,18 @@ msgid "Archived tariffs"
 msgstr "Tarifas archivadas"
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa
+msgid "Arrival notice of the handler (NOA)"
+msgstr "Aviso de llegada del handler (NOA)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__ata
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__ata
+msgid "Arrival of the vessel or flight (ATA)"
+msgstr "Llegada del buque o vuelo (ATA)"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid ""
@@ -421,6 +451,11 @@ msgid ""
 "Arrival on a Saturday: free until Monday if collected by then; not assumed in an estimate, applied with the actual exit."
 msgstr ""
 "Llegada en sábado: libre hasta el lunes si se retira antes; no se supone en una estimación, se aplica con la salida real."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "As the tariff"
+msgstr "Como la tarifa"
 
 #. module: boss_pricing
 #. odoo-python
@@ -720,8 +755,14 @@ msgstr "Origen del coste"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__country_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Countries abroad"
 msgstr "Países en el extranjero"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_country_ids
+msgid "Countries abroad of this price"
+msgstr "Países en el extranjero de este precio"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_port__country_id
@@ -812,6 +853,12 @@ msgid "Days counted as"
 msgstr "Días contados como"
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__delivery
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__delivery
+msgid "Delivery to the consignee / out of the warehouse"
+msgstr "Entrega al destinatario / salida del almacén"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__is_demo
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_list_ws
@@ -846,8 +893,20 @@ msgstr "Tarifas de demostración"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__direction
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__direction
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Direction"
 msgstr "Sentido"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_direction
+msgid "Direction of this price"
+msgstr "Sentido de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__discharge
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__discharge
+msgid "Discharge of the vessel"
+msgstr "Descarga del buque"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_container_type__display_name
@@ -908,31 +967,39 @@ msgid "E.g. MSC local charges import 2026."
 msgstr "P. ej. MSC gastos locales importación 2026."
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_out
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_out
+msgid "Empty container picked up (each container)"
+msgstr "Retirada del contenedor vacío (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_return
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_return
+msgid "Empty container returned (each container)"
+msgstr "Devolución del contenedor vacío (cada contenedor)"
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Empty, so the prices apply to any:"
 msgstr "Vacíos, así que los precios valen para cualquier:"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__load_type
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__load_type
 msgid "Empty: any load type."
 msgstr "Vacío: cualquier forma de carga."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__transport_mode
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__transport_mode
 msgid "Empty: any mode."
 msgstr "Vacío: cualquier modo."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__port_ids
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__port_ids
 msgid "Empty: any port."
 msgstr "Vacío: cualquier puerto."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__direction
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__direction
 msgid "Empty: import and export."
 msgstr "Vacío: importación y exportación."
 
@@ -941,6 +1008,12 @@ msgstr "Vacío: importación y exportación."
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__valid_to
 msgid "Empty: valid until a newer version starts."
 msgstr "Vacío: válida hasta que empiece una versión más nueva."
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__emptying
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__emptying
+msgid "Emptying of the groupage container (LCL)"
+msgstr "Vaciado del contenedor de grupaje (LCL)"
 
 #. module: boss_pricing
 #. odoo-python
@@ -964,6 +1037,20 @@ msgstr ""
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "Estimate: %(days)s days"
 msgstr "Estimación: %(days)s días"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_end_event
+msgid ""
+"Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del vacío»). Events of each container price each container with its own dates. Empty: the default of the service for the direction."
+msgstr ""
+"Hecho del expediente que cierra el periodo facturable (p. ej. demoras MSC «devolución del vacío»). Con los hechos de cada contenedor, cada contenedor se valora con sus propias fechas. Vacío: el de defecto del servicio para el sentido."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_start_event
+msgid ""
+"Event of the shipment file that opens the chargeable period, as the supplier document says (e.g. WFS «desde el NOA», MSC demurrage «fecha llegada buque»). Empty: the default of the service for the direction."
+msgstr ""
+"Hecho del expediente que abre el periodo facturable, como dice el documento del proveedor (p. ej. WFS «desde el NOA», demoras MSC «fecha llegada buque»). Vacío: el de defecto del servicio para el sentido."
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__whole_stay
@@ -1010,6 +1097,8 @@ msgstr "Vencen pronto (30 días)"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__export
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__direction__export
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_direction__export
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Export"
 msgstr "Exportación"
@@ -1021,6 +1110,8 @@ msgstr "FCL"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__fcl
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_load_type__fcl
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__load_type__fcl
 msgid "FCL (full container)"
 msgstr "FCL (contenedor completo)"
 
@@ -1109,6 +1200,24 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__friday_extra_day
 msgid "Friday +1 free day"
 msgstr "Viernes +1 día libre"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_gate_in
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_gate_in
+msgid "Full container in the port terminal (each container)"
+msgstr "Entrada del contenedor lleno en la terminal (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_full_out
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_full_out
+msgid "Full container out of the terminal (each container)"
+msgstr "Salida del contenedor lleno de la terminal (cada contenedor)"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__foh
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__foh
+msgid "Goods delivered to the handler or terminal (FOH)"
+msgstr "Mercancía entregada al handler o la terminal (FOH)"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1205,6 +1314,8 @@ msgstr ""
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__import
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__direction__import
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_direction__import
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Import"
 msgstr "Importación"
@@ -1264,6 +1375,8 @@ msgstr "LCL"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__lcl
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_load_type__lcl
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__load_type__lcl
 msgid "LCL (groupage)"
 msgstr "LCL (grupaje)"
 
@@ -1320,8 +1433,14 @@ msgstr "Forma de carga"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Load type"
 msgstr "Forma de carga"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_load_type
+msgid "Load type of this price"
+msgstr "Forma de carga de este precio"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__priority
@@ -1393,6 +1512,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__min_per_day
 msgid "Minimum per day"
 msgstr "Mínimo por día"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa_or_ata
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa_or_ata
+msgid "NOA, or ATA when there is no NOA"
+msgstr "NOA, o ATA si no hay NOA"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_container_type__name
@@ -1618,6 +1743,25 @@ msgid "Only for these container types. Empty: any type."
 msgstr "Solo para estos tipos de contenedor. Vacío: cualquier tipo."
 
 #. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid ""
+"Only when this price is narrower than its tariff (a section of the document). Empty: the tariff's scope."
+msgstr ""
+"Solo si este precio es más restringido que su tarifa (una sección del documento). Vacío: el alcance de la tarifa."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_country_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_direction
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_load_type
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_port_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_state_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_transport_mode
+msgid ""
+"Only when this price is narrower than its tariff. Empty: the tariff's."
+msgstr ""
+"Solo si este precio es más restringido que su tarifa. Vacío: el de la tarifa."
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_supplier_view_list_ws
 msgid "Open the contact"
 msgstr "Abrir el contacto"
@@ -1698,9 +1842,25 @@ msgid "Percentage of a base"
 msgstr "Porcentaje de una base"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_end_event
+msgid "Period ends at"
+msgstr "El periodo termina en"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_start_event
+msgid "Period starts at"
+msgstr "El periodo empieza en"
+
+#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_unit__24h
 msgid "Periods of 24 hours from the start"
 msgstr "Periodos de 24 horas desde el inicio"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__pickup
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__pickup
+msgid "Pickup of the shipment (port, airport, handler)"
+msgstr "Retirada del envío (puerto, aeropuerto, handler)"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1726,6 +1886,7 @@ msgstr "Puerto o aeropuerto"
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__port_ids
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__port_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Ports"
 msgstr "Puertos"
 
@@ -1733,6 +1894,11 @@ msgstr "Puertos"
 #: model:ir.actions.act_window,name:boss_pricing.boss_port_action
 msgid "Ports and airports"
 msgstr "Puertos y aeropuertos"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_port_ids
+msgid "Ports of this price"
+msgstr "Puertos de este precio"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__price_display
@@ -1849,8 +2015,14 @@ msgstr ""
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__state_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Provinces (inland)"
 msgstr "Provincias (interior)"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_state_ids
+msgid "Provinces of this price"
+msgstr "Provincias de este precio"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1930,12 +2102,16 @@ msgstr ""
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__road
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_transport_mode__road
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__transport_mode__road
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Road"
 msgstr "Terrestre"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__load_type__road
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_load_type__road
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__load_type__road
 msgid "Road cargo"
 msgstr "Carga terrestre"
 
@@ -1977,6 +2153,8 @@ msgstr "Alcance revisado"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__transport_mode__sea
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_transport_mode__sea
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__transport_mode__sea
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Sea"
 msgstr "Marítimo"
@@ -2078,6 +2256,14 @@ msgid ""
 "Several supplier prices apply: %s. Choose the carrier, narrow a tariff scope or set a priority."
 msgstr ""
 "Aplican varios precios de proveedor: %s. Elija el transportista, acote el alcance de una tarifa o fije una prioridad."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Several suppliers have a price for this shipment: %s. Choose the supplier on the line (column Supplier) to price it with that supplier's tariff."
+msgstr ""
+"Varios proveedores tienen precio para este envío: %s. Elija el proveedor en la línea (columna Proveedor) para calcularla con la tarifa de ese proveedor."
 
 #. module: boss_pricing
 #. odoo-python
@@ -2242,11 +2428,6 @@ msgid "Tariff or document"
 msgstr "Tarifa o documento"
 
 #. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid "Tariff scope"
-msgstr "Alcance de la tarifa"
-
-#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_res_partner__boss_ws_tariff_count
 #: model:ir.model.fields,field_description:boss_pricing.field_res_users__boss_ws_tariff_count
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_supplier_view_list_ws
@@ -2387,6 +2568,11 @@ msgstr "Este código de tipo de contenedor ya existe."
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "This price applies to"
+msgstr "Este precio se aplica a"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid ""
 "This price belongs to a tariff sent for approval or approved: it does not change. Open the\n"
 "                    tariff and create a new version (or set it back to draft) to change it."
@@ -2451,16 +2637,22 @@ msgstr "Modo de transporte"
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Transport mode"
 msgstr "Modo de transporte"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_transport_mode
+msgid "Transport mode of this price"
+msgstr "Modo de transporte de este precio"
 
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid ""
-"Two prices for %(svc)s with the same unit and container: they would conflict."
+"Two prices for %(svc)s in %(uom)s apply to the same shipments (same unit, container and scope): they would conflict. Narrow «Applies to» on one of them."
 msgstr ""
-"Dos precios de %(svc)s con la misma unidad y contenedor: darían conflicto."
+"Dos precios de %(svc)s en %(uom)s se aplican a los mismos envíos (misma unidad, contenedor y alcance): estarían en conflicto. Restrinja «Se aplica a» en uno de ellos."
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
@@ -2862,188 +3054,3 @@ msgstr "toda la estancia al tramo alcanzado"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "x %(count)s containers = %(amount)s"
 msgstr "x %(count)s contenedores = %(amount)s"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__ata
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__ata
-msgid "Arrival of the vessel or flight (ATA)"
-msgstr "Llegada del buque o vuelo (ATA)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__discharge
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__discharge
-msgid "Discharge of the vessel"
-msgstr "Descarga del buque"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa
-msgid "Arrival notice of the handler (NOA)"
-msgstr "Aviso de llegada del handler (NOA)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__noa_or_ata
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__noa_or_ata
-msgid "NOA, or ATA when there is no NOA"
-msgstr "NOA, o ATA si no hay NOA"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__foh
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__foh
-msgid "Goods delivered to the handler or terminal (FOH)"
-msgstr "Mercancía entregada al handler o la terminal (FOH)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__departure
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__departure
-msgid "Actual departure (ATD)"
-msgstr "Salida real (ATD)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__pickup
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__pickup
-msgid "Pickup of the shipment (port, airport, handler)"
-msgstr "Retirada del envío (puerto, aeropuerto, handler)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__delivery
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__delivery
-msgid "Delivery to the consignee / out of the warehouse"
-msgstr "Entrega al destinatario / salida del almacén"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_out
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_out
-msgid "Empty container picked up (each container)"
-msgstr "Retirada del contenedor vacío (cada contenedor)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_gate_in
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_gate_in
-msgid "Full container in the port terminal (each container)"
-msgstr "Entrada del contenedor lleno en la terminal (cada contenedor)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_full_out
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_full_out
-msgid "Full container out of the terminal (each container)"
-msgstr "Salida del contenedor lleno de la terminal (cada contenedor)"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__container_empty_return
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__container_empty_return
-msgid "Empty container returned (each container)"
-msgstr "Devolución del contenedor vacío (cada contenedor)"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_start_event
-msgid "Period starts at"
-msgstr "El periodo empieza en"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_end_event
-msgid "Period ends at"
-msgstr "El periodo termina en"
-
-#. module: boss_pricing
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_start_event
-msgid "Event of the shipment file that opens the chargeable period, as the supplier document says (e.g. WFS «desde el NOA», MSC demurrage «fecha llegada buque»). Empty: the default of the service for the direction."
-msgstr "Hecho del expediente que abre el periodo facturable, como dice el documento del proveedor (p. ej. WFS «desde el NOA», demoras MSC «fecha llegada buque»). Vacío: el de defecto del servicio para el sentido."
-
-#. module: boss_pricing
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__period_end_event
-msgid "Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del vacío»). Events of each container price each container with its own dates. Empty: the default of the service for the direction."
-msgstr "Hecho del expediente que cierra el periodo facturable (p. ej. demoras MSC «devolución del vacío»). Con los hechos de cada contenedor, cada contenedor se valora con sus propias fechas. Vacío: el de defecto del servicio para el sentido."
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_start_event__emptying
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__emptying
-msgid "Emptying of the groupage container (LCL)"
-msgstr "Vaciado del contenedor de grupaje (LCL)"
-
-#. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_pricing.py:0
-msgid ""
-"Several suppliers have a price for this shipment: %s. Choose the supplier on the line (column Supplier) to price it "
-"with that supplier's tariff."
-msgstr ""
-"Varios proveedores tienen precio para este envío: %s. Elija el proveedor en la línea (columna Proveedor) para "
-"calcularla con la tarifa de ese proveedor."
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_direction
-msgid "Direction of this price"
-msgstr "Sentido de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_transport_mode
-msgid "Transport mode of this price"
-msgstr "Modo de transporte de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_load_type
-msgid "Load type of this price"
-msgstr "Forma de carga de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_port_ids
-msgid "Ports of this price"
-msgstr "Puertos de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_country_ids
-msgid "Countries abroad of this price"
-msgstr "Países en el extranjero de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_state_ids
-msgid "Provinces of this price"
-msgstr "Provincias de este precio"
-
-#. module: boss_pricing
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_country_ids
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_direction
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_load_type
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_port_ids
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_state_ids
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_transport_mode
-msgid "Only when this price is narrower than its tariff. Empty: the tariff's."
-msgstr "Solo si este precio es más restringido que su tarifa. Vacío: el de la tarifa."
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid ""
-"Only when this price is narrower than its tariff (a section of the document). Empty: the tariff's scope."
-msgstr ""
-"Solo si este precio es más restringido que su tarifa (una sección del documento). Vacío: el alcance de la tarifa."
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid "As the tariff"
-msgstr "Como la tarifa"
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
-msgid "This price applies to"
-msgstr "Este precio se aplica a"
-
-#. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_tariff_line.py:0
-msgid ""
-"%(service)s: «%(fields)s» of this price is outside its tariff. A price can narrow the tariff's scope, not widen "
-"it: leave it empty, or change the tariff."
-msgstr ""
-"%(service)s: «%(fields)s» de este precio queda fuera de su tarifa. Un precio puede restringir el alcance de la "
-"tarifa, no ampliarlo: déjelo vacío o cambie la tarifa."
-
-#. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_tariff.py:0
-msgid ""
-"Two prices for %(svc)s in %(uom)s apply to the same shipments (same unit, container and scope): they would "
-"conflict. Narrow «Applies to» on one of them."
-msgstr ""
-"Dos precios de %(svc)s en %(uom)s se aplican a los mismos envíos (misma unidad, contenedor y alcance): estarían "
-"en conflicto. Restrinja «Se aplica a» en uno de ellos."
