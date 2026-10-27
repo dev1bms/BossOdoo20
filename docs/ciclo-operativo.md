@@ -242,6 +242,23 @@ FACTURA/2026/10/0003–0005 contabilizadas, sin pagos; D-13 corregido (boss_expe
 
 **Un documento de proveedor = una tarifa (27/10, aprobado por Belal; enmienda de ADR-002):** cada precio puede restringir el alcance de su tarifa (sentido, modo, forma de carga, puertos, países, provincias), nunca ampliarlo; «Antes de enviar a aprobación» avisa de dos precios del mismo servicio que se solapan. boss_pricing **20.0.1.8.2**, boss_pricing_sale **20.0.1.9.3**; `dev/check_line_scope.py` 9/9 (`docs/evidencias/20261027_1241_check_line_scope_boss20_590c98e6226a.txt`). IRENEO consolidado en **«IRENEO Tarifas MAD 2026»** (`dev/setup_ireneo_2026_document.py`): versión 1 desde 01/01/2026 (recogidas, paquete de exportación y X-R, zona 3, almacén G-5 «A consultar», y el almacenaje de exportación p.4 dado de alta en Chrome) y versión 2 desde 15/07/2026 (zona 3 +10 %, carta de 14/07/2026), aprobadas por delegación de Belal para pruebas; las 5 tarifas por sección de 2026 archivadas. Comprobación privada 34/34 (`.research/evidencia_tarifas_20261027_1252.txt`). Guía «Introducir una tarifa» e Inicio rápido actualizados (`?v=20261027d`).
 
+**WFS de nuevo (27/10, decisión de Belal):** T6 y T7 borradas definitivamente desde el servidor (la interfaz no borra
+tarifas aprobadas); 10 líneas de oferta (S00010, S00014, S00027, S00032) y 3 costes de E260016 perdieron el enlace al
+precio. Valores guardados antes en `.research/wfs_T6_T7_before_delete.txt`. Nueva **«WFS Tarifas MAD/BCN desde
+01/06/2026»** dada de alta en Chrome (7 precios con «Se aplica a» importación/exportación, 0 diferencias con las
+anteriores), **esperando aprobación** (Belal o Ángel). Hasta entonces los precios de WFS salen «pendiente de
+aprobación» (4 casos de la comprobación privada fallan por eso).
+
+**Reunión con Ángel (27/10) → ADR-006** (`docs/reunion-angel-2026-10-27.md`): el envío como **origen → destino**
+(país, puerto/aeropuerto, dirección, lugar), **ETD y ETA**, «Ordenante» y **negocio de BOSS o del agente** con código de
+tráfico (IMB, IMA…), **la plantilla es el caso** (rellena sentido, modo, carga, incoterm, negocio, lo que gestiona
+BOSS), **peso tasable aéreo** = mayor del bruto y volumen × 167, almacenaje estimado 0, contenedores solo donde aplican,
+semana desde el lunes. Puerto español, país extranjero, provincia y fecha de tarifa se **derivan** (precios e IVA sin
+cambios: 38 ofertas y expedientes con los mismos datos de precio antes y después). boss_pricing_sale **20.0.1.10.0**,
+boss_expediente **20.0.1.9.0**; 9.496 puertos y aeropuertos (de Odoo 17 vía Odoo 19); `dev/check_route_cases.py` 36/36
+(`docs/evidencias/20261027_1420_check_route_cases_boss20_70dc926985e1.txt`). Abiertas R-A1…R-A5 y R-S1 en
+`docs/preguntas-abiertas.md`.
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de

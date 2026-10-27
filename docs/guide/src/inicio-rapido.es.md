@@ -105,12 +105,14 @@ proveedor del mismo servicio, elija ese proveedor en el asistente.
 
 ## 8. Oferta con varios servicios
 
-1. Ventas › Pedidos › Presupuestos › [[Nuevo]] › **Cliente** (la lista de precios y el plazo de pago llegan del cliente).
-2. Pestaña **Envío**: Sentido, Modo de transporte, Forma de carga, **Puerto / aeropuerto español**, **País en el
-   extranjero**, **Provincia interior** (entrega), **Transportista**, **Fecha prevista** (elige la versión de la
-   tarifa), Peso bruto (kg), Volumen (m³), **Peso tasable (AWB, kg)** en aéreo, **Valor de la mercancía**,
-   **Contenedores** (tamaño, tipo, cantidad) en FCL, Incoterm, BOSS se encarga de…
-3. Otra Información › **Plantilla** → pestaña **Líneas del pedido**.
+1. Ventas › Pedidos › Presupuestos › [[Nuevo]] › **Ordenante** (cliente o agente; la lista de precios y el plazo de
+   pago llegan de él).
+2. Pestaña **Envío** › **Plantilla (caso)**: rellena sentido, modo, forma de carga, incoterm, negocio (cliente de BOSS
+   o del agente), lo que gestiona BOSS y los servicios (pestaña **Líneas del pedido**).
+3. **Origen** (izquierda) y **Destino** (derecha): país, puerto o aeropuerto, dirección de recogida / entrega, **ETD**
+   y **ETA**. El puerto español, el país extranjero, la provincia (de la dirección) y la fecha de tarifa salen de
+   aquí. Después: **Transportista principal**, peso bruto, volumen (el peso tasable aéreo se calcula con 167 kg/m³),
+   **Contenedores** en FCL ([detalle](#/oferta-envio)).
 4. Coste: **Cotizado** (de tarifa), **Importe manual** (escriba **Coste manual**, p. ej. el flete del agente
    convertido a EUR) o los avisos del paso 10. El icono ⓘ explica el cálculo línea a línea.
 5. Venta: de la lista de precios o escrita (paso 6). Guarde; vuelva a abrir: todo sigue igual.

@@ -2660,3 +2660,19 @@ msgstr "precio unitario"
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "valid from"
 msgstr "válida desde"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Template (case)"
+msgstr "Plantilla (caso)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid ""
+"The template is the case (air import FOB, sea import FCL...): it fills the "
+"direction, mode, load type, incoterm, whose client, what BOSS handles and the "
+"services."
+msgstr ""
+"La plantilla es el caso (importación aérea FOB, importación marítima FCL…): "
+"rellena el sentido, el modo, el tipo de carga, el incoterm, de quién es el "
+"cliente, lo que gestiona BOSS y los servicios."

@@ -1088,6 +1088,19 @@ TASKS = [
                    "Aceptación: dos precios del mismo servicio con alcances distintos conviven; si se solapan, el aviso "
                    "lo dice antes de enviar; un precio no puede ampliar su tarifa."),
          links=[f"{SYS}/odoo/action-boss_pricing.boss_tariff_action/56", f"{DOC}#/tarifa-alta"]),
+    dict(code="W14", title="Reunión con Ángel: envío como origen → destino, ETD/ETA, ordenante y negocio B/A, plantilla = caso, peso tasable aéreo",
+         epic="E8", type=T.DEV, sprint="S44", points=5, start=D(2026, 10, 27), due=D(2026, 10, 27),
+         priority=P.CRITICAL, deps=["W13"], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 27),
+         evidence="27/10 en boss20 (ADR-006, docs/reunion-angel-2026-10-27.md): oferta, oportunidad y expediente con "
+                  "origen y destino (país, puerto, dirección), ETD y ETA, «Ordenante», negocio de BOSS o del agente y "
+                  "código de tráfico; la plantilla rellena el caso; peso tasable aéreo con 167 kg/m³; almacenaje "
+                  "estimado 0; contenedores solo donde aplican; semana desde el lunes; 9.496 puertos de Odoo 17. "
+                  "Precios sin cambios (38 registros iguales antes y después); check_route_cases 36/36.",
+         desc=desc("Resultado: el comercial describe el envío como lo cuenta el cliente y BOSS lo trabaja; los precios "
+                   "reciben los mismos datos que antes.",
+                   "Aceptación: Ángel revisa una oferta FCL China → Valencia → Madrid y una exportación Zaragoza → "
+                   "Barcelona → Túnez; abiertas R-A1…R-A5 y R-S1."),
+         links=[f"{SYS}/odoo/sales/34", f"{DOC}#/oferta-envio"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
