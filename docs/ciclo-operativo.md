@@ -274,17 +274,17 @@ Ediciones (recorrido)». Abiertas R2-A1…A3.
 **Peso tasable por modo (Ángel, Teams 27/10; R-A1 resuelta):** aéreo 167, terrestre 333, marítimo 1000 kg/m³; tasable
 = el mayor del bruto y el volumen; proveedores y BOSS cobran por peso tasable. Una sola fuente
 (`boss.shipment.route`), motor con `chargeable_kg` cuando el documento no indica factor, unidad «kg tasable
-terrestre» contada del envío (`dev/setup_chargeable_uom.py`, pendiente de aplicar), ambas medidas necesarias (nada se
-supone). Probado con el código local montado en boss20 sin desplegar (`dev/server_shell_wip.sh`):
-`check_chargeable_weight` 36/36, `check_route_cases` 36/36, `check_quote_flow` 40/40. **Sin desplegar: espera la
-aprobación de Belal** (enmienda de ADR-006).
+terrestre» contada del envío (`dev/setup_chargeable_uom.py`, aplicado), ambas medidas necesarias (nada se
+supone). `check_chargeable_weight` 38/38, `check_route_cases` 36/36, `check_quote_flow` 40/40 (enmienda de ADR-006).
 
 **Cierre de la lista de revisión de Belal (42 puntos, 27/10 tarde):** matriz fuente → código → prueba → pantalla en
 `docs/matriz-reunion-2026-10-27.md`; recorrido **solo por pantalla** S00162 → E260038
 (`docs/evidencias/20261027_1600_chrome_s00162_e260038_ui_only.md`); `dev/check_meeting_matrix.py` 23/23 (dos
 almacenes de un cliente y precio terrestre IRENEO por almacén, matriz de IVA por zona y posición fiscal, nueva edición
-de un documento de 10 precios sin tocar S00033, 15 días de demora, valor desconocido). Código WIP sin desplegar:
-tramo terrestre de un envío marítimo con 333 (`chargeable_road_kg`), transportista terrestre en oferta y
+de un documento de 10 precios sin tocar S00033, 15 días de demora, valor desconocido). **Desplegado el 27/10 a las
+16:08 con la aprobación de Belal (commit `064891c`, servidor en reposo 108 min; `setup_chargeable_uom.py` aplicado;
+guía publicada v=20261027h)**; `check_chargeable_weight` 38/38 y `check_meeting_matrix` 23/23 sobre el código
+desplegado (`docs/evidencias/20261027_1608_*_064891c6ae9d.txt`). Contenido: tramo terrestre de un envío marítimo con 333 (`chargeable_road_kg`), transportista terrestre en oferta y
 expediente, lugar del incoterm, celdas de contenedor solo en líneas por contenedor, cabecera de Odoo alineada con el
 almacén elegido. Decisiones: R2-A1…A6, R-S1, R-A2…A5.
 
