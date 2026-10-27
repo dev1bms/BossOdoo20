@@ -1,0 +1,15 @@
+// On an XXL screen the standard form view lays the sheet and the chatter in a row and scrolls the sheet on its own
+// (made for the chatter beside the form). With the chatter below (chatter_below_form.js) the renderer flows as a
+// column and the page scrolls as on smaller screens. Attachment previews (chatter copied inside the sheet
+// background, viewer beside) keep the row: the selector only matches the chatter as a direct child of the renderer.
+.o_form_view.o_xxl_form_view:has(.o_form_renderer > .o-mail-Form-chatter:not(.o-aside)) {
+    .o_form_renderer {
+        flex-direction: column;
+        height: auto !important;
+    }
+
+    .o_form_sheet_bg {
+        overflow: visible;
+        flex: 0 0 auto;
+    }
+}
