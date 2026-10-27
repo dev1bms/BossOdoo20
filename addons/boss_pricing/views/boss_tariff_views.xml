@@ -71,7 +71,7 @@
                             </p>
                             <group>
                                 <group>
-                                    <field name="direction" readonly="state != 'draft'" placeholder="Import and export"/>
+                                    <field name="direction" readonly="state != 'draft'" placeholder="Any direction"/>
                                     <field name="transport_mode" readonly="state != 'draft'" placeholder="Any mode"/>
                                     <field name="load_type" readonly="state != 'draft'" placeholder="Any load"/>
                                     <field name="carrier_id" readonly="state != 'draft'" placeholder="Any carrier"/>

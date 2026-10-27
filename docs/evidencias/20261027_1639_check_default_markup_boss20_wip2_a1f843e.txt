@@ -1,0 +1,24 @@
+# check_default_markup.py on boss20 with the local addons mounted (dev/server_shell_wip.sh): code after a1f843e (cost + %, cross-trade/national, key date): NOT deployed
+CHECK PASS 1 nothing active before: expected 0 got 0
+CHECK PASS 1 setting reads 0 while off: expected 0.0 got 0.0
+CHECK PASS 1 one global rule created: expected 1 got 1
+CHECK PASS 1 the rule is on the pricelist a new customer gets: expected product.pricelist(2,) got product.pricelist(2,)
+CHECK PASS 1 rule: cost + 20 % (surcharge, stored as a negative discount): expected ('markup', 20.0, -20.0) got ('markup', 20.0, -20.0)
+CHECK PASS 1 setting reads 20 afterwards: expected 20.0 got 20.0
+CHECK PASS 1 changing the percentage updates the same rule: expected (1, 25.0) got (1, 25.0)
+CHECK PASS 2 quotation on the default pricelist: expected product.pricelist(2,) got product.pricelist(2,)
+CHECK PASS 2 THC: cost 253 from MSC -> sale 303.60 (cost + 20 %): expected ('ok', 253.0, 'cost_based', 303.6) got ('ok', 253.0, 'cost_based', 303.6)
+CHECK PASS 2 THC explanation names the pricelist rule: expected True got True
+CHECK PASS 2 FMI: no cost -> no sale price (never built on zero), missing: expected ('manual', 0.0, 'missing') got ('manual', 0.0, 'missing')
+CHECK PASS 2 the quotation still says what is missing: expected True got True
+CHECK PASS 3 FMI manual cost 1500 -> sale 1800 (price and technical price agree): expected ('cost_based', 1800.0, 1800.0, True) got ('cost_based', 1800.0, 1800.0, True)
+CHECK PASS 3 typed sale price -> manual: expected ('manual', 1700.0) got ('manual', 1700.0)
+CHECK PASS 3 cost changed: the typed price is kept: expected ('manual', 1600.0, 1700.0) got ('manual', 1600.0, 1700.0)
+CHECK PASS 3 explicit re-pricing keeps the typed THC price: expected ('manual', 300.0) got ('manual', 300.0)
+CHECK PASS 4 COFITEL: agreed AWB 75 from its own pricelist, not cost + 20 %: expected ('agreed', 75.0) got ('agreed', 75.0)
+CHECK PASS 5 non-BOSS product: list price 10: expected 10.0 got 10.0
+CHECK PASS 6 S00009: frozen prices unchanged: expected [('BL', 'cost_based', 75.0), ('DEM', 'cost_based', 120.0), ('DEM', 'cost_based', 120.0), ('THC', 'agreed', 280.0), ('THC', 'agreed', 280.0), ('ARA', 'cost_based', 350.0), ('OCU', 'cost_based', 160.0)] got [('BL', 'cost_based', 75.0), ('DEM', 'cost_based', 120.0), ('DEM', 'cost_based', 120.0), ('THC', 'agreed', 280.0), ('THC', 'agreed', 280.0), ('ARA', 'cost_based', 350.0), ('OCU', 'cost_based', 160.0)]
+CHECK PASS 7 off: no rule: expected 0 got 0
+CHECK PASS 7 setting reads 0: expected 0.0 got 0.0
+CHECK PASS 7 off: THC cost known but no sale price proposed: expected ('ok', 'missing', 0.0) got ('ok', 'missing', 0.0)
+RESULT 22 passed, 0 failed

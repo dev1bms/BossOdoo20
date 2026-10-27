@@ -2,6 +2,8 @@ from odoo import Command, api, fields, models
 from odoo.exceptions import ValidationError
 
 from .boss_airline_handler import HANDLER_SERVICE_CODES
+from odoo.addons.boss_pricing_sale.models.boss_shipment_route import key_date
+
 from .boss_expediente import FROM_ORDER, SCOPES, with_accounts
 
 
@@ -72,7 +74,7 @@ class SaleOrder(models.Model):
             value = self[order_field]
             values[file_field] = value.id if isinstance(value, models.BaseModel) else value
         if not (self.boss_etd or self.boss_eta) and self.boss_planned_date:
-            values["etd" if self.boss_direction == "export" else "eta"] = self.boss_planned_date
+            values[key_date(self.boss_direction)] = self.boss_planned_date
         company_currency = self.company_id.currency_id
         for file_field, order_field in (("goods_value", "boss_goods_value"), ("duties_amount", "boss_duties_amount")):
             values[file_field] = self.currency_id._convert(self[order_field], company_currency, self.company_id,

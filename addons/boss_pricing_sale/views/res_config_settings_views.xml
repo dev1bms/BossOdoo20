@@ -6,6 +6,15 @@
         <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <setting id="pricelist_configuration" position="after">
+                <setting id="boss_default_markup" string="Default sale price of BOSS services"
+                         help="Expected cost of the line + this percentage, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 = off.">
+                    <div class="content-group">
+                        <div class="row mt16">
+                            <label for="boss_default_markup" class="col-lg-4 o_light_label">Cost +</label>
+                            <field name="boss_default_markup" class="col-lg-3"/> %
+                        </div>
+                    </div>
+                </setting>
                 <setting id="boss_fx_policy" string="Supplier cost in another currency"
                          help="What to do when a supplier price is in another currency than the quotation.">
                     <field name="boss_fx_policy"/>

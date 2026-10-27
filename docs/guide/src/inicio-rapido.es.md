@@ -78,7 +78,7 @@ China»: la lista de países es una propuesta).
 |---|---|---|---|
 | **Lista de precios del cliente** (Odoo estándar) | Acuerdo estable con un cliente | Ventas › Productos › **Listas de precios** › [[Nuevo]]: una regla por servicio, **Precio fijo**, la unidad se rellena sola con la del servicio. En el cliente: pestaña Ventas y compras › **Lista de precios** | **Precio pactado (lista de precios)** |
 | **Escrito por el comercial** | Flete y gastos de cada envío, tramos por envío | Columna **Precio unitario** de la línea | **Indicado por una persona** |
-| Margen sobre el coste | Regla de margen en una lista de precios | Regla con **Basado en** = coste previsto de la línea | Precio de la regla |
+| **Coste + 20 %** (por defecto) | Todo servicio con coste conocido, salvo precio pactado o escrito | Ventas › Configuración › Ajustes › **Venta por defecto de los servicios BOSS: coste + %** (una regla en la tarifa por defecto; 0 la desactiva). Sin coste conocido no hay precio: nunca se calcula sobre cero | **Desde el coste previsto (regla de lista de precios)** |
 | **Sin cargo** | Se vende dentro de otro servicio | Columna opcional **Sin cargo** | **Sin cargo** |
 
 Registro usado: lista «COFITEL, S.A. · venta importación aérea (oferta 05570 y factura F26 10-0011)» (AWB, CSA,

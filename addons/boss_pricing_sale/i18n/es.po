@@ -2319,9 +2319,9 @@ msgstr "El documento cotiza este tipo de contenedor de forma distinta."
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_planned_date
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_planned_date
 msgid ""
-"The key date of the shipment: ETA for an import, ETD for an export. It chooses the version of each supplier tariff."
+"The key date of the shipment: ETA for an import, ETD for an export, a cross-trade or a national shipment. It chooses the version of each supplier tariff."
 msgstr ""
-"La fecha clave del envío: ETA en importación, ETD en exportación. Elige la versión de cada tarifa de proveedor."
+"La fecha clave del envío: ETA en importación, ETD en exportación, cruzado o nacional. Elige la versión de cada tarifa de proveedor."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -2779,3 +2779,58 @@ msgstr ""
 "El mayor del peso bruto y el peso volumen; los proveedores cobran sobre él y "
 "BOSS también. Necesita las dos medidas. Aéreo: se usa como peso de la AWB "
 "hasta conocer la AWB."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__cross
+msgid "Cross-trade"
+msgstr "Cruzado"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__national
+msgid "National"
+msgstr "Nacional"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_default_markup
+msgid "Default sale price: expected cost + %"
+msgstr "Venta por defecto: coste previsto + %"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Default sale price of BOSS services"
+msgstr "Venta por defecto de los servicios BOSS"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Cost +"
+msgstr "Coste +"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Expected cost of the line + this percentage, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 = off."
+msgstr "Coste previsto de la línea + este porcentaje, como regla de la tarifa por defecto. El precio acordado con un cliente y el precio tecleado en la línea van primero. 0 = desactivado."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_config_settings__boss_default_markup
+msgid "Sale price proposed on every service line whose cost is known: cost + this percentage, as a rule of the default pricelist. Agreed prices of a customer's own pricelist and prices typed on the line come first. 0 switches it off (the rule is removed)."
+msgstr "Precio de venta propuesto en cada línea de servicio con coste conocido: coste + este porcentaje, como regla de la tarifa por defecto. Los precios acordados en la tarifa propia de un cliente y los tecleados en la línea van primero. 0 lo desactiva (se elimina la regla)."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Cross-trade: neither side is in Spain; the key date is the departure (ETD). Only supplier prices without a Spanish port or country scope apply."
+msgstr "Cruzado: ningún lado está en España; la fecha clave es la salida (ETD). Solo aplican precios de proveedor sin ámbito de puerto español ni país."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "National: both sides are in Spain; the key date is the departure (ETD) and the delivery address gives the province."
+msgstr "Nacional: los dos lados están en España; la fecha clave es la salida (ETD) y la dirección de entrega da la provincia."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_port_id
+msgid "Port or airport in Spain where BOSS handles the cargo: the destination of an import, the origin of an export, the destination of a national shipment. Empty for a cross-trade."
+msgstr "Puerto o aeropuerto en España donde BOSS gestiona la carga: el destino de una importación, el origen de una exportación, el destino de un envío nacional. Vacío en un cruzado."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_country_id
+msgid "Origin country of an import or destination country of an export, used by tariffs. Empty for a national shipment or a cross-trade."
+msgstr "País de origen de una importación o de destino de una exportación, usado por las tarifas. Vacío en un envío nacional o cruzado."

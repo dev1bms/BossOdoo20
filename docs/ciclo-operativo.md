@@ -288,6 +288,16 @@ desplegado (`docs/evidencias/20261027_1608_*_064891c6ae9d.txt`). Contenido: tram
 expediente, lugar del incoterm, celdas de contenedor solo en líneas por contenedor, cabecera de Odoo alineada con el
 almacén elegido. Decisiones: R2-A1…A6, R-S1, R-A2…A5.
 
+**Segunda tanda del 27/10 (tarde, Belal tras hablar con Ángel):** no existen «PP» ni «super cubic meter» (R2-A4, R2-A5
+cerradas). **Venta por defecto = coste + 20 %** como ajuste de Ventas que crea una regla en la tarifa por defecto
+(tecleado y precio pactado van primero; 0 la quita; ADR-008; `dev/check_default_markup.py` 22/22). **Sentidos cruzado
+(X) y nacional (N)**: España se propone y nunca se fuerza; entradas de tarificación e IVA por los dos lados de la ruta;
+fecha clave = ETA en importación, ETD en el resto, nunca la fecha de vaciado (R-A2 y R-A5 cerradas; ADR-006 enmienda 2;
+`dev/check_route_cases.py` 53/53). **TTE-CON comprobado** antes de tocar el motor: unidad «kg tasable terrestre», 6
+precios de IRENEO por tramos con factor 333 del documento; sin cambios en el motor. Probado montado en boss20
+(`docs/evidencias/*_wip2_*.txt`); **pendiente de despliegue** (boss_pricing 20.0.1.10.0, boss_pricing_sale 20.0.1.12.0,
+boss_expediente 20.0.1.11.0) y de activar el ajuste del 20 % en pantalla.
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de

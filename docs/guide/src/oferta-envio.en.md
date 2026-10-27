@@ -15,11 +15,15 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
 | Cargo | Gross weight, volume, pallets, value | Services per kg, tonne, m³, W/M or pallet. All optional: they can be completed later on the file |
 | Estimates | Days in storage (0 by default), customs duties | Time-based services and percentages |
 
-- **The side abroad is never Spain**, and the Spanish side is set to Spain when the direction is chosen.
+- **Spain is proposed, never forced**: on an import or export the Spanish side is set to Spain when the direction is
+  chosen and the side abroad is never Spain; a **National** shipment has both sides in Spain; a **Cross-trade** (neither
+  origin nor destination in Spain) fills nothing, and only supplier prices without a Spanish port or country in their
+  scope apply. The traffic code says it: IMB, EAB, **XMB**, **NTB**…
 - **Addresses**: a customer with several warehouses (e.g. Leroy Merlin) has one delivery address each; choose the
   right one. If there is none, create it from the field («Create and edit»): it becomes an address of the customer.
 - **Dates**: ETD (departure from the origin port) and ETA (arrival at the destination). The key date —ETA for an
-  import, ETD for an export— is the **tariff date**: it picks the version of each supplier tariff. «Final delivery to
+  import, ETD for an export, a cross-trade or a national shipment— is the **tariff date**: it picks the version of each
+  supplier tariff. The unloading date of an LCL (on the file) never picks a tariff. «Final delivery to
   the client» in the header is something else: delivery at the warehouse, possibly weeks after the ETA.
 - **Real, volume and chargeable weight** (Ángel, 27/10/2026): volume weight = m³ × factor of the mode (**air 167,
   road 333, sea 1000** kg/m³); chargeable weight = **the higher** of gross and volume weight. Suppliers charge BOSS on

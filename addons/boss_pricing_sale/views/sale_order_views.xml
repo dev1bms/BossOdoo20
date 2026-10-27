@@ -64,6 +64,8 @@
                     <div class="text-muted small mb-2" invisible="not boss_direction">
                         <span invisible="boss_direction != 'import'">Import: Spain is the destination; the key date is the arrival (ETA) and the delivery address gives the province.</span>
                         <span invisible="boss_direction != 'export'">Export: Spain is the origin; the key date is the departure (ETD) and the pickup address gives the province.</span>
+                        <span invisible="boss_direction != 'cross'">Cross-trade: neither side is in Spain; the key date is the departure (ETD). Only supplier prices without a Spanish port or country scope apply.</span>
+                        <span invisible="boss_direction != 'national'">National: both sides are in Spain; the key date is the departure (ETD) and the delivery address gives the province.</span>
                     </div>
                     <group>
                         <group string="Origin" name="boss_origin">

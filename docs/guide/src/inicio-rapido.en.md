@@ -75,7 +75,7 @@ proposal).
 |---|---|---|---|
 | **Customer pricelist** (standard Odoo) | Stable agreement with a customer | Sales › Products › **Pricelists** › [[New]]: one rule per service, **Fixed price**, the unit is filled with the service's unit. On the customer: Sales & Purchase tab › **Pricelist** | **Agreed price (pricelist)** |
 | **Typed by the salesperson** | Freight and charges of each shipment, per-shipment brackets | **Unit price** column | **Entered by a person** |
-| Markup on cost | Margin rule in a pricelist | Rule **Based on** = expected cost of the line | Rule price |
+| **Cost + 20 %** (default) | Every service with a known cost, unless a price is agreed or typed | Sales › Configuration › Settings › **Default sale price of BOSS services: cost + %** (one rule on the default pricelist; 0 switches it off). No known cost, no price: never built on zero | **From the expected cost (pricelist rule)** |
 | **Free of charge** | Sold inside another service | Optional column **Free of charge** | **Free of charge** |
 
 Record used: pricelist «COFITEL, S.A. · venta importación aérea (oferta 05570 y factura F26 10-0011)» (AWB, CSA,

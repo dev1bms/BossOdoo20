@@ -2,6 +2,8 @@ from odoo import api, fields, models
 
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 
+from . import vat_rules
+
 # Volume weight per transport mode, kg per m³ (CBM): air 167, road 333, sea 1000. The chargeable weight is the higher
 # of the real (gross) weight and the volume weight; suppliers charge BOSS on it and BOSS charges its customers on it
 # (Ángel, Teams 27/10/2026; ADR-006 amendment). A supplier document stating its own factor keeps it (engine params).
@@ -9,7 +11,8 @@ MODE_VOLUMETRIC_FACTORS = {"air": 167, "road": 333, "sea": 1000}
 AIR_VOLUMETRIC_FACTOR = MODE_VOLUMETRIC_FACTORS["air"]
 # Whose business the shipment is: the third letter of the traffic code (decision B13, Cristina 27/08/2026).
 BUSINESSES = [("boss", "BOSS client"), ("agent", "Agent's client")]
-_LETTERS = {"import": "I", "export": "E", "air": "A", "sea": "M", "road": "T", "boss": "B", "agent": "A"}
+_LETTERS = {"import": "I", "export": "E", "cross": "X", "national": "N", "air": "A", "sea": "M", "road": "T",
+            "boss": "B", "agent": "A"}
 
 
 def traffic_code(direction, mode, business):
@@ -20,8 +23,23 @@ def traffic_code(direction, mode, business):
 
 
 def spanish_side(direction):
-    """BOSS works in Spain: the destination of an import and the origin of an export."""
-    return {"import": "destination", "export": "origin"}.get(direction)
+    """Side of the route in Spain: the destination of an import, the origin of an export. A national shipment has
+    both sides in Spain and its delivery side plays this role (province, header address), like an import. A
+    cross-trade has none: Spain is never forced on it."""
+    return {"import": "destination", "export": "origin", "national": "destination"}.get(direction)
+
+
+def abroad_side(direction):
+    """Side of the route abroad that keys the tariffs (country abroad, port abroad): the origin of an import, the
+    destination of an export. None for a national shipment (nothing abroad) and for a cross-trade (both sides are
+    abroad, so neither has that meaning: only tariffs without those scopes price it)."""
+    return {"import": "origin", "export": "destination"}.get(direction)
+
+
+def key_date(direction):
+    """Which estimate chooses the tariff version: the arrival (ETA) of an import, the departure (ETD) of any other
+    shipment. Never the unloading date (Odoo 17 LCL habit; Belal, 27/10/2026)."""
+    return "eta" if direction == "import" else "etd"
 
 
 def chargeable_by_mode(gross_kg, volume_m3):
@@ -92,19 +110,19 @@ class BossShipmentRoute(models.AbstractModel):
     boss_port_id = fields.Many2one(
         "boss.port", "Spanish port / airport", compute="_compute_boss_pricing_route", store=True, readonly=False,
         precompute=True, help="Port or airport in Spain where BOSS handles the cargo: the destination of an import, "
-        "the origin of an export.")
+        "the origin of an export, the destination of a national shipment. Empty for a cross-trade.")
     boss_country_id = fields.Many2one(
         "res.country", "Country abroad", compute="_compute_boss_pricing_route", store=True, readonly=False,
-        precompute=True, help="Origin country of an import or destination country of an export. Used by tariffs and "
-        "VAT.")
+        precompute=True, help="Origin country of an import or destination country of an export, used by tariffs. "
+        "Empty for a national shipment or a cross-trade.")
     boss_inland_state_id = fields.Many2one(
         "res.country.state", "Inland province", domain="[('country_id.code', '=', 'ES')]",
         compute="_compute_boss_inland_state", store=True, readonly=False, precompute=True, tracking=True,
         help="Province of the delivery (import) or pickup (export) in Spain, from its address; hauliers price by zone.")
     boss_planned_date = fields.Date(
         "Tariff date", compute="_compute_boss_planned_date", store=True, readonly=False, precompute=True,
-        help="The key date of the shipment: ETA for an import, ETD for an export. It chooses the version of each "
-        "supplier tariff.")
+        help="The key date of the shipment: ETA for an import, ETD for an export, a cross-trade or a national "
+        "shipment. It chooses the version of each supplier tariff.")
     boss_gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2))
     boss_volume_m3 = fields.Float("Volume (m³)", digits=(12, 3))
     boss_awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2),
@@ -149,13 +167,12 @@ class BossShipmentRoute(models.AbstractModel):
                  "boss_destination_port_id")
     def _compute_boss_pricing_route(self):
         for record in self:
-            side = spanish_side(record.boss_direction)
-            if not side or not record._boss_route_known():
+            side, abroad = spanish_side(record.boss_direction), abroad_side(record.boss_direction)
+            if not record.boss_direction or not record._boss_route_known():
                 record.boss_port_id, record.boss_country_id = record.boss_port_id, record.boss_country_id
                 continue
-            abroad = "origin" if side == "destination" else "destination"
-            record.boss_port_id = record[f"boss_{side}_port_id"]
-            record.boss_country_id = record[f"boss_{abroad}_country_id"]
+            record.boss_port_id = record[f"boss_{side}_port_id"] if side else False
+            record.boss_country_id = record[f"boss_{abroad}_country_id"] if abroad else False
 
     @api.depends("boss_direction", "boss_pickup_address_id.state_id", "boss_delivery_address_id.state_id")
     def _compute_boss_inland_state(self):
@@ -168,8 +185,8 @@ class BossShipmentRoute(models.AbstractModel):
     @api.depends("boss_direction", "boss_etd", "boss_eta")
     def _compute_boss_planned_date(self):
         for record in self:
-            first, second = ((record.boss_etd, record.boss_eta) if record.boss_direction == "export"
-                             else (record.boss_eta, record.boss_etd))
+            first, second = ((record.boss_eta, record.boss_etd) if key_date(record.boss_direction) == "eta"
+                             else (record.boss_etd, record.boss_eta))
             record.boss_planned_date = first or second or record.boss_planned_date
 
     @api.depends("boss_transport_mode", "boss_gross_kg", "boss_volume_m3")
@@ -181,12 +198,15 @@ class BossShipmentRoute(models.AbstractModel):
     def _boss_foreign_port(self):
         """Port or airport abroad for pricing: the origin of an import, the destination of an export."""
         self.ensure_one()
-        side = spanish_side(self.boss_direction)
-        if side == "destination":
-            return self.boss_origin_port_id
-        if side == "origin":
-            return self.boss_destination_port_id
-        return self.env["boss.port"]
+        side = abroad_side(self.boss_direction)
+        return self[f"boss_{side}_port_id"] if side else self.env["boss.port"]
+
+    def _boss_side_zone(self, side, eu_codes):
+        """VAT zone of one side of the route (its port, with the Canary flag, else its country); None when unknown."""
+        self.ensure_one()
+        port = self[f"boss_{side}_port_id"]
+        country = port.country_id or self[f"boss_{side}_country_id"]
+        return vat_rules.zone(country.code, eu_codes=eu_codes, canary=port.canary_islands) if country else None
 
     def _boss_apply_orderer_party(self):
         """BOSS business: the party who orders (partner_id of the quotation or opportunity) is the consignee of an
@@ -219,12 +239,17 @@ class BossShipmentRoute(models.AbstractModel):
 
     @api.onchange("boss_direction")
     def _onchange_boss_direction_spain(self):
-        """The Spanish side of the route is Spain; the side abroad cannot be Spain."""
+        """Import and export: the Spanish side is Spain and the side abroad cannot be. National: both sides are Spain.
+        Cross-trade: nothing is proposed or cleared (Spain is not a party)."""
         spain = self.env.ref("base.es")
-        side = spanish_side(self.boss_direction)
-        if not side:
+        if self.boss_direction == "national":
+            for side in ("origin", "destination"):
+                if not self[f"boss_{side}_country_id"]:
+                    self[f"boss_{side}_country_id"] = spain
             return
-        abroad = "origin" if side == "destination" else "destination"
+        side, abroad = spanish_side(self.boss_direction), abroad_side(self.boss_direction)
+        if not side or not abroad:
+            return
         if not self[f"boss_{side}_country_id"]:
             self[f"boss_{side}_country_id"] = spain
         if self[f"boss_{abroad}_country_id"] == spain:

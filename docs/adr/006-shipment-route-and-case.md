@@ -44,7 +44,7 @@ Status: accepted (technical), 27/10/2026. Requirements: `docs/reunion-angel-2026
 - A quotation changed after this ADR recomputes its Spanish port, country abroad, province and tariff date from the
   route: changing an origin or destination can change costs (as changing the port did before).
 - The lead form shows the same route; its quotation receives it unchanged.
-- Open: A2 X/N traffic, A3 orderer of an agent file (B17), A4 contact migration, A5 LCL key date. A1 resolved below.
+- Open: A3 orderer of an agent file (B17), A4 contact migration. A1, A2 and A5 resolved below.
 
 ## Amendment (27/10/2026): chargeable weight for every transport mode — A1 resolved
 
@@ -69,3 +69,29 @@ per record) and passed to the pricing engine as the input `chargeable_kg`.
 - **History**: accepted quotations are frozen (ADR-003) and existing tariffs are not touched; the earlier air-only
   estimate with one measure known no longer applies (both measures are needed), which only affects drafts when they
   are edited.
+
+## Amendment 2 (27/10/2026): cross-trade and national routes, Spain never forced; key date never the unloading date — A2 and A5 resolved
+
+Belal, 27/10/2026 (after Ángel): «support routes without imposing Spain as a permanent party, and do not assume the
+unloading date for pricing». Ángel also confirmed there is no «PP» and no «super cubic meter»: only the cubic metre
+(the W/M basis already in place).
+
+Decision:
+- **Directions** are now import, export, **cross-trade** (X: neither side in Spain) and **national** (N: both sides in
+  Spain), on the quotation, the opportunity, the file, the template and the tariff scope (Odoo 17 `x_traficos`
+  I/E/X/N). Traffic codes: XMB, NTB… A tariff with an empty direction applies to all four.
+- **Spain is proposed, never forced**: choosing import or export fills the empty Spanish side with Spain and clears
+  Spain from the side abroad (as before); national fills both empty sides with Spain; cross-trade proposes nothing and
+  clears nothing.
+- **Derived pricing inputs** keep one meaning per name: Spanish port = destination of an import, origin of an export,
+  destination of a national shipment, **empty** for a cross-trade; country abroad and port abroad = origin of an import,
+  destination of an export, **empty** for national and cross-trade (both sides are abroad, so neither has that
+  meaning: only supplier prices without those scopes price a cross-trade, nothing is invented). Inland province =
+  delivery address (import, national) or pickup address (export); none for a cross-trade.
+- **VAT zones come from the route as described** (origin side, destination side: port with its Canary flag, else
+  country), so a cross-trade China → Netherlands is TER → COM (an NR pair) and a national shipment PRO → PRO; records
+  without a route keep the former reading of the Spanish port and the country abroad.
+- **Key date** (`key_date()`): the arrival (ETA/ATA) of an import, the departure (ETD/ATD) of any other shipment. The
+  unloading date of an LCL exists on the file for operations but **never** chooses a tariff version (A5: Odoo 17 habit
+  not carried over).
+- Checks: `dev/check_route_cases.py` E8 (cross-trade) and E9 (national), 53 checks in all.

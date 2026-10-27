@@ -14,7 +14,8 @@ DEMO_USE = "demo"
 # Only set by the workflow methods (never by create, import, RPC or a form).
 WORKFLOW_FIELDS = ("state", "approved_by_id", "approved_date", "version", "lineage_id")
 
-DIRECTIONS = [("import", "Import"), ("export", "Export")]
+# Cross-trade: neither side in Spain; national: both sides in Spain (Odoo 17 x_traficos I/E/X/N; ADR-006 §3).
+DIRECTIONS = [("import", "Import"), ("export", "Export"), ("cross", "Cross-trade"), ("national", "National")]
 TRANSPORT_MODES = [("sea", "Sea"), ("air", "Air"), ("road", "Road")]
 LOAD_TYPES = [("fcl", "FCL (full container)"), ("lcl", "LCL (groupage)"), ("air", "Air cargo"),
               ("road", "Road cargo")]
@@ -53,7 +54,7 @@ class BossTariff(models.Model):
     document_name = fields.Char()
     document_reference = fields.Char(tracking=True, help="Title and edition of the document, e.g. "
                                      "'DRY - Gastos locales 2026 (09/2026)'.")
-    direction = fields.Selection(DIRECTIONS, tracking=True, help="Empty: import and export.")
+    direction = fields.Selection(DIRECTIONS, tracking=True, help="Empty: any direction (import, export, cross-trade, national).")
     transport_mode = fields.Selection(TRANSPORT_MODES, tracking=True, help="Empty: any mode.")
     load_type = fields.Selection(LOAD_TYPES, tracking=True, help="Empty: any load type.")
     carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True,
@@ -92,7 +93,7 @@ class BossTariff(models.Model):
         _ = self.env._
         for tariff in self:
             label = lambda name, t=tariff: dict(t._fields[name]._description_selection(self.env)).get(t[name])  # noqa: E731
-            parts = [label("direction") or _("Import/export"), label("transport_mode") or _("any mode")]
+            parts = [label("direction") or _("any direction"), label("transport_mode") or _("any mode")]
             if tariff.load_type:
                 parts.append(label("load_type"))
             for names in (tariff.port_ids.mapped("code"), tariff.foreign_port_ids.mapped("code"),

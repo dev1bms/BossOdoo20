@@ -3510,3 +3510,13 @@ msgstr ""
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__chargeable_kg
 msgid "The higher of the gross weight and the volume weight (both needed)."
 msgstr "El mayor del peso bruto y el peso volumen (hacen falta los dos)."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__cross
+msgid "Cross-trade"
+msgstr "Cruzado"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__national
+msgid "National"
+msgstr "Nacional"

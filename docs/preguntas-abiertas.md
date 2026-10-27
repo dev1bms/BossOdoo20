@@ -40,16 +40,11 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | P16 | Definir los servicios de uso real (unidad, proveedor, documento) y retirar el resto | C | Pendiente de Cristina | Cristina |
 | P34 | Precio cerrado para varios envíos: clientes, duración y cantidades máximas de cada acuerdo | C + B | Pendiente de Cristina; después, el acuerdo en el sistema | Cristina |
 | P13 | Caución (CAU) y seguro (SEG): cada valor como tarifa con su documento | C | Pendiente de Cristina + Ángel | Cristina y Ángel |
-| R-A2 | Tráficos cruzados (X) y nacionales (N) de Odoo 17 (`x_traficos`) | C | Odoo 20 solo tiene importación y exportación | Cristina |
 | R-A3 | Ordenante de un expediente de agente (B17 de Odoo 19): validar tipo de contacto Agente / Cliente como Odoo 17 | C | Se guarda «Negocio de» (B/A) y el código de tráfico; sin validación del tipo de contacto | Cristina |
 | R-A4 | Migración de contactos y direcciones de entrega desde Odoo 17 | C | Se crean a mano (Belal: «I will migrate all the users») | Belal |
-| R-A5 | Fecha clave de un LCL de importación (Odoo 17: fecha de vaciado) | C | En la oferta, la ETA; en el expediente ya existe la fecha de vaciado | Cristina |
 | R2-A1 | ¿Un coste de flete tecleado solo para una oferta debe guardarse también como precio reutilizable (ruta y semana)? (reunión parte 2) | C | Dos vías: coste manual en la línea o precio semanal desde ⊕ con ruta y validez | Cristina y Ángel |
 | R2-A2 | ¿Quién aprueba los precios semanales de flete? (P19) | C | Aprobador de tarifas; el asistente los deja en borrador o los envía a aprobación | Ángel |
-| R2-A3 | Venta por defecto: ¿+20 % sobre el coste o 20 % de margen sobre la venta? | C | Nada activo; venta de la lista del cliente o tecleada | Cristina y Ángel |
-| R2-A4 | «Super cubic meter» (Ángel: «I will explain that on Teams later») | C | Sin dato; nada implementado | Ángel |
-| R2-A5 | «PP» en las plantillas de venta («menos el PP que se pone caso por caso»): ¿flete prepagado (prepaid)? ¿otra cosa? | C | Sin definir; la venta se teclea o viene de la lista del cliente | Cristina / Ángel |
-| R2-A6 | ¿Se usa el transporte convencional por kg tasable (TTE-CON) en envíos FCL? Si sí, el volumen debe verse también en FCL | C | En FCL el volumen está oculto en la pestaña Envío | Cristina |
+| R2-A6 | ¿Se usa el transporte convencional por kg tasable (TTE-CON) en envíos FCL? Si sí, el volumen debe verse también en FCL | C | En FCL el volumen está oculto en la pestaña Envío. Comprobado el 27/10 (Belal): TTE-CON se tarifa por «kg tasable terrestre» (factor 333 del documento de IRENEO, tramos); el motor no necesita cambios | Cristina |
 | R-S1 | Caso de las plantillas IAB FOB, IMB FOB, EAB (sentido, modo, carga, incoterm, cliente de BOSS) y lo que gestiona BOSS deducido de sus servicios | C | Cargado como **propuesta** (`dev/setup_templates.py`); se cambia en la plantilla | Cristina |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions
@@ -113,6 +108,11 @@ Las tablas siguientes conservan el contexto de cada pregunta.
 
 ## Cerradas con respuesta documentada · Closed
 
+| R-A2 | Tráficos cruzados (X) y nacionales (N) | **Belal, 27/10/2026**: rutas sin España como parte fija | Sentidos «Cruzado» y «Nacional» en oferta, oportunidad, expediente, plantilla y tarifa; España se propone, nunca se fuerza; IVA por los dos lados de la ruta (ADR-006, enmienda 2; `check_route_cases` E8/E9) |
+| R-A5 | Fecha clave de un LCL de importación (Odoo 17: fecha de vaciado) | **Belal, 27/10/2026**: no suponer la fecha de vaciado para tarificar | Fecha clave = ETA/ATA en importación, ETD/ATD en el resto; la fecha de vaciado del expediente no elige versión de tarifa (ADR-006, enmienda 2) |
+| R2-A3 | Venta por defecto | **Belal, 27/10/2026** (tras hablar con Ángel): +20 % sobre el coste, editable a mano y desactivable | Ajuste Ventas › «Venta por defecto de los servicios BOSS: coste + %» = una regla en la tarifa por defecto; 0 la quita (ADR-008; `check_default_markup` 22/22). El 20 % es indicación de Belal, no aprobación documentada de Cristina |
+| R2-A4 | «Super cubic meter» | **Ángel (vía Belal, 27/10/2026)**: no existe; solo el metro cúbico | Nada que hacer: base W/M y m³ ya existentes |
+| R2-A5 | «PP» en las plantillas de venta | **Ángel (vía Belal, 27/10/2026)**: no existe | Nada que hacer |
 | R-A1 | Peso real, peso volumen y peso tasable | **Ángel, Teams 27/10/2026**: aéreo 1 CBM = 167 kg, terrestre 333, marítimo 1000; tasable = el mayor; proveedores cobran a BOSS y BOSS al cliente por peso tasable | Implementado: enmienda de ADR-006, `dev/check_chargeable_weight.py` |
 |---|---|---|---|
 
