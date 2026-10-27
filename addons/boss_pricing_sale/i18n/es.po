@@ -2315,3 +2315,19 @@ msgid ""
 msgstr ""
 "Añadidos: %(added)s. Ya estaban en la oferta (se conservan como estaban): %(present)s. Borre a mano los servicios "
 "que no apliquen."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_add_services.py:0
+msgid "Not added twice"
+msgstr "No se añade dos veces"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/wizard/boss_add_services.py:0
+msgid ""
+"Already on the quotation: %(present)s. Added: %(added)s. To add a service again for a second supplier, choose that "
+"supplier here."
+msgstr ""
+"Ya están en la oferta: %(present)s. Añadidos: %(added)s. Para añadir un servicio otra vez con un segundo proveedor, "
+"elija ese proveedor aquí."
