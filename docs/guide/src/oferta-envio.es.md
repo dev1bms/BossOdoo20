@@ -27,6 +27,15 @@ Todo se puede cambiar después.
   AWB, manda ese.
 - **Puertos y aeropuertos**: los de todo el mundo (lista de Odoo 17). En marítimo solo se proponen puertos; en aéreo,
   aeropuertos.
+- **Contenedores**: [[Añadir una línea]] y **elija el tamaño** (20'/40'/45'): la fila solo queda cuando se elige algo;
+  luego tipo y cantidad. Los servicios por contenedor toman el tamaño y la cantidad (2 × 40' → cantidad 2; por envío,
+  1), también si los contenedores se indican después de la plantilla.
+- **Ordenante y partes**: en negocio de BOSS, el ordenante se propone como destinatario (importación) o expedidor
+  (exportación); se puede cambiar. En negocio de agente no se copia nada: el agente encarga, y el expedidor y el
+  destinatario son otros.
+- **Aceptar**: si falta algo, el mensaje lo agrupa por causa (precio de venta que falta; IVA pendiente porque el
+  cliente no tiene país…) y dice qué hacer. Al aceptar se abre **un** expediente con los costes a comprar; el campo
+  «Vincular a un expediente existente» solo sirve para un expediente abierto antes (preaviso).
 
 > Si falta un dato que una tarifa necesita, la línea lo dice («Complete en la oferta: Transportista principal»), sin
 > inventar el valor.

@@ -25,6 +25,14 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
   an air waybill (AWB), prices «per chargeable kg of the AWB» use it and the explanation says «ESTIMATED»; once the AWB
   weight is entered, it rules.
 - **Ports and airports**: worldwide (Odoo 17 list). Sea shipments offer ports; air shipments, airports.
+- **Containers**: [[Añadir una línea]] and **choose the size** (20'/40'/45'): the row only stays once something is
+  chosen; then type and quantity. Per-container services take the size and quantity (2 × 40' → quantity 2; per
+  shipment, 1), also when the containers are entered after the template.
+- **Orderer and parties**: in BOSS business the orderer is proposed as consignee (import) or shipper (export); it can
+  be changed. In an agent's business nothing is copied: the agent orders, the shipper and consignee are others.
+- **Accept**: when something is missing, the message groups it by cause (sale price missing; VAT pending because the
+  customer has no country…) and says what to do. Acceptance opens **one** file with the costs to buy; «Link to an
+  existing file» is only for a file opened before (pre-alert).
 
 > When a tariff needs data that is empty, the line says so ("Fill in on the quotation: Main carrier") instead of
 > inventing a value.

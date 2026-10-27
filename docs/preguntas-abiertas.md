@@ -45,6 +45,9 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | R-A3 | Ordenante de un expediente de agente (B17 de Odoo 19): validar tipo de contacto Agente / Cliente como Odoo 17 | C | Se guarda «Negocio de» (B/A) y el código de tráfico; sin validación del tipo de contacto | Cristina |
 | R-A4 | Migración de contactos y direcciones de entrega desde Odoo 17 | C | Se crean a mano (Belal: «I will migrate all the users») | Belal |
 | R-A5 | Fecha clave de un LCL de importación (Odoo 17: fecha de vaciado) | C | En la oferta, la ETA; en el expediente ya existe la fecha de vaciado | Cristina |
+| R2-A1 | ¿Un coste de flete tecleado solo para una oferta debe guardarse también como precio reutilizable (ruta y semana)? (reunión parte 2) | C | Dos vías: coste manual en la línea o precio semanal desde ⊕ con ruta y validez | Cristina y Ángel |
+| R2-A2 | ¿Quién aprueba los precios semanales de flete? (P19) | C | Aprobador de tarifas; el asistente los deja en borrador o los envía a aprobación | Ángel |
+| R2-A3 | Venta por defecto: ¿+20 % sobre el coste o 20 % de margen sobre la venta? | C | Nada activo; venta de la lista del cliente o tecleada | Cristina y Ángel |
 | R-S1 | Caso de las plantillas IAB FOB, IMB FOB, EAB (sentido, modo, carga, incoterm, cliente de BOSS) y lo que gestiona BOSS deducido de sus servicios | C | Cargado como **propuesta** (`dev/setup_templates.py`); se cambia en la plantilla | Cristina |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions

@@ -259,6 +259,18 @@ boss_expediente **20.0.1.9.0**; 9.496 puertos y aeropuertos (de Odoo 17 vía Odo
 (`docs/evidencias/20261027_1420_check_route_cases_boss20_70dc926985e1.txt`). Abiertas R-A1…R-A5 y R-S1 en
 `docs/preguntas-abiertas.md`.
 
+**Reunión parte 2 (Ángel y Cristina, 27/10) → ADR-007** (`docs/reunion-angel-2026-10-27-parte2.md`): el error al
+confirmar S00034 era la comprobación de la oferta (cliente «susaeta» sin país → IVA pendiente en 8 líneas; 4 ventas
+sin precio), ahora agrupada por causa; **contenedores**: una fila añadida con todos los valores por defecto la
+descartaba la lista (de ahí «no está» en la demo) → sin tamaño por defecto; los servicios por contenedor toman los
+contenedores aunque se indiquen después de la plantilla; **puerto extranjero** en el alcance de tarifas y precios;
+**flete semanal** desde la oferta (⊕ en la línea: ruta, una semana, histórico) y servicios de importe manual
+cotizados por un precio aprobado cuando aplica; ordenante propuesto como destinatario/expedidor (negocio BOSS); aviso
+al elegir un proveedor sin precio (WFS en flete). boss_pricing **20.0.1.9.0**, boss_pricing_sale **20.0.1.11.0**,
+boss_expediente **20.0.1.10.0**; `dev/check_quote_flow.py` 40/40
+(`docs/evidencias/20261027_1457_check_quote_flow_boss20_31420676097f.txt`); recorrido en Chrome con «[PRUEBA] Susaeta
+Ediciones (recorrido)». Abiertas R2-A1…A3.
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de
