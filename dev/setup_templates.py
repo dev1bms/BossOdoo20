@@ -1,56 +1,49 @@
-"""Quotation templates (standard sale_management) with the BOSS services that always apply per case, on boss20 or
-the local copy (odoo shell). Approved by Belal on 26/10/2026 (task TP02). Idempotent by template name.
+"""Quotation templates (standard sale_management) with the BOSS services that always apply per case, on boss20 (odoo
+shell). Approved by Belal on 26/10/2026 (task TP02); names without «[DEMO]» since 27/10 (they are real cases, not demo
+data). Idempotent by case code: a template is renamed, never created twice; missing services are added, none removed.
 
-Lists: air import FOB from the real Cofitel offer 05570 (03/02/2026); the other two are proposals until Cristina
-confirms the always/sometimes services per case (task TP03). Optional services (ALM, inspections, SEG, CAU, QBR,
-extras) are added on the quotation with «Add services». Also one [DEMO] draft quotation from the air template so the
-pricing of the lines can be seen (nothing is sent or confirmed)."""
-from datetime import date
-
+Lists: air import FOB = the services of the real offer to Cofitel 05570 (03/02/2026) and of its shipments E260167 /
+E261152 (Odoo 17); sea import FCL = Odoo 19 «proposed by default» classification and the FCL file E260883 (Odoo 17),
+with T3-PAD (MSC «PAD - Additional Port Expenses (T-3 incluido)»); air export = Odoo 19 classification. Cristina still
+confirms the always/sometimes split per case (task TP03). Optional services (EXW-AIR pickup at origin, ALM, inspections,
+SEG, CAU, QBR, extras) are added on the quotation with «Add services». The template note is Odoo's customer-facing
+«Terms and conditions»: left empty (internal guidance lives in the user guide)."""
 from odoo import Command
 
-assert env.cr.dbname in ("boss20", "boss_test", "boss_uat", "boss20_uat"), env.cr.dbname  # noqa: F821
+assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True, mail_create_nosubscribe=True))  # noqa: F821
 P, Template = env["product.product"], env["sale.order.template"]
 TEMPLATES = {
-    "[DEMO] IAB FOB · Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
-        ["FAI", "HAN", "AWB", "CSA", "FAD", "ETX", "TTE-CON"],
-    "[DEMO] IMB FOB · Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
-        ["FMI", "THC", "BL", "GLO-CCC", "FAD", "CSM", "TTE-FCL"],
-    "[DEMO] EAB · Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
-        ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
+    "IAB FOB · Importación aérea FOB · servicios fijos": ["FAI", "HAN", "AWB", "CSA", "FAD", "ETX", "TTE-CON"],
+    "IMB FOB · Importación marítima FCL · servicios fijos": ["FMI", "THC", "BL", "GLO-CCC", "T3-PAD", "FAD", "CSM",
+                                                             "TTE-FCL"],
+    "EAB · Exportación aérea · servicios fijos": ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
 }
 EN_NAMES = dict(zip(TEMPLATES, [
-    "[DEMO] IAB FOB · Air import FOB · standard services (Cofitel offer 02/2026; Cristina confirms)",
-    "[DEMO] IMB FOB · Sea import FCL · standard services (reference S00009 [DEMO] and MSC 2026; Cristina confirms)",
-    "[DEMO] EAB · Air export · standard services (reference WFS export tariff; Cristina confirms)",
+    "IAB FOB · Air import FOB · fixed services",
+    "IMB FOB · Sea import FCL · fixed services",
+    "EAB · Air export · fixed services",
 ]))
-# The template «note» is Odoo's «Terms and conditions»: it is copied to the quotation and to the customer invoices, so
-# it holds nothing internal (found in Chrome on 27/10, D-7: the internal note of the first version was printed on
-# INV/2026/00002 and RINV/2026/00001). The internal explanation lives in this docstring and in the guide.
 OLD_NOTE = "Plantilla de servicios que aplican SIEMPRE"
 made = {}
-OLD = {
-    "[DEMO] IAB FOB · Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
-        "[DEMO] Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)",
-    "[DEMO] IMB FOB · Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)":
-        "[DEMO] Importación marítima FCL · servicios estándar (referencia S00009 [DEMO] y MSC 2026; Cristina confirma)",
-    "[DEMO] EAB · Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)":
-        "[DEMO] Exportación aérea · servicios estándar (referencia tarifa WFS export; Cristina confirma)",
-}
-for new_name, old_name in OLD.items():
-    Template.search([("name", "=", old_name)]).write({"name": new_name})
-env["sale.order"].search([("origin", "=", "[DEMO] Plantilla importación aérea FOB (26/10)")]).write({"origin": "[DEMO] Caso Cofitel — Importación aérea"})
+# a template is found by its case code (the start of its name), in any earlier name
+for name in TEMPLATES:
+    code = name.split(" · ")[0]
+    old = Template.with_context(active_test=False).search([("name", "=ilike", f"%{code} · %")], limit=1)
+    if old and old.name != name:
+        old.name = name
 assert not env["ir.config_parameter"].sudo().get_str("sale.default_sale_order_template_id"), "a default template would apply to every quotation"
 for name, codes in TEMPLATES.items():
     products = [P.search([("default_code", "=", c)], limit=1) for c in codes]
     assert all(products), [c for c, p in zip(codes, products) if not p]
     template = Template.search([("name", "=", name)], limit=1)
     if not template:
-        template = Template.create({"name": name, "sale_order_template_line_ids": [
-            Command.create({"product_id": p.id, "product_uom_qty": 1, "product_uom_id": p.uom_id.id,
-                            "sequence": i * 10}) for i, p in enumerate(products, start=1)]})
-    # The name is translatable: the same «[DEMO] <case>» prefix in every language, so that the template is found by
+        template = Template.create({"name": name})
+    have = template.sale_order_template_line_ids.product_id
+    template.sale_order_template_line_ids = [
+        Command.create({"product_id": p.id, "product_uom_qty": 1, "product_uom_id": p.uom_id.id, "sequence": i * 10 - (5 if have else 0)})
+        for i, p in enumerate(products, start=1) if p not in have]  # an added one goes before the next
+    # The name is translatable: the same «<case>» prefix in every language, so that the template is found by
     # its case code whatever the language of the user (found in Chrome on 26/10: the English name was an older one).
     template.with_context(lang="es_ES").name = name
     template.with_context(lang="en_US").name = EN_NAMES[name]
@@ -58,26 +51,4 @@ for name, codes in TEMPLATES.items():
         template.note = False
     made[name] = template
     print("TEMPLATE", template.id, name[:40], [l.product_id.default_code for l in template.sale_order_template_line_ids])
-
-# [DEMO] draft quotation from the air import template (DEMO customer, DEMO tariffs); never sent or confirmed
-customer = env["res.partner"].search([("name", "=", "[DEMO] Cliente UE Ejemplo GmbH")], limit=1)
-air = made[next(n for n in TEMPLATES if n.startswith("[DEMO] IAB"))]
-origin = "[DEMO] Caso Cofitel — Importación aérea"
-order = env["sale.order"].search([("origin", "=", origin)], limit=1)
-if customer and not order:
-    mad = env["boss.port"].search([("code", "=", "MAD")], limit=1)
-    order = env["sale.order"].create({
-        "partner_id": customer.id, "origin": origin, "sale_order_template_id": air.id, "boss_direction": "import",
-        "boss_transport_mode": "air", "boss_load_type": "air", "boss_port_id": mad.id,
-        "boss_country_id": env.ref("base.cn").id, "boss_planned_date": date(2026, 11, 4), "boss_awb_kg": 500.0})
-    order._onchange_sale_order_template_id()
-if order and order.state == "draft" and any(l.product_uom_qty == 1 and l.product_id.default_code == "HAN" for l in order.order_line):
-    order.order_line.unlink()  # re-apply the template with the deployed counting of the shipment
-    order._onchange_sale_order_template_id()
-if order:
-    print("QUOTE", order.name, order.state, "| lines", len(order.order_line))
-    for l in order.order_line:
-        print("   ", l.product_id.default_code, "| qty", l.product_uom_qty, l.product_uom_id.name, "| exec",
-              l.boss_execution, "| cost", l.boss_cost_status, l.boss_cost_amount, "| supplier",
-              l.boss_supplier_id.name or "-", "| sale", l.boss_sale_status)
 env.cr.commit()
