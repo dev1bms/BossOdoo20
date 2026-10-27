@@ -4,7 +4,9 @@ Una fila por punto de la lista de revisión de Belal (42). Estado: **CERRADO** (
 aplica), **PARCIAL** (hecho con una condición pendiente), **ABIERTO** (no hecho) o **DECISIÓN** (necesita a Ángel o
 Cristina). Evidencia: ruta de código, nombre de la comprobación (`dev/check_*.py`, salida en `docs/evidencias/`) y
 registro visto en Chrome. Comprobado el 27/10/2026 sobre boss20; el código posterior al commit `2b572c7` se probó
-montado en boss20 sin desplegar (`dev/server_shell_wip.sh`) y **espera aprobación de despliegue** (marcado «WIP»).
+montado en boss20 sin desplegar (`dev/server_shell_wip.sh`) y **se desplegó el 27/10 a las 16:08 con la aprobación
+de Belal** (commit `064891c`; las filas marcadas «WIP» están ya en boss20: `check_chargeable_weight` 38/38 y
+`check_meeting_matrix` 23/23 sobre el código desplegado, `docs/evidencias/20261027_1608_*_064891c6ae9d.txt`).
 
 | # | Punto | Estado | Evidencia (código → prueba → pantalla) |
 |---|---|---|---|
