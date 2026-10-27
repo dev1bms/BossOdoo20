@@ -45,7 +45,7 @@
                 <field name="partner_id" string="Supplier"/>
                 <field name="tariff_id" string="Tariff or document"
                        filter_domain="['|', ('tariff_id.name', 'ilike', self), ('tariff_id.document_reference', 'ilike', self)]"/>
-                <field name="tariff_id" string="Port / airport" filter_domain="[('tariff_id.port_ids', 'ilike', self)]"/>
+                <field name="tariff_id" string="Port / airport" filter_domain="['|', ('tariff_id.port_ids', 'ilike', self), ('line_port_ids', 'ilike', self)]"/>
                 <filter string="Valid" name="ws_current"
                         domain="[('tariff_state', '=', 'approved'), ('tariff_active', '=', True), ('valid_from', '&lt;=', context_today().strftime('%Y-%m-%d')), '|', ('valid_to', '=', False), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
                 <filter string="Expiring (30 days)" name="ws_expiring"

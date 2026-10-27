@@ -48,9 +48,13 @@ class BossTariffLine(models.Model):
         day = max(today, tariff.valid_from) if not tariff.valid_to or tariff.valid_to >= today else tariff.valid_to
         values = {
             "product_id": self.product_id.id, "uom_id": self.uom_id.id, "supplier_id": tariff.partner_id.id,
-            "date": day, "direction": tariff.direction, "transport_mode": tariff.transport_mode,
-            "load_type": tariff.load_type, "carrier_id": tariff.carrier_id.id, "port_id": tariff.port_ids[:1].id,
-            "country_id": tariff.country_ids[:1].id, "state_id": tariff.state_ids[:1].id,
+            # the price's own scope when it narrows its tariff (a section of the document)
+            "date": day, "direction": self.line_direction or tariff.direction,
+            "transport_mode": self.line_transport_mode or tariff.transport_mode,
+            "load_type": self.line_load_type or tariff.load_type, "carrier_id": tariff.carrier_id.id,
+            "port_id": (self.line_port_ids or tariff.port_ids)[:1].id,
+            "country_id": (self.line_country_ids or tariff.country_ids)[:1].id,
+            "state_id": (self.line_state_ids or tariff.state_ids)[:1].id,
             # a demo price is tried with a demo customer (it never prices a real one)
             "customer_id": (tariff.customer_id or (self.env["res.partner"].search([("boss_demo", "=", True)], limit=1)
                                                    if tariff.is_demo else self.env["res.partner"])).id,

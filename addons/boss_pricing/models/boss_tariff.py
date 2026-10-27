@@ -103,6 +103,10 @@ class BossTariff(models.Model):
             tariff.scope_summary = " · ".join(parts)
             tariff.line_count = len(tariff.line_ids)
 
+    @api.constrains(*SCOPE_FIELDS)
+    def _check_lines_scope(self):
+        self.line_ids._check_line_scope()
+
     @api.constrains("valid_from", "valid_to")
     def _check_dates(self):
         for tariff in self:
@@ -192,6 +196,8 @@ class BossTariff(models.Model):
 
     @api.depends("line_ids", "line_ids.product_id", "line_ids.uom_id", "line_ids.container_size",
                  "line_ids.container_type_ids", "line_ids.ws_is_empty", "document", "document_reference",
+                 "line_ids.line_direction", "line_ids.line_transport_mode", "line_ids.line_load_type",
+                 "line_ids.line_port_ids", "line_ids.line_country_ids", "line_ids.line_state_ids",
                  "scope_confirmed", *SCOPE_FIELDS)
     @api.depends_context("lang")
     def _compute_ws_checklist(self):
@@ -209,13 +215,14 @@ class BossTariff(models.Model):
             for line in tariff.line_ids.filtered("ws_is_empty"):
                 todo.append(_("%s has no amount: enter it, or mark 'On request' or 'No cost (confirmed zero)'.",
                               line.product_id.display_name))
-            seen = {}
-            for line in tariff.line_ids:
-                key = (line.product_id.id, line.uom_id.id, line.container_size, frozenset(line.container_type_ids.ids))
-                if key in seen:
-                    todo.append(_("Two prices for %(svc)s with the same unit and container: they would conflict.",
-                                  svc=line.product_id.display_name))
-                seen[key] = line
+            lines = list(tariff.line_ids)
+            for i, line in enumerate(lines):
+                for other in lines[i + 1:]:
+                    if (line.product_id == other.product_id and line.uom_id == other.uom_id
+                            and line._ws_overlaps(other)):
+                        todo.append(_("Two prices for %(svc)s in %(uom)s apply to the same shipments (same unit, "
+                                      "container and scope): they would conflict. Narrow «Applies to» on one of them.",
+                                      svc=line.product_id.display_name, uom=line.uom_id.name))
             tariff.ws_checklist = "\n".join(todo) or False
             tariff.ws_open_scope = ", ".join(
                 tariff._fields[name].get_description(self.env)["string"]

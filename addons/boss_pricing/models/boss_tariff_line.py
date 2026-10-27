@@ -3,6 +3,7 @@ from odoo.exceptions import UserError, ValidationError
 
 from ..engine import METHODS, Rule
 from .boss_container_type import CONTAINER_SIZES
+from .boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 
 METHOD_SELECTION = [
     ("per_unit", "Price per unit"),
@@ -66,6 +67,18 @@ class BossTariffLine(models.Model):
     container_size = fields.Selection(CONTAINER_SIZES, help="Only for containers of this size. Empty: any size.")
     container_type_ids = fields.Many2many("boss.container.type", string="Container types",
                                           help="Only for these container types. Empty: any type.")
+    # Scope of this price when it is narrower than its tariff (ADR-002 amendment 27/10/2026): one supplier document is
+    # one tariff and each section of the document narrows the scope on its own prices. Empty: the tariff's scope.
+    line_direction = fields.Selection(DIRECTIONS, "Direction of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_transport_mode = fields.Selection(TRANSPORT_MODES, "Transport mode of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_load_type = fields.Selection(LOAD_TYPES, "Load type of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_port_ids = fields.Many2many("boss.port", "boss_tariff_line_port_rel", "line_id", "port_id",
+                                     "Ports of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_country_ids = fields.Many2many("res.country", "boss_tariff_line_country_rel", "line_id", "country_id",
+                                        "Countries abroad of this price", copy=True, help="Only when this price is narrower than its tariff. Empty: the tariff's.")
+    line_state_ids = fields.Many2many("res.country.state", "boss_tariff_line_state_rel", "line_id", "state_id",
+                                      "Provinces of this price", copy=True, domain="[('country_id.code', '=', 'ES')]",
+                                      help="Only when this price is narrower than its tariff. Empty: the tariff's.")
     method = fields.Selection(METHOD_SELECTION, required=True, default="per_unit")
     basis = fields.Selection(BASES, "Priced on", default="line", required=True,
                              help="What the supplier document charges on.")
@@ -157,6 +170,44 @@ class BossTariffLine(models.Model):
             if self.product_id.boss_cost_method in dict(METHOD_SELECTION):
                 self.method = self.product_id.boss_cost_method
 
+    @api.constrains("line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "line_country_ids",
+                    "line_state_ids", "tariff_id")
+    def _check_line_scope(self):
+        """A price may narrow its tariff, never widen it (the tariff states what the whole document covers)."""
+        for line in self:
+            tariff = line.tariff_id
+            wider = [name for name in ("direction", "transport_mode", "load_type")
+                     if line[f"line_{name}"] and tariff[name] and line[f"line_{name}"] != tariff[name]]
+            wider += [name for name in ("port_ids", "country_ids", "state_ids")
+                      if line[f"line_{name}"] and tariff[name] and line[f"line_{name}"] - tariff[name]]
+            if wider:
+                raise ValidationError(self.env._(
+                    "%(service)s: «%(fields)s» of this price is outside its tariff. A price can narrow the tariff's "
+                    "scope, not widen it: leave it empty, or change the tariff.", service=line.product_id.display_name,
+                    fields=", ".join(tariff._fields[name].get_description(self.env)["string"] for name in wider)))
+
+    def _scope_conditions(self):
+        """Engine conditions of this price: the tariff's scope, narrowed by the line where it is set."""
+        self.ensure_one()
+        conditions = self.tariff_id._engine_conditions()
+        for name in ("direction", "transport_mode", "load_type"):
+            if self[f"line_{name}"]:
+                conditions[name] = {self[f"line_{name}"]}
+        for fname, key in (("line_port_ids", "port_id"), ("line_country_ids", "country_id"),
+                           ("line_state_ids", "state_id")):
+            if self[fname]:
+                conditions[key] = set(self[fname].ids)
+        if self.container_size:
+            conditions["container_size"] = {self.container_size}
+        if self.container_type_ids:
+            conditions["container_type_id"] = set(self.container_type_ids.ids)
+        return conditions
+
+    def _ws_overlaps(self, other):
+        """Both prices would apply to some same shipment (every condition they share has a common value)."""
+        mine, theirs = self._scope_conditions(), other._scope_conditions()
+        return all(mine[key] & theirs[key] for key in mine.keys() & theirs.keys())
+
     @api.constrains("product_id", "uom_id")
     def _check_charge_basis(self):
         for line in self:
@@ -214,11 +265,7 @@ class BossTariffLine(models.Model):
         """simulate: draft tariffs counted as approved for this call only (test panel, never a quotation)."""
         self.ensure_one()
         tariff = self.tariff_id
-        conditions = tariff._engine_conditions()
-        if self.container_size:
-            conditions["container_size"] = {self.container_size}
-        if self.container_type_ids:
-            conditions["container_type_id"] = set(self.container_type_ids.ids)
+        conditions = self._scope_conditions()
         return Rule(
             id=self.id, product_id=self.product_id.id, uom_id=self.uom_id.id, method=self.method,
             currency=tariff.currency_id.name, lineage_id=tariff.lineage_id.id or tariff.id,
@@ -277,10 +324,11 @@ class BossTariffLineWorkspace(models.Model):
     tariff_active = fields.Boolean(related="tariff_id.active", store=True)
     valid_from = fields.Date(related="tariff_id.valid_from", store=True)
     valid_to = fields.Date(related="tariff_id.valid_to", store=True)
-    direction = fields.Selection(related="tariff_id.direction", store=True)
-    transport_mode = fields.Selection(related="tariff_id.transport_mode", store=True)
-    load_type = fields.Selection(related="tariff_id.load_type", store=True)
-    port_ids = fields.Many2many(related="tariff_id.port_ids", string="Ports")
+    # effective scope of the price (its own, or its tariff's): what the filters and lists show
+    direction = fields.Selection(DIRECTIONS, compute="_compute_effective_scope", store=True)
+    transport_mode = fields.Selection(TRANSPORT_MODES, compute="_compute_effective_scope", store=True)
+    load_type = fields.Selection(LOAD_TYPES, compute="_compute_effective_scope", store=True)
+    port_ids = fields.Many2many("boss.port", string="Ports", compute="_compute_effective_scope")
     version = fields.Integer(related="tariff_id.version")
     document_reference = fields.Char(related="tariff_id.document_reference")
     company_id = fields.Many2one(related="tariff_id.company_id", store=True)
@@ -339,6 +387,16 @@ class BossTariffLineWorkspace(models.Model):
                 empty = not any(b.unit_price or b.fixed_amount for b in line.bracket_ids)
             line.ws_is_empty = empty
 
+    @api.depends("line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "tariff_id.direction",
+                 "tariff_id.transport_mode", "tariff_id.load_type", "tariff_id.port_ids")
+    def _compute_effective_scope(self):
+        for line in self:
+            tariff = line.tariff_id
+            line.direction = line.line_direction or tariff.direction
+            line.transport_mode = line.line_transport_mode or tariff.transport_mode
+            line.load_type = line.line_load_type or tariff.load_type
+            line.port_ids = line.line_port_ids or tariff.port_ids
+
     def _ws_label(self, fname, value, record=None):
         record = record or self
         return dict(record._fields[fname]._description_selection(self.env)).get(value, value or "")
@@ -356,7 +414,9 @@ class BossTariffLineWorkspace(models.Model):
                  "uom_id", "tariff_id.state",
                  "tariff_id.valid_from", "tariff_id.valid_to", "tariff_id.direction", "tariff_id.transport_mode",
                  "tariff_id.load_type", "tariff_id.port_ids", "tariff_id.state_ids", "tariff_id.customer_id",
-                 "container_size", "container_type_ids", "tariff_id.currency_id")
+                 "container_size", "container_type_ids", "tariff_id.currency_id", "tariff_id.country_ids",
+                 "line_direction", "line_transport_mode", "line_load_type", "line_port_ids", "line_country_ids",
+                 "line_state_ids")
     @api.depends_context("lang")
     def _compute_workspace_display(self):
         _ = self.env._
@@ -411,14 +471,22 @@ class BossTariffLineWorkspace(models.Model):
                 price += " · " + _("max. %s", f"{num(line.max_amount)} {cur}")
             line.price_display = price
             tariff = line.tariff_id
-            scope = [line._ws_label("direction", tariff.direction, tariff) or _("Import/export"),
-                     line._ws_label("transport_mode", tariff.transport_mode, tariff) or _("any mode")]
-            if tariff.load_type:
-                scope.append(line._ws_label("load_type", tariff.load_type, tariff))
-            if tariff.port_ids:
-                scope.append(", ".join(tariff.port_ids.mapped("code")))
-            if tariff.state_ids:
-                scope.append(", ".join(tariff.state_ids.mapped("name")))
+            direction = line.line_direction or tariff.direction
+            mode = line.line_transport_mode or tariff.transport_mode
+            load = line.line_load_type or tariff.load_type
+            ports = line.line_port_ids or tariff.port_ids
+            countries = line.line_country_ids or tariff.country_ids
+            provinces = line.line_state_ids or tariff.state_ids
+            scope = [line._ws_label("direction", direction, tariff) or _("Import/export"),
+                     line._ws_label("transport_mode", mode, tariff) or _("any mode")]
+            if load:
+                scope.append(line._ws_label("load_type", load, tariff))
+            if ports:
+                scope.append(", ".join(ports.mapped("code")))
+            if countries:
+                scope.append(", ".join(countries.mapped("name")))
+            if provinces:
+                scope.append(", ".join(provinces.mapped("name")))
             if line.container_size or line.container_type_ids:
                 size = f"{line.container_size}'" if line.container_size else ""
                 scope.append(f"{size} {'/'.join(line.container_type_ids.mapped('code'))}".strip())

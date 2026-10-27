@@ -52,6 +52,7 @@
                                     <field name="uom_id" string="Charge basis" width="130px"/>
                                     <field name="container_size" string="Size" optional="show"/>
                                     <field name="container_type_ids" widget="many2many_tags" string="Types" optional="show"/>
+                                    <field name="scope_display" string="Applies to" optional="show"/>
                                     <field name="price_display"/>
                                     <field name="ws_is_empty" column_invisible="1"/>
                                     <field name="method" optional="hide"/>
@@ -142,9 +143,16 @@
                         <field name="document_page"/>
                     </group>
                     <group string="Applies to">
-                        <field name="scope_display" string="Tariff scope" widget="text" invisible="not context.get('boss_ws')"/>
                         <field name="container_size" placeholder="Any size"/>
                         <field name="container_type_ids" widget="many2many_tags" placeholder="Any type"/>
+                        <div colspan="2" class="text-muted small">Only when this price is narrower than its tariff (a section of the document). Empty: the tariff's scope.</div>
+                        <field name="line_direction" string="Direction" placeholder="As the tariff"/>
+                        <field name="line_transport_mode" string="Transport mode" placeholder="As the tariff"/>
+                        <field name="line_load_type" string="Load type" placeholder="As the tariff"/>
+                        <field name="line_port_ids" string="Ports" widget="many2many_tags" placeholder="As the tariff"/>
+                        <field name="line_country_ids" string="Countries abroad" widget="many2many_tags" placeholder="As the tariff"/>
+                        <field name="line_state_ids" string="Provinces (inland)" widget="many2many_tags" placeholder="As the tariff"/>
+                        <field name="scope_display" string="This price applies to" widget="text"/>
                         <field name="valid_from" invisible="not context.get('boss_ws')"/>
                         <field name="valid_to" invisible="not context.get('boss_ws')" placeholder="Until a newer version"/>
                         <field name="validity_state" widget="badge" invisible="not context.get('boss_ws') or not id"/>

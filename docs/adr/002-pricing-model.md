@@ -81,3 +81,25 @@ otherwise (`boss_fx_policy`: none by default; "Odoo rate of the quotation date" 
 ## Consequences
 - Adding a supplier = data. Adding a method = one function in `engine/methods.py` + tests.
 - Quotations and, later, expedientes share `price_cost()` and the explanation.
+
+## Amendment (27/10/2026): scope per price line — one supplier document, one tariff
+
+Context: a supplier document often has sections with different scopes (IRENEO «Tarifas MAD»: terminal pickups for
+import, the Barajas export package, storage, national distribution by zone of provinces). With the scope only on the
+tariff, each section had to be a tariff of its own, which the business owners found unnatural (Ángel and the BOSS
+managers, relayed by Belal on 27/10/2026: «create IRENEO 2026, choose the services, set their prices and calculation»).
+
+Decision (approved by Belal on 27/10/2026):
+- The tariff keeps the scope shared by the whole document. A price line may **narrow** it with its own direction,
+  transport mode, load type, ports, countries abroad and provinces (empty = the tariff's). A line never widens its
+  tariff (validated). Customer and carrier stay on the tariff: a customer agreement or a carrier list is another
+  document.
+- The engine receives, per line, the tariff conditions overridden by the line's (as container size and types already
+  were). Selection, specificity and conflict rules are unchanged.
+- The checklist «Before sending» reports two prices of the same service and charge basis whose scopes overlap inside
+  the same tariff (they would conflict in every quotation).
+- One approval per document version. A price whose reading is still open is marked «On request» (never priced) instead
+  of holding back the whole document; a change of part of the document is a new version of the whole document.
+- Line scope is governed like the prices (editable only while the tariff is a draft).
+
+Existing tariffs keep working unchanged (empty line scope = tariff scope).

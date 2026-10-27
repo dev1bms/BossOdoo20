@@ -2970,3 +2970,80 @@ msgid ""
 msgstr ""
 "Varios proveedores tienen precio para este envío: %s. Elija el proveedor en la línea (columna Proveedor) para "
 "calcularla con la tarifa de ese proveedor."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_direction
+msgid "Direction of this price"
+msgstr "Sentido de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_transport_mode
+msgid "Transport mode of this price"
+msgstr "Modo de transporte de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_load_type
+msgid "Load type of this price"
+msgstr "Forma de carga de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_port_ids
+msgid "Ports of this price"
+msgstr "Puertos de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_country_ids
+msgid "Countries abroad of this price"
+msgstr "Países en el extranjero de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_state_ids
+msgid "Provinces of this price"
+msgstr "Provincias de este precio"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_country_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_direction
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_load_type
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_port_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_state_ids
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_transport_mode
+msgid "Only when this price is narrower than its tariff. Empty: the tariff's."
+msgstr "Solo si este precio es más restringido que su tarifa. Vacío: el de la tarifa."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid ""
+"Only when this price is narrower than its tariff (a section of the document). Empty: the tariff's scope."
+msgstr ""
+"Solo si este precio es más restringido que su tarifa (una sección del documento). Vacío: el alcance de la tarifa."
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "As the tariff"
+msgstr "Como la tarifa"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "This price applies to"
+msgstr "Este precio se aplica a"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid ""
+"%(service)s: «%(fields)s» of this price is outside its tariff. A price can narrow the tariff's scope, not widen "
+"it: leave it empty, or change the tariff."
+msgstr ""
+"%(service)s: «%(fields)s» de este precio queda fuera de su tarifa. Un precio puede restringir el alcance de la "
+"tarifa, no ampliarlo: déjelo vacío o cambie la tarifa."
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"Two prices for %(svc)s in %(uom)s apply to the same shipments (same unit, container and scope): they would "
+"conflict. Narrow «Applies to» on one of them."
+msgstr ""
+"Dos precios de %(svc)s en %(uom)s se aplican a los mismos envíos (misma unidad, contenedor y alcance): estarían "
+"en conflicto. Restrinja «Se aplica a» en uno de ellos."
