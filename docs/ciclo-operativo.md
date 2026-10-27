@@ -223,15 +223,24 @@ módulos y ajustes, desplegar y reiniciar sin pedir permiso de nuevo. Comunicaci
 (`dev/boss20_isolate.py`). Odoo 17 y 19 solo lectura. Nada de esto convierte una propuesta o una tarifa en decisión
 aprobada por Cristina o Ángel.
 
-Desplegado en boss20: boss_services 20.0.1.3.0, boss_pricing 20.0.1.6.0, boss_pricing_sale **20.0.1.8.2**,
-boss_expediente **20.0.1.8.0**. Ciclo contable completo recorrido en Chrome en boss20 (S00031/E260015: facturas de
-MSC, facturación parcial al cliente, abono, coste extra refacturado, pagos, casación bancaria, rentabilidad); registros y
-pasos en `docs/escenario-uat.md`. Defectos encontrados y corregidos en el recorrido: D-7, D-8, D-9
-(`docs/preguntas-abiertas.md`).
+Desplegado en boss20 (27/10, tarde): boss_services 20.0.1.3.0, boss_pricing **20.0.1.7.0**, boss_pricing_sale
+**20.0.1.9.2**, boss_expediente 20.0.1.8.0. Ciclo contable recorrido en Chrome (S00031/E260015, `docs/escenario-uat.md`).
+
+**Precios y plantillas con datos reales (27/10, mandato de Belal):** copia de seguridad de boss20 y de su filestore en
+`~/backups/boss20-20261027_0944*` antes de limpiar; 8 tarifas DEMO borradas y 9 archivadas, lista de precios [DEMO]
+archivada (`dev/cleanup_demo_pricing.py`); proveedores con sus datos legales de Odoo 17 (`dev/setup_real_suppliers.py`);
+clientes COFITEL y AGUILERA EXTINCION (`dev/setup_real_customers.py`); 24 tarifas aprobadas por delegación de Belal
+para pruebas tras comparar cada línea con su documento (`dev/approve_verified_tariffs.py`; informes privados
+`.research/verify_sea.md`, `verify_air.md`; 30/30 cálculos manuales iguales al motor,
+`.research/evidencia_tarifas_20261027_1058.txt`); plantillas por caso sin [DEMO] (`dev/setup_templates.py`); lista de
+precios de COFITEL creada en Chrome; precisión de precio 4 decimales; tipos del BCE cargados. Ofertas probadas en
+Chrome: **S00032** (COFITEL, aérea, aceptada → E260016) y **S00033** (AGUILERA, FCL 20'+40', en presupuesto: venta del
+FuelEU por decidir). Defectos D-10, D-11 corregidos; D-12 documentado como limitación; excepciones en
+`docs/preguntas-abiertas.md`. Inicio rápido publicado: doc.bosscontinental.com/new/#/inicio-rapido (`?v=20261027b`).
 
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
-avance del proyecto: para usarlo en producción faltan las aprobaciones (0 de 25 tarifas [MUESTRA] aprobadas por
-Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de
+avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
+por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de
 Cristina sobre la venta y el margen «en la aceptación» tras una recotización.
 
 Pendiente de personas: aprobación de tarifas (Cristina); ratificación de suplidos, P30 y P32 (Ángel). Pendiente de

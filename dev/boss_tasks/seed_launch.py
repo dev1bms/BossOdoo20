@@ -1060,6 +1060,20 @@ TASKS = [
                    "interfaz de boss20 con registros [PRUEBA]; defectos corregidos y vueltos a probar.",
                    "Aceptación: todas las facturas «Pagado», banco casado, margen final explicado cifra a cifra."),
          links=[f"{SYS}/odoo/action-656/15", f"{SYS}/odoo/action-sale.action_orders/31", f"{DOC}#/facturacion"]),
+    dict(code="W12", title="Precios y plantillas con datos reales: tarifas verificadas, limpieza DEMO, casos Cofitel y FCL, Inicio rápido",
+         epic="E8", type=T.DEV, sprint="S44", points=5, start=D(2026, 10, 27), due=D(2026, 10, 27),
+         priority=P.CRITICAL, deps=["W11"], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 27),
+         evidence="27/10 en boss20: copia previa (~/backups/boss20-20261027_0944*); 8 tarifas DEMO borradas y 9 "
+                  "archivadas; 24 tarifas aprobadas por delegación de Belal tras comparar cada línea con su documento "
+                  "(30/30 cálculos manuales = motor); proveedores y clientes con datos de Odoo 17; plantillas sin [DEMO]; "
+                  "lista de precios COFITEL; S00032 (Cofitel, aceptada → E260016) y S00033 (FCL 20'+40') probadas en "
+                  "Chrome; D-10, D-11 corregidos, D-12 limitación; Inicio rápido publicado (?v=20261027b). Excepciones: "
+                  "docs/preguntas-abiertas.md.",
+         desc=desc("Resultado: una oferta nueva con cliente, envío y plantilla muestra servicios, proveedores y costes "
+                   "de tarifas aprobadas con documento, venta desde la lista del cliente o escrita, y avisos claros de lo "
+                   "que falta.",
+                   "Aceptación: Inicio rápido seguible por Belal sin ayuda; tarifas sin fuente siguen sin aprobar."),
+         links=[f"{SYS}/odoo/sales/32", f"{SYS}/odoo/sales/33", f"{DOC}#/inicio-rapido"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
