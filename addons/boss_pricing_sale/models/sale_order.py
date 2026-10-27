@@ -93,25 +93,73 @@ class SaleOrder(models.Model):
             vals = dict(vals, boss_storage_days_known=True)
         return super().write(vals)
 
+    def _boss_container_groups(self):
+        return sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
+                      key=lambda g: (g[0], g[1].sequence))
+
+    @staticmethod
+    def _boss_per_container(product, uom):
+        return bool(product.boss_pricing_mode) and uom.boss_quantity_source in ("container", "teu")
+
     @api.onchange("sale_order_template_id")
     def _onchange_sale_order_template_id(self):
         """The template lists the services of a case; container services become one line per container size and
-        type of the shipment, like «Add services» does (they may be priced and sold differently)."""
+        type of the shipment, like «Add services» does (they may be priced and sold differently).
+        Odoo replaces every line when a template is chosen: on a quotation that already has services that would
+        silently delete the work done (prices, suppliers, added services). Then nothing is removed: only the services
+        of the template that are missing are added, and the user is told which."""
+        if not self.sale_order_template_id:
+            return None
+        existing = self.order_line.filtered(lambda l: l.product_id and not l.display_type)
+        if existing:
+            return self._boss_merge_template(existing)
         super()._onchange_sale_order_template_id()
-        groups = sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
-                        key=lambda g: (g[0], g[1].sequence))
+        groups = self._boss_container_groups()
         if not groups:
-            return
+            return None
         added = []
         for line in self.order_line:
-            if (line.product_id.boss_pricing_mode and not line.boss_container_size
-                    and line.product_uom_id.boss_quantity_source in ("container", "teu")):
+            if not line.boss_container_size and self._boss_per_container(line.product_id, line.product_uom_id):
                 (line.boss_container_size, line.boss_container_type_id), *rest = groups
                 added += [Command.create({"product_id": line.product_id.id, "product_uom_id": line.product_uom_id.id,
                                           "boss_container_size": size, "boss_container_type_id": ctype.id,
                                           "sequence": line.sequence}) for size, ctype in rest]
         if added:
             self.update({"order_line": added})
+        return None
+
+    def _boss_merge_template(self, existing):
+        _ = self.env._
+        template = self.sale_order_template_id.with_context(lang=self.partner_id.lang).with_company(self.company_id)
+        groups = self._boss_container_groups()
+        have = {(l.product_id, l.boss_container_size or False, l.boss_container_type_id) for l in existing}
+        sequence = max(self.order_line.mapped("sequence") or [10])
+        commands, added, present = [], [], []
+        for t_line in template.sale_order_template_line_ids.filtered(lambda t: t.product_id and not t.display_type):
+            product = t_line.product_id
+            if groups and self._boss_per_container(product, t_line.product_uom_id):
+                keys = [(size, ctype) for size, ctype in groups if (product, size, ctype) not in have]
+            else:
+                keys = [] if product in existing.product_id else [(False, False)]
+            if not keys:
+                present.append(product.default_code or product.name)
+                continue
+            for size, ctype in keys:
+                sequence += 1
+                vals = t_line._prepare_order_line_values(self.fiscal_position_id, self.currency_id)
+                vals["sequence"] = sequence
+                if size:
+                    vals.update(boss_container_size=size, boss_container_type_id=ctype.id)
+                commands.append(Command.create(vals))
+            added.append(product.default_code or product.name)
+        if commands:
+            self.update({"order_line": commands})
+        return {"warning": {
+            "title": _("Template applied without removing anything"),
+            "message": _("Added: %(added)s. Already on the quotation (kept as they are): %(present)s. Delete by hand "
+                         "the services that do not apply.", added=", ".join(added) or "-",
+                         present=", ".join(present) or "-"),
+            "type": "notification"}}
 
     def _boss_quantity(self, source, size=False, ctype=False):
         """Quantity of a charge basis taken from the shipment, or None when entered on the line."""

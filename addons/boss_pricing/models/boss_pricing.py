@@ -275,6 +275,10 @@ class BossPricing(models.AbstractModel):
                      ", ".join(candidates.mapped("display_name")))
         if status == "on_request":
             return _("The supplier document says 'on request' (%s): ask the supplier.", line.display_name)
+        if status == "conflict" and len(candidates.partner_id) > 1:
+            return _("Several suppliers have a price for this shipment: %s. Choose the supplier on the line (column "
+                     "Supplier) to price it with that supplier's tariff.",
+                     ", ".join(candidates.partner_id.mapped("name")))
         if status == "conflict":
             return _("Several supplier prices apply: %s. Choose the carrier, narrow a tariff scope or "
                      "set a priority.", ", ".join(candidates.mapped("display_name")))

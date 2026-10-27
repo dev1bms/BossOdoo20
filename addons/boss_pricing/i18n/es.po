@@ -2960,3 +2960,13 @@ msgstr "Hecho del expediente que cierra el periodo facturable (p. ej. demoras MS
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__period_end_event__emptying
 msgid "Emptying of the groupage container (LCL)"
 msgstr "Vaciado del contenedor de grupaje (LCL)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"Several suppliers have a price for this shipment: %s. Choose the supplier on the line (column Supplier) to price it "
+"with that supplier's tariff."
+msgstr ""
+"Varios proveedores tienen precio para este envío: %s. Elija el proveedor en la línea (columna Proveedor) para "
+"calcularla con la tarifa de ese proveedor."

@@ -2299,3 +2299,19 @@ msgstr "precio unitario"
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "valid from"
 msgstr "válida desde"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "Template applied without removing anything"
+msgstr "Plantilla aplicada sin quitar nada"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid ""
+"Added: %(added)s. Already on the quotation (kept as they are): %(present)s. Delete by hand the services that do not "
+"apply."
+msgstr ""
+"Añadidos: %(added)s. Ya estaban en la oferta (se conservan como estaban): %(present)s. Borre a mano los servicios "
+"que no apliquen."
