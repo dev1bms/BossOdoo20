@@ -415,6 +415,12 @@ msgstr ""
 "Destrucción de mercancía a coste (poco frecuente); definición pendiente."
 
 #. module: boss_services
+#: model_terms:product.template,description:boss_services.service_det
+msgid ""
+"Detención del contenedor fuera de la terminal cuando la naviera la factura aparte (MSC exportación: retirada del vacío a entrada del lleno); dentro de DEM cuando va combinada (Hapag MHD/DTD). Propuesta del 07/10/2026 aplicada (P09)."
+msgstr ""
+
+#. module: boss_services
 #: model:ir.model.fields,field_description:boss_services.field_product_template__display_name
 #: model:ir.model.fields,field_description:boss_services.field_uom_uom__display_name
 msgid "Display Name"
@@ -541,11 +547,6 @@ msgid "Handler fee per chargeable kg with a minimum."
 msgstr "Tarifa del handler por kg tasable con mínimo."
 
 #. module: boss_services
-#: model_terms:product.template,description:boss_services.service_etx
-msgid "Energy / service maintenance surcharge of the handler (WFS item 49, Swissport «tasa de mantenimiento»): air import only, bought per master AWB, sold per file (one master AWB per file). Cristina 07/10 and 08/10/2026."
-msgstr "Tasa energética / recargo de mantenimiento del servicio del handler (WFS ítem 49, Swissport «tasa de mantenimiento»): solo importación aérea, compra por AWB máster, venta por expediente (un AWB máster por expediente). Cristina 07/10 y 08/10/2026."
-
-#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc_lcl
 msgid ""
 "Handling of groupage cargo at the CFS; the larger of tonnes x price and m³ x price."
@@ -618,6 +619,12 @@ msgstr "Despacho de aduana de importación (por DUA)"
 #: model:product.template,name:boss_services.service_ara
 msgid "Import duty (paid on behalf)"
 msgstr "Arancel de importación (suplido)"
+
+#. module: boss_services
+#: model_terms:product.template,description:boss_services.service_vet
+msgid ""
+"Inspección veterinaria en el PIF, por documento como SAN: coste del veterinario + 20 % de gestión del handler (WFS ítem 54). Propuesta del 07/10/2026 aplicada (P16)."
+msgstr ""
 
 #. module: boss_services
 #: model:product.template,name:boss_services.service_ins
@@ -1114,6 +1121,12 @@ msgid "TEU of the containers"
 msgstr "TEU de los contenedores"
 
 #. module: boss_services
+#: model_terms:product.template,description:boss_services.service_etx
+msgid ""
+"Tasa energética / recargo de mantenimiento del servicio del handler (WFS ítem 49, Swissport «tasa de mantenimiento»): solo importación aérea, compra por AWB máster, venta por expediente (un AWB máster por expediente). Cristina 07/10 y 08/10/2026."
+msgstr ""
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_pla
 msgid ""
 "Tax paid on behalf of the customer, amount from the customs declaration."
@@ -1145,19 +1158,9 @@ msgid "US customs advance filing, per B/L."
 msgstr "Transmisión anticipada a la aduana de EE. UU., por BL."
 
 #. module: boss_services
-#: model_terms:product.template,description:boss_services.service_det
-msgid "Container detention outside the terminal when the carrier bills it on its own (MSC export: empty pickup to full gate-in); inside DEM when combined (Hapag MHD/DTD). Proposal of 07/10/2026 applied (P09)."
-msgstr "Detención del contenedor fuera de la terminal cuando la naviera la factura aparte (MSC exportación: retirada del vacío a entrada del lleno); dentro de DEM cuando va combinada (Hapag MHD/DTD). Propuesta del 07/10/2026 aplicada (P09)."
-
-#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_gav
 msgid "Used for weekly T1 transits of one customer; to confirm."
 msgstr "Usado para tránsitos T1 semanales de un cliente; por confirmar."
-
-#. module: boss_services
-#: model_terms:product.template,description:boss_services.service_vet
-msgid "Veterinary inspection at the border post, per document like SAN: cost of the veterinarian + 20 % handling of the handler (WFS item 54). Proposal of 07/10/2026 applied (P16)."
-msgstr "Inspección veterinaria en el PIF, por documento como SAN: coste del veterinario + 20 % de gestión del handler (WFS ítem 54). Propuesta del 07/10/2026 aplicada (P16)."
 
 #. module: boss_services
 #: model:ir.model.fields,field_description:boss_services.field_product_product__boss_vat_class
@@ -1226,3 +1229,12 @@ msgid ""
 "Where the quantity of a quotation line in this charge basis comes from. Empty: not a BOSS charge basis."
 msgstr ""
 "De dónde sale la cantidad de una línea de oferta en esta base de cobro. Vacío: no es una base de cobro BOSS."
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_kg
+msgid ""
+"Chargeable weight: higher of gross weight and volume × factor of the mode "
+"(air 167, road 333, sea 1000 kg/m³)"
+msgstr ""
+"Peso tasable: el mayor del peso bruto y el volumen × factor del modo (aéreo "
+"167, terrestre 333, marítimo 1000 kg/m³)"

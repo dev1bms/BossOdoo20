@@ -84,7 +84,8 @@ class BossTariffLine(models.Model):
     method = fields.Selection(METHOD_SELECTION, required=True, default="per_unit")
     basis = fields.Selection(BASES, "Priced on", default="line", required=True,
                              help="What the supplier document charges on.")
-    volumetric_factor = fields.Float(help="kg per m³ stated by the supplier document (e.g. 167 air).")
+    volumetric_factor = fields.Float(help="kg per m³ stated by the supplier document (e.g. 167 air). Empty: the "
+                                     "factor of the shipment's transport mode (air 167, road 333, sea 1000).")
     unit_size = fields.Float(default=1.0, help="Size of one priced unit, e.g. 100 for 'per 100 kg'.")
     round_up = fields.Boolean("Or fraction", help="Round up to whole units ('per 100 kg or fraction').")
     round_undecided = fields.Boolean(
@@ -229,8 +230,6 @@ class BossTariffLine(models.Model):
     @api.constrains("method", "basis", "volumetric_factor", "basis_2", "percent_base", "bracket_ids")
     def _check_method_parameters(self):
         for line in self.filtered(lambda l: not l.on_request):
-            if "chargeable_kg" in (line.basis, line.basis_2) and not line.volumetric_factor:
-                raise ValidationError(self.env._("Chargeable kg needs the volumetric factor stated by the document."))
             if line.method == "max_of_bases" and not line.basis_2:
                 raise ValidationError(self.env._("The larger of two bases needs a second basis."))
             if line.method == "percent" and not line.percent_base:

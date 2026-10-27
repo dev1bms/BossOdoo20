@@ -6,6 +6,7 @@ from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 
 from . import vat_rules
+from .boss_shipment_route import MODE_VOLUMETRIC_FACTORS
 from .product_pricelist_item import BOSS_LINE_COST
 
 SALE_STATUSES = [
@@ -34,6 +35,7 @@ SHIPMENT_DEPENDS = (
     "order_id.partner_id", "order_id.boss_direction", "order_id.boss_transport_mode", "order_id.boss_load_type",
     "order_id.boss_carrier_id", "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_planned_date",
     "order_id.boss_inland_state_id", "order_id.boss_awb_kg", "order_id.boss_chargeable_kg",
+    "order_id.boss_volume_weight_kg",
     "order_id.boss_origin_port_id", "order_id.boss_destination_port_id",
     "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
     "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
@@ -223,7 +225,7 @@ class SaleOrderLine(models.Model):
     @api.depends("product_uom_id", "boss_container_size", "boss_container_type_id",
                  "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
                  "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
-                 "order_id.boss_pallets", "order_id.boss_awb_kg")
+                 "order_id.boss_pallets", "order_id.boss_awb_kg", "order_id.boss_chargeable_kg")
     def _compute_product_uom_qty(self):
         frozen = self._boss_skip()
         super(SaleOrderLine, self - frozen)._compute_product_uom_qty()
@@ -341,7 +343,17 @@ class SaleOrderLine(models.Model):
                   and line.boss_tariff_line_id.method == "time"):
                 text = self.env._("ACTUAL period of %s days.", line.boss_days) + "\n" + text
             order = line.order_id
-            if (line.boss_tariff_line_id.basis == "awb_kg" and not order.boss_awb_kg and order.boss_chargeable_kg
+            rule = line.boss_tariff_line_id
+            if (rule.basis == "chargeable_kg" and not rule.volumetric_factor and order.boss_chargeable_kg
+                    and line.boss_cost_status == "ok"):
+                text = self.env._(
+                    "Chargeable weight %(kg)s kg: the higher of the gross weight (%(gross)s kg) and the volume weight "
+                    "(%(volume)s m³ × %(factor)s kg/m³, factor of %(mode)s).", kg=order.boss_chargeable_kg,
+                    gross=order.boss_gross_kg, volume=order.boss_volume_m3,
+                    factor=MODE_VOLUMETRIC_FACTORS.get(order.boss_transport_mode),
+                    mode=dict(order._fields["boss_transport_mode"]._description_selection(self.env)).get(
+                        order.boss_transport_mode)) + "\n" + text
+            if (rule.basis == "awb_kg" and not order.boss_awb_kg and order.boss_chargeable_kg
                     and line.boss_cost_status == "ok"):
                 text = self.env._(
                     "No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) "

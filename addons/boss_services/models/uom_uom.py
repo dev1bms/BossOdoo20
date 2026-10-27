@@ -17,6 +17,8 @@ class UomUom(models.Model):
             ("wm", "W/M: larger of tonnes and m³"),
             ("pallets", "Pallets"),
             ("awb_kg", "Chargeable weight of the air waybill (entered on the line when empty)"),
+            ("chargeable_kg", "Chargeable weight: higher of gross weight and volume × factor of the mode "
+                              "(air 167, road 333, sea 1000 kg/m³)"),
             ("input", "Entered on the line"),
         ],
         string="BOSS quantity",

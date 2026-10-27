@@ -271,6 +271,14 @@ boss_expediente **20.0.1.10.0**; `dev/check_quote_flow.py` 40/40
 (`docs/evidencias/20261027_1457_check_quote_flow_boss20_31420676097f.txt`); recorrido en Chrome con «[PRUEBA] Susaeta
 Ediciones (recorrido)». Abiertas R2-A1…A3.
 
+**Peso tasable por modo (Ángel, Teams 27/10; R-A1 resuelta):** aéreo 167, terrestre 333, marítimo 1000 kg/m³; tasable
+= el mayor del bruto y el volumen; proveedores y BOSS cobran por peso tasable. Una sola fuente
+(`boss.shipment.route`), motor con `chargeable_kg` cuando el documento no indica factor, unidad «kg tasable
+terrestre» contada del envío (`dev/setup_chargeable_uom.py`, pendiente de aplicar), ambas medidas necesarias (nada se
+supone). Probado con el código local montado en boss20 sin desplegar (`dev/server_shell_wip.sh`):
+`check_chargeable_weight` 36/36, `check_route_cases` 36/36, `check_quote_flow` 40/40. **Sin desplegar: espera la
+aprobación de Belal** (enmienda de ADR-006).
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de

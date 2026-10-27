@@ -58,7 +58,8 @@
                             <field name="boss_packages"/>
                             <field name="boss_gross_kg"/>
                             <field name="boss_volume_m3" invisible="boss_load_type == 'fcl'"/>
-                            <field name="boss_chargeable_kg" invisible="boss_transport_mode != 'air'"/>
+                            <field name="boss_volume_weight_kg" invisible="not boss_transport_mode or boss_load_type == 'fcl'"/>
+                            <field name="boss_chargeable_kg" invisible="not boss_transport_mode or boss_load_type == 'fcl'"/>
                             <field name="boss_awb_kg" invisible="boss_transport_mode != 'air'"/>
                             <field name="boss_pallets" invisible="boss_load_type == 'fcl'"/>
                             <field name="boss_goods_value"/>

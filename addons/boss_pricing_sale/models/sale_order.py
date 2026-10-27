@@ -55,6 +55,7 @@ class SaleOrder(models.Model):
                            for c in self.boss_container_ids],
             "gross_kg": self.boss_gross_kg or None,
             "awb_kg": self._boss_awb_weight(),
+            "chargeable_kg": self.boss_chargeable_kg or None,
             "volume_m3": self.boss_volume_m3 or None,
             "pallets": self.boss_pallets or None,
             "goods_value": self.boss_goods_value or None,
@@ -184,7 +185,8 @@ class SaleOrder(models.Model):
         self.ensure_one()
         return shipment_quantity(
             source, [(c.size, c.container_type_id, c.quantity) for c in self.boss_container_ids], self.boss_gross_kg,
-            self.boss_volume_m3, self.boss_pallets, self._boss_awb_weight(), size, ctype)
+            self.boss_volume_m3, self.boss_pallets, self._boss_awb_weight(), size, ctype,
+            chargeable_kg=self.boss_chargeable_kg)
 
     @api.depends("order_line.boss_cost_status", "order_line.boss_sale_status", "order_line.boss_vat_status",
                  "order_line.boss_manual_cost", "partner_id.commercial_partner_id.country_id")

@@ -2,9 +2,11 @@ from odoo import api, fields, models
 
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 
-# Air cargo: 1 m³ counts as 167 kg (IATA 1:6000). The chargeable weight is the higher of the real (gross) weight and
-# this volume weight (Ángel, meeting of 27/10/2026, ADR-006). Supplier documents with their own factor keep theirs.
-AIR_VOLUMETRIC_FACTOR = 167
+# Volume weight per transport mode, kg per m³ (CBM): air 167, road 333, sea 1000. The chargeable weight is the higher
+# of the real (gross) weight and the volume weight; suppliers charge BOSS on it and BOSS charges its customers on it
+# (Ángel, Teams 27/10/2026; ADR-006 amendment). A supplier document stating its own factor keeps it (engine params).
+MODE_VOLUMETRIC_FACTORS = {"air": 167, "road": 333, "sea": 1000}
+AIR_VOLUMETRIC_FACTOR = MODE_VOLUMETRIC_FACTORS["air"]
 # Whose business the shipment is: the third letter of the traffic code (decision B13, Cristina 27/08/2026).
 BUSINESSES = [("boss", "BOSS client"), ("agent", "Agent's client")]
 _LETTERS = {"import": "I", "export": "E", "air": "A", "sea": "M", "road": "T", "boss": "B", "agent": "A"}
@@ -23,11 +25,13 @@ def spanish_side(direction):
 
 
 def chargeable_kg(mode, gross_kg, volume_m3):
-    """Air: higher of gross weight and volume weight; other modes have no general factor (each document says)."""
-    if mode != "air" or not (gross_kg or volume_m3):
+    """(volume weight, chargeable weight) of a shipment: volume × factor of the mode, and the higher of gross and
+    volume weight. Both measures are needed: with one of them unknown nothing is assumed (0, 0 = not known)."""
+    factor = MODE_VOLUMETRIC_FACTORS.get(mode)
+    if not factor or not gross_kg or not volume_m3:
         return 0.0, 0.0
-    volume_kg = (volume_m3 or 0.0) * AIR_VOLUMETRIC_FACTOR
-    return volume_kg, max(gross_kg or 0.0, volume_kg)
+    volume_kg = volume_m3 * factor
+    return volume_kg, max(gross_kg, volume_kg)
 
 
 class BossShipmentRoute(models.AbstractModel):
@@ -102,10 +106,11 @@ class BossShipmentRoute(models.AbstractModel):
                                "the estimated chargeable weight is used.")
     boss_volume_weight_kg = fields.Float(
         "Volume weight (kg)", digits=(12, 2), compute="_compute_boss_chargeable_kg", store=True,
-        help="Air: volume × 167 kg per m³ (IATA 1:6000).")
+        help="Volume × factor of the transport mode: air 167, road 333, sea 1000 kg per m³ (Ángel, 27/10/2026).")
     boss_chargeable_kg = fields.Float(
         "Chargeable weight (kg)", digits=(12, 2), compute="_compute_boss_chargeable_kg", store=True,
-        help="Air: the higher of the gross weight and the volume weight. Used as the AWB weight until the AWB is known.")
+        help="The higher of the gross weight and the volume weight; suppliers charge on it and so does BOSS. Needs "
+        "both measures. Air: used as the AWB weight until the AWB is known.")
 
     def _valid_field_parameter(self, field, name):
         # tracking applies on the models that use this route (quotation, opportunity: both are mail threads)

@@ -45,7 +45,9 @@ def raw_measure(basis, inputs, params):
     if basis == "chargeable_kg":
         factor = params.get("volumetric_factor")
         if not factor:
-            raise MissingInput("volumetric_factor")
+            # no factor stated by the document: the chargeable weight of the shipment, computed with the factor
+            # of its transport mode (air 167, road 333, sea 1000 kg/m³; Ángel 27/10/2026)
+            return _required(inputs, "chargeable_kg")
         return max(_required(inputs, "gross_kg"), _required(inputs, "volume_m3") * dec(factor))
     if basis == "awb_kg":
         return _required(inputs, "awb_kg")

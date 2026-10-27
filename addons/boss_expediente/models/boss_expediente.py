@@ -178,9 +178,9 @@ class BossExpediente(models.Model):
     volume_m3 = fields.Float("Volume (m³)", digits=(12, 3), tracking=True)
     awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2))
     volume_weight_kg = fields.Float("Volume weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg", store=True,
-                                    help="Air: volume × 167 kg per m³ (IATA 1:6000).")
+                                    help="Volume × factor of the mode: air 167, road 333, sea 1000 kg per m³.")
     chargeable_kg = fields.Float("Chargeable weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg",
-                                 store=True, help="Air: the higher of the gross weight and the volume weight.")
+                                 store=True, help="The higher of the gross weight and the volume weight (both needed).")
     pallets = fields.Integer()
     goods_value = fields.Monetary("Goods value", currency_field="currency_id", tracking=True,
                                   help="Commercial value of the goods, when known (often only after the quotation).")
@@ -398,7 +398,7 @@ class BossExpediente(models.Model):
         self.ensure_one()
         return shipment_quantity(source, [(c.size, c.container_type_id, 1) for c in self.container_ids],
                                  self.gross_kg, self.volume_m3, self.pallets, self.awb_kg or self.chargeable_kg,
-                                 size, ctype)
+                                 size, ctype, chargeable_kg=self.chargeable_kg)
 
     def _boss_inputs(self):
         """Shipment inputs of boss.pricing taken from the file (what really happens), like
@@ -419,6 +419,7 @@ class BossExpediente(models.Model):
             "containers": [{"size": size, "type_id": type_id, "quantity": quantity}
                            for (size, type_id), quantity in containers.items()],
             "gross_kg": self.gross_kg or None, "awb_kg": self.awb_kg or self.chargeable_kg or None,
+            "chargeable_kg": self.chargeable_kg or None,
             "volume_m3": self.volume_m3 or None, "pallets": self.pallets or None,
             "goods_value": self.goods_value or order.boss_goods_value or None,
             "duties_amount": self.duties_amount or order.boss_duties_amount or None, "storage_days": None,

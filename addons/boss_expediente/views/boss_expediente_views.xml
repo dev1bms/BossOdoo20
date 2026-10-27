@@ -273,8 +273,8 @@
                                 <group>
                                     <field name="gross_kg"/>
                                     <field name="volume_m3"/>
-                                    <field name="volume_weight_kg" invisible="transport_mode != 'air'"/>
-                                    <field name="chargeable_kg" invisible="transport_mode != 'air'"/>
+                                    <field name="volume_weight_kg" invisible="not transport_mode or load_type == 'fcl'"/>
+                                    <field name="chargeable_kg" invisible="not transport_mode or load_type == 'fcl'"/>
                                     <field name="awb_kg" invisible="transport_mode != 'air'"/>
                                     <field name="goods_value"/>
                                     <field name="duties_amount"/>

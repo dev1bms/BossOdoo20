@@ -70,7 +70,7 @@ boss20). Contrastada con Odoo 17 en producción (solo lectura: `x_spot` = oferta
 
 | # | Tema | Situación |
 |---|---|---|
-| A1 | Factor de peso tasable **terrestre** (333) y marítimo (1000) generales | Ángel habló solo del aéreo. Odoo 17 usa 333/1000 fijos; P14 decía no suponerlos. Los precios terrestres siguen usando el factor de su documento (IRENEO 333) |
+| A1 | Factor de peso tasable **terrestre** (333) y marítimo (1000) generales | **Resuelta** el 27/10 (mensaje de Ángel en Teams): aéreo 167, terrestre 333, marítimo 1000 kg por m³; peso tasable = el mayor del real y el volumen; los proveedores cobran a BOSS y BOSS cobra al cliente por peso tasable. Implementado (enmienda de ADR-006) |
 | A2 | Tráficos cruzados (X) y nacionales (N) | Existen en Odoo 17 (`x_traficos`: XMA/XMB, NTB…); Odoo 20 solo tiene importación y exportación |
 | A3 | ¿Quién es el ordenante en un expediente de agente? (B17 de Odoo 19, abierta) | Se guarda B/A; validar el tipo de contacto (Agente / Cliente) como Odoo 17 queda pendiente |
 | A4 | Migración de contactos y direcciones de Odoo 17 | Belal: «I will migrate all the users». Hoy hay que crearlos; Odoo propone empresas de internet que no son clientes |
