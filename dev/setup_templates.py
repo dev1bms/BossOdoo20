@@ -39,6 +39,11 @@ for name, codes in TEMPLATES.items():
     template = Template.search([("name", "=", name)], limit=1)
     if not template:
         template = Template.create({"name": name})
+    for t_line in template.sale_order_template_line_ids.filtered(lambda l: l.product_id and l.product_uom_id != l.product_id.uom_id):
+        # the line keeps the unit the service had when it was added (ETX was per file, now per AWB: found in Chrome
+        # on 27/10, its tariff and sale price did not apply): follow the service's unit
+        print("UNIT", t_line.product_id.default_code, t_line.product_uom_id.name, "->", t_line.product_id.uom_id.name)
+        t_line.product_uom_id = t_line.product_id.uom_id
     have = template.sale_order_template_line_ids.product_id
     template.sale_order_template_line_ids = [
         Command.create({"product_id": p.id, "product_uom_qty": 1, "product_uom_id": p.uom_id.id, "sequence": i * 10 - (5 if have else 0)})
