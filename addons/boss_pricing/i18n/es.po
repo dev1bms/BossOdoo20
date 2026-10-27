@@ -7,6 +7,12 @@ msgstr ""
 #. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid " to %s"
+msgstr " hasta %s"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "%(basis)s %(raw)s -> %(qty)s units. "
 msgstr "%(basis)s %(raw)s -> %(qty)s unidades. "
 
@@ -152,6 +158,12 @@ msgstr "(mínimo de %s aplicado a cada día cobrado)"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "(the readings not decided yet give the same amount for this shipment)"
 msgstr "(las lecturas aún sin decidir dan el mismo importe para este envío)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ", applies to %s"
+msgstr ", se aplica a %s"
 
 #. module: boss_pricing
 #. odoo-python
@@ -336,6 +348,11 @@ msgstr "Cualquier modo"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Any port"
 msgstr "Cualquier puerto"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any port abroad"
+msgstr "Cualquier puerto extranjero"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
@@ -1752,6 +1769,7 @@ msgstr ""
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_country_ids
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_direction
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_foreign_port_ids
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_load_type
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_port_ids
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__line_state_ids
@@ -1792,6 +1810,13 @@ msgid ""
 "Origin country of an import or destination country of an export. Empty: any."
 msgstr ""
 "País de origen de una importación o de destino de una exportación. Vacío: cualquiera."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__foreign_port_ids
+msgid ""
+"Origin port of an import or destination port of an export (freight rates are per route, e.g. Shanghai → Valencia). Empty: any."
+msgstr ""
+"Puerto de origen de una importación o de destino de una exportación (los fletes son por ruta, p. ej. Shanghái → Valencia). Vacío: cualquiera."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__document_page
@@ -1874,6 +1899,12 @@ msgid "Port / airport"
 msgstr "Puerto / aeropuerto"
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Port / airport abroad"
+msgstr "Puerto / aeropuerto extranjero"
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_port__canary_islands
 msgid "Port in the Canary Islands (own VAT zone)."
 msgstr "Puerto en Canarias (zona de IVA propia)."
@@ -1889,6 +1920,17 @@ msgstr "Puerto o aeropuerto"
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
 msgid "Ports"
 msgstr "Puertos"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__foreign_port_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_form
+msgid "Ports / airports abroad"
+msgstr "Puertos / aeropuertos extranjeros"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__line_foreign_port_ids
+msgid "Ports / airports abroad of this price"
+msgstr "Puertos / aeropuertos extranjeros de este precio"
 
 #. module: boss_pricing
 #: model:ir.actions.act_window,name:boss_pricing.boss_port_action
