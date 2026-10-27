@@ -1101,6 +1101,20 @@ TASKS = [
                    "Aceptación: Ángel revisa una oferta FCL China → Valencia → Madrid y una exportación Zaragoza → "
                    "Barcelona → Túnez; abiertas R-A1…R-A5 y R-S1."),
          links=[f"{SYS}/odoo/sales/34", f"{DOC}#/oferta-envio"]),
+    dict(code="W15", title="Reunión parte 2: error al confirmar, contenedores, flete semanal por ruta desde la oferta, ordenante y partes",
+         epic="E8", type=T.DEV, sprint="S44", points=5, start=D(2026, 10, 27), due=D(2026, 10, 27),
+         priority=P.CRITICAL, deps=["W14"], hours=8, who="belal", dept="sys", status=S.DONE, done=D(2026, 10, 27),
+         evidence="27/10 en boss20 (ADR-007, docs/reunion-angel-2026-10-27-parte2.md): el error de S00034 era la "
+                  "comprobación de la oferta (cliente sin país → IVA pendiente; ventas sin precio), ahora agrupada por "
+                  "causa; fila de contenedor con valores por defecto descartada por la lista → sin tamaño por defecto; "
+                  "servicios por contenedor toman los contenedores aunque se indiquen después; puerto extranjero en "
+                  "tarifas; flete semanal desde ⊕ (ruta, una semana, histórico); ordenante propuesto como "
+                  "destinatario/expedidor; aviso de proveedor sin precio. check_quote_flow 40/40; recorrido en Chrome "
+                  "con [PRUEBA] Susaeta: contenedor 1×40' → precios por contenedor, aceptación y expediente.",
+         desc=desc("Resultado: una oferta se acepta con un mensaje claro de lo que falta; el flete de la semana se "
+                   "guarda por ruta desde la oferta y los históricos no cambian.",
+                   "Aceptación: Ángel repite su demo (plantilla IMB FOB, 1×40', Confirmar) sin «so much error»."),
+         links=[f"{SYS}/odoo/sales/80", f"{DOC}#/sin-precio"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",
