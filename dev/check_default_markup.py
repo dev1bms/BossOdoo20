@@ -39,8 +39,9 @@ warehouse = Partner.create({"name": "[PRUEBA] Almacén recargo", "parent_id": cu
 accepted = env["sale.order"].search([("state", "=", "sale"), ("boss_pricing_frozen", "=", True)], order="id", limit=1)
 frozen_before = prices(accepted) if accepted else None
 
-# 1. the setting: off, then 20 % -> one rule on the default pricelist
-check("1 nothing active before", 0, len(rules()))
+# 1. the setting: off (whatever boss20 has is switched off inside this transaction, rolled back at the end), then 20 %
+Settings._boss_set_default_markup(0)
+check("1 off: no global rule", 0, len(rules()))
 check("1 setting reads 0 while off", 0.0, Settings._boss_get_default_markup())
 Settings._boss_set_default_markup(20)
 rule = rules()
