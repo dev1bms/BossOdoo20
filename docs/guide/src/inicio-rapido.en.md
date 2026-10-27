@@ -102,11 +102,13 @@ service, choose that supplier in the wizard.
 
 ## 8. Quotation with several services
 
-1. Sales › Orders › Quotations › [[New]] › **Customer** (pricelist and payment term come from the customer).
-2. **Shipment** tab: direction, mode, load type, **Spanish port / airport**, **Country abroad**, **Inland province**,
-   **Carrier**, **Planned date** (picks the tariff version), gross weight, volume, **Chargeable weight (AWB, kg)** for
-   air, **Goods value**, **Containers** (size, type, quantity) for FCL, Incoterm, BOSS handles…
-3. Other Info › **Template** → **Order Lines** tab.
+1. Sales › Orders › Quotations › [[New]] › **Ordered by** (client or agent; pricelist and payment term come from it).
+2. **Shipment** tab › **Template (case)**: fills direction, mode, load type, incoterm, business (BOSS client or agent's
+   client), what BOSS handles and the services (**Order Lines** tab).
+3. **Origin** (left) and **Destination** (right): country, port or airport, pickup / delivery address, **ETD** and
+   **ETA**. The Spanish port, the country abroad, the province (from the address) and the tariff date come from here.
+   Then: **Main carrier**, gross weight, volume (the air chargeable weight uses 167 kg/m³), **Containers** for FCL
+   ([details](#/oferta-envio)).
 4. Cost: **Priced** (tariff), **Manual amount** (type the **Manual cost**, e.g. the agent's freight converted to EUR)
    or the notices of step 10. The ⓘ icon explains each line.
 5. Sale: from the pricelist or typed (step 6). Save; reopen: everything is kept.

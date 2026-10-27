@@ -30,13 +30,19 @@
                 <attribute name="string">Ordered by</attribute>
                 <attribute name="help">Who orders the shipment and is invoiced: a BOSS client, or an agent (a forwarder abroad) for its own client.</attribute>
             </xpath>
-            <xpath expr="//field[@name='commitment_date']" position="attributes">
+            <xpath expr="//label[@for='commitment_date'][1]" position="attributes">
+                <attribute name="string">Final delivery to the client</attribute>
+            </xpath>
+            <xpath expr="//label[@for='commitment_date'][2]" position="attributes">
                 <attribute name="string">Final delivery to the client</attribute>
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="before">
                 <page string="Shipment" name="boss_shipment">
                     <group>
                         <group string="Case" name="boss_case">
+                            <field name="sale_order_template_id" string="Template (case)"
+                                   readonly="state in ('sale', 'cancel')" options="{'no_create': True}"
+                                   help="The template is the case (air import FOB, sea import FCL...): it fills the direction, mode, load type, incoterm, whose client, what BOSS handles and the services."/>
                             <field name="boss_business" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_direction" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_transport_mode" readonly="state in ('sale', 'cancel')"/>

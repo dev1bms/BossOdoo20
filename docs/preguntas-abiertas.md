@@ -40,6 +40,12 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | P16 | Definir los servicios de uso real (unidad, proveedor, documento) y retirar el resto | C | Pendiente de Cristina | Cristina |
 | P34 | Precio cerrado para varios envíos: clientes, duración y cantidades máximas de cada acuerdo | C + B | Pendiente de Cristina; después, el acuerdo en el sistema | Cristina |
 | P13 | Caución (CAU) y seguro (SEG): cada valor como tarifa con su documento | C | Pendiente de Cristina + Ángel | Cristina y Ángel |
+| R-A1 | Factor de peso tasable **terrestre** (333) y marítimo (1000) como regla general (reunión con Ángel 27/10: solo se confirmó el aéreo, 167) | C | Los precios terrestres usan el factor de su documento (IRENEO 333); Odoo 17 aplica 333/1000 fijos | Ángel / Cristina |
+| R-A2 | Tráficos cruzados (X) y nacionales (N) de Odoo 17 (`x_traficos`) | C | Odoo 20 solo tiene importación y exportación | Cristina |
+| R-A3 | Ordenante de un expediente de agente (B17 de Odoo 19): validar tipo de contacto Agente / Cliente como Odoo 17 | C | Se guarda «Negocio de» (B/A) y el código de tráfico; sin validación del tipo de contacto | Cristina |
+| R-A4 | Migración de contactos y direcciones de entrega desde Odoo 17 | C | Se crean a mano (Belal: «I will migrate all the users») | Belal |
+| R-A5 | Fecha clave de un LCL de importación (Odoo 17: fecha de vaciado) | C | En la oferta, la ETA; en el expediente ya existe la fecha de vaciado | Cristina |
+| R-S1 | Caso de las plantillas IAB FOB, IMB FOB, EAB (sentido, modo, carga, incoterm, cliente de BOSS) y lo que gestiona BOSS deducido de sus servicios | C | Cargado como **propuesta** (`dev/setup_templates.py`); se cambia en la plantilla | Cristina |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions
 
