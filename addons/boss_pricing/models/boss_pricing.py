@@ -61,6 +61,7 @@ class BossPricing(models.AbstractModel):
             "storage_end": _("End of the period after its start (exit date and time)"),
             "awb_kg": _("Chargeable weight of the air waybill"), "state_id": _("Province (inland)"),
             "volumetric_factor": _("Volumetric factor of the tariff"),
+            "chargeable_kg": _("Chargeable weight (gross weight and volume)"),
             "base_services": _("Base services of the same supplier"),
             "base_services_currency": _("Base services in the tariff currency"),
             "tariff_use": _("Demo or real customer"),

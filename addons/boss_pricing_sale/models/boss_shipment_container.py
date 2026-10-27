@@ -5,9 +5,11 @@ from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 TEU = {"20": 1, "40": 2, "45": 2}
 
 
-def shipment_quantity(source, containers, gross_kg, volume_m3, pallets, awb_kg, size=False, ctype=False):
+def shipment_quantity(source, containers, gross_kg, volume_m3, pallets, awb_kg, size=False, ctype=False,
+                      chargeable_kg=None):
     """Quantity of a charge basis taken from shipment data (quotation or file), or None when it is entered on the
-    line. containers: [(size, container type, quantity)]. One function for every screen (ADR-003/005)."""
+    line. containers: [(size, container type, quantity)]. One function for every screen (ADR-003/005).
+    chargeable_kg: the shipment's chargeable weight (higher of gross and volume × factor of the mode)."""
     rows = [(s, t, q) for s, t, q in containers if (not size or s == size) and (not ctype or t == ctype)]
     values = {
         "shipment": 1.0,
@@ -19,6 +21,7 @@ def shipment_quantity(source, containers, gross_kg, volume_m3, pallets, awb_kg, 
         "wm": max(gross_kg / 1000, volume_m3),
         "pallets": float(pallets),
         "awb_kg": awb_kg or None,  # empty: the quantity stays the one typed on the line
+        "chargeable_kg": chargeable_kg or None,  # empty (a measure unknown): the quantity stays as typed
     }
     return values.get(source)
 

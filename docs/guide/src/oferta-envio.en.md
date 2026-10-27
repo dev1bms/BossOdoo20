@@ -21,9 +21,12 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
 - **Dates**: ETD (departure from the origin port) and ETA (arrival at the destination). The key date —ETA for an
   import, ETD for an export— is the **tariff date**: it picks the version of each supplier tariff. «Final delivery to
   the client» in the header is something else: delivery at the warehouse, possibly weeks after the ETA.
-- **Air chargeable weight**: the higher of the gross weight and the volume weight (volume × 167 kg/m³). Until there is
-  an air waybill (AWB), prices «per chargeable kg of the AWB» use it and the explanation says «ESTIMATED»; once the AWB
-  weight is entered, it rules.
+- **Real, volume and chargeable weight** (Ángel, 27/10/2026): volume weight = m³ × factor of the mode (**air 167,
+  road 333, sea 1000** kg/m³); chargeable weight = **the higher** of gross and volume weight. Suppliers charge BOSS on
+  the chargeable weight and BOSS charges the customer on it: services «per chargeable kg» take that quantity. Both
+  measures are needed; with one unknown nothing is assumed (weight-based prices say «missing data»). For air, until
+  there is an air waybill (AWB), prices «per chargeable kg of the AWB» use the chargeable weight and the explanation
+  says «ESTIMATED»; once the AWB weight is entered, it rules. A supplier document with its own factor keeps it.
 - **Ports and airports**: worldwide (Odoo 17 list). Sea shipments offer ports; air shipments, airports.
 - **Containers**: [[Añadir una línea]] and **choose the size** (20'/40'/45'): the row only stays once something is
   chosen; then type and quantity. Per-container services take the size and quantity (2 × 40' → quantity 2; per

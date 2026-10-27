@@ -22,9 +22,13 @@ Todo se puede cambiar después.
 - **Fechas**: ETD (salida del puerto de origen) y ETA (llegada al de destino). La fecha clave —ETA en importación, ETD
   en exportación— es la **fecha de tarifa**: elige la versión de cada tarifa de proveedor. La «Entrega final al
   cliente» de la cabecera es otra cosa: la entrega en el almacén, que puede ser semanas después de la ETA.
-- **Peso tasable aéreo**: el mayor del peso bruto y el peso volumen (volumen × 167 kg/m³). Mientras no hay guía aérea
-  (AWB), los precios «por kg tasable de la AWB» lo usan y la explicación dice «ESTIMADO»; al escribir el peso de la
-  AWB, manda ese.
+- **Peso real, peso volumen y peso tasable** (Ángel, 27/10/2026): peso volumen = m³ × factor del modo (**aéreo 167,
+  terrestre 333, marítimo 1000** kg/m³); peso tasable = **el mayor** del bruto y el volumen. Los proveedores cobran a
+  BOSS por peso tasable y BOSS cobra al cliente por peso tasable: los servicios «por kg tasable» toman esa cantidad.
+  Hacen falta las dos medidas; con una desconocida no se supone nada (y los precios por peso dicen «faltan datos»).
+  En aéreo, mientras no hay guía aérea (AWB), los precios «por kg tasable de la AWB» usan el peso tasable y la
+  explicación dice «ESTIMADO»; al escribir el peso de la AWB, manda ese. Un documento de proveedor con su propio factor
+  lo conserva.
 - **Puertos y aeropuertos**: los de todo el mundo (lista de Odoo 17). En marítimo solo se proponen puertos; en aéreo,
   aeropuertos.
 - **Contenedores**: [[Añadir una línea]] y **elija el tamaño** (20'/40'/45'): la fila solo queda cuando se elige algo;

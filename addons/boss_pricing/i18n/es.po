@@ -656,16 +656,16 @@ msgid "Chargeable kg (volumetric factor of the document)"
 msgstr "kg tasable (factor volumétrico del documento)"
 
 #. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_tariff_line.py:0
-msgid "Chargeable kg needs the volumetric factor stated by the document."
-msgstr "El kg tasable necesita el factor volumétrico que indica el documento."
-
-#. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__basis_2__awb_kg
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__basis__awb_kg
 msgid "Chargeable kg of the air waybill (entered)"
 msgstr "kg tasable de la guía aérea (indicado)"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid "Chargeable weight (gross weight and volume)"
+msgstr "Peso tasable (peso bruto y volumen)"
 
 #. module: boss_pricing
 #. odoo-python
@@ -3096,3 +3096,13 @@ msgstr "toda la estancia al tramo alcanzado"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "x %(count)s containers = %(amount)s"
 msgstr "x %(count)s contenedores = %(amount)s"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__volumetric_factor
+msgid ""
+"kg per m³ stated by the supplier document (e.g. 167 air). Empty: the factor "
+"of the shipment's transport mode (air 167, road 333, sea 1000)."
+msgstr ""
+"kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: "
+"el factor del modo de transporte del envío (aéreo 167, terrestre 333, "
+"marítimo 1000)."
