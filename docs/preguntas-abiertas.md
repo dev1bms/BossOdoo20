@@ -88,6 +88,7 @@ con el proveedor estándar de Odoo.
 | Licitación Leroy Merlin 2025/26 (demoras y ocupaciones ONE, Maersk, OOCL, MSC): aprobada hasta el 31/05/2026 | Los envíos de Leroy desde 06/2026 usan las tarifas públicas de la naviera | Condiciones 2026-27 de Leroy |
 | Ocupación MSC: el documento no tiene columna para 40' HC (A5) | 40' HC sale «Sin precio de proveedor» en ocupación | Cristina decide si el 40' HC usa la columna del 40' DV |
 | IRENEO: las zonas MAD y MAD-EXT van por código postal y radio de 30 km; no están cargadas | Entregas en la provincia de Madrid: «Sin precio de proveedor» | IRENEO o Cristina confirman la zona de cada población; luego se cargan (p.2) |
+| ALM de IRENEO (almacén G-5, «Tarifas MAD 2025» p.15): cargado el 27/10 esperando aprobación; el documento no dice si los 5 días libres se descuentan o, superados, se cobra desde el día 1 (cargado como «descontados») | No cotiza hasta aprobarlo; con 10 días la diferencia entre lecturas es el doble | IRENEO o Cristina confirman la lectura; luego se aprueba |
 | Iberia (handling) y otros handlers: sin documento de tarifa | Qatar en MAD propone Iberia: sin precio hasta cambiar a WFS | Documento de tarifas de Iberia |
 | Despacho aéreo (Aducex, Ramos Vila): solo hay respuesta de Cristina para FCL | FAD aéreo sin precio | Tarifa o confirmación del agente de aduanas |
 | Agente en origen (SINOTECH), transportistas de Madrid (Barbican), arrastre MSC | Coste aceptado sin tarifa, con motivo, por un responsable de ventas | Cotización de cada envío o documento de tarifas |
