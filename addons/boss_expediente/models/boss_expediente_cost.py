@@ -295,7 +295,9 @@ class BossExpedienteCost(models.Model):
             else:
                 reference = max(expected, ordered)
                 po_to_review = bool(confirmed) and not currency.is_zero(expected - ordered)
-            unknown = (not need.closed and not confirmed and not billed
+            # an order confirmed at 0 does not make an unknown cost known: «Create RFQs» orders it at 0 and the margin
+            # was then called final with the cost still missing (found in Chrome on boss20, E260017, 27/10/2026, D-13)
+            unknown = (not need.closed and (not confirmed or currency.is_zero(ordered)) and not billed
                        and need.currency_id.is_zero(need.expected_unit_cost) and need.accepted_cost_kind != "zero")
             variance = billed - reference if need.state in ("billed", "closed") and billed else 0.0
             need.update({
