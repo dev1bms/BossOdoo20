@@ -1,6 +1,6 @@
 Recorrido probado en boss20 el 27/10/2026 con dos casos reales: la importación aérea de **COFITEL, S.A.** (oferta
 [S00032](https://system.bosscontinental.com/odoo/sales/32), aceptada, expediente E260016) y la importación FCL de
-**AGUILERA EXTINCION, S.L.** con un 20' DV y un 40' HC (oferta [S00033](https://system.bosscontinental.com/odoo/sales/33)).
+**AGUILERA EXTINCION, S.L.** con un 20' DV y un 40' HC (oferta [S00033](https://system.bosscontinental.com/odoo/sales/33), aceptada, expediente E260017).
 Los importes de proveedor y de venta son confidenciales: no están en esta guía, sino dentro de Odoo (tarifas,
 lista de precios y la nota interna de cada oferta, que dice de dónde sale cada cifra).
 
@@ -144,4 +144,4 @@ Después de aceptar, un cambio de precio va por [[Recotizar]] con motivo (queda 
 
 Excepciones reales que muestra la prueba: despacho aéreo (solo hay tarifa FCL de los agentes), entrega en Madrid
 (sin tarifa de Barbican; la zona de IRENEO para 28140 está sin confirmar), recogida del agente en origen, arrastre
-de MSC y venta del FuelEU en S00033 (decisión comercial pendiente).
+de MSC y venta del FuelEU (en S00033 va «Sin cargo» como en la factura real; decisión comercial pendiente).

@@ -90,7 +90,7 @@ con el proveedor estándar de Odoo.
 | Iberia (handling) y otros handlers: sin documento de tarifa | Qatar en MAD propone Iberia: sin precio hasta cambiar a WFS | Documento de tarifas de Iberia |
 | Despacho aéreo (Aducex, Ramos Vila): solo hay respuesta de Cristina para FCL | FAD aéreo sin precio | Tarifa o confirmación del agente de aduanas |
 | Agente en origen (SINOTECH), transportistas de Madrid (Barbican), arrastre MSC | Coste aceptado sin tarifa, con motivo, por un responsable de ventas | Cotización de cada envío o documento de tarifas |
-| Venta del FuelEU a AGUILERA (la factura real no lo cobra) | S00033 queda en presupuesto con «Falta precio de venta» | Decisión comercial |
+| Venta del FuelEU (la factura real de AGUILERA no lo cobra) | En S00033 (aceptada → E260017) va «Sin cargo» para reproducir el caso real; su coste cuenta en el margen | Decisión comercial: repercutirlo o no |
 
 Observaciones para decidir (Cristina): tras una recotización, «Venta aceptada» y «Margen en la aceptación» del expediente muestran los precios recotizados (E260015: 3.005 → 2.930 € y 545 → 470 €); los precios aceptados originales siguen en el «Historial de precios». ¿Deben quedarse congelados los de la aceptación? Y en «Recotizar», «Recalcular el coste» viene marcado en todas las líneas: para cambiar solo un precio hay que desmarcarlas.
 

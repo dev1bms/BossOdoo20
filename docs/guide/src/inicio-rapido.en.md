@@ -1,6 +1,6 @@
 Walk-through tested on boss20 on 27/10/2026 with two real cases: the air import of **COFITEL, S.A.** (quotation
 [S00032](https://system.bosscontinental.com/odoo/sales/32), accepted, file E260016) and the FCL import of
-**AGUILERA EXTINCION, S.L.** with one 20' DV and one 40' HC (quotation [S00033](https://system.bosscontinental.com/odoo/sales/33)).
+**AGUILERA EXTINCION, S.L.** with one 20' DV and one 40' HC (quotation [S00033](https://system.bosscontinental.com/odoo/sales/33), accepted, file E260017).
 Supplier and sale amounts are confidential: they are not in this guide but inside Odoo (tariffs, pricelist and the
 internal note of each quotation, which says where every figure comes from).
 
@@ -140,4 +140,4 @@ After acceptance, a price change goes through [[Re-price]] with a reason (kept i
 
 Real exceptions shown by the test: air customs clearance (brokers have FCL tariffs only), delivery in Madrid (no
 Barbican tariff; IRENEO's zone for 28140 not confirmed), the origin agent's pickup, MSC haulage, and the FuelEU sale
-in S00033 (pending business decision).
+in S00033 («Free of charge» as in the real invoice; pending business decision).
