@@ -1,5 +1,6 @@
 """The suppliers of the tariffs loaded from real documents were created as sample partners («MSC [MUESTRA]»…). They are
-the real companies BOSS buys from: give them their legal data from Odoo 17 production (read on 27/10/2026, partner id in
+the real companies BOSS buys from: give them their legal data from Odoo 17 production (and create the agents and
+haulier of the reference cases) (read on 27/10/2026, partner id in
 «ref» as O17:<id>), keeping the same records so tariffs, purchases and bills stay linked. Idempotent.
     dev/server_shell.sh setup_real_suppliers.py"""
 from odoo import Command
@@ -22,12 +23,20 @@ SUPPLIERS = [
     # Odoo 17 keeps the German VAT, the Hamburg address and a Spanish zip on the Spanish company name: copied as it is.
     ("Hapag-Lloyd [MUESTRA]", 23276, "HAPAG-LLOYD, S.L.", "DE813960018", "Ballindamm 25, 20095", "08002", "Hamburg", de,
      ["boss_expediente.role_carrier"]),
+    # suppliers of the reference cases (Cofitel E260167/E261152, Aguilera E260883), created if missing
+    (None, 38861, "SINOTECH LOGISTICS CO., LTD", False, "Floor 27, Block A, World Trade Plaza, Fuhong Rd, Futian District",
+     False, "Shenzhen", env.ref("base.cn"), ["boss_expediente.role_agent"]),
+    (None, 38815, "PORTEVER SHIPPING (SHENZHEN) LTD", False, "Rm 501-502 S/F Shenhua Commercial Building 2018 Jiabin Road",
+     False, "Shenzhen", env.ref("base.cn"), ["boss_expediente.role_agent"]),
+    (None, 23007, "BARBICAN LOGISTIC S.L.", "ESB78297637", "Pinar de Somosaguas 89 BOS Of. 1-8", "28223",
+     "Pozuelo de Alarcón", es, ["boss_expediente.role_haulier"]),
 ]
 for sample, o17, name, vat, street, zip_code, city, country, roles in SUPPLIERS:
-    partner = Partner.search([("ref", "=", f"O17:{o17}")], limit=1) or Partner.search([("name", "=", sample)], limit=1)
-    if not partner:
+    partner = (Partner.search([("ref", "=", f"O17:{o17}")], limit=1) or Partner.search([("name", "=", sample or name)], limit=1))
+    if not partner and sample:
         print("NOT FOUND", sample)
         continue
+    partner = partner or Partner.create({"name": name})
     partner.write({"name": name, "ref": f"O17:{o17}", "vat": vat, "street": street, "zip": zip_code, "city": city,
                    "country_id": country.id, "is_company": True, "boss_is_supplier": True,
                    "boss_role_ids": [Command.link(role(r).id) for r in roles]})
