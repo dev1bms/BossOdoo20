@@ -34,6 +34,7 @@ SHIPMENT_DEPENDS = (
     "order_id.partner_id", "order_id.boss_direction", "order_id.boss_transport_mode", "order_id.boss_load_type",
     "order_id.boss_carrier_id", "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_planned_date",
     "order_id.boss_inland_state_id", "order_id.boss_awb_kg", "order_id.boss_chargeable_kg",
+    "order_id.boss_origin_port_id", "order_id.boss_destination_port_id",
     "order_id.boss_container_ids.size", "order_id.boss_container_ids.container_type_id",
     "order_id.boss_container_ids.quantity", "order_id.boss_gross_kg", "order_id.boss_volume_m3",
     "order_id.boss_pallets", "order_id.boss_goods_value", "order_id.boss_duties_amount",
@@ -561,11 +562,30 @@ class SaleOrderLine(models.Model):
         return self._boss_dialog(self.env._("Pricing of %s", self.product_id.display_name), "sale.order.line",
                                  res_id=self.id, views=[(view.id, "form")])
 
+    @api.onchange("boss_supplier_id")
+    def _onchange_boss_supplier_id(self):
+        """A supplier chosen for a service it has no price for (WFS on an ocean freight...): say so at once; the
+        line will show «no supplier price» until a tariff of that supplier prices it."""
+        if not self.boss_supplier_id or not self.product_id or self.boss_execution == "boss":
+            return
+        if self.product_id.boss_pricing_mode not in ("tariff", "manual"):
+            return
+        has_price = self.env["boss.tariff.line"].search_count([
+            ("product_id", "=", self.product_id.id), ("tariff_id.partner_id", "=", self.boss_supplier_id.id),
+            ("tariff_id.active", "=", True)])
+        if not has_price:
+            return {"warning": {
+                "title": self.env._("No price of this supplier for this service"),
+                "message": self.env._(
+                    "%(supplier)s has no supplier price for %(service)s (no tariff at all). The line will show «no "
+                    "supplier price» until one is entered: choose the supplier that performs this service, or add "
+                    "its price.", supplier=self.boss_supplier_id.name, service=self.product_id.display_name)}}
+
     def action_boss_add_supplier_price(self):
         """No supplier price: record it in a supplier tariff, pre-filled from this quotation. Simple prices
         use a short form; brackets, percentages and time prices open the full tariff form."""
         self.ensure_one()
-        if self.product_id.boss_cost_method == "per_unit":
+        if self.product_id.boss_cost_method in ("per_unit", "manual"):
             return self._boss_dialog(self.env._("Add supplier price"), "boss.supplier.price.wizard",
                                      views=[(False, "form")], context={"default_sale_line_id": self.id})
         order = self.order_id

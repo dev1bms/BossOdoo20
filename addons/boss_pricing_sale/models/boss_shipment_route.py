@@ -167,6 +167,28 @@ class BossShipmentRoute(models.AbstractModel):
             record.boss_volume_weight_kg, record.boss_chargeable_kg = chargeable_kg(
                 record.boss_transport_mode, record.boss_gross_kg, record.boss_volume_m3)
 
+    def _boss_foreign_port(self):
+        """Port or airport abroad for pricing: the origin of an import, the destination of an export."""
+        self.ensure_one()
+        side = spanish_side(self.boss_direction)
+        if side == "destination":
+            return self.boss_origin_port_id
+        if side == "origin":
+            return self.boss_destination_port_id
+        return self.env["boss.port"]
+
+    def _boss_apply_orderer_party(self):
+        """BOSS business: the party who orders (partner_id of the quotation or opportunity) is the consignee of an
+        import or the shipper of an export (Ángel, 27/10/2026). Only fills an empty field; an agent's business never
+        copies the agent. Called by the onchange of the models that use this route."""
+        if self.boss_business != "boss" or not self.partner_id:
+            return
+        party = self.partner_id.commercial_partner_id
+        if self.boss_direction == "import" and not self.boss_consignee_id:
+            self.boss_consignee_id = party
+        elif self.boss_direction == "export" and not self.boss_shipper_id:
+            self.boss_shipper_id = party
+
     def _boss_awb_weight(self):
         """AWB weight for pricing: the one written on the AWB, else the estimated chargeable weight (air)."""
         self.ensure_one()

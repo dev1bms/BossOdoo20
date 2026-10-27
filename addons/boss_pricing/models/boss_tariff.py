@@ -3,8 +3,8 @@ from odoo.exceptions import UserError, ValidationError
 
 # ADR-002: the scope of a tariff = conditions shared by every line. Each one maps to a shipment
 # input of the same name in boss.pricing (one place, one meaning).
-SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_ids", "country_ids",
-                "state_ids", "customer_id")
+SCOPE_FIELDS = ("direction", "transport_mode", "load_type", "carrier_id", "port_ids", "foreign_port_ids",
+                "country_ids", "state_ids", "customer_id")
 # Approved = evidence: these fields never change; a change is a new version.
 GOVERNED_FIELDS = SCOPE_FIELDS + (
     "partner_id", "currency_id", "valid_from", "valid_to", "document", "document_reference", "is_demo",
@@ -59,6 +59,10 @@ class BossTariff(models.Model):
     carrier_id = fields.Many2one("res.partner", "Carrier", tracking=True,
                                  help="Shipping line, airline or haulier the prices apply to. Empty: any.")
     port_ids = fields.Many2many("boss.port", string="Ports", help="Empty: any port.")
+    foreign_port_ids = fields.Many2many(
+        "boss.port", "boss_tariff_foreign_port_rel", "tariff_id", "port_id", "Ports / airports abroad",
+        help="Origin port of an import or destination port of an export (freight rates are per route, e.g. "
+        "Shanghai → Valencia). Empty: any.")
     country_ids = fields.Many2many(
         "res.country", string="Countries abroad",
         help="Origin country of an import or destination country of an export. Empty: any.")
@@ -91,8 +95,8 @@ class BossTariff(models.Model):
             parts = [label("direction") or _("Import/export"), label("transport_mode") or _("any mode")]
             if tariff.load_type:
                 parts.append(label("load_type"))
-            for names in (tariff.port_ids.mapped("code"), tariff.country_ids.mapped("name"),
-                          tariff.state_ids.mapped("name")):
+            for names in (tariff.port_ids.mapped("code"), tariff.foreign_port_ids.mapped("code"),
+                          tariff.country_ids.mapped("name"), tariff.state_ids.mapped("name")):
                 if names:
                     parts.append(", ".join(names))
             if tariff.carrier_id:
@@ -197,8 +201,8 @@ class BossTariff(models.Model):
     @api.depends("line_ids", "line_ids.product_id", "line_ids.uom_id", "line_ids.container_size",
                  "line_ids.container_type_ids", "line_ids.ws_is_empty", "document", "document_reference",
                  "line_ids.line_direction", "line_ids.line_transport_mode", "line_ids.line_load_type",
-                 "line_ids.line_port_ids", "line_ids.line_country_ids", "line_ids.line_state_ids",
-                 "scope_confirmed", *SCOPE_FIELDS)
+                 "line_ids.line_port_ids", "line_ids.line_foreign_port_ids", "line_ids.line_country_ids",
+                 "line_ids.line_state_ids", "scope_confirmed", *SCOPE_FIELDS)
     @api.depends_context("lang")
     def _compute_ws_checklist(self):
         _ = self.env._
@@ -252,6 +256,8 @@ class BossTariff(models.Model):
                 conditions[name] = {self[name].id}
         if self.port_ids:
             conditions["port_id"] = set(self.port_ids.ids)
+        if self.foreign_port_ids:
+            conditions["foreign_port_id"] = set(self.foreign_port_ids.ids)
         if self.country_ids:
             conditions["country_id"] = set(self.country_ids.ids)
         if self.state_ids:

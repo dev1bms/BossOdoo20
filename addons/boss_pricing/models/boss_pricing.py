@@ -52,6 +52,7 @@ class BossPricing(models.AbstractModel):
         return {
             "direction": _("Direction"), "transport_mode": _("Transport mode"), "load_type": _("Load type"),
             "carrier_id": _("Carrier"), "port_id": _("Spanish port / airport"), "customer_id": _("Customer"),
+            "foreign_port_id": _("Port / airport abroad"),
             "country_id": _("Country abroad"), "tariff_date": _("Planned date (ETA import / ETD export)"),
             "quantity": _("Quantity"), "containers": _("Containers"), "container_size": _("Container size"),
             "container_type_id": _("Container type"), "gross_kg": _("Gross weight"), "volume_m3": _("Volume"),
@@ -90,9 +91,7 @@ class BossPricing(models.AbstractModel):
         mode = product.boss_pricing_mode
         if mode == "own":
             return CostResult("ok", line=Line, candidates=Line)
-        if mode == "manual":
-            return CostResult("manual", line=Line, candidates=Line)
-        if mode != "tariff":
+        if mode not in ("tariff", "manual"):
             return CostResult("not_ready", line=Line, candidates=Line)
         # The method belongs to each supplier price line (one service, different suppliers, different methods).
 
@@ -103,6 +102,10 @@ class BossPricing(models.AbstractModel):
         currencies = lines.tariff_id.currency_id
         decimals = currencies[:1].decimal_places if len(currencies) == 1 else 2
         res = engine.price([ln._to_engine_rule(simulate) for ln in lines], inputs, day, decimals)
+        if mode == "manual" and res.status.value != "ok":
+            # Manual amount (freight offer...): a person types the cost of each shipment, unless an approved
+            # supplier price applies to this route (weekly freight rate entered from a quotation, ADR-007).
+            return CostResult("manual", line=Line, candidates=Line)
         line = Line.browse(res.rule.id) if res.rule else Line
         if (res.status.value == "no_tariff" and inputs.get("tariff_use") != "demo"
                 and lines.filtered("tariff_id.is_demo")):
@@ -247,6 +250,10 @@ class BossPricing(models.AbstractModel):
             source = _("Source: %(tariff)s v%(version)s (%(supplier)s), valid from %(start)s",
                        tariff=tariff.name, version=tariff.version, supplier=tariff.partner_id.name,
                        start=format_date(self.env, tariff.valid_from))
+            if tariff.valid_to:
+                source += _(" to %s", format_date(self.env, tariff.valid_to))
+            if line.scope_display:
+                source += _(", applies to %s", line.scope_display)
             if tariff.document_reference or line.document_page:
                 source += _(", document %(doc)s page %(page)s",
                             doc=tariff.document_reference or "-", page=line.document_page or "-")

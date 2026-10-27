@@ -24,7 +24,9 @@
                     <span><field name="boss_scope_destination_customs" nolabel="1" readonly="state in ('sale', 'cancel')"/> Customs destination</span>
                     <span><field name="boss_scope_delivery" nolabel="1" readonly="state in ('sale', 'cancel')"/> Delivery</span>
                 </div>
-                <field name="boss_expediente_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
+                <field name="boss_expediente_id" string="Link to an existing file" readonly="state in ('sale', 'cancel')"
+                       options="{'no_create': True}" placeholder="None: acceptance opens the file"
+                       help="Normally empty: accepting the quotation opens its shipment file. Choose a file only to add a service sold later, or to link a file opened before the quotation (pre-alert)."/>
             </xpath>
             <xpath expr="//group[@name='boss_cargo']/field[@name='boss_gross_kg']" position="before">
                 <field name="boss_goods_description" readonly="state in ('sale', 'cancel')"/>

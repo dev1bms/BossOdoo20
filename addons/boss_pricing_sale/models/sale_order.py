@@ -45,6 +45,7 @@ class SaleOrder(models.Model):
             "load_type": self.boss_load_type,
             "carrier_id": self.boss_carrier_id.id,
             "port_id": self.boss_port_id.id,
+            "foreign_port_id": self._boss_foreign_port().id,
             "country_id": self.boss_country_id.id,
             "state_id": self.boss_inland_state_id.id,
             "customer_id": self.partner_id.commercial_partner_id.id,
@@ -122,6 +123,11 @@ class SaleOrder(models.Model):
             if template[template_field]:
                 self[order_field] = template[template_field]
         self._onchange_boss_direction_spain()
+        self._boss_apply_orderer_party()
+
+    @api.onchange("partner_id", "boss_direction", "boss_business")
+    def _onchange_boss_orderer_party(self):
+        self._boss_apply_orderer_party()
 
     def _boss_merge_template(self, existing):
         _ = self.env._
@@ -164,7 +170,7 @@ class SaleOrder(models.Model):
             self.boss_volume_m3, self.boss_pallets, self._boss_awb_weight(), size, ctype)
 
     @api.depends("order_line.boss_cost_status", "order_line.boss_sale_status", "order_line.boss_vat_status",
-                 "order_line.boss_manual_cost")
+                 "order_line.boss_manual_cost", "partner_id.commercial_partner_id.country_id")
     def _compute_boss_pricing_alert(self):
         line_model = self.env["sale.order.line"]
         cost_labels = dict(line_model._fields["boss_cost_status"]._description_selection(self.env))
@@ -181,24 +187,49 @@ class SaleOrder(models.Model):
                     ("boss_sale_status", "missing", self.env._("Sale price missing")),
                     ("boss_vat_status", "pending", self.env._("VAT pending"))):
                 count = len(lines.filtered(lambda l, f=field_name, v=value: l[f] == v))
+                if count and field_name == "boss_vat_status" and order._boss_customer_zone_missing():
+                    label = self.env._("VAT pending (customer without country: set it on the contact)")
                 if count:
                     issues.append(f"{label}: {count}")
             order.boss_pricing_alert = " · ".join(issues) if issues else False
 
+    def _boss_customer_zone_missing(self):
+        """The customer's VAT zone is unknown: no country on the contact (or a province Odoo cannot place)."""
+        self.ensure_one()
+        customer = self.partner_id.commercial_partner_id
+        return bool(customer) and not customer.country_id
+
+    def _boss_readiness_issues(self):
+        """What stops this quotation from being sent or accepted, grouped by cause (not one line per service):
+        the customer without country, the sale prices missing, the VAT treatments pending."""
+        self.ensure_one()
+        _ = self.env._
+        lines = self.order_line.filtered(lambda l: l.product_id.boss_pricing_mode and not l.display_type)
+        code = lambda l: l.product_id.default_code or l.product_id.display_name  # noqa: E731
+        issues = []
+        missing_sale = lines.filtered(lambda l: l.boss_sale_status == "missing")
+        if missing_sale:
+            issues.append(_("Sale price missing on %(count)s services: %(codes)s. Type it on the line or set it in "
+                            "the customer's pricelist.", count=len(missing_sale),
+                            codes=", ".join(missing_sale.mapped(code))))
+        pending_vat = lines.filtered(lambda l: l.boss_vat_status == "pending")
+        if pending_vat and self._boss_customer_zone_missing():
+            issues.append(_("VAT pending on %(count)s services because the customer «%(customer)s» has no country: "
+                            "set the country (and tax ID) on the contact, then the VAT follows.",
+                            count=len(pending_vat), customer=self.partner_id.commercial_partner_id.name))
+        elif pending_vat:
+            issues.append(_("VAT pending on %(count)s services:\n%(details)s", count=len(pending_vat),
+                            details="\n".join(f"- {code(l)}: {l.boss_vat_trace or _('VAT pending')}"
+                                               for l in pending_vat)))
+        return issues
+
     def _boss_check_ready(self):
         """A quotation is not sent or accepted with an undecided VAT treatment or a missing sale price."""
         for order in self:
-            lines = order.order_line.filtered(lambda l: l.product_id.boss_pricing_mode and not l.display_type)
-            blocking = lines.filtered(lambda l: l.boss_vat_status == "pending" or l.boss_sale_status == "missing")
-            if blocking:
-                details = "\n".join(
-                    f"- {line.product_id.display_name}: "
-                    + ", ".join(filter(None, (
-                        line.boss_sale_status == "missing" and self.env._("sale price missing"),
-                        line.boss_vat_status == "pending" and (line.boss_vat_trace or self.env._("VAT pending")))))
-                    for line in blocking)
-                raise UserError(self.env._("%(order)s is not ready to send or accept:\n%(details)s",
-                                           order=order.name, details=details))
+            issues = order._boss_readiness_issues()
+            if issues:
+                raise UserError(self.env._("%(order)s is not ready to send or accept.\n\n%(details)s",
+                                           order=order.name, details="\n\n".join(issues)))
 
     def action_quotation_send(self):
         self._boss_check_ready()
