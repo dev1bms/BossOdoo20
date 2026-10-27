@@ -1017,8 +1017,8 @@ msgstr "Eventos"
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__cost_complete
-msgid "Every external cost is billed or closed: the margin is final."
-msgstr "Todo coste externo está facturado o cerrado: el margen es definitivo."
+msgid "Every external cost is billed or closed."
+msgstr "Todo coste externo está facturado o cerrado."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_sale_order__boss_expediente_ids
@@ -1158,8 +1158,10 @@ msgstr "Expedientes de %s"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "Final margin %(margin)s = %(sale)s - actual cost %(actual)s"
-msgstr "Margen final %(margin)s = %(sale)s - coste real %(actual)s"
+msgid ""
+"Final margin %(margin)s = invoiced (credit notes deducted) %(invoiced)s - actual cost %(actual)s"
+msgstr ""
+"Margen final %(margin)s = facturado (abonos descontados) %(invoiced)s - coste real %(actual)s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_margin_final
@@ -1212,10 +1214,38 @@ msgstr ""
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Forecast margin %(margin)s = %(sale)s - %(cost)s. NOT FINAL:"
+msgstr "Margen previsto %(margin)s = %(sale)s - %(cost)s. NO DEFINITIVO:"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "   %s services not billed yet or with unknown cost"
+msgstr "   %s servicios sin facturar por el proveedor o con coste desconocido"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid ""
-"Forecast margin %(margin)s = %(sale)s - %(cost)s. NOT FINAL: %(n)s services not billed yet or with unknown cost."
+"   %(todo)s of the agreed sale not invoiced (invoiced %(invoiced)s, credit notes deducted): invoice it, or re-price "
+"the service if it will not be invoiced"
 msgstr ""
-"Margen previsto %(margin)s = %(sale)s - %(cost)s. NO DEFINITIVO: %(n)s servicios sin facturar o con coste desconocido."
+"   %(todo)s de la venta acordada sin facturar (facturado %(invoiced)s, abonos descontados): factúralo, o "
+"«Recotizar» el servicio si no se va a facturar"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__margin_final
+msgid "Margin final"
+msgstr "Margen definitivo"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__margin_final
+msgid ""
+"Costs complete and nothing left to invoice: the margin is final. A credited service stays to invoice until it is "
+"invoiced again or re-priced (Re-price)."
+msgstr ""
+"Costes completos y nada por facturar: el margen es definitivo. Un servicio abonado sigue por facturar hasta que se "
+"vuelve a facturar o se recotiza («Recotizar»)."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_margin_forecast
@@ -1782,9 +1812,11 @@ msgstr ""
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_margin_final
 msgid ""
-"Only when every external cost is billed or closed: agreed sale minus actual cost."
+"Only when every external cost is billed or closed and the agreed sale is invoiced: invoiced (credit notes deducted) "
+"minus actual cost."
 msgstr ""
-"Solo cuando todo coste externo está facturado o cerrado: venta acordada menos coste real."
+"Solo cuando todo coste externo está facturado o cerrado y la venta acordada está facturada: facturado (abonos "
+"descontados) menos coste real."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__open

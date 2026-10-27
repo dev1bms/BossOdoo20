@@ -131,9 +131,10 @@
                                 </group>
                                 <group string="Margin">
                                     <field name="amount_margin_accepted"/>
-                                    <field name="amount_margin_forecast" invisible="cost_complete"/>
-                                    <field name="amount_margin_final" invisible="not cost_complete"/>
+                                    <field name="amount_margin_forecast" invisible="margin_final"/>
+                                    <field name="amount_margin_final" invisible="not margin_final"/>
                                     <field name="cost_complete"/>
+                                    <field name="margin_final"/>
                                 </group>
                                 <group string="Differences with the quotation" invisible="not quote_difference">
                                     <field name="quote_difference" nolabel="1" colspan="2"/>

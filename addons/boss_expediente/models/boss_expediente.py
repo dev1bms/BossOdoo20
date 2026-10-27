@@ -247,7 +247,8 @@ class BossExpediente(models.Model):
         "work (staff, office) is not a cost here: this is not the net profit.")
     amount_margin_final = fields.Monetary(
         "Final margin after external costs", compute="_compute_amounts", compute_sudo=True, groups=MARGIN_GROUPS,
-        help="Only when every external cost is billed or closed: agreed sale minus actual cost.")
+        help="Only when every external cost is billed or closed and the agreed sale is invoiced: invoiced (credit "
+        "notes deducted) minus actual cost.")
     amount_invoiced = fields.Monetary("Invoiced", compute="_compute_amounts", compute_sudo=True, groups=SALE_GROUPS,
                                       help="Posted customer invoices minus credit notes, untaxed.")
     amount_to_invoice = fields.Monetary("To invoice", compute="_compute_amounts", compute_sudo=True,
@@ -263,7 +264,10 @@ class BossExpediente(models.Model):
     amount_draft_bills = fields.Monetary("Draft vendor bills (not counted)", compute="_compute_amounts",
                                          compute_sudo=True, groups=COST_GROUPS)
     cost_complete = fields.Boolean("Costs complete", compute="_compute_amounts", compute_sudo=True,
-                                   help="Every external cost is billed or closed: the margin is final.")
+                                   help="Every external cost is billed or closed.")
+    margin_final = fields.Boolean("Margin final", compute="_compute_amounts", compute_sudo=True,
+                                  help="Costs complete and nothing left to invoice: the margin is final. A credited "
+                                  "service stays to invoice until it is invoiced again or re-priced (Re-price).")
     profit_explanation = fields.Text("Where the figures come from", compute="_compute_amounts", compute_sudo=True,
                                      groups=MARGIN_GROUPS)
     completeness = fields.Text("To do", compute="_compute_amounts", compute_sudo=True)
@@ -620,6 +624,8 @@ class BossExpediente(models.Model):
                 (invoices | bills).filtered(lambda m: m.state == "posted") & bills
             draft_invoices = invoices.filtered(lambda m: m.state == "draft")
             draft_bills = bills.filtered(lambda m: m.state == "draft")
+            # final only when the sale side is settled too: a credit note leaves its service to invoice (D-8)
+            final = complete and float_compare(amount_sale - invoiced, 0.0, precision_rounding=currency.rounding) <= 0
             file.update({
                 "amount_sale": amount_sale, "amount_sale_accepted": accepted_sale, "amount_sale_added": amount_added,
                 "amount_sale_own": own, "amount_on_behalf": on_behalf,
@@ -628,7 +634,7 @@ class BossExpediente(models.Model):
                 "amount_cost_forecast": actual + pending,
                 "amount_margin_accepted": accepted_sale - accepted_cost,
                 "amount_margin_forecast": amount_sale - actual - pending,
-                "amount_margin_final": amount_sale - actual if complete else 0.0,
+                "amount_margin_final": invoiced - actual if final else 0.0,
                 "amount_invoiced": invoiced, "amount_to_invoice": amount_sale - invoiced,
                 "amount_collected": sum(m.amount_total_signed - m.amount_residual_signed for m in posted_invoices),
                 "amount_paid": -sum(m.amount_total_signed - m.amount_residual_signed for m in posted_bills),
@@ -636,7 +642,7 @@ class BossExpediente(models.Model):
                 "amount_draft_rfqs": sum(company_amount(p.amount_untaxed, p.currency_id, p.date_order)
                                          for p in draft_rfqs),
                 "amount_draft_bills": -sum(draft_bills.mapped("amount_untaxed_signed")),
-                "cost_complete": complete,
+                "cost_complete": complete, "margin_final": final,
             })
 
             # Where each figure comes from (the summary must be checkable by hand).
@@ -667,14 +673,21 @@ class BossExpediente(models.Model):
                 rows.append(_("   purchase lines without file service: %s", money(sum(
                     max(company_amount(l.price_subtotal, l.currency_id, l.order_id.date_order)
                         - billed_by_line.get(l.id, 0.0), 0.0) for l in loose))))
-            if complete:
-                rows.append(_("Final margin %(margin)s = %(sale)s - actual cost %(actual)s",
-                              margin=money(amount_sale - actual), sale=money(amount_sale), actual=money(actual)))
+            if final:
+                rows.append(_("Final margin %(margin)s = invoiced (credit notes deducted) %(invoiced)s - actual cost "
+                              "%(actual)s", margin=money(invoiced - actual), invoiced=money(invoiced),
+                              actual=money(actual)))
             else:
-                rows.append(_("Forecast margin %(margin)s = %(sale)s - %(cost)s. NOT FINAL: %(n)s services not billed "
-                              "yet or with unknown cost.", margin=money(amount_sale - actual - pending),
-                              sale=money(amount_sale), cost=money(actual + pending),
-                              n=len(needs.filtered(lambda n: not n.closed and n.state != "billed"))))
+                rows.append(_("Forecast margin %(margin)s = %(sale)s - %(cost)s. NOT FINAL:",
+                              margin=money(amount_sale - actual - pending), sale=money(amount_sale),
+                              cost=money(actual + pending)))
+                if not complete:
+                    rows.append(_("   %s services not billed yet or with unknown cost",
+                                  len(needs.filtered(lambda n: not n.closed and n.state != "billed"))))
+                if float_compare(amount_sale - invoiced, 0.0, precision_rounding=currency.rounding) > 0:
+                    rows.append(_("   %(todo)s of the agreed sale not invoiced (invoiced %(invoiced)s, credit notes "
+                                  "deducted): invoice it, or re-price the service if it will not be invoiced",
+                                  todo=money(amount_sale - invoiced), invoiced=money(invoiced)))
             rows.append(_("Not counted in the figures: draft customer invoices %(inv)s, RFQs not confirmed %(rfq)s, "
                           "draft vendor bills %(bills)s.", inv=money(file.amount_draft_invoices),
                           rfq=money(file.amount_draft_rfqs), bills=money(file.amount_draft_bills)))

@@ -25,9 +25,10 @@ EN_NAMES = dict(zip(TEMPLATES, [
     "[DEMO] IMB FOB · Sea import FCL · standard services (reference S00009 [DEMO] and MSC 2026; Cristina confirms)",
     "[DEMO] EAB · Air export · standard services (reference WFS export tariff; Cristina confirms)",
 ]))
-NOTE = ("Plantilla de servicios que aplican SIEMPRE en este caso. Los servicios que aplican A VECES (almacenaje ALM, "
-        "inspecciones, seguro, caución, quebranto, extras) se añaden en la oferta con «Añadir servicios». Lista "
-        "pendiente de confirmación por Cristina (tarea BOSS20-TP03).")
+# The template «note» is Odoo's «Terms and conditions»: it is copied to the quotation and to the customer invoices, so
+# it holds nothing internal (found in Chrome on 27/10, D-7: the internal note of the first version was printed on
+# INV/2026/00002 and RINV/2026/00001). The internal explanation lives in this docstring and in the guide.
+OLD_NOTE = "Plantilla de servicios que aplican SIEMPRE"
 made = {}
 OLD = {
     "[DEMO] IAB FOB · Importación aérea FOB · servicios estándar (oferta Cofitel 02/2026; Cristina confirma)":
@@ -46,13 +47,15 @@ for name, codes in TEMPLATES.items():
     assert all(products), [c for c, p in zip(codes, products) if not p]
     template = Template.search([("name", "=", name)], limit=1)
     if not template:
-        template = Template.create({"name": name, "note": NOTE, "sale_order_template_line_ids": [
+        template = Template.create({"name": name, "sale_order_template_line_ids": [
             Command.create({"product_id": p.id, "product_uom_qty": 1, "product_uom_id": p.uom_id.id,
                             "sequence": i * 10}) for i, p in enumerate(products, start=1)]})
     # The name is translatable: the same «[DEMO] <case>» prefix in every language, so that the template is found by
     # its case code whatever the language of the user (found in Chrome on 26/10: the English name was an older one).
     template.with_context(lang="es_ES").name = name
     template.with_context(lang="en_US").name = EN_NAMES[name]
+    if any(OLD_NOTE in (template.with_context(lang=lang).note or "") for lang in ("es_ES", "en_US")):
+        template.note = False
     made[name] = template
     print("TEMPLATE", template.id, name[:40], [l.product_id.default_code for l in template.sale_order_template_line_ids])
 
