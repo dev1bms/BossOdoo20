@@ -21,7 +21,7 @@ for chunk, owner in (("angel", "Ángel"), ("cristina1", "Cristina"), ("cristina2
     for v in json.loads((RES / f"f0_triage_{chunk}.json").read_text(encoding="utf-8")):
         verdicts[(owner, v["id"])] = v
 SLUG = {"Ángel": "angel", "Cristina": "cristina", "Belal": "belal"}
-LABEL = {"answered": "respondida", "default": "supuesto adoptado", "keep": "reunión", "duplicate": "duplicada"}
+LABEL = {"answered": "respondida", "default": "propuesta (no aprobada)", "keep": "reunión", "duplicate": "duplicada"}
 
 
 def cell(text):
@@ -41,10 +41,10 @@ md = ["# Decisiones F0 del plan «expediente completo» — revisadas (28/10/202
       "si no había respuesta, en la práctica del sector y la documentación de Odoo. Resultado en tres grupos:", "",
       "1. **Para la reunión**: esenciales, sin respuesta en ninguna fuente, y un supuesto equivocado causaría daño "
       "legal, económico o irreversible.",
-      "2. **Supuestos adoptados**: no esenciales; se aplica la mejor práctica documentada, es reversible y queda a la vista "
+      "2. **Propuestas por defecto**: no esenciales; mejor práctica documentada y reversible. **No están aprobadas**: la rutina técnica se aplica, las de efecto real se aprueban en paquetes (docs/paquetes-aprobacion-f0.md). Quedan a la vista "
       "del responsable para corregirla si no está de acuerdo.",
       "3. **Ya respondidas**: la respuesta existe en una fuente (citada).", ""]
-md.append("| Persona | Para la reunión | Supuestos adoptados | Ya respondidas | Duplicadas |")
+md.append("| Persona | Para la reunión | Propuestas (no aprobadas) | Ya respondidas | Duplicadas |")
 md.append("|---|---|---|---|---|")
 for owner in ("Ángel", "Cristina", "Belal"):
     md.append(f"| {owner} | {count[(owner, 'keep')]} | {count[(owner, 'default')]} | {count[(owner, 'answered')]} | "
@@ -62,7 +62,7 @@ for owner in ("Ángel", "Cristina", "Belal"):
         md.append(f"- Mientras tanto: {q['meanwhile_es']}")
         md.append(f"- Buscado en: {v.get('source') or '—'}")
         md.append("")
-md.append("## 2. Supuestos adoptados (reversibles)")
+md.append("## 2. Propuestas por defecto (no aprobadas; las de efecto real van en docs/paquetes-aprobacion-f0.md)")
 md.append("| Persona | Id | Pregunta | Supuesto adoptado | Fuente | Confianza |")
 md.append("|---|---|---|---|---|---|")
 for owner, qid, q, v in rows:
@@ -131,7 +131,7 @@ marker = "## Decisiones F0 del plan «expediente completo» (28/10/2026)"
 if marker in text:
     text = text[:text.index(marker)].rstrip() + "\n"
 lines = [marker, "", "Estado de cada pregunta tras la revisión del 28/10 (detalle y fuentes: `docs/decisiones-f0.md`). «reunión» = "
-         "abierta para la reunión; «supuesto adoptado» = se aplica la mejor práctica, reversible; «respondida» = ya estaba "
+         "abierta para la reunión; «propuesta (no aprobada)» = mejor práctica reversible, pendiente de aprobación (las de efecto real, en docs/paquetes-aprobacion-f0.md); «respondida» = ya estaba "
          "decidida en una fuente.", "", "| Id | Responsable | Pregunta | Estado | Respuesta o supuesto |", "|---|---|---|---|---|"]
 for owner, qid, q, v in rows:
     answer = "" if v["verdict"] == "keep" else cell(v["answer_es"])

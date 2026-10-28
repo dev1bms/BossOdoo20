@@ -3,10 +3,10 @@
 Belal no puede consultar a Cristina ni a Ángel por cada duda. Por eso cada pregunta se ha buscado primero en la documentación del proyecto, el proyecto Odoo 19, los Excel de SharePoint («NEW ODOO»), Odoo 17 de producción y, si no había respuesta, en la práctica del sector y la documentación de Odoo. Resultado en tres grupos:
 
 1. **Para la reunión**: esenciales, sin respuesta en ninguna fuente, y un supuesto equivocado causaría daño legal, económico o irreversible.
-2. **Supuestos adoptados**: no esenciales; se aplica la mejor práctica documentada, es reversible y queda a la vista del responsable para corregirla si no está de acuerdo.
+2. **Propuestas por defecto**: no esenciales; mejor práctica documentada y reversible. **No están aprobadas**: la rutina técnica se aplica, las de efecto real se aprueban en paquetes (docs/paquetes-aprobacion-f0.md). Quedan a la vista del responsable para corregirla si no está de acuerdo.
 3. **Ya respondidas**: la respuesta existe en una fuente (citada).
 
-| Persona | Para la reunión | Supuestos adoptados | Ya respondidas | Duplicadas |
+| Persona | Para la reunión | Propuestas (no aprobadas) | Ya respondidas | Duplicadas |
 |---|---|---|---|---|
 | Ángel | 2 | 57 | 20 | 3 |
 | Cristina | 2 | 83 | 37 | 1 |
@@ -52,13 +52,13 @@ Belal no puede consultar a Cristina ni a Ángel por cada duda. Por eso cada preg
 - Mientras tanto: boss20 sigue como base de desarrollo y pruebas. No se instala VERI*FACTU ni SII y no se activa nada con efectos externos.
 - Buscado en: docs/plan-expediente-completo.md:668-669, 682 y 859 (last_value 108, huecos de numeración, estrategia de base); CLAUDE.md:36-46
 
-**F0-B24** — ¿autorizas, como excepción a tu regla de no hacer copias, la copia diaria de la base y del filestore de boss20 guardada fuera del servidor, con una restauración de prueba, (a) desde la carga de contactos reales (F2) o (b) solo desde el 1/1?
-- Por qué hay que preguntarlo: contradice una regla tuya y solo tú puedes levantarla. Sin copias, una avería con datos reales no tiene arreglo, y el cambio no tiene plan de vuelta atrás. La restauración de prueba necesita además una base temporal.
+**F0-B24** — ¿Quién hará la copia de seguridad del servidor de producción de Odoo 20 (base y archivos) y su prueba de restauración, y desde cuándo: (a) desde la carga de contactos reales (F2) o (b) desde el 1/1? Tu regla del 25/09 me impide a mí hacer copias.
+- Por qué hay que preguntarlo: Texto literal de la regla (25/09/2026, instrucciones globales del asistente): «Never take database/filestore backups and never create scratch/copy databases to try things; work directly on the current database». Es una regla sobre cómo trabaja el asistente: le prohíbe hacer copias de la base y del filestore y crear bases de borrador o copias para probar. No dice nada de la política de copias de la empresa en producción. Sin una copia de producción hecha por alguien y probada, una avería con datos reales no tiene vuelta atrás.
 - Opciones: Sí, diarias, guardadas fuera del servidor y con restauración probada, desde que haya datos reales (contactos migrados y operación en pruebas) / Sí, diarias, guardadas fuera del servidor y con restauración probada, solo desde el arranque del 1/1 / Sí, diarias en el mismo servidor / No
 - Mientras tanto: Sigue la regla actual: no se hace ninguna copia, y la tarea de copias automáticas queda «pendiente de decisión».
-- Buscado en: C:/Users/BelalAlswerki/.claude/CLAUDE.md (regla del 25/09: nunca copias de la base ni del filestore); dev/boss_tasks/seed_launch.py:886-894 (I02: copia diaria fuera del servidor y restauración probada); docs/plan-expediente-completo.md:696
+- Buscado en: C:/Users/BelalAlswerki/.claude/CLAUDE.md línea 13 (regla del 25/09); CLAUDE.md del proyecto (política del 27/10: sin bases de prueba ni copias)
 
-## 2. Supuestos adoptados (reversibles)
+## 2. Propuestas por defecto (no aprobadas; las de efecto real van en docs/paquetes-aprobacion-f0.md)
 | Persona | Id | Pregunta | Supuesto adoptado | Fuente | Confianza |
 |---|---|---|---|---|---|
 | Ángel | F0-A81 | P30 impide EMITIR el pago de una factura de proveedor antes de facturar el servicio al cliente. Si el pago ya ha salido del banco (por ejemplo, un cargo directo de la naviera), ¿le parece bien que al conciliar el extracto Odoo lo registre y lo marque como «pagado antes de facturar al cliente» en la factura y en el expediente, en lugar de impedir la conciliación? | Registrar y marcar (lo implementado): un movimiento real del banco se concilia siempre, para que la contabilidad cuadre con el extracto. Se deja una nota en la factura y en el expediente y un punto en «Pendiente» hasta que se facture al cliente. El asistente de pago sigue bloqueado (P30). No se avisa a nadie más, salvo que Ángel o Cristina lo pidan. | docs/preguntas-abiertas.md:253 y :24 (P30); docs/ciclo-operativo.md §«Factura de proveedor y facturación al cliente (P30)»; commit 76ccb67; principio de imagen fiel del PGC (la contabilidad refleja el banco real) | alta |
