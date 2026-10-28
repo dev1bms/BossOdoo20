@@ -3629,3 +3629,9 @@ msgstr "facturas de proveedor pagadas antes de facturar sus servicios (P30)"
 #: model:ir.model.fields,field_description:boss_expediente.field_account_move__boss_paid_before_invoice
 msgid "Paid before the customer invoice"
 msgstr "Pagada antes de la factura al cliente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_mobile
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_mobile
+msgid "Mobile"
+msgstr "Móvil"

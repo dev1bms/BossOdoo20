@@ -31,6 +31,7 @@ class ResPartner(models.Model):
         "boss.partner.role", string="Logistic roles",
         help="Roles this party plays in shipments (shipper, consignee, agent, carrier, haulier...).")
     boss_eori = fields.Char("EORI", help="Economic Operators Registration and Identification number (customs).")
+    boss_mobile = fields.Char("Mobile", help="Mobile phone kept apart from the phone (Odoo 20 has one phone field; migrated from the Odoo 17 mobile, F2).")
     boss_contact_purpose = fields.Selection(
         [("commercial", "Commercial"), ("operations", "Operations"), ("accounting", "Accounting")], "Contact for",
         help="What this person is contacted for.")
