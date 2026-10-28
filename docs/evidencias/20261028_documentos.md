@@ -31,3 +31,7 @@ el pie de empresa (ajuste) y el módulo. No se ha tocado ningún impuesto ni cue
 Cuenta bancaria a imprimir en la factura (en Odoo 17 sale la de Santander; en boss20 no hay ninguna); textos legales
 de los impuestos al 0 % («0% EX S» ya imprime el artículo 22; «0% S NS», «0% UE S» …); texto del plazo de pago;
 línea del Registro Mercantil para el pie si la quiere.
+
+**Corrección (28/10, revisión del plan del expediente completo):** el texto del artículo 22 que imprime la factura de
+prueba no viene del impuesto 41 «0% EX S» (sin nota legal en boss20) sino del impuesto 72 «0% EXEMPT Art.22», que es
+el que llevaban esas líneas. Los textos legales que faltan siguen siendo de Ángel (fase F4 del plan).
