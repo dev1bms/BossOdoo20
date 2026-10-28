@@ -194,3 +194,5 @@ values = order._boss_file_values()
 check("7 file receives the haulier from the road line", ireneo.id, values.get("haulier_id"))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

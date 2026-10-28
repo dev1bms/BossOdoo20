@@ -73,3 +73,5 @@ except ValidationError:
 check("a price cannot widen its tariff (BCN outside MAD)", "refused", widened)
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

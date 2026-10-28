@@ -132,3 +132,5 @@ check("7 off: THC cost known but no sale price proposed", ("ok", "missing", 0.0)
       (thc2.boss_cost_status, thc2.boss_sale_status, thc2.price_unit))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

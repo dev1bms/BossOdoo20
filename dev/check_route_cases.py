@@ -223,3 +223,5 @@ if accepted:
     check(f"E7 {accepted.name}: frozen costs unchanged after a route edit", before, costs(accepted))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

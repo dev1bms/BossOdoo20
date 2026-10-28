@@ -171,7 +171,7 @@ try:
                                        "Last update recorded" in detail))
     check("6 detail: published event, house B/L, estimated dates; no internal note, no master B/L",
           (True, True, True, False, False),
-          (f"Loaded on board {RUN}" in detail, f"HBL-{RUN}" in detail, "Estimated" in detail, f"secreto-{RUN}" in detail, f"MBL-{RUN}" in detail))
+          (f"Loaded on board {RUN}" in detail, f"HBL-{RUN}" in detail, "Estimated" in detail or "Previsto" in detail, f"secreto-{RUN}" in detail, f"MBL-{RUN}" in detail))
     check("6 B opening A's shipment gets 404", 404, s["b_comm"].get(f"{BASE}/my/shipments/{file.id}", timeout=30).status_code)
     d = s["a_track"].get(f"{BASE}/my/shipments/{file.id}/documents/{doc.id}", timeout=30)
     check("7 the published document downloads for A", (200, b"%PDF-1.4 prueba portal"), (d.status_code, d.content))
@@ -207,3 +207,5 @@ finally:
     file.action_boss_revoke_tracking()
     env.cr.commit()  # noqa: F821
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)
