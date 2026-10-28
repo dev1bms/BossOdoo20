@@ -1,0 +1,55 @@
+# check_route_cases.py on boss20 with the local addons mounted (dev/server_shell_wip.sh + wip_bootstrap: new columns and XML loaded in the transaction): code after 3e3b6b4 (review 2): NOT deployed
+CHECK PASS ports abroad loaded (Shanghai, Tunis, Ningbo): expected 3 got 3
+CHECK PASS E1 template fills the case: expected ('import', 'sea', 'fcl', 'FOB', 'boss') got ('import', 'sea', 'fcl', 'FOB', 'boss')
+CHECK PASS E1 template fills what BOSS handles: expected (False, False, True, True, True) got (False, False, True, True, True)
+CHECK PASS E1 Spanish side is Spain (destination of an import): expected 'ES' got 'ES'
+CHECK PASS E1 traffic code: expected 'IMB' got 'IMB'
+CHECK PASS E1 Spanish port = destination port: expected 'ESVLC' got 'ESVLC'
+CHECK PASS E1 country abroad = origin country: expected 'CN' got 'CN'
+CHECK PASS E1 province from the delivery address: expected 'M' got 'M'
+CHECK PASS E1 destination place from the address: expected 'Getafe' got 'Getafe'
+CHECK PASS E1 tariff date = ETA (import): expected datetime.date(2026, 12, 10) got datetime.date(2026, 12, 10)
+CHECK PASS E1 storage estimate 0 days, indicated: expected (0, True) got (0, True)
+CHECK PASS E1 costs equal to the same inputs typed directly: expected [('FMI', 'manual', 0.0), ('THC', 'ok', 253.0), ('BL', 'ok', 79.0), ('GLO-CCC', 'ok', 27.0), ('T3-PAD', 'ok', 50.0), ('FAD', 'conflict', 0.0), ('CSM', 'ok', 0.0), ('TTE-FCL', 'no_tariff', 0.0)] got [('FMI', 'manual', 0.0), ('THC', 'ok', 253.0), ('BL', 'ok', 79.0), ('GLO-CCC', 'ok', 27.0), ('T3-PAD', 'ok', 50.0), ('FAD', 'conflict', 0.0), ('CSM', 'ok', 0.0), ('TTE-FCL', 'no_tariff', 0.0)]
+CHECK PASS E1 MSC THC priced from the route (ESVLC, China): expected ('ok', 253.0) got ('ok', 253.0)
+CHECK PASS E2 Spanish side is Spain (origin of an export): expected 'ES' got 'ES'
+CHECK PASS E2 the side abroad cannot be Spain: expected False got False
+CHECK PASS E2 traffic code: expected 'EMB' got 'EMB'
+CHECK PASS E2 Spanish port = origin port: expected 'ESBCN' got 'ESBCN'
+CHECK PASS E2 country abroad = destination country: expected 'TN' got 'TN'
+CHECK PASS E2 province from the pickup address: expected 'Z' got 'Z'
+CHECK PASS E2 tariff date = ETD (export): expected datetime.date(2026, 11, 20) got datetime.date(2026, 11, 20)
+CHECK PASS E3 traffic code: expected 'IAB' got 'IAB'
+CHECK PASS E3 volume weight 4 m3 x 167: expected 668.0 got 668.0
+CHECK PASS E3 chargeable weight = higher: expected 668.0 got 668.0
+CHECK PASS E3 pricing AWB weight = estimate: expected 668.0 got 668.0
+CHECK PASS E3 HAN quantity on the chargeable weight: expected 668.0 got 668.0
+CHECK PASS E3 WFS HAN import on 668 kg (simulated, tariff waiting approval) = 668 x 0.05: expected ('ok', 33.4) got ('ok', 33.4)
+CHECK PASS E3 the AWB weight wins when known: expected 700.0 got 700.0
+CHECK PASS E3 dense cargo: chargeable = gross: expected 900.0 got 900.0
+CHECK PASS E4 traffic code of an agent's client: expected 'IMA' got 'IMA'
+CHECK PASS E5 file route: expected ('CNSHA', 'ESVLC', res.partner(482,), 'agent', 'IMA') got ('CNSHA', 'ESVLC', res.partner(482,), 'agent', 'IMA')
+CHECK PASS E5 file dates: expected (datetime.date(2026, 11, 10), datetime.date(2026, 12, 10)) got (datetime.date(2026, 11, 10), datetime.date(2026, 12, 10))
+CHECK PASS E5 file pricing inputs: expected ('ESVLC', 'CN', 'M') got ('ESVLC', 'CN', 'M')
+CHECK PASS E5 file: changing the destination port changes the Spanish port: expected 'ESBCN' got 'ESBCN'
+CHECK PASS E6 opportunity traffic and pricing inputs: expected ('IMB', 'ESVLC', 'CN', 'M') got ('IMB', 'ESVLC', 'CN', 'M')
+CHECK PASS E6 quotation from the opportunity: expected ('CNNGB', 'ESVLC', 'CN', 'M', datetime.date(2026, 12, 1)) got ('CNNGB', 'ESVLC', 'CN', 'M', datetime.date(2026, 12, 1))
+CHECK PASS E8 cross-trade: no country proposed: expected (False, False) got (False, False)
+CHECK PASS E8 traffic code: expected 'XMB' got 'XMB'
+CHECK PASS E8 sides kept as typed (CN -> NL): expected ('CN', 'NL') got ('CN', 'NL')
+CHECK PASS E8 no Spanish port, no country abroad for tariffs: expected (False, False) got (False, False)
+CHECK PASS E8 no port abroad for tariffs either: expected False got False
+CHECK PASS E8 key date = ETD, never an unloading date: expected datetime.date(2026, 11, 20) got datetime.date(2026, 11, 20)
+CHECK PASS E8 VAT from the route: China (TER) -> Netherlands (COM) is an NR pair, Spanish customer -> NR: expected 'NR' got 'NR'
+CHECK PASS E8 orderer not proposed as a party of a cross-trade: expected (False, False) got (False, False)
+CHECK PASS E9 national: both sides proposed as Spain: expected ('ES', 'ES') got ('ES', 'ES')
+CHECK PASS E9 traffic code: expected 'NTB' got 'NTB'
+CHECK PASS E9 no country abroad; no Spanish port without ports: expected (False, False) got (False, False)
+CHECK PASS E9 province from the delivery address: expected 'M' got 'M'
+CHECK PASS E9 key date = ETD: expected datetime.date(2026, 11, 20) got datetime.date(2026, 11, 20)
+CHECK PASS E9 road chargeable weight 2 m3 x 333 = 666 > 500: expected 666.0 got 666.0
+CHECK PASS E9 VAT from the route: PRO -> PRO, Spanish customer -> NR: expected 'NR' got 'NR'
+CHECK PASS E9 file: national, ETD as key date, province, no country abroad: expected ('NTB', datetime.date(2026, 11, 20), 'M', False) got ('NTB', datetime.date(2026, 11, 20), 'M', False)
+CHECK PASS E9 file pricing inputs: no port abroad: expected False got False
+CHECK PASS E7 S00325: frozen costs unchanged after a route edit: expected [('FMI', 'ok', 5000.0), ('THC', 'ok', 506.0), ('BL', 'ok', 79.0), ('GLO-CCC', 'ok', 54.0), ('T3-PAD', 'ok', 100.0), ('FAD', 'ok', 75.0), ('CSM', 'ok', 0.0)] got [('FMI', 'ok', 5000.0), ('THC', 'ok', 506.0), ('BL', 'ok', 79.0), ('GLO-CCC', 'ok', 54.0), ('T3-PAD', 'ok', 100.0), ('FAD', 'ok', 75.0), ('CSM', 'ok', 0.0)]
+RESULT 53 passed, 0 failed

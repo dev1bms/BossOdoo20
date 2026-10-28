@@ -313,7 +313,13 @@ código HS; cabecera sin direcciones; etiquetas venta/compra; dos decimales; res
 servicio (categorías de Odoo 17). **Sin desplegar: espera la aprobación de Belal** (boss_services 20.0.1.4.0 con
 migración de categorías, boss_pricing 20.0.1.11.0, boss_pricing_sale 20.0.1.13.0, boss_expediente 20.0.1.12.0). Tras el
 despliegue: comprobar en Chrome la pestaña Envío, el asistente, el PDF de una oferta de tarifas y el Resumen.
-`dev/server_shell_wip.sh` ahora crea las columnas nuevas dentro de la transacción (`dev/wip_bootstrap.py`).
+`dev/server_shell_wip.sh` ahora crea las columnas nuevas **y carga el XML de los módulos** dentro de la transacción
+(`dev/wip_bootstrap.py`): vistas, asistentes y documento del cliente se comprueban sin copia de base de datos.
+**Revisión 2 de Belal (28/10, misma tarde):** coste a petición solo con proveedor nombrado sin precio; la puerta de
+contenedores solo en ofertas de tarifas y nombrando las alternativas no reservadas; tipo de contenedor en el PDF;
+flujo probado como usuaria real de tarifas (Wendy) y bloqueado para un comercial sin derechos; Resumen probado con
+factura de proveedor, factura parcial de cliente y abono; M2-23 (partidas) rebajado a parcial/decisión.
+`check_meeting2` 69/69.
 
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas

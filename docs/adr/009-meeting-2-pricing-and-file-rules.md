@@ -1,6 +1,6 @@
 # ADR-009 — Rules confirmed in the second meeting with Ángel: freight date, one tariff per route, approval on entry, carrier family, rate quotations, cost on request, cargo units, file summary by group
 
-Status: accepted (technical), 28/10/2026. Requirements: seven recovered segments of the meeting of 27/10/2026
+Status: accepted (technical), 28/10/2026; reviewed 28/10/2026 (review 2 of Belal, below). Requirements: seven recovered segments of the meeting of 27/10/2026
 (transcript given by Belal on 28/10, with his notes). Builds on ADR-002 (tariffs), ADR-003 (quotation), ADR-005 (file
 figures), ADR-006 (route), ADR-007 (weekly rates), ADR-008 (default sale price).
 
@@ -103,3 +103,73 @@ figures), ADR-006 (route), ADR-007 (weekly rates), ADR-008 (default sale price).
 - Ángel: acceptance of a rate list (file at once, or at the booking); a duty table by goods code; supplier
   eligibility per service (today: any supplier, with a warning when it has no tariff for the service).
 - Belal: Spanish language for the BOSS users (number format); who may approve document tariffs besides Ángel.
+
+## Source of each rule (review 2 of Belal, 28/10/2026)
+
+| Rule | Explicit request | Decision of Belal | Inference / design of the implementer | Status |
+|---|---|---|---|---|
+| Freight tariff date = ETD (import and export, air too) | Ángel, segment 4 | — | — | applied |
+| Quotation date while the ETD is unknown | — (segment 3: «the last one available we have») | — | **inference** | applied, to confirm (M2-G) |
+| One tariff per route; a new rate = new version; newest valid wins | Ángel, segment 3 | — | version mechanics = ADR-002 | applied |
+| Approval on entry of freight rates typed from a quotation | Ángel, segment 2 («it shouldn't be waiting for approval»; Belal: «we can add auto approval» — «okay») | — | setting, default on, **only** freight (manual-amount services) typed from a quotation; author recorded | applied; supersedes R2-A2 for those rates |
+| Supplier document compulsory → switch | Ángel, segment 2 («ask Cristina», «easy to remove») | — | default on = ADR-002 unchanged | applied; Cristina decides (M2-B) |
+| One commercial carrier, several legal entities | Ángel, segment 1; Belal's wording accepted («that's what we need») | — | «Part of carrier» field + family matching | applied |
+| Header invoice/delivery addresses hidden; pickup = shipper's addresses; delivery with the consignee | Ángel, segments 1 and 2 | — | — | applied |
+| Type of unit, goods code | Ángel, segment 2 | — | taxonomy = Odoo 17 partida (read on production) | applied; duties table open (M2-D) |
+| Containers heading, wizard origin→destination, validity from today | Ángel, segment 2 | — | — | applied |
+| USD freight converted | Ángel, segment 2 | FX policy = Belal (P03) | — | already there, checked |
+| Two decimals | Ángel, segment 2 («always, everywhere») | — | **interpretation**: at least two, four only when the value has them (per-kg prices) | applied; Ángel to confirm the exception |
+| Spanish number format | Ángel, segment 2 | — | user language es_ES (changes the UI language too) | **not done**: Belal decides (M2-F) |
+| Rate quotation (unit rates, no total) | Ángel, segment 6 | — | flag, document, 1 unit per line; **acceptance waits for the containers = design, not a decision** | applied; the timing is open (M2-C) |
+| Cost on request | Ángel, segment 6 (keep the service, type the cost in the file, «on zero if necessary») | — | scope: **only** a named supplier without a price for the service (review 2) | applied; narrows B22 (Cristina to confirm, M2-H) |
+| Fixed selling price independent of the supplier | Ángel, segments 4 and 5 | +20 % default: Belal 27/10 | mechanism = ADR-003 pricelist | applied, checked; figures are Cristina's (M2-A) |
+| Selling / buying labels | Ángel, segment 6 | — | — | applied |
+| File summary by group, pending vs definitive, pending vs invoiced | Ángel, segment 7 | — | groups = Odoo 17 product categories (read on production) | applied, checked through the billing cycle |
+| One file and one partida on one page | Ángel, segment 7 | — | «several partidas = several files» was the implementer's reading | **downgraded**: partial / decision (M2-I) |
+
+## Review 2 (Belal, 28/10/2026): what changed
+
+1. **Cost on request** is no general exception: it applies only when the supplier named on the line has no price
+   for the service (`no_tariff`). Missing shipment data, a price waiting for approval, a conflict and a freight
+   without offer keep their own path (checked with IRENEO without weights and with a freight without rate). B22
+   (Cristina: a manager's reason for an unknown cost) stays for every other case; the on-request case is the one
+   Ángel described and is recorded for Cristina's confirmation (M2-H).
+2. **The containers gate belongs to rate quotations only**; ordinary FCL quotations are not touched (a per-container
+   line without containers keeps quantity 0 as before). When the client books, the rates of the sizes not shipped are
+   **named** («THC 20' DV, THC 40' DV, FMI 40' DV: remove the lines the client did not book, or add the container»);
+   the person removes them with the trash icon of the line or edits the line's container type — nothing is dropped
+   silently and the alternatives never become containers. Whether acceptance of a rate list should open the file at
+   once (today) or wait for the booking stays a decision (M2-C) with two options: **A** (today): Confirm = booking,
+   containers required, file with real containers; **B**: Confirm without containers, file opened with unit
+   quantities and completed at the booking — figures of the file meaningless until then.
+3. **The customer document** prints the container type («Container 40' HC») so 40' DV and 40' HC are told apart;
+   the ordinary document keeps quantities, amounts and totals; no buying price, margin or internal note is printed.
+   The customer **portal** page (standard) still shows amounts and totals for a rate quotation: out of scope here,
+   noted.
+4. **Roles**: the flow was re-run as a real pricing user (tariff user + salesperson, not approver): she enters the
+   rate from the quotation, it is approved on entry *by her* (approved_by, note), the quotation is priced at once
+   and she confirms it without anyone else. A salesperson without tariff rights cannot open the wizard (access
+   error). With the setting off, her rate waits and she cannot approve it. No group was widened.
+5. **WIP shell** (`dev/wip_bootstrap.py`): besides the new columns, it now loads the XML of the BOSS modules (views,
+   wizards, QWeb reports, data) inside the rolled-back transaction, so the form arch and the rendered customer
+   document are checked without a copy database (policy 27/10: no throw-away databases) and without a deploy. What
+   it cannot do: the web client (JS assets) — Chrome checks still need the deploy. Security CSV is not reloaded.
+6. **Summary by group through the billing cycle** (same steps as `dev/uat_e2e.py`, which already covers RFQ →
+   bill → partial invoices → credit note → payments for the file figures): posted vendor bill of THC 253 → actual
+   253 and nothing still expected in local charges (not counted twice); TTE still expected 150, not billed; partial
+   customer invoice 280 less a credit note of 80 → invoiced 200, to invoice 80; totals equal the file figures
+   (invoiced 200, actual 253, pending 150, forecast 403, margin 177). Invoiced ≠ collected; paid ≠ settled (ADR-005).
+7. **Partidas (M2-23)**: downgraded to partial. Odoo 20 has one file = one page with the cargo, the containers and
+   the references, and `mbl_ref`/`hbl_ref`, `mawb_ref`/`hawb_ref` on the file; a consolidation (one master, several
+   houses, shared costs) has no master object: several files would repeat the master references and split the shared
+   costs by hand. Odoo 19 kept a partida model (`BOSS_SHIPMENT_MODEL_PROPOSAL.md`: cargo per partida, HBL per
+   partida; `DECISIONS.md` 08/10: purchase per MAWB/Expediente, sale per Partida or Expediente). Cristina's
+   statement of 17/09 (MBL/MAWB ↔ expediente, HBL/HAWB ↔ partida) is not in the documents readable here: Belal to
+   point to it. Options, before any change: **A** master file + child files (a «Master file» link on the file,
+   shared costs on the master, summary of the master adds its houses); **B** a partida model inside the file (Odoo
+   19 shape). Not built.
+8. **Matrix statuses**: «CERRADO» only when seen on screen; what is implemented and checked by code/test but not yet
+   on screen is «IMPLEMENTADO · pantalla pendiente».
+
+Checks after the review: `dev/check_meeting2.py` 69/69 on boss20 with the code and XML mounted (commit of the
+review); regressions 39/53/23/38/22.

@@ -16,7 +16,7 @@
         <xpath expr="//td[@name='td_product_quantity']" position="after">
             <td t-if="doc.boss_rate_quotation" name="td_boss_rate_basis" class="text-end text-nowrap">
                 <span t-field="line.product_uom_id"/>
-                <span t-if="line.boss_container_size"><t t-out="line.boss_container_size"/>'</span>
+                <span t-if="line.boss_container_size"><t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></span>
             </td>
         </xpath>
         <xpath expr="//td[@name='td_product_subtotal']" position="attributes">
