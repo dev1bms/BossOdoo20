@@ -4,8 +4,13 @@ from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import consteq
 
-STATE_LABELS = {"open": "Booked", "in_transit": "In transit", "delivered": "Delivered", "closed": "Delivered",
-                "cancel": "Cancelled"}
+
+
+def state_label(env, state):
+    """Status shown to the customer, in the customer's language (literal strings so that Odoo extracts them)."""
+    labels = {"open": env._("Booked"), "in_transit": env._("In transit"), "delivered": env._("Delivered"),
+              "closed": env._("Delivered"), "cancel": env._("Cancelled")}
+    return labels.get(state, state)
 
 
 class BossExpediente(models.Model):
@@ -76,7 +81,7 @@ class BossExpediente(models.Model):
         events = file.event_ids.filtered("portal_published").sorted("date", reverse=True)
         values = {
             "reference": file.name,
-            "state": STATE_LABELS.get(file.state, file.state),
+            "state": state_label(self.env, file.state),
             "transport_mode": dict(file._fields["transport_mode"]._description_selection(self.env)).get(
                 file.transport_mode) if file.transport_mode else None,
             "load_type": dict(file._fields["load_type"]._description_selection(self.env)).get(

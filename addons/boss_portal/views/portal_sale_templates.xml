@@ -10,6 +10,9 @@
             <h2 t-if="sale_order.boss_rate_quotation" class="mb-0 text-break">Rates</h2>
             <h2 t-else="" t-field="sale_order.amount_total" class="mb-0 text-break"/>
         </xpath>
+        <xpath expr="//t[@t-set='entries']/div[hasclass('alert-warning')]" position="attributes">
+            <attribute name="t-if">sale_order.state in ('draft', 'sent') and sale_order.prepayment_percent != 1.0 and not sale_order.boss_rate_quotation</attribute>
+        </xpath>
         <xpath expr="//t[@t-set='subtitle']" position="replace">
             <t t-set="subtitle"><t t-if="sale_order.boss_rate_quotation">Price per unit of each line</t><t t-else="">Tax Included</t></t>
         </xpath>
@@ -72,7 +75,7 @@
                             <td colspan="3" t-out="line.name"/>
                         </tr>
                         <tr t-elif="not line.display_type">
-                            <td t-out="line.name"/>
+                            <td t-out="line.label"/>
                             <td class="text-nowrap">
                                 <span t-out="line.product_uom_id.name"/>
                                 <span t-if="line.boss_container_size"> <t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></span>
@@ -106,7 +109,7 @@
                         <thead><tr><th>Rate</th><th class="text-end" style="width: 9rem;">Containers</th></tr></thead>
                         <tbody>
                             <tr t-foreach="sale_order._boss_booking_lines_available()" t-as="line">
-                                <td><t t-out="line.name"/> · <t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></td>
+                                <td><t t-out="line.label"/> · <t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></td>
                                 <td class="text-end"><input type="number" min="0" max="99" step="1" class="form-control form-control-sm text-end" t-attf-name="qty_#{line.id}"/></td>
                             </tr>
                         </tbody>
