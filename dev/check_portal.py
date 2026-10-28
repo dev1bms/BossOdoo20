@@ -21,10 +21,14 @@ def check(name, expected, got):
 
 
 def refused(fn):
+    """True when the call is refused; the attempt is rolled back (savepoint) so it leaves nothing behind."""
     try:
-        fn()
+        with env.cr.savepoint():
+            fn()
+            env.flush_all()
         return False
     except (AccessError, UserError, ValidationError):
+        env.invalidate_all()
         return True
 
 
@@ -167,10 +171,11 @@ else:
           [refused(lambda q=q: so_a2._boss_portal_request_booking(a_appr, q)) for q in
            ({so_b.order_line[:1].id: 1}, {bl.id: 1}, {thc_hc.id: 100}, {thc_hc.id: 0})])
     activities = so_a2.activity_ids
+    price_before = thc_hc.price_unit
     rows = so_a2._boss_portal_request_booking(a_appr, {thc_hc.id: 2, thc_dv.id: 0}, "[PRUEBA] cargo listo 15/11")
     check("5 the approver's request is recorded: 2 x 40' HC, pending BOSS review", ("requested", [(thc_hc.id, 2, "40", "HC")], a_appr),
           (so_a2.boss_booking_state, [(r["line_id"], r["quantity"], r["size"], r["type"]) for r in rows], so_a2.boss_booking_requested_by))
-    check("5 nothing confirmed, no file, no invoice, prices unchanged", ("sent", False, 0, 310.0),
+    check("5 nothing confirmed, no file, no invoice, prices unchanged", ("sent", False, 0, price_before),
           (so_a2.state, bool(so_a2.boss_expediente_id), len(so_a2.invoice_ids), thc_hc.price_unit))
     check("5 the salesperson gets an activity and an internal note", (True, True),
           (len(so_a2.activity_ids) > len(activities), any(m.subtype_id == ref("mail.mt_note") and "Booking request" in (m.body or "")
