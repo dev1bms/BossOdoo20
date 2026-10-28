@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Invoice, credit note, vendor bill (ADR-011): the shipment block of the file under the dates; the charge base
+         (per container, per B/L, per kg...) always printed next to the quantity; no shipping-address duplicate
+         when the document has a shipment block (the delivery place is in it); the standard «Source» column is
+         replaced by the quotation named in the block. -->
+    <template id="report_invoice_document_boss" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-set='information_block']" position="attributes">
+            <attribute name="t-if">o.partner_shipping_id and (o.partner_shipping_id != o.partner_id) and not o._boss_document_file()</attribute>
+        </xpath>
+        <xpath expr="//div[@id='informations']/div[@name='origin']" position="attributes">
+            <attribute name="t-if">o.invoice_origin and not o._boss_document_file()</attribute>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="after">
+            <t t-call="boss_documents.shipment_block">
+                <t t-set="block" t-value="o._boss_document_block()"/>
+                <t t-set="for_supplier" t-value="o.move_type in ('in_invoice', 'in_refund')"/>
+            </t>
+        </xpath>
+        <xpath expr="//td[@name='td_quantity']/span[@t-field='line.product_uom_id']" position="attributes">
+            <attribute name="groups"/>
+        </xpath>
+        <xpath expr="//td[@name='td_quantity']/span[@groups='uom.group_uom']" position="attributes">
+            <attribute name="groups"/>
+        </xpath>
+        <xpath expr="//td[@name='td_quantity_grouped']//span[@groups='uom.group_uom']" position="attributes">
+            <attribute name="groups"/>
+        </xpath>
+        <!-- the second span of the grouped cell (quantity in the product unit) -->
+        <xpath expr="//td[@name='td_quantity_grouped']//span[@groups='uom.group_uom']" position="attributes">
+            <attribute name="groups"/>
+        </xpath>
+    </template>
+</odoo>

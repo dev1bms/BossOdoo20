@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quotation, order and pro forma (ADR-011): the shipment block under the dates (from the file once accepted,
+         from the quotation before); the invoicing/shipping address block of Odoo is dropped for BOSS shipments
+         (meeting 2, M2-4: the pickup and delivery places are shipment data, not header addresses). The quotation
+         already prints the charge base next to the quantity. -->
+    <template id="report_saleorder_document_boss_documents" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t[@t-set='information_block']/.." position="attributes">
+            <attribute name="t-if">not doc._boss_document_block() and (doc.partner_shipping_id == doc.partner_invoice_id and doc.partner_invoice_id != doc.partner_id or doc.partner_shipping_id != doc.partner_invoice_id)</attribute>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="after">
+            <t t-call="boss_documents.shipment_block">
+                <t t-set="block" t-value="doc._boss_document_block()"/>
+                <t t-set="for_supplier" t-value="False"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>
