@@ -3596,3 +3596,36 @@ msgstr "Moneda de la compañía, sin impuestos. Coste real = facturas y abonos d
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Only %s can do this on a file."
 msgstr "Solo %s puede hacer esto en un expediente."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "file %s is financially closed: an accounting manager reopens it first"
+msgstr "el expediente %s está cerrado financieramente: un responsable de contabilidad lo reabre primero"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s is financially closed: an accounting manager reopens it first."
+msgstr "%s está cerrado financieramente: un responsable de contabilidad lo reabre primero."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid ""
+"Paid by a bank movement before its services were invoiced to the customer (P30). The movement is recorded "
+"because it happened; invoice these services:"
+msgstr ""
+"Pagada por un movimiento bancario antes de facturar sus servicios al cliente (P30). El movimiento se registra "
+"porque ha ocurrido; facture estos servicios:"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "supplier bills paid before their services were invoiced (P30)"
+msgstr "facturas de proveedor pagadas antes de facturar sus servicios (P30)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move__boss_paid_before_invoice
+msgid "Paid before the customer invoice"
+msgstr "Pagada antes de la factura al cliente"

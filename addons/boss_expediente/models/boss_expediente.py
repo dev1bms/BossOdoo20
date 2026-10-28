@@ -938,6 +938,8 @@ class BossExpediente(models.Model):
                 (sees_cost, _("purchase orders to review after a cost recalculation"), needs.filtered("po_to_review")),
                 (sees_sale, _("draft customer invoices"), draft_invoices),
                 (sees_cost, _("draft vendor bills"), draft_bills),
+                (sees_cost, _("supplier bills paid before their services were invoiced (P30)"), posted_bills.filtered(
+                    lambda b: b.boss_paid_before_invoice and b._boss_bill_order_problems())),
             ]
             todo += [f"{len(records)} {label}" for visible, label, records in checks if visible and records]
             if sees_sale and float_compare(file.amount_to_invoice, 0.0, precision_rounding=currency.rounding) > 0:
@@ -964,6 +966,7 @@ class BossExpediente(models.Model):
     def action_create_rfqs(self):
         """Draft RFQs for what is still to order, one per supplier and currency (an open draft RFQ of the file is
         completed instead of opening another one). Nothing is confirmed or sent: a person reviews them."""
+        self._boss_check_open_financially()
         self.ensure_one()
         self._boss_lock()
         self.cost_ids.invalidate_recordset()
@@ -998,7 +1001,14 @@ class BossExpediente(models.Model):
             self.message_post(body=self.env._("Not ordered, supplier missing: %s", ", ".join(skipped)))
         return self._boss_action("purchase.order", orders, self.env._("Requests for quotation"))
 
+    def _boss_check_open_financially(self):
+        closed = self.filtered("financial_closed")
+        if closed:
+            raise UserError(self.env._("%s is financially closed: an accounting manager reopens it first.",
+                                       ", ".join(closed.mapped("name"))))
+
     def action_invoice_services(self):
+        self._boss_check_open_financially()
         self.ensure_one()
         return {
             "type": "ir.actions.act_window", "res_model": "boss.invoice.services", "view_mode": "form",
