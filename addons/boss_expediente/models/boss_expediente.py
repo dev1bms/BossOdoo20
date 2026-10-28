@@ -5,7 +5,7 @@ from markupsafe import Markup
 from psycopg2 import errors as pg_errors
 
 from odoo import Command, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.tools import float_compare
 from odoo.tools.misc import formatLang
 
@@ -102,6 +102,24 @@ def account_share(line, account):
     key = str(account.id)
     return sum(share for combination, share in (line.analytic_distribution or {}).items()
                if key in combination.split(",")) / 100.0
+
+
+def settled_part(moves, items, account):
+    """Amount already paid of the moves that belongs to the file: each move counts in proportion to its product
+    lines on the file's analytic account (an invoice of several files is collected in proportion, like «invoiced»).
+    A move of the file's own order without analytic lines counts in full."""
+    part = defaultdict(float)
+    for item in items:
+        part[item.move_id.id] += item.balance * account_share(item, account)
+    total = 0.0
+    for move in moves:
+        paid = move.amount_total_signed - move.amount_residual_signed
+        if move.id in part:
+            base = sum(move.line_ids.filtered(lambda l: l.display_type == "product").mapped("balance"))
+            total += paid * (part[move.id] / base if base else 0.0)
+        else:
+            total += paid
+    return total
 
 
 class BossExpediente(models.Model):
@@ -687,6 +705,13 @@ class BossExpediente(models.Model):
     def _boss_containers_text(self, counts):
         return ", ".join(f"{qty} x {size}' {code or ''}".strip() for (size, code), qty in sorted(counts.items()))
 
+    def _boss_check_group(self, group):
+        """The buttons of the financial close are limited by group in the view; the method checks it too, so that a
+        call over RPC (or from another screen) cannot skip it."""
+        if not self.env.su and not self.env.user.has_group(group):
+            raise AccessError(self.env._("Only %s can do this on a file.",
+                                         self.env.ref(group).sudo().display_name))
+
     def _boss_user_can(self, groups):
         user = self.env.user
         return any(user.has_group(group) for group in groups.split(","))
@@ -841,8 +866,8 @@ class BossExpediente(models.Model):
                 "amount_margin_forecast": amount_sale - actual - pending,
                 "amount_margin_final": invoiced - actual if final else 0.0,
                 "amount_invoiced": invoiced, "amount_to_invoice": amount_sale - invoiced,
-                "amount_collected": sum(m.amount_total_signed - m.amount_residual_signed for m in posted_invoices),
-                "amount_paid": -sum(m.amount_total_signed - m.amount_residual_signed for m in posted_bills),
+                "amount_collected": settled_part(posted_invoices, revenue_items, account),
+                "amount_paid": -settled_part(posted_bills, cost_items, account),
                 "amount_draft_invoices": sum(draft_invoices.mapped("amount_untaxed_signed")),
                 "amount_draft_rfqs": sum(company_amount(p.amount_untaxed, p.currency_id, p.date_order)
                                          for p in draft_rfqs),
@@ -1028,7 +1053,8 @@ class BossExpediente(models.Model):
             "type": "ir.actions.act_window", "res_model": "account.move", "view_mode": "form",
             "views": [(False, "form")], "name": self.env._("Vendor bill"),
             "context": {"default_move_type": "in_invoice", "default_ref": self.name,
-                        "boss_default_analytic": {str(self.analytic_account_id.id): 100.0}},
+                        "boss_default_analytic": {str(self.analytic_account_id.id): 100.0},
+                        "boss_default_file": self.id},
         }
 
     def action_in_transit(self):
@@ -1054,6 +1080,7 @@ class BossExpediente(models.Model):
     def action_close_financial(self):
         """Financial close is separate from the operational close: everything invoiced, every cost billed or
         closed, variances reviewed, nothing in draft."""
+        self._boss_check_group("account.group_account_invoice")
         for file in self:
             problems = []
             if file.state not in ("closed", "cancel"):
@@ -1067,6 +1094,7 @@ class BossExpediente(models.Model):
                     "financial_closed_by": self.env.uid})
 
     def action_reopen_financial(self):
+        self._boss_check_group("account.group_account_manager")
         self.write({"financial_closed": False, "financial_closed_date": False, "financial_closed_by": False})
 
 
