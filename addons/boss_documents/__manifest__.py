@@ -3,7 +3,7 @@
     "summary": "Customer and supplier documents of BOSS Continental (invoice, credit note, quotation, order, purchase order): "
                "BOSS layout on the standard Odoo document template, one shipment block (file, route, transport, cargo) on "
                "every document, charge bases always printed, no shipping-address duplicates (ADR-011)",
-    "version": "20.0.1.0.2",
+    "version": "20.0.1.0.3",
     "category": "Accounting/Accounting",
     "author": "BiDATiA",
     "license": "LGPL-3",

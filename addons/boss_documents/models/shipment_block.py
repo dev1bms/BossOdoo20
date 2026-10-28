@@ -4,6 +4,8 @@ so the invoice, the quotation and the purchase order always say the same thing. 
 cost, a margin, a supplier price or an internal note."""
 from collections import Counter
 
+from odoo.tools.misc import formatLang
+
 
 def _label(record, field_name):
     """Translated label of a selection value (empty when unset)."""
@@ -14,11 +16,9 @@ def _label(record, field_name):
     return dict(field._description_selection(record.env)).get(value, value)
 
 
-def _place(country, port, place, address):
-    """«Shanghái (CNSHA), China» / «Zaragoza warehouse, Zaragoza, Spain»: the most precise data available."""
+def _place(country, port, place):
+    """«Shanghái (CNSHA), China»: the port with its code (or the place typed), then the country."""
     parts = []
-    if address:
-        parts += [address.name, address.city]
     if port:
         parts.append(f"{port.name} ({port.code})")
     elif place:
@@ -48,8 +48,15 @@ def containers_summary(rows, with_numbers=False):
     return text
 
 
-def _kg(value):
-    return f"{value:,.0f} kg" if value else ""
+def _address(address):
+    """«Almacén Zaragoza, Zaragoza»: the name of the pickup or delivery address and its city."""
+    parts = [address.name or address.commercial_partner_id.name, address.city]
+    return ", ".join(p for p in parts if p)
+
+
+def _number(env, value, digits):
+    """A number in the language of the document (es: 9.850 · 58,400)."""
+    return formatLang(env, value, digits=digits)
 
 
 def shipment_rows(src, prefix="", file=None):
@@ -70,13 +77,16 @@ def shipment_rows(src, prefix="", file=None):
     traffic = " · ".join(p for p in (direction, mode, load) if p)
     if traffic:
         route.append((_("Traffic"), traffic))
-    origin = _place(g("origin_country_id"), g("origin_port_id"), g("origin_place"), g("pickup_address_id"))
-    destination = _place(g("destination_country_id"), g("destination_port_id"), g("destination_place"),
-                         g("delivery_address_id"))
+    origin = _place(g("origin_country_id"), g("origin_port_id"), g("origin_place"))
+    destination = _place(g("destination_country_id"), g("destination_port_id"), g("destination_place"))
     if origin:
         route.append((_("From"), origin))
+    if g("pickup_address_id"):
+        route.append((_("Pickup"), _address(g("pickup_address_id"))))
     if destination:
         route.append((_("To"), destination))
+    if g("delivery_address_id"):
+        route.append((_("Delivery"), _address(g("delivery_address_id"))))
     incoterm = src["incoterm_id"] if "incoterm_id" in src._fields else (src["incoterm"] if "incoterm" in src._fields else False)
     if incoterm:
         location = src["incoterm_location"] if "incoterm_location" in src._fields else ""
@@ -134,11 +144,11 @@ def shipment_rows(src, prefix="", file=None):
         cargo.append((_("Pallets"), f"{pallets:g}"))
     gross, volume, chargeable = g("gross_kg"), g("volume_m3"), g("chargeable_kg")
     if gross:
-        cargo.append((_("Gross weight"), _kg(gross)))
+        cargo.append((_("Gross weight"), _number(env, gross, 0) + " kg"))
     if volume:
-        cargo.append((_("Volume"), f"{volume:,.3f} m³"))
+        cargo.append((_("Volume"), _number(env, volume, 3) + " m³"))
     if chargeable and (mode and "FCL" not in load):
-        cargo.append((_("Chargeable weight"), _kg(chargeable)))
+        cargo.append((_("Chargeable weight"), _number(env, chargeable, 0) + " kg"))
     goods = g("goods_description")
     if goods:
         cargo.append((_("Goods"), goods))

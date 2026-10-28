@@ -8,6 +8,12 @@
         <xpath expr="//t[@t-set='information_block']/.." position="attributes">
             <attribute name="t-if">not doc._boss_document_block() and (doc.partner_shipping_id == doc.partner_invoice_id and doc.partner_invoice_id != doc.partner_id or doc.partner_shipping_id != doc.partner_invoice_id)</attribute>
         </xpath>
+        <xpath expr="//div[@id='informations']/div[@name='informations_reference']" position="attributes">
+            <attribute name="t-if">doc.client_order_ref and not doc._boss_document_block()</attribute>
+        </xpath>
+        <xpath expr="//div[@id='informations']/div[@t-if='doc.incoterm']" position="attributes">
+            <attribute name="t-if">doc.incoterm and not doc._boss_document_block()</attribute>
+        </xpath>
         <xpath expr="//div[@id='informations']" position="after">
             <t t-set="block" t-value="doc._boss_document_block()"/>
             <t t-set="for_supplier" t-value="False"/>
