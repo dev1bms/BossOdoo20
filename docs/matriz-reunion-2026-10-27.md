@@ -92,17 +92,17 @@ Pruebas del cierre: `dev/check_meeting_matrix.py` (23/23), `dev/check_chargeable
 **desplegada a las 16:43** (commit `5cf2918`); el 20 % está activado en Ajustes y visto en S00311
 (`docs/evidencias/20261027_1646_chrome_s00311_venta_coste_mas_20.md`).
 
-## Portal de clientes (Belal, 28/10/2026; ADR-010) — implementado, **sin instalar**
+## Portal de clientes (Belal, 28/10/2026; ADR-010) — **instalado 28/10 12:10**; `check_portal` 46/46, `check_portal_http` 25/25
 
 | # | Punto | Estado | Evidencia |
 |---|---|---|---|
-| P-1 | Costes, márgenes, proveedores, tarifas y compras nunca llegan al cliente (también por RPC, exportación, informes) | IMPLEMENTADO · probado (parte de campos) | 24 campos de línea y 4 de oferta solo internos; `check_portal` 1: 9/9 con un usuario portal real (lectura, `fields_get`, búsqueda, exportación rechazadas); regresiones 69/39/53/23/38/22 |
-| P-2 | Roles concedidos por BOSS (seguimiento, comercial, apoderado) y alcance por entidad legal | IMPLEMENTADO · prueba tras instalar | Restricciones `ir.access` (Odoo 20); `check_portal` 2–3, 9 y `check_portal_http` 0–2, 9 |
-| P-3 | Compras del cliente-proveedor visibles en el portal estándar | IMPLEMENTADO · prueba tras instalar | Comprobado hoy visible (`check_portal` 1); `boss_portal` lo cierra (`check_portal` 3) |
-| P-4 | Oferta de tarifas en portal, lista, correo y PDF sin total; sin firma ni pago | IMPLEMENTADO · plantillas validadas | `check_portal_qweb` 4/4 contra las plantillas de Odoo 20; `check_portal` 4; `check_portal_http` 3–4 |
-| P-5 | Aceptar/firmar/pagar solo apoderado; el enlace con token solo ve | IMPLEMENTADO · prueba tras instalar | `check_portal` 4, `check_portal_http` 4 |
-| P-6 | Petición de reserva revisada por BOSS (sin confirmar, sin expediente, sin factura) | IMPLEMENTADO · prueba tras instalar | `check_portal` 5, `check_portal_http` 5; el momento del expediente sigue siendo M2-C |
-| P-7 | Mis envíos con fechas estimadas ≠ reales, eventos y documentos publicados | IMPLEMENTADO · plantillas validadas | `check_portal_qweb` 4/4; `check_portal` 6–7; `check_portal_http` 6–7 |
-| P-8 | Enlace de seguimiento sin acceso, revocable, sin partes ni documentos | IMPLEMENTADO · prueba tras instalar | `check_portal` 8, `check_portal_http` 8 |
+| P-1 | Costes, márgenes, proveedores, tarifas y compras nunca llegan al cliente (también por RPC, exportación, informes) | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | 24 campos de línea y 4 de oferta solo internos; `check_portal` 1: 9/9 con un usuario portal real (lectura, `fields_get`, búsqueda, exportación rechazadas); regresiones 69/39/53/23/38/22 |
+| P-2 | Roles concedidos por BOSS (seguimiento, comercial, apoderado) y alcance por entidad legal | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | Restricciones `ir.access` (Odoo 20); `check_portal` 2–3, 9 y `check_portal_http` 0–2, 9 |
+| P-3 | Compras del cliente-proveedor visibles en el portal estándar | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | Comprobado hoy visible (`check_portal` 1); `boss_portal` lo cierra (`check_portal` 3) |
+| P-4 | Oferta de tarifas en portal, lista, correo y PDF sin total; sin firma ni pago | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | `check_portal_qweb` 4/4 contra las plantillas de Odoo 20; `check_portal` 4; `check_portal_http` 3–4 |
+| P-5 | Aceptar/firmar/pagar solo apoderado; el enlace con token solo ve | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | `check_portal` 4, `check_portal_http` 4 |
+| P-6 | Petición de reserva revisada por BOSS (sin confirmar, sin expediente, sin factura) | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | `check_portal` 5, `check_portal_http` 5; el momento del expediente sigue siendo M2-C |
+| P-7 | Mis envíos con fechas estimadas ≠ reales, eventos y documentos publicados | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | `check_portal_qweb` 4/4; `check_portal` 6–7; `check_portal_http` 6–7 |
+| P-8 | Enlace de seguimiento sin acceso, revocable, sin partes ni documentos | PROBADO (ORM + HTTP) · pantalla del cliente pendiente | `check_portal` 8, `check_portal_http` 8 |
 | P-9 | Seguimiento automático (MSC, BFirst…) | DECISIÓN | No existe en Odoo 17 ni 20; `docs/portal-seguimiento-integraciones.md` |
 
