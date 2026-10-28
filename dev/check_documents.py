@@ -87,10 +87,13 @@ check("5b supplier variant: no quotation, no customer reference, no scope", (Fal
 
 if installed:
     company = env.company  # noqa: F821
-    check("6 company layout: Light template, striped tables, BOSS colours, Lato, footer with the contact data",
-          ("web.external_layout_standard", "striped", "#64a8af", "#003a5c", "Lato", True),
-          (company.external_report_layout_id.key, company.report_tables_id, company.primary_color, company.secondary_color,
-           company.font, "boss@bosscontinental.com" in (company.report_footer or "")))
+    # ADR-011 §1: the installation sets the layout once; afterwards Settings › Document layout decides (Belal chose
+    # «Folder» with «bubble» tables on 28/10/2026). The check keeps the BOSS identity, not one template.
+    print(f"      layout chosen in Settings: {company.external_report_layout_id.key}, tables {company.report_tables_id}")
+    check("6 company layout: a document template set, BOSS colours, Lato, footer with the contact data",
+          (True, "#64a8af", "#003a5c", "Lato", True),
+          (bool(company.external_report_layout_id), company.primary_color, company.secondary_color, company.font,
+           "boss@bosscontinental.com" in (company.report_footer or "")))
     # ---- a complete [PRUEBA] file in the transaction
     so = env["sale.order"].browse(162)  # noqa: F821  S00162 → E260038
     f38.write({"vessel": "MSC ISABELLA", "voyage": "FI642A", "mbl_ref": "MEDUSH123456", "hbl_ref": "BOSS26SH0042",
