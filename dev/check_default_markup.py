@@ -133,8 +133,9 @@ check("5b duties 500 paid -> sale 500, without margin, shown as an estimate", (5
       (round(ara.price_unit, 2), ara.boss_sale_status, "without margin" in (ara.boss_sale_explanation or ""),
        "Estimate" in (ara.boss_sale_explanation or "")))
 ara.boss_manual_cost_note = "[PRUEBA] DUA 26ES0046"
-check("5b with the reference of the customs declaration: the amount is the document's, no longer an estimate",
-      (True, False), ("[PRUEBA] DUA 26ES0046" in ara.boss_sale_explanation, "Estimate" in ara.boss_sale_explanation))
+check("5b with a reference typed: shown as typed and unverified (no longer «estimate», never «documented»)",
+      (True, False, True), ("[PRUEBA] DUA 26ES0046" in ara.boss_sale_explanation, "Estimate" in ara.boss_sale_explanation,
+                            "does not check" in ara.boss_sale_explanation))
 check("5b THC on the same quotation keeps cost + 20 %", ("cost_based", True),
       (thc_ob.boss_sale_status, abs(thc_ob.price_unit - round(thc_ob.purchase_price * 1.2, 2)) < 0.011))
 ara.price_unit = 510.0

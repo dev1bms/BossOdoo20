@@ -2969,8 +2969,10 @@ msgstr "Suplido: se refactura por el importe pagado, %(cost)s por %(uom)s, sin m
 #. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
-msgid "Amount of the document %s."
-msgstr "Importe del documento %s."
+msgid ""
+"Reference typed: %s. The system does not check the document nor that the amount matches it."
+msgstr ""
+"Referencia tecleada: %s. El sistema no comprueba el documento ni que el importe coincida con él."
 
 #. module: boss_pricing_sale
 #. odoo-python

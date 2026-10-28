@@ -59,8 +59,8 @@ Aprobado por Belal el 28/10/2026 (F0-A00): los servicios con la marca **«Pagado
 (`boss_paid_on_behalf`; en boss20: ARA, IVA, DUM y PLA) se proponen en la oferta **por el importe pagado, sin el margen
 por defecto** («coste + 20 %», ADR-008). Solo cambia esa propuesta por defecto: un precio pactado en la lista del
 cliente o tecleado por una persona se respeta; sin importe conocido no se propone precio (nunca 0); un importe sin
-documento se muestra como **estimación** («el importe definitivo es el del DUA»); con la referencia del documento, como
-importe del documento. Las ofertas aceptadas, las facturas emitidas, los impuestos y las cuentas no cambian
+referencia se muestra como **estimación** («el importe definitivo es el del DUA»); con una referencia tecleada se muestra
+como «referencia tecleada», **sin que el sistema compruebe el documento ni el importe**. Las ofertas aceptadas, las facturas emitidas, los impuestos y las cuentas no cambian
 (comprobado en boss20: las 2 líneas de ARA existentes, ambas en ofertas aceptadas, conservan su precio). Si BOSS cobra
 por adelantar el dinero, es un servicio propio aparte (p. ej. caución CAU) con su precio y su IVA.
 
@@ -69,6 +69,8 @@ paga normalmente por cuenta del cliente» y decide el precio por defecto. Para q
 imponible del IVA (Ley 37/1992, art. 78.Tres.3º) hacen falta además, en cada operación: que BOSS lo pague **en nombre y
 por cuenta del cliente** en virtud de su mandato; que esté **justificado con el documento a nombre del cliente** (DUA,
 liquidación o factura); que se refacture **por el importe exacto**; y que se registre en **cuentas específicas**
-(419xxx, ver arriba). Por eso Odoo 20 solo aplica el impuesto de suplido cuando la línea lleva la referencia del
-documento («Referencia del coste»): sin ella, el IVA queda pendiente (`_compute_boss_vat`, desde el 26/10). La revisión
-de esas condiciones en casos concretos corresponde a Ángel o al asesor.
+(419xxx, ver arriba). Odoo 20 solo aplica el impuesto de suplido cuando la línea lleva un texto en «Referencia del coste»
+(`_compute_boss_vat`, desde el 26/10). **Hueco de verificación:** ese texto no prueba que exista un documento a nombre del
+cliente ni que el importe coincida; nadie lo comprueba en el sistema. Queda registrado en el paquete de IVA de
+`docs/paquetes-aprobacion-f0.md` para que Ángel decida cómo se verifica (revisión contable al registrar la factura del
+agente, adjuntar el DUA, o conciliación del importe con la factura del agente). No se cambia ningún impuesto por ello.
