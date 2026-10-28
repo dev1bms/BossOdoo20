@@ -19,6 +19,7 @@
             <xpath expr="//group[@name='misc']" position="inside">
                 <field name="boss_role_ids" widget="many2many_tags" options="{'no_create': True}"/>
                 <field name="boss_eori"/>
+                <field name="boss_mobile" widget="phone"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='email']" position="before">
                 <field name="boss_contact_purpose"/>

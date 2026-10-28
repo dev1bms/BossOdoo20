@@ -9,6 +9,67 @@ Excepción ya aprobada: **F0-A00** (suplidos al importe pagado, sin margen), apr
 
 Cada fila indica si la fuente se ha comprobado. Las marcadas «la fuente NO lo respalda» o «fuente débil» no deben aprobarse sin revisarlas (resumen al final).
 
+## Recomendación por paquete (28/10/2026)
+
+Cada paquete lleva una recomendación coherente, ya depurada: las propuestas con fuente débil o contraria se han
+corregido aquí, para que el responsable apruebe o corrija un criterio, no resuelva contradicciones de documentos. Lo
+**ya aprobado** (Belal 23/10 y 27/10, Ángel 27/10) se mantiene y se señala; solo lo marcado «nuevo» necesita decisión.
+
+1. **Bloqueos en contabilidad, pagos y cierre financiero (Ángel).** Ya aprobado: P30 (la factura de proveedor se
+   contabiliza y su pago espera a la factura del cliente; Belal 23/10). Nuevo, recomendado: un movimiento bancario
+   real se registra y se marca (F0-A81); un expediente cerrado financieramente no admite contabilizar hasta reabrirlo
+   (F0-A80); se retiene toda la factura si uno de sus servicios no está facturado (P30-b); el abono del proveedor se
+   aplica siempre (P30-d); los anticipos a proveedor (DUA, handling) se registran como anticipo ligado al expediente
+   (F0-A09). Los bloqueos tomados solo de Odoo 17 se recomiendan como **aviso, no bloqueo**, en el arranque: proveedor
+   sin cuenta bancaria (F0-A08) y cliente sin condición de pago (F0-A25); pasan a bloqueo si Ángel lo pide. P31 se
+   mantiene como aprobado (NIF del cliente español) y la exigencia de NIF-IVA a clientes de la UE con «0% UE S» se
+   recomienda como bloqueo por su efecto en el 349. Fechas de bloqueo trimestrales como en Odoo 17 (F0-A33). Cierre
+   financiero = todo facturado y «Pendiente» vacía, sin exigir cobros ni pagos (F0-A34).
+2. **Margen mínimo, venta bajo coste y crédito (Ángel y Cristina).** Las dos propuestas de margen se contradecían; la
+   recomendación única es: **aviso** de margen por grupo (10 % o 10 €, cifras de Odoo 17) en la oferta y el
+   expediente, **sin bloquear** en el arranque (es lo que fijó Odoo 19 y lo que aprobó Belal el 23/10: P01/P02 solo
+   aviso). El bloqueo con desbloqueo motivado (como Odoo 17) queda como opción posterior. La venta de ALM **nunca por
+   debajo del coste** salvo excepción documentada (decisión B18 de Odoo 19; se corrige P43-D8). Límite de crédito:
+   aviso estándar al ofertar y **bloqueo al abrir el expediente** solo si Ángel lo confirma (F0-A05, hoy en Odoo 17).
+3. **Condiciones de estado (Cristina).** Recomendación: las condiciones de Odoo 17 se cargan como **lista de
+   condiciones configurables por tráfico**, activas desde el arranque solo las que tienen requisito escrito de
+   Cristina (HBL liberado o SWB antes de la OT; levante antes de «Entregado» si la aduana es de BOSS; fecha y hora de
+   entrega obligatorias cuando BOSS transporta; MBL/MAWB antes de «En tránsito»). Las demás (seguro, partes reales,
+   booking confirmado, ATA pasada, valoraciones al cerrar) se cargan **desactivadas** y Cristina las activa. «Entregado»
+   no exige factura; el cierre operativo sí (F0-A07, ya decidido por Belal en el ciclo). Validez de oferta: **30 días**
+   como la compañía en Odoo 17 (se corrige P23). La forma de carga coherente con el modo (F0-B06) es una restricción
+   de datos, aprobada por Belal.
+4. **Permisos (Cristina y Ángel).** Ya aprobado: visibilidad estándar por rol (P35, Belal 23/10), portal ADR-010.
+   Recomendación: usuarios desde Odoo 17 conservando su grupo de ventas (F0-C01); ventas ve coste y margen de la oferta
+   (P20); reabre un cierre financiero solo el administrador contable (F0-A35, control ya implantado); cierra el
+   operativo o el gestor y reabre Cristina con motivo (F0-C61). Publicación en el portal por defecto: salida, llegada,
+   levante, entrega y cambios de ETD/ETA; documentos solo los publicados (F0-C34, F0-C39).
+5. **Cuentas y diarios (Ángel).** Recomendación: cuentas 705xxx y 607xxx por familia como en Odoo 17 (P37), un diario
+   por cuenta bancaria activa (F0-A28), modelos de conciliación de hoy (F0-A30), diferencia de cambio al diario estándar
+   sin bloquear el cierre (P03-b). Periodificación mensual y compensación con agentes (F0-A36, F0-A32) **no se
+   implantan** hasta que Ángel las pida: no hay fuente de la práctica de BOSS.
+6. **IVA y menciones legales (Ángel).** Ya aprobado: tabla de IVA de Ángel (31/08), P17, P11, P18. Recomendación:
+   menciones legales del 0 % según el artículo que corresponda a cada caso (`docs/sii-verifactu-revision.md`: 21.5º
+   exportación, 64 importación, 69 localización), cargadas solo tras la revisión de Ángel o el asesor; suplidos fuera
+   de la base con el art. 78.Tres.3º (F0-A15) y **hueco de verificación** registrado (F0-A15-v). **F0-A20 se
+   rechaza**: la fecha de la factura es la de expedición, con la fecha de operación aparte (RD 1619/2012 art. 6).
+   **F0-A24 (347) no se cambia** respecto a Odoo 17 sin que Ángel lo confirme con el asesor. IVA de compra por
+   defecto como Odoo 17 (A01).
+7. **Reparto de costes e ingresos (Cristina y Ángel).** Recomendación: un pedido de venta por pagador (F0-C56), prepaid
+   o collect decide el pagador del flete (F0-C57), el Incoterm propone el pagador (F0-C08), profit share según el caso
+   con los cuatro casos de Odoo 17 (F0-C58), FuelEU dentro del THC de precio fijo (F0-C16). El reparto del máster
+   entre houses **se hace a mano** hasta que exista la consolidación (se corrige F0-C30). La comisión del recomendador
+   (F0-A39) **no se automatiza**: queda como informe manual hasta que Ángel apruebe la regla.
+8. **Migración de datos (Belal, Ángel, Cristina).** Recomendación: alcance de `docs/migracion.md` (contactos con
+   actividad desde 2024 y sus direcciones útiles, sin exclusión automática por nombre de lugar; duplicados listados,
+   no fusionados; archivados vinculados a operaciones se migran archivados). Condiciones de pago en uso (F0-A01),
+   límites de crédito tal cual (F0-A03), asiento de apertura y partidas abiertas (F0-A44, F0-A45), servicios P16.
+   Expedientes abiertos: todos los no cerrados con actividad en 2026 (F0-C73, confianza baja: se mide en el ensayo).
+9. **Qué se activa el 1/1 (Belal y Ángel).** Recomendación: correo real y efectos externos el 1/1 con lista firmada
+   (F0-B25, F0-B26); sin OCR ni buzón de facturas en el arranque (F0-A11, F0-A12); sin Facturae (P45-b); AWB, HBL,
+   seguimiento automático y petición de documentos después del arranque. VERI*FACTU o SII según P45-a, con el
+   certificado cargado por Ángel en Odoo (F0-A43, fecha legal del BOE: 1/1/2027 salvo publicación del aplazamiento).
+
 ## 1. Bloqueos en contabilidad, pagos y cierre financiero — Bloqueos · responsable: Ángel
 | Id | Recomendación | Fuente | Comprobación | Nota |
 |---|---|---|---|---|
