@@ -8,7 +8,7 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
 
 | Block | Fields | Used for |
 |---|---|---|
-| Case | Business of (BOSS client / agent's client), Direction, Mode, Load type, Incoterm and its **named place** | Choose the tariffs. **Traffic** is computed: IMB = sea import, BOSS client; IMA = ordered by an agent for its client |
+| Case | Business of (BOSS client / agent's client), Direction, Mode, Load type, Incoterm (the place is the route, not a separate field) | Choose the tariffs. **Traffic** is computed: IMB = sea import, BOSS client; IMA = ordered by an agent for its client |
 | Carrier | Main carrier (shipping line or airline), **Inland carrier** (shown only: the supplier of the road transport line, carried to the file), BOSS handles (pickup, customs, main carriage, delivery) | Tariffs of that line or airline; the haulier is chosen on the TTE line |
 | Origin (left) | Shipper, country, port/airport, pickup address, place, **ETD** | On an export Spain is the origin: the origin port is the Spanish port and the pickup address gives the province |
 | Destination (right) | Consignee, country, port/airport, delivery address, place, **ETA** | On an import Spain is the destination: the destination port is the Spanish port and the delivery address gives the province |
