@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Run an odoo shell script from dev/ on boss20 with the LOCAL, UNCOMMITTED addons (work in progress) mounted from a
 # private folder on the server, without touching ~/BossOdoo20/addons nor the running web (no deploy, no restart, no
-# module update: only Python-level changes can be tried this way; new fields or views need a real deploy).
+# module update). dev/wip_bootstrap.py creates the columns and tables of new or changed fields inside the transaction
+# (rolled back at the end), so new fields can be tried too; XML data and views still need a real deploy.
 #   dev/server_shell_wip.sh <script.py> [private-data-file ...]
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -19,5 +20,7 @@ for DATA in "$@"; do
   $SSH "cat > '$TMP/data/$NAME' && chmod 644 '$TMP/data/$NAME'" < "$DATA"
   FILES="${FILES:+$FILES|}$NAME"
 done
-$SSH "cd ~/BossOdoo20 && docker compose run --rm -T -e BOSS_FILES='$FILES' -v $TMP/addons:/mnt/wip-addons:ro -v $TMP/data:/tmp/boss:ro odoo shell \
+$SSH "cat > '$TMP/wip_bootstrap.py' && chmod 644 '$TMP/wip_bootstrap.py'" < dev/wip_bootstrap.py
+$SSH "cd ~/BossOdoo20 && docker compose run --rm -T -e BOSS_FILES='$FILES' -v $TMP/addons:/mnt/wip-addons:ro -v $TMP/data:/tmp/boss:ro \
+      -v $TMP/wip_bootstrap.py:/tmp/wip_bootstrap.py:ro --entrypoint python3 odoo /tmp/wip_bootstrap.py \
       -c /etc/odoo/odoo.conf -d boss20 --addons-path=/opt/odoo-src/odoo/addons,/mnt/wip-addons --no-http --log-level=warn; rc=\$?; rm -rf $TMP; exit \$rc" < "dev/$SCRIPT"

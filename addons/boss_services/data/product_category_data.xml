@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Service groups of the file summary (Odoo 17 product categories under «Comercial»); services are assigned by code
+     in models/service_groups.py on install and upgrade. -->
+<odoo>
+    <record id="product_category_freight" model="product.category">
+        <field name="name">Freight</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_inland" model="product.category">
+        <field name="name">Inland transport</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_local" model="product.category">
+        <field name="name">Local charges</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_customs" model="product.category">
+        <field name="name">Customs</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_storage" model="product.category">
+        <field name="name">Storage and warehouse</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_insurance" model="product.category">
+        <field name="name">Insurance and courier</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_profit_share" model="product.category">
+        <field name="name">Profit share</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+    <record id="product_category_duties" model="product.category">
+        <field name="name">Duties and taxes paid on behalf</field>
+        <field name="parent_id" ref="product_category_services"/>
+    </record>
+</odoo>

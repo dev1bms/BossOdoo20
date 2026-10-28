@@ -3116,3 +3116,28 @@ msgstr "Cruzado"
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__national
 msgid "National"
 msgstr "Nacional"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_tariff_document_required
+msgid "Supplier document required to send a tariff for approval"
+msgstr "Documento del proveedor obligatorio para enviar una tarifa a aprobación"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_spot_rate_auto_approve
+msgid "Freight rates entered from a quotation are approved on entry"
+msgstr "Los fletes introducidos desde una oferta se aprueban al introducirlos"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_partner__boss_carrier_group_id
+msgid "Part of carrier"
+msgstr "Pertenece al transportista"
+
+#. module: boss_pricing
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Freight rates are not approved on entry (Sales settings)."
+msgstr "Los fletes no se aprueban al introducirlos (ajustes de Ventas)."
+
+#. module: boss_pricing
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Approved on entry: freight rate typed from %s (Sales setting «Freight rates entered from a quotation are approved on entry»)."
+msgstr "Aprobado al introducirlo: flete tecleado desde %s (ajuste de Ventas «Los fletes introducidos desde una oferta se aprueban al introducirlos»)."

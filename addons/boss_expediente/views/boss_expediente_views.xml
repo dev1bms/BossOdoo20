@@ -128,6 +128,8 @@
                     </group>
                     <notebook>
                         <page string="Summary" name="summary">
+                            <field name="summary_html" nolabel="1" readonly="1"
+                                   groups="sales_team.group_sale_manager,account.group_account_invoice,account.group_account_readonly"/>
                             <group>
                                 <group string="Sale">
                                     <field name="amount_sale"/>
@@ -268,7 +270,9 @@
                                 <group>
                                     <field name="goods_description"/>
                                     <field name="packages"/>
+                                    <field name="package_type"/>
                                     <field name="pallets"/>
+                                    <field name="hs_code"/>
                                 </group>
                                 <group>
                                     <field name="gross_kg"/>

@@ -22,6 +22,8 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     boss_fx_policy = fields.Selection(related="company_id.boss_fx_policy", readonly=False)
+    boss_tariff_document_required = fields.Boolean(related="company_id.boss_tariff_document_required", readonly=False)
+    boss_spot_rate_auto_approve = fields.Boolean(related="company_id.boss_spot_rate_auto_approve", readonly=False)
     # Default sale price = expected cost + this percentage (Belal, 27/10/2026, after Ángel: a surcharge on the cost,
     # not a margin on the sale). It lives as one standard rule on the default pricelist: a customer with an agreed
     # price keeps it, a price typed on the line is never overwritten, and 0 removes the rule (switched off).

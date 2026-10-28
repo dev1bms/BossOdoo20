@@ -1135,6 +1135,14 @@ TASKS = [
                    "cruzada o nacional se describe sin que España sea parte; la fecha de vaciado nunca elige tarifa.",
                    "Aceptación: Belal activa el ajuste en pantalla y Ángel ve el 20 % en una oferta nueva."),
          links=[f"{SYS}/odoo/action-sale.action_orders", f"{DOC}#/inicio-rapido"]),
+    dict(code="W18", title="Reunión 2 (siete fragmentos): flete por ETD, una tarifa por ruta con versiones y aprobación al introducir, familia de transportista, oferta de tarifas, coste a petición, resumen por grupo",
+         epic="E8", type=T.FEATURE, sprint="S44", points=8, start=D(2026, 10, 28), due=D(2026, 10, 29),
+         priority=P.HIGH, deps=["W17"], hours=9, who="belal", dept="sys", status=S.IN_PROGRESS,
+         evidence="28/10: ADR-009; matriz M2-1…M2-23; check_meeting2 47/47 y regresiones con el código montado en boss20; "
+                  "pendiente: aprobación de despliegue y comprobación en Chrome (pestaña Envío, asistente, PDF, Resumen).",
+         desc=desc("Resultado: las reglas confirmadas por Ángel en la segunda reunión funcionan y están probadas; las cifras de venta siguen siendo de Cristina.",
+                   "Aceptación: Ángel teclea un flete desde una oferta y lo ve aplicado al momento; el Resumen del expediente cuadra por grupo."),
+         links=[f"{SYS}/odoo/sales/311", f"{DOC}#/oferta-envio"]),
     dict(code="X01", title="Excepción de coste manual en la entrega para servicios sin tarifa aprobada: aprobación de "
                            "Belal por servicio", epic="E8", type=T.ANALYSIS, sprint="S47", points=1,
          start=D(2026, 11, 16), due=D(2026, 11, 17), priority=P.CRITICAL, deps=["D02", "D05"], hours=2, who="belal",

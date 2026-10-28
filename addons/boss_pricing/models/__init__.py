@@ -5,3 +5,4 @@ from . import boss_tariff_line
 from . import boss_pricing
 from . import boss_tariff_import
 from . import workspace
+from . import res_company

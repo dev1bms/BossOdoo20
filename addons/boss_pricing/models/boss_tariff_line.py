@@ -91,9 +91,9 @@ class BossTariffLine(models.Model):
     round_undecided = fields.Boolean(
         "Or fraction not decided", help="Time-based prices: the document says «per 100 kg» without «or fraction» and "
         "the business has not decided: both readings are computed and the price is automatic only when they agree.")
-    unit_price = fields.Float(min_display_digits="Product Price")
+    unit_price = fields.Float(min_display_digits=2)
     basis_2 = fields.Selection(BASES, "Second basis")
-    unit_price_2 = fields.Float("Second unit price", min_display_digits="Product Price")
+    unit_price_2 = fields.Float("Second unit price", min_display_digits=2)
     b2_unit_size = fields.Float("Second unit size", default=1.0)
     b2_round_up = fields.Boolean("Second basis or fraction")
     bracket_ids = fields.One2many("boss.tariff.bracket", "line_id", "Brackets / day tiers", copy=True)
@@ -146,12 +146,12 @@ class BossTariffLine(models.Model):
         help="Event of the shipment file that closes the chargeable period (e.g. MSC demurrage «devolución del "
         "vacío»). Events of each container price each container with its own dates. Empty: the default of the "
         "service for the direction.")
-    min_amount = fields.Float("Minimum", min_display_digits="Product Price",
+    min_amount = fields.Float("Minimum", min_display_digits=2,
                               help="Minimum of the line total (all units of this charge together).")
     min_per_day = fields.Boolean(
         "Minimum per day", help="The minimum applies to each charged day or period (document: «mínimo … AWB/día», "
         "«/expedición/día»), not to the whole stay.")
-    max_amount = fields.Float("Maximum", min_display_digits="Product Price",
+    max_amount = fields.Float("Maximum", min_display_digits=2,
                               help="Maximum of the line total. Empty: no maximum.")
     on_request = fields.Boolean(
         help="The document says 'on request': there is no amount; the quotation shows it as pending.")
@@ -286,8 +286,8 @@ class BossTariffBracket(models.Model):
     line_id = fields.Many2one("boss.tariff.line", required=True, ondelete="cascade", index=True)
     up_to = fields.Float("Up to", help="Upper bound, included (kg, km, value, day number...). 0 = no limit.")
     up_to_is_open = fields.Boolean(compute="_compute_up_to_is_open", store=True)
-    fixed_amount = fields.Float(min_display_digits="Product Price", help="Amount of the bracket.")
-    unit_price = fields.Float(min_display_digits="Product Price",
+    fixed_amount = fields.Float(min_display_digits=2, help="Amount of the bracket.")
+    unit_price = fields.Float(min_display_digits=2,
                               help="Price per unit (whole quantity), or price per day for day tiers.")
 
     @api.depends("up_to")

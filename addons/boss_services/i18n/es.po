@@ -1238,3 +1238,63 @@ msgid ""
 msgstr ""
 "Peso tasable: el mayor del peso bruto y el volumen × factor del modo (aéreo "
 "167, terrestre 333, marítimo 1000 kg/m³)"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_freight
+msgid "Freight"
+msgstr "Flete"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_inland
+msgid "Inland transport"
+msgstr "Transporte terrestre"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_local
+msgid "Local charges"
+msgstr "Gastos locales"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_customs
+msgid "Customs"
+msgstr "Aduana"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_storage
+msgid "Storage and warehouse"
+msgstr "Almacenaje y almacén"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_insurance
+msgid "Insurance and courier"
+msgstr "Seguro y mensajería"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_profit_share
+msgid "Profit share"
+msgstr "Profit share"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_duties
+msgid "Duties and taxes paid on behalf"
+msgstr "Aranceles e impuestos (suplidos)"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_tariff_date
+msgid "Tariff date"
+msgstr "Fecha de tarifa"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__key
+msgid "Key date of the shipment (ETA of an import, ETD otherwise)"
+msgstr "Fecha clave del envío (ETA en importación, ETD en el resto)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__etd
+msgid "Departure (ETD); the quotation date while the ETD is unknown"
+msgstr "Salida (ETD); la fecha de la oferta mientras no se conoce la ETD"
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "Summary group"
+msgstr "Grupo del resumen"

@@ -53,6 +53,37 @@ de Belal** (commit `064891c`; las filas marcadas «WIP» están ya en boss20: `c
 | 41 | PP, MSF, One, OCL, FBA | CERRADO | MSF = MSC, One = ONE (Ocean Network Express), OCL = OOCL (navieras); FBA probablemente «aéreo» (transcripción); PP no existe (Ángel 27/10) |
 | 42 | Mapa fuente → código → prueba → pantalla | CERRADO | Esta matriz |
 
+## Segunda reunión: siete fragmentos recuperados (transcripción entregada por Belal el 28/10/2026; ADR-009)
+
+Estado el 28/10 con el código montado en boss20 (`dev/check_meeting2.py`, 47/47; «tras el despliegue» = pantalla o
+plantilla QWeb que el montaje WIP no carga). **Pendiente de aprobación de despliegue.**
+
+| # | Punto (fragmento) | Estado | Evidencia (código → prueba → pantalla) |
+|---|---|---|---|
+| M2-1 | La plantilla FOB rellena el incoterm FOB (1) | CERRADO | Ya lo hacía: `check_route_cases` E1, `check_meeting2` 5; Chrome S00311 («[FOB] FREE ON BOARD» desde la plantilla) |
+| M2-2 | Entrega final al cliente es estimada, meses después (1) | CERRADO (WIP) | Etiqueta «Final delivery to the client (estimate)», opcional; `check_meeting2` 3 (tras el despliegue) |
+| M2-3 | Un transportista comercial, varias entidades legales (MSC España, Suiza, USA) (1) | CERRADO (WIP) | `res.partner.boss_carrier_group_id` «Pertenece al transportista»; las tarifas casan por familia, la línea/compra/factura conservan la entidad legal; `check_meeting2` 4 y 6. Dato: al migrar los contactos (R-A4) MSC Suiza/USA se marcan como parte de MSC |
+| M2-4 | Dirección de entrega con el destinatario, recogida con el expedidor; la cabecera sobra (1, 2) | CERRADO (WIP) | Cabecera: direcciones de factura y entrega ocultas (Odoo las sigue rellenando); recogida elegida entre las direcciones del **expedidor**, entrega entre las del **destinatario**; ambas opcionales; `check_meeting2` 3 y 5 |
+| M2-5 | Tipo de bulto (cajas, palés, jaulas, bultos, botellas, sacos) y código de la mercancía (2) | CERRADO (WIP) | `boss_package_type` (taxonomía de la partida de Odoo 17) y `boss_hs_code` en oportunidad, oferta y expediente; `check_meeting2` 5 |
+| M2-6 | Aranceles según valor y código de la mercancía (2) | DECISIÓN | Sin tabla de aranceles por código (TARIC): la estimación se teclea; el código queda registrado. Pendiente de Ángel: fuente de los tipos |
+| M2-7 | FCL: sitio claro para los contenedores (2) | CERRADO (WIP) | Encabezado «Contenedores del envío (tamaño, tipo, cantidad)» sobre la lista |
+| M2-8 | «Valencia, Shenzhen» se lee al revés (2) | CERRADO (WIP) | Asistente: origen arriba, destino debajo; ámbito de la tarifa «CNSZX → ESVLC»; nombre de la tarifa con la ruta; `check_meeting2` 6 y 8 |
+| M2-9 | Validez del flete desde esta semana; dos semanas si hace falta (2) | CERRADO (WIP) | `valid_from` = hoy, `valid_to` = +6 días, editables; `check_meeting2` 8 |
+| M2-10 | Flete en USD con cambio (2) | CERRADO | Tarifa 98 de Ángel en USD → coste en EUR al cambio de la fecha de la oferta (política «rate_quotation»); `check_meeting2` 7 |
+| M2-11 | Números a la española, dos decimales en todo (2) | PARCIAL | Dos decimales mínimos en precio de venta, coste de compra y precios de proveedor (4 solo si el valor los tiene; `check_meeting2` 3). Coma decimal y punto de millar = idioma del usuario (es_ES): **decisión de Belal** poner a los usuarios de BOSS en español (los dos usuarios actuales están en en_US) |
+| M2-12 | Documento del proveedor ¿obligatorio? Preguntar a Cristina; fácil de quitar (2) | CERRADO (WIP) + DECISIÓN | Ajuste «Documento del proveedor obligatorio» (por defecto activo = ADR-002); `check_meeting2` 2 y 8. Cristina decide |
+| M2-13 | Wendy a las 4 de la mañana no puede esperar una aprobación (2) | CERRADO (WIP) | Ajuste «Fletes aprobados al introducirlos» (activo): el flete tecleado desde la oferta queda aprobado por su autor, con nota, y valora la oferta al momento; desactivado vuelve el circuito de aprobación; `check_meeting2` 8 |
+| M2-14 | Una tarifa por ruta, precios sucesivos (1/11, 8/11, 13/11, 17/11), el más nuevo vigente (3) | CERRADO (WIP) | El asistente crea **versiones** de la misma tarifa; el motor elige la versión más nueva vigente en la fecha; historial intacto; aceptadas sin cambios; precio de diciembre adelantado no toca noviembre; `check_meeting2` 8 |
+| M2-15 | El flete marítimo y aéreo toma siempre la salida (ETD) (4) | CERRADO (WIP) | `product.template.boss_tariff_date` = salida en FMI/FMI-LCL/FME/FME-LCL/FAI/FAE (migración); sin ETD, la fecha de la oferta; explicación en la línea; `check_meeting2` 1 y 7; `check_quote_flow` 5 adaptado |
+| M2-16 | Venta independiente del proveedor: THC 180 (MSC) / 190 (CMA) → 210 (4, 5) | CERRADO | Precio fijo del servicio en la lista general (regla por producto) manda sobre «coste + 20 %»; cambiar de naviera cambia el coste y el margen, no la venta; el precio tecleado sobrevive; `check_meeting2` 9. **Las cifras son de Cristina (Excel): pendientes** |
+| M2-17 | La plantilla tiene los precios de venta (Excel de Cristina) (5) | DECISIÓN | Mecanismo listo (lista de precios general = tarifas de venta); faltan los Excel y qué servicios son fijos o variables |
+| M2-18 | «Unit price / unit cost» confunden (6) | CERRADO (WIP) | «Precio de venta (unitario)» y «Coste de compra (unitario)» |
+| M2-19 | Transporte terrestre caso por caso: mantener la línea, aceptar, teclear el coste en el expediente (6) | CERRADO (WIP) | «Coste a petición» en la línea → estado «a petición», se acepta sin excepción de responsable, el expediente lo muestra como desconocido hasta teclearlo; `check_meeting2` 10 |
+| M2-20 | Proveedor que haga el servicio (camionero, o la naviera) (6) | PARCIAL | Cualquier proveedor con aviso si no tiene tarifa del servicio; sin lista de servicios por proveedor (decisión) |
+| M2-21 | Al cliente se envían tarifas por unidad (20', 40', 40'HC, B/L), no un total (6) | CERRADO (WIP) + DECISIÓN | «Oferta de tarifas»: líneas por contenedor valoradas para 1 unidad del tamaño, documento con la base y sin total, aceptación bloqueada hasta introducir los contenedores; sin precios de compra en el PDF; `check_meeting2` 12 (documento tras el despliegue). Decisión: ¿expediente al aceptar la lista o al hacer el booking? |
+| M2-22 | Resumen como Odoo 17: compra/venta por grupo, pendiente vs definitivo, pendiente vs facturado (7) | CERRADO (WIP) | Grupos = categorías de Odoo 17 (Flete, Transporte terrestre, Gastos locales, Aduana, Almacén, Seguro, Profit share, Suplidos); tabla en la pestaña Resumen con venta acordada / facturada / por facturar y coste pendiente / real (facturas) / previsto y margen; la fila total cuadra con las cifras del expediente; `check_meeting2` 11 |
+| M2-23 | Un expediente y una partida en la misma página (7) | CERRADO | Odoo 20 no separa la partida: todo en el expediente (varias partidas = varios expedientes, asistente de división) |
+
 Pruebas del cierre: `dev/check_meeting_matrix.py` (23/23), `dev/check_chargeable_weight.py` (38/38),
 `dev/check_quote_flow.py` (40/40), `dev/check_route_cases.py` (36/36; 53/53 con los casos cruzado y nacional),
 `dev/check_default_markup.py` (22/22). «WIP 2» = segunda tanda del 27/10 por la tarde (X/N, fecha clave, +20 %),

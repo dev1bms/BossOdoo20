@@ -2834,3 +2834,128 @@ msgstr "Puerto o aeropuerto en España donde BOSS gestiona la carga: el destino 
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_country_id
 msgid "Origin country of an import or destination country of an export, used by tariffs. Empty for a national shipment or a cross-trade."
 msgstr "País de origen de una importación o de destino de una exportación, usado por las tarifas. Vacío en un envío nacional o cruzado."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Freight rates approved on entry"
+msgstr "Fletes aprobados al introducirlos"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Supplier document required"
+msgstr "Documento del proveedor obligatorio"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_rate_quotation
+msgid "Rate quotation (no quantities)"
+msgstr "Oferta de tarifas (sin cantidades)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_on_request
+msgid "Cost asked case by case"
+msgstr "Coste pedido caso por caso"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__on_request
+msgid "Asked to the supplier (case by case)"
+msgstr "Pedido al proveedor (caso por caso)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Final delivery to the client (estimate)"
+msgstr "Entrega final al cliente (estimada)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Selling price (unit)"
+msgstr "Precio de venta (unitario)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Buying cost (unit)"
+msgstr "Coste de compra (unitario)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Buying cost per unit (quotation currency)"
+msgstr "Coste de compra unitario (moneda de la oferta)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Containers of the shipment (size, type, quantity)"
+msgstr "Contenedores del envío (tamaño, tipo, cantidad)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Cost on request"
+msgstr "Coste a petición"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Rate quotation: leave the containers empty while the client has not said how many ship; each per-container service is priced for one container of the size on its line, and the document shows unit rates without a total. Enter the containers before accepting."
+msgstr "Oferta de tarifas: deje los contenedores vacíos mientras el cliente no diga cuántos embarca; cada servicio por contenedor se valora para un contenedor del tamaño de su línea y el documento muestra precios unitarios sin total. Introduzca los contenedores antes de aceptar."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Origin ports / airports"
+msgstr "Puertos / aeropuertos de origen"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Destination ports / airports (Spain)"
+msgstr "Puertos / aeropuertos de destino (España)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Origin ports / airports (Spain)"
+msgstr "Puertos / aeropuertos de origen (España)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Destination ports / airports"
+msgstr "Puertos / aeropuertos de destino"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
+msgid "Freight rate: approved on entry, usable at once (Sales setting)."
+msgstr "Flete: aprobado al introducirlo, utilizable al momento (ajuste de Ventas)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__lineage_id
+msgid "New version of"
+msgstr "Nueva versión de"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.report_saleorder_document_boss
+msgid "Per"
+msgstr "Por"
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+msgid "%s cannot be accepted yet: enter the containers of the shipment (size, type, quantity) in the Shipment tab. The quotation gives rates per container; the file needs the actual containers."
+msgstr "%s no puede aceptarse todavía: introduzca los contenedores del envío (tamaño, tipo, cantidad) en la pestaña Envío. La oferta da precios por contenedor; el expediente necesita los contenedores reales."
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Cost asked to %s case by case: the quotation can be accepted and the cost is typed in the file when the supplier answers."
+msgstr "Coste pedido a %s caso por caso: la oferta puede aceptarse y el coste se teclea en el expediente cuando el proveedor responde."
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Tariff date %s: the departure (ETD) chooses the freight rate."
+msgstr "Fecha de tarifa %s: la salida (ETD) elige el flete."
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Tariff date %s: the quotation date, until the ETD is known (freight rates take the departure)."
+msgstr "Fecha de tarifa %s: la fecha de la oferta, hasta conocer la ETD (los fletes toman la salida)."
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "the supplier"
+msgstr "el proveedor"
+
+#. module: boss_pricing_sale
+#: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
+msgid "Attach the supplier document to send the price for approval (Sales setting «Supplier document required»)."
+msgstr "Adjunte el documento del proveedor para enviar el precio a aprobación (ajuste de Ventas «Documento del proveedor obligatorio»)."

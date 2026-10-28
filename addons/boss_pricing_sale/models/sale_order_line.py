@@ -1,6 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools.misc import formatLang
+from odoo.tools.misc import format_date, formatLang
 
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
@@ -24,6 +24,7 @@ COST_KINDS = [
     ("estimate", "Estimate"),
     ("zero", "Approved zero"),
     ("unknown", "Unknown"),
+    ("on_request", "Asked to the supplier (case by case)"),
 ]
 # Changing these on an accepted line is a re-pricing: only through the Re-price wizard (ADR-003).
 FROZEN_FIELDS = {"product_id", "product_uom_id", "product_uom_qty", "price_unit", "discount", "purchase_price",
@@ -34,6 +35,7 @@ COST_FIELDS = ("boss_cost_status", "boss_cost_amount", "boss_cost_currency_id", 
 SHIPMENT_DEPENDS = (
     "order_id.partner_id", "order_id.boss_direction", "order_id.boss_transport_mode", "order_id.boss_load_type",
     "order_id.boss_carrier_id", "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_planned_date",
+    "order_id.boss_etd", "order_id.date_order", "order_id.boss_rate_quotation",
     "order_id.boss_inland_state_id", "order_id.boss_awb_kg", "order_id.boss_chargeable_kg",
     "order_id.boss_volume_weight_kg",
     "order_id.boss_origin_port_id", "order_id.boss_destination_port_id",
@@ -74,6 +76,15 @@ class SaleOrderLine(models.Model):
         "Accepted without cost because", copy=False,
         help="Documented exception (sales manager only): accept this supplier service with its cost still unknown. "
         "The file shows its cost as missing until the supplier bill arrives.")
+    boss_cost_on_request = fields.Boolean(
+        "Cost asked case by case", copy=False,
+        help="The supplier gives no tariff for this service (inland trucking, for instance) and quotes each shipment "
+        "on request: the service stays on the quotation with its sale price, the quotation can be accepted, and the "
+        "cost is typed in the file when the supplier answers (Ángel, 27/10/2026).")
+    # Amounts shown with 2 decimals unless more are needed (0,3779 €/kg keeps its 4): «Spanish way, two decimals,
+    # everywhere» (Ángel, 27/10/2026). Stored precision unchanged (Product Price).
+    price_unit = fields.Float(digits="Product Price", min_display_digits=2)
+    purchase_price = fields.Float(digits="Product Price", min_display_digits=2)
     boss_days_source = fields.Selection(
         [("shipment", "Days of the shipment"), ("estimate", "Estimate of this line"), ("actual", "Actual period (ended)")],
         "Days for this service", default="shipment", required=True,
@@ -157,6 +168,8 @@ class SaleOrderLine(models.Model):
                         else "estimate" if line.boss_cost_is_estimate else "known")
             elif line.boss_cost_status in ("manual", "not_ready") and line.boss_manual_cost:
                 kind = "known"
+            elif line.boss_cost_status == "on_request" and line.boss_cost_on_request:
+                kind = "on_request"  # asked to the supplier case by case: accepted, typed in the file (not unknown)
             else:
                 kind = "unknown"
             line.boss_cost_kind = kind
@@ -235,21 +248,40 @@ class SaleOrderLine(models.Model):
             source = line.product_uom_id.boss_quantity_source
             if source in (False, "input"):
                 continue
-            quantity = line.order_id._boss_quantity(source, line.boss_container_size, line.boss_container_type_id)
+            order = line.order_id
+            quantity = order._boss_quantity(source, line.boss_container_size, line.boss_container_type_id)
             if quantity is not None:
+                if (not quantity and order.boss_rate_quotation and source in ("container", "teu")
+                        and not order.boss_container_ids):
+                    quantity = 1.0  # rate quotation: a unit rate per container size, no containers known yet
                 line.product_uom_qty = quantity
 
     # --- cost: one call to boss.pricing --------------------------------------------------------------
 
     def _boss_inputs(self):
         self.ensure_one()
-        inputs = self.order_id._boss_shipment_inputs()
+        order = self.order_id
+        inputs = order._boss_shipment_inputs()
         inputs.update({"line_qty": self.product_uom_qty, "container_size": self.boss_container_size or None,
                        "container_type_id": self.boss_container_type_id.id or None,
                        "supplier_id": self.boss_supplier_id.id or None})
         if self.boss_days_source != "shipment":
             inputs["storage_days"] = self.boss_days
+        if order.boss_rate_quotation and not order.boss_container_ids and self.boss_container_size:
+            # rate per container of this size: priced for one container, the customer multiplies
+            inputs["containers"] = [{"size": self.boss_container_size, "type_id": self.boss_container_type_id.id or None,
+                                     "quantity": 1}]
         return inputs
+
+    def _boss_tariff_date(self):
+        """Date that chooses the supplier tariff version of this line: the departure (ETD) for ocean and air freight
+        — the quotation date while the ETD is unknown —, the key date of the shipment for the other services
+        (Ángel, 27/10/2026; ADR-009)."""
+        self.ensure_one()
+        order = self.order_id
+        if self.product_id.boss_tariff_date == "etd":
+            return order.boss_etd or fields.Date.to_date(order.date_order) or fields.Date.context_today(self)
+        return order.boss_planned_date or None
 
     def _boss_price(self, related_costs=None):
         self.ensure_one()
@@ -257,7 +289,7 @@ class SaleOrderLine(models.Model):
         if related_costs is not None:
             inputs["related_costs"] = related_costs
         return self.env["boss.pricing"].price_cost(self.product_id, self.product_uom_id, inputs,
-                                                   self.order_id.boss_planned_date or None, self.order_id.company_id)
+                                                   self._boss_tariff_date(), self.order_id.company_id)
 
     def _boss_related_costs(self):
         """Costs of the other lines of the order, for percentages on services of the same supplier."""
@@ -272,9 +304,9 @@ class SaleOrderLine(models.Model):
                                 "amount": res.amount, "currency": res.line.currency_id.name})
         return related
 
-    @api.depends("product_id", "product_uom_id", "product_uom_qty", "currency_id", "boss_container_size",
-                 "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source", "boss_execution",
-                 *SHIPMENT_DEPENDS)
+    @api.depends("product_id", "product_id.boss_tariff_date", "product_uom_id", "product_uom_qty", "currency_id",
+                 "boss_container_size", "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source",
+                 "boss_execution", "boss_cost_on_request", *SHIPMENT_DEPENDS)
     def _compute_boss_cost(self):
         frozen = self._boss_skip()
         frozen._boss_keep(*COST_FIELDS)
@@ -300,6 +332,9 @@ class SaleOrderLine(models.Model):
             if (status == "ok" and res.currency and res.currency != line.currency_id
                     and line.order_id.company_id.boss_fx_policy == "none"):
                 status = "currency"
+            if (line.boss_cost_on_request and not line.boss_manual_cost
+                    and status in ("no_tariff", "manual", "missing_input", "pending_approval", "conflict")):
+                status = "on_request"  # the supplier quotes case by case: cost typed in the file when known
             line.update({
                 "boss_cost_status": status,
                 "boss_cost_amount": res.amount,
@@ -334,6 +369,17 @@ class SaleOrderLine(models.Model):
             elif line.boss_cost_status in ("manual", "not_ready") and line.boss_manual_cost:
                 text = self.env._("Manual cost per unit: %(cost)s %(cur)s %(ref)s", cost=line.boss_manual_cost,
                                   cur=line.currency_id.name, ref=line.boss_manual_cost_note or "")
+            elif line.boss_cost_status == "on_request" and line.boss_cost_on_request:
+                text = self.env._("Cost asked to %s case by case: the quotation can be accepted and the cost is typed "
+                                  "in the file when the supplier answers.",
+                                  line.boss_supplier_id.name or self.env._("the supplier"))
+            if line.product_id.boss_tariff_date == "etd" and line.boss_cost_status in ("ok", "no_tariff", "manual",
+                                                                                        "pending_approval", "conflict"):
+                day = format_date(self.env, line._boss_tariff_date())
+                text = (self.env._("Tariff date %s: the departure (ETD) chooses the freight rate.", day)
+                        if line.order_id.boss_etd else
+                        self.env._("Tariff date %s: the quotation date, until the ETD is known (freight rates take "
+                                   "the departure).", day)) + "\n" + text
             if line.boss_cost_is_estimate and line.boss_cost_status == "ok":
                 days = line.boss_days if line.boss_days_source == "estimate" else line.order_id.boss_storage_days
                 where = (self.env._("estimate of this line") if line.boss_days_source == "estimate"
@@ -617,7 +663,7 @@ class SaleOrderLine(models.Model):
             "default_name": f"{supplier.name or ''} {self.product_id.default_code}".strip(),
             "default_partner_id": supplier.id,
             "default_carrier_id": order.boss_carrier_id.id if supplier == order.boss_carrier_id else False,
-            "default_valid_from": order.boss_planned_date or fields.Date.today(),
+            "default_valid_from": fields.Date.context_today(self),  # this week's rate (Ángel, 27/10/2026)
             "default_currency_id": order.currency_id.id, "default_direction": order.boss_direction,
             "default_transport_mode": order.boss_transport_mode, "default_load_type": order.boss_load_type,
             "default_port_ids": order.boss_port_id.ids, "default_country_ids": order.boss_country_id.ids,

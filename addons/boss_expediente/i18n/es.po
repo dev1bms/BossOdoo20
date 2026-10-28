@@ -3520,3 +3520,73 @@ msgstr "Cruzado"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__national
 msgid "National"
 msgstr "Nacional"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__package_type
+msgid "Type of unit"
+msgstr "Tipo de bulto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__hs_code
+msgid "Goods code (HS)"
+msgstr "Código de la mercancía (HS)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__package_type__ct
+msgid "Cartons"
+msgstr "Cajas"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__package_type__cr
+msgid "Crates"
+msgstr "Jaulas"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__package_type__bt
+msgid "Bottles"
+msgstr "Botellas"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__package_type__bg
+msgid "Bags"
+msgstr "Sacos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__summary_html
+msgid "Buying and selling by service group"
+msgstr "Compra y venta por grupo de servicio"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Service group"
+msgstr "Grupo de servicio"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Actual cost (bills)"
+msgstr "Coste real (facturas)"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Forecast cost"
+msgstr "Coste previsto"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Forecast margin"
+msgstr "Margen previsto"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Other"
+msgstr "Otros"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Total"
+msgstr "Total"
+
+#. module: boss_expediente
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Company currency, without taxes. Actual cost = posted vendor bills and credit notes; cost still expected = services not billed yet (forecast); invoiced = posted customer invoices less credit notes. Services without a group: «Other»."
+msgstr "Moneda de la compañía, sin impuestos. Coste real = facturas y abonos de proveedor contabilizados; coste pendiente = servicios aún no facturados (previsión); facturado = facturas de cliente contabilizadas menos abonos. Servicios sin grupo: «Otros»."

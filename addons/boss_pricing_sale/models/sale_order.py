@@ -42,6 +42,11 @@ class SaleOrder(models.Model):
         help="Set when the quotation is accepted: prices only change through Re-price, with a reason.")
     boss_snapshot_ids = fields.One2many("boss.pricing.snapshot", "order_id", "Pricing history", readonly=True)
     boss_pricing_alert = fields.Text(compute="_compute_boss_pricing_alert")
+    boss_rate_quotation = fields.Boolean(
+        "Rate quotation (no quantities)", copy=True,
+        help="The customer asks for rates (per container of each size, per B/L...) without saying how many "
+        "containers will ship: per-container services are priced for one unit of their size, the document shows "
+        "unit rates and no total, and the containers are entered before acceptance (Ángel, 27/10/2026).")
 
     def _boss_shipment_inputs(self):
         """Shipment inputs for boss.pricing, named like the tariff scope (one meaning per name)."""
@@ -50,7 +55,7 @@ class SaleOrder(models.Model):
             "direction": self.boss_direction,
             "transport_mode": self.boss_transport_mode,
             "load_type": self.boss_load_type,
-            "carrier_id": self.boss_carrier_id.id,
+            "carrier_id": self.boss_carrier_id._boss_carrier_family().id if self.boss_carrier_id else False,
             "port_id": self.boss_port_id.id,
             "foreign_port_id": self._boss_foreign_port().id,
             "country_id": self.boss_country_id.id,
@@ -321,8 +326,22 @@ class SaleOrder(models.Model):
                     "ask a sales manager to record why it is accepted without it.", order=order.name,
                     lines="\n".join(f"- {line.product_id.display_name}" for line in unknown)))
 
+    def _boss_check_containers(self):
+        """A rate quotation gives rates per container size: the file needs the actual containers, so acceptance
+        waits until they are entered (Ángel, 27/10/2026: the client tells the number of containers when booking)."""
+        for order in self:
+            per_container = order.order_line.filtered(
+                lambda l: l.product_id.boss_pricing_mode and not l.display_type
+                and l.product_uom_id.boss_quantity_source in ("container", "teu"))
+            if order.boss_load_type == "fcl" and per_container and not order.boss_container_ids:
+                raise UserError(self.env._(
+                    "%s cannot be accepted yet: enter the containers of the shipment (size, type, quantity) in the "
+                    "Shipment tab. The quotation gives rates per container; the file needs the actual containers.",
+                    order.name))
+
     def action_confirm(self):
         self._boss_check_ready()
+        self._boss_check_containers()
         self._boss_check_costs()
         res = super().action_confirm()
         # Acceptance = evidence: finish pending computations, then freeze every line and keep a

@@ -23,7 +23,29 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
   right one. If there is none, create it from the field («Create and edit»): it becomes an address of the customer.
 - **Dates**: ETD (departure from the origin port) and ETA (arrival at the destination). The key date —ETA for an
   import, ETD for an export, a cross-trade or a national shipment— is the **tariff date**: it picks the version of each
-  supplier tariff. The unloading date of an LCL (on the file) never picks a tariff. «Final delivery to
+  supplier tariff. The unloading date of an LCL (on the file) never picks a tariff. **Exception (Ángel, 27/10): ocean
+  and air freight always take the departure (ETD)**, import or export; while the ETD is unknown, the quotation date
+  (the rate available today). The ⓘ of the line says which date was used.
+- **Addresses and parties**: the invoice address is the orderer's fiscal address and the delivery address lives with
+  the consignee in this tab (the header does not show them). The **pickup** address is chosen among the
+  **shipper's** addresses; the **delivery** address among the **consignee's** (its warehouses). Both may stay empty.
+- **Carrier**: name the commercial carrier (e.g. MSC) even if another legal entity of the group invoices (MSC Spain,
+  MSC Switzerland): on each entity's contact, «Part of carrier». Tariffs apply to the whole family; the line, the
+  purchase and the bill keep the legal entity.
+- **Cargo**: packages with their **type of unit** (cartons, pallets, crates, packages, bottles, bags) and the
+  **goods code (HS)**, carried to the file; the duties stay a typed estimate.
+- **Rate quotation** (box in the Case group): the client asks for 20', 40' and 40'HC rates without saying how many
+  containers ship. Leave the containers empty: each per-container line is priced for **one** container of the size
+  on the line, the PDF shows «per Container 40'» and no total, and the client calculates. Before accepting, enter the
+  actual containers: the file needs them.
+- **Cost on request**: a trucker quoting case by case has no tariff. Choose the supplier, tick «Cost on request» on
+  the line (optional column) and type the selling price: the quotation is accepted and the cost is typed in the file
+  when the supplier answers.
+- **Freight rate from the quotation (⊕)**: valid from today, one week (extendable); if the supplier already has a
+  tariff for that route and service, the rate is saved as a **new version** of the same tariff (earlier rates stay as
+  history; the newest one valid on the date is used). Rates typed this way are **approved on entry** by whoever types
+  them (Sales setting), so nobody waits for an approver in another time zone; the supplier document is required while
+  the «Supplier document required» setting is on. «Final delivery to
   the client» in the header is something else: delivery at the warehouse, possibly weeks after the ETA.
 - **Real, volume and chargeable weight** (Ángel, 27/10/2026): volume weight = m³ × factor of the mode (**air 167,
   road 333, sea 1000** kg/m³); chargeable weight = **the higher** of gross and volume weight. Suppliers charge BOSS on

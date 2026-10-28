@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rate quotation (Ángel, 27/10/2026): the customer receives unit rates (per container of a size, per B/L...)
+         and makes the calculation; no quantities and no total are printed. Buying prices are never printed (the
+         standard document has no cost column). -->
+    <template id="report_saleorder_document_boss" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//th[@name='th_quantity']" position="inside">
+            <span t-if="doc.boss_rate_quotation">Per</span>
+        </xpath>
+        <xpath expr="//th[@name='th_subtotal']" position="attributes">
+            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
+        </xpath>
+        <xpath expr="//td[@name='td_product_quantity']" position="attributes">
+            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
+        </xpath>
+        <xpath expr="//td[@name='td_product_quantity']" position="after">
+            <td t-if="doc.boss_rate_quotation" name="td_boss_rate_basis" class="text-end text-nowrap">
+                <span t-field="line.product_uom_id"/>
+                <span t-if="line.boss_container_size"><t t-out="line.boss_container_size"/>'</span>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_product_subtotal']" position="attributes">
+            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
+        </xpath>
+        <xpath expr="//div[@name='so_total_summary']" position="attributes">
+            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
+        </xpath>
+    </template>
+</odoo>

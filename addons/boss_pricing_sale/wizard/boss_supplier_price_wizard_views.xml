@@ -5,8 +5,15 @@
         <field name="model">boss.supplier.price.wizard</field>
         <field name="arch" type="xml">
             <form>
-                <p class="text-muted">The price is saved in a supplier tariff (never on the quotation), with its route and validity, and is used once it is approved. Earlier prices stay as history.</p>
+                <p class="text-muted">The price is saved in a supplier tariff (never on the quotation), with its route and validity. Earlier prices stay as history: the newest one valid on the tariff date is used.</p>
                 <field name="spot_rate" invisible="1"/>
+                <field name="auto_approve" invisible="1"/>
+                <div class="alert alert-info mb-2" role="status" invisible="not lineage_id or tariff_id">
+                    New version of <field name="lineage_id" readonly="1" class="d-inline" options="{'no_open': True}"/>: this supplier already has this route and service; the rate replaces the previous one from its start date.
+                </div>
+                <div class="alert alert-success mb-2" role="status" invisible="not auto_approve">
+                    Freight rate: approved on entry, usable at once (Sales setting).
+                </div>
                 <group>
                     <group string="Price">
                         <field name="sale_line_id" invisible="1"/>
@@ -27,7 +34,7 @@
                         <field name="tariff_scope_confirmed" invisible="not tariff_id"/>
                         <field name="tariff_name" invisible="tariff_id" required="not tariff_id"/>
                         <field name="valid_from" invisible="tariff_id" required="not tariff_id"/>
-                        <field name="valid_to" invisible="tariff_id"/>
+                        <field name="valid_to" invisible="tariff_id" help="A week by default for a freight rate; make it two weeks if the carrier says so."/>
                         <field name="currency_id" invisible="tariff_id" required="not tariff_id"/>
                         <field name="document" filename="document_name" invisible="tariff_id"/>
                         <field name="document_name" invisible="1"/>
@@ -42,14 +49,17 @@
                     </group>
                     <group>
                         <field name="carrier_id"/>
-                        <field name="port_ids" widget="many2many_tags"/>
-                        <field name="foreign_port_ids" widget="many2many_tags"/>
+                        <!-- the route as the business reads it: origin on top, destination below -->
+                        <field name="foreign_port_ids" widget="many2many_tags" string="Origin ports / airports" invisible="direction == 'export'"/>
+                        <field name="port_ids" widget="many2many_tags" string="Destination ports / airports (Spain)" invisible="direction == 'export'"/>
+                        <field name="port_ids" widget="many2many_tags" string="Origin ports / airports (Spain)" invisible="direction != 'export'"/>
+                        <field name="foreign_port_ids" widget="many2many_tags" string="Destination ports / airports" invisible="direction != 'export'"/>
                         <field name="country_ids" widget="many2many_tags"/>
                         <field name="only_this_customer"/>
                     </group>
                 </group>
                 <group>
-                    <field name="submit"/>
+                    <field name="submit" invisible="auto_approve"/>
                 </group>
                 <footer>
                     <button name="action_save" type="object" string="Save price" class="btn-primary"/>

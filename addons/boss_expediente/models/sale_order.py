@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError
 from .boss_airline_handler import HANDLER_SERVICE_CODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import key_date
 
-from .boss_expediente import FROM_ORDER, SCOPES, with_accounts
+from .boss_expediente import FROM_ORDER, PACKAGE_TYPES, SCOPES, with_accounts
 
 
 class SaleOrder(models.Model):
@@ -18,6 +18,10 @@ class SaleOrder(models.Model):
     boss_scope_delivery = fields.Boolean("Delivery")
     boss_goods_description = fields.Char("Goods")
     boss_packages = fields.Integer("Packages")
+    boss_package_type = fields.Selection(PACKAGE_TYPES, "Type of unit",
+                                         help="What the packages are: cartons, pallets, crates... (Odoo 17 partida).")
+    boss_hs_code = fields.Char("Goods code (HS)", help="Customs tariff code of the goods: it decides the duties "
+                               "(Ángel, 27/10/2026). Information for the customs declaration; the duties estimate is typed.")
     boss_requested_service_ids = fields.Many2many(
         "product.product", string="Requested services",
         domain="[('boss_pricing_mode', '!=', False), ('sale_ok', '=', True)]",

@@ -31,6 +31,8 @@
             <xpath expr="//group[@name='boss_cargo']/field[@name='boss_gross_kg']" position="before">
                 <field name="boss_goods_description" readonly="state in ('sale', 'cancel')"/>
                 <field name="boss_packages" readonly="state in ('sale', 'cancel')"/>
+                <field name="boss_package_type" readonly="state in ('sale', 'cancel')"/>
+                <field name="boss_hs_code" readonly="state in ('sale', 'cancel')"/>
             </xpath>
             <xpath expr="//group[@name='boss_estimates']" position="inside">
                 <field name="boss_requested_service_ids" widget="many2many_tags" options="{'no_create': True}"
