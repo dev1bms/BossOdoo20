@@ -319,7 +319,9 @@ despliegue: comprobar en Chrome la pestaña Envío, el asistente, el PDF de una 
 contenedores solo en ofertas de tarifas y nombrando las alternativas no reservadas; tipo de contenedor en el PDF;
 flujo probado como usuaria real de tarifas (Wendy) y bloqueado para un comercial sin derechos; Resumen probado con
 factura de proveedor, factura parcial de cliente y abono; M2-23 (partidas) rebajado a parcial/decisión.
-`check_meeting2` 69/69.
+`check_meeting2` 69/69. **Desplegado el 28/10 a las 11:26 con la aprobación de Belal** (boss_services 20.0.1.4.0, boss_pricing
+20.0.1.11.0, boss_pricing_sale 20.0.1.13.0, boss_expediente 20.0.1.12.0; guía v=20261028a); comprobado en Chrome
+(`docs/evidencias/20261028_1135_chrome_despliegue_reunion2.md`).
 
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
