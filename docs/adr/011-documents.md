@@ -28,7 +28,8 @@ BOSS's costs reaches the customer), meeting 2 M2-4 (header addresses), M2-11 (tw
 1. **Standard Odoo template, BOSS identity, set once.** Template «Light» (`web.external_layout_standard`), table
    design «striped» (long lists of charges stay readable), Lato, primary `#64a8af`, secondary `#003a5c`, footer with
    phone, e-mail and web. Applied by the installation hook only to a company that has **no** template yet; from then
-   on Settings › General › Document layout is the single source (the module never overwrites it). No custom layout
+   on Settings › General › Document layout is the single source (the module never overwrites it). On 28/10/2026 (14:13 UTC) Belal
+   chose «Folder» with «bubble» tables there; colours, font and footer kept. No custom layout
    template: the standard one is maintained by Odoo and configurable by BOSS.
 2. **One shipment block on every document**, built by one method per model (`_boss_document_block()` on
    `boss.expediente`, `sale.order`, `account.move`, `purchase.order`) and printed by one QWeb template
