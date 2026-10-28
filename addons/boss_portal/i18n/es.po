@@ -373,3 +373,8 @@ msgstr "Tarifas"
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_quotations_boss
 msgid "Rates per unit"
 msgstr "Precios por unidad"
+
+#. module: boss_portal
+#: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_template_boss
+msgid "Price per unit of each line"
+msgstr "Precio por unidad de cada línea"

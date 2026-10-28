@@ -125,11 +125,16 @@ try:
     res = rpc(s["a_comm"], "boss.tariff", "search_read", [[]], {"fields": ["name"], "limit": 1})
     check("2 RPC on supplier tariffs is refused", True, "error" in res)
     page = s["a_comm"].get(f"{BASE}/my/orders/{rate.id}", timeout=30).text
+    i = page.find("o_portal_sale_sidebar")
+    print("DIAG sidebar:", re.sub(r"\s+", " ", page[max(i - 200, 0):i + 300]))
+    j = page.find("<h2")
+    print("DIAG first h2:", re.sub(r"\s+", " ", page[j:j + 200]))
     check("3 rate quotation page: three alternatives with their basis, rates, no total, no signature",
           (True, True, True, True, False, False),
-          ("20' DV" in page, "40' DV" in page, "40' HC" in page, "Rates" in page, "Untaxed Amount" in page,
+          ("20' DV" in page, "40' DV" in page, "40' HC" in page, "Rates" in page or "Tarifas" in page, "Untaxed Amount" in page,
            "Sign &amp; Pay" in page or "modalaccept" in page and "Accept &amp; Sign" in page))
-    check("3 no hypothetical total in the page data", True, 'data-order-amount-total="0' in page or "data-order-amount-total=\"0.0\"" in page)
+    check("3 no hypothetical total in the page data (attribute absent or 0), «Tax Included» replaced", (True, False),
+          ("data-order-amount-total" not in page or 'data-order-amount-total="0' in page, "Tax Included" in page))
     html = s["a_comm"].get(f"{BASE}/my/orders/{rate.id}?report_type=html", timeout=60).text
     check("3 rate quotation document: basis per line, no total table", (True, False), ("40' HC" in html, "o_total_table" in html))
     normal = s["a_comm"].get(f"{BASE}/my/orders/{so_a.id}?report_type=html", timeout=60).text
@@ -147,6 +152,7 @@ try:
     r = book("a_comm", 1)
     check("5 commercial A: booking refused (authorised representative only)", True, "boss_booking_error" in r.headers.get("Location", ""))
     r = book("a_appr", 2)
+    env.cr.commit()  # noqa: F821  new snapshot: see what the web process committed
     rate.invalidate_recordset()
     check("5 approver A: booking request sent, quotation not confirmed, no file", (True, "requested", "sent", False),
           ("boss_booking=sent" in r.headers.get("Location", ""), rate.boss_booking_state, rate.state, bool(rate.boss_expediente_id)))
