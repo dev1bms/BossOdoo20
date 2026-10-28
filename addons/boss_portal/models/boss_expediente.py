@@ -25,9 +25,8 @@ class BossExpediente(models.Model):
 
     @api.depends("portal_tracking_token")
     def _compute_portal_tracking_url(self):
-        base = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-        for file in self:
-            file.portal_tracking_url = f"{base}/boss/track/{file.portal_tracking_token}" \
+        for file in self:  # Odoo 20: get_base_url() (ir.config_parameter has get_str, no get_param)
+            file.portal_tracking_url = f"{file.get_base_url()}/boss/track/{file.portal_tracking_token}" \
                 if file.portal_tracking_token else False
 
     @api.constrains("portal_attachment_ids")
