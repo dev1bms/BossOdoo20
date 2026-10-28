@@ -135,7 +135,9 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    boss_allocation_ids = fields.One2many("boss.expediente.allocation", "sale_line_id", "Files", copy=False)
+    # what part of the line is in which file, with amounts: internal (ADR-010)
+    boss_allocation_ids = fields.One2many("boss.expediente.allocation", "sale_line_id", "Files", copy=False,
+                                          groups="base.group_user")
 
     @api.model_create_multi
     def create(self, vals_list):

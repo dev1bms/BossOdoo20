@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_expediente_view_form" model="ir.ui.view">
+        <field name="name">boss.expediente.form.boss.portal</field>
+        <field name="model">boss.expediente</field>
+        <field name="inherit_id" ref="boss_expediente.boss_expediente_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='events']//field[@name='note']" position="after">
+                <field name="portal_published" optional="show" string="Publish"/>
+                <field name="portal_text" optional="show" string="Text for the customer"
+                       required="portal_published"/>
+            </xpath>
+            <xpath expr="//page[@name='events']" position="after">
+                <page string="Customer portal" name="boss_portal" groups="sales_team.group_sale_salesman">
+                    <group>
+                        <group string="Tracking link (no login)">
+                            <field name="portal_tracking_url" widget="CopyClipboardChar" invisible="not portal_tracking_url"/>
+                            <div colspan="2" class="text-muted small">
+                                Shows the route, the dates (estimated and actual), the containers by size and the published events; never parties, prices, references or documents. Creating a new link stops the earlier one.
+                            </div>
+                            <div colspan="2" class="d-flex gap-2">
+                                <button name="action_boss_share_tracking" type="object" string="Create tracking link"
+                                        class="btn-secondary"/>
+                                <button name="action_boss_revoke_tracking" type="object" string="Revoke link"
+                                        class="btn-secondary" invisible="not portal_tracking_url"/>
+                            </div>
+                        </group>
+                        <group string="Documents in the customer's portal">
+                            <field name="portal_attachment_ids" widget="many2many_tags" nolabel="1" colspan="2"
+                                   options="{'no_create': True}"/>
+                            <div colspan="2" class="text-muted small">
+                                Only the documents chosen here reach the customer. A master document can carry other customers' data: publish it only when it is this customer's.
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,6 @@
+# check_portal_qweb.py on boss20 with the local addons mounted (dev/server_shell_wip.sh; boss_portal NOT installed: its XML/models are not loaded except the two QWeb files of check_portal_qweb, loaded in the rolled-back transaction). Code after a9fffaf (ADR-010): NOT deployed
+CHECK PASS sidebar: total hidden for a rate quotation (title and mobile price row): expected (True, True, True) got (True, True, True)
+CHECK PASS quotations list: «Rates per unit» instead of the total: expected True got True
+CHECK PASS dates: estimated departure and arrival shown as estimated; nothing actual; delivery «Not yet»: expected (2, 0, True) got (2, 0, True)
+CHECK PASS events: the published text and the source of the update: expected (True, True) got (True, True)
+RESULT 4 passed, 0 failed

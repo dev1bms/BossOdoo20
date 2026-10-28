@@ -37,10 +37,12 @@ with registry.cursor() as cr:
     registry.init_models(cr, names, {"models_to_check": True}, install=False)
     env = api.Environment(cr, api.SUPERUSER_ID, {})
     loaded = []
+    cr.execute("SELECT name FROM ir_module_module WHERE state = 'installed'")
+    installed = {row[0] for row in cr.fetchall()}
     for module in sorted(os.listdir(WIP_ADDONS)):
         manifest = os.path.join(WIP_ADDONS, module, "__manifest__.py")
-        if not module.startswith("boss_") or not os.path.exists(manifest):
-            continue
+        if not module.startswith("boss_") or not os.path.exists(manifest) or module not in installed:
+            continue  # a module not installed yet (new addon) cannot be loaded here: it needs its install
         with open(manifest, encoding="utf-8") as fp:
             data = ast.literal_eval(fp.read()).get("data", [])
         for filename in data:

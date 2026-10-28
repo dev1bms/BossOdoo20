@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- My Shipments and the tracking link (ADR-010). The templates only receive the whitelisted dictionaries of
+         boss.expediente._boss_portal_values: no record reaches them. Estimated and actual dates are shown apart;
+         an unknown value says so. -->
+    <template id="portal_breadcrumbs_boss" inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'boss_shipments'" class="breadcrumb-item active">My Shipments</li>
+            <li t-if="page_name == 'boss_shipment'" class="breadcrumb-item"><a href="/my/shipments">My Shipments</a></li>
+            <li t-if="page_name == 'boss_shipment'" class="breadcrumb-item active" t-out="shipment['reference']"/>
+        </xpath>
+    </template>
+
+    <template id="boss_shipment_dates">
+        <dl class="row mb-0 small">
+            <dt class="col-5 col-md-3">Departure</dt>
+            <dd class="col-7 col-md-9">
+                <t t-if="s['atd']"><span class="badge text-bg-success">Actual</span> <span t-out="s['atd']" t-options="{'widget': 'datetime'}"/></t>
+                <t t-elif="s['etd']"><span class="badge text-bg-light">Estimated</span> <span t-out="s['etd']" t-options="{'widget': 'date'}"/></t>
+                <span t-else="" class="text-muted">Not known yet</span>
+            </dd>
+            <dt class="col-5 col-md-3">Arrival</dt>
+            <dd class="col-7 col-md-9">
+                <t t-if="s['ata']"><span class="badge text-bg-success">Actual</span> <span t-out="s['ata']" t-options="{'widget': 'datetime'}"/></t>
+                <t t-elif="s['eta']"><span class="badge text-bg-light">Estimated</span> <span t-out="s['eta']" t-options="{'widget': 'date'}"/>
+                    <span class="text-muted">(not confirmed: the arrival is shown as actual only when recorded)</span></t>
+                <span t-else="" class="text-muted">Not known yet</span>
+            </dd>
+            <dt class="col-5 col-md-3">Delivered</dt>
+            <dd class="col-7 col-md-9">
+                <span t-if="s['delivered']" t-out="s['delivered']" t-options="{'widget': 'datetime'}"/>
+                <span t-else="" class="text-muted">Not yet</span>
+            </dd>
+        </dl>
+    </template>
+
+    <template id="boss_shipment_events">
+        <h5 class="mt-4">Updates</h5>
+        <p t-if="not s['events']" class="text-muted small">No update published yet.</p>
+        <ul t-else="" class="list-unstyled small">
+            <li t-foreach="s['events']" t-as="event" class="mb-1">
+                <span class="text-muted" t-out="event['date']" t-options="{'widget': 'datetime'}"/> ·
+                <span t-if="event['kind'] == 'incident'" class="badge text-bg-warning">Incident</span>
+                <span t-out="event['text']"/>
+            </li>
+        </ul>
+        <p t-if="s['last_update']" class="text-muted small mb-0">Last update recorded by BOSS operations:
+            <span t-out="s['last_update']" t-options="{'widget': 'datetime'}"/>. No live position is shown: updates come from BOSS's records.</p>
+    </template>
+
+    <template id="portal_my_shipments" name="My Shipments">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <h3 class="mt-3">My Shipments</h3>
+            <p t-if="not boss_role" class="alert alert-info">Your account has no access to shipments yet: ask your BOSS contact.</p>
+            <p t-elif="not shipments" class="text-muted">No shipment yet.</p>
+            <t t-else="" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Shipment</th>
+                        <th>Your ref.</th>
+                        <th>Route</th>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="shipments" t-as="s">
+                        <td><a t-attf-href="/my/shipments/#{s['id']}" t-out="s['reference']"/></td>
+                        <td t-out="s['customer_reference'] or ''"/>
+                        <td><t t-out="(s['origin_port'] or {}).get('code') or '?'"/> → <t t-out="(s['destination_port'] or {}).get('code') or '?'"/></td>
+                        <td>
+                            <t t-if="s['atd']"><span t-out="s['atd']" t-options="{'widget': 'date'}"/></t>
+                            <t t-elif="s['etd']"><span t-out="s['etd']" t-options="{'widget': 'date'}"/> <small class="text-muted">(est.)</small></t>
+                        </td>
+                        <td>
+                            <t t-if="s['ata']"><span t-out="s['ata']" t-options="{'widget': 'date'}"/></t>
+                            <t t-elif="s['eta']"><span t-out="s['eta']" t-options="{'widget': 'date'}"/> <small class="text-muted">(est.)</small></t>
+                        </td>
+                        <td t-out="s['state']"/>
+                    </tr>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_my_shipment" name="My Shipment">
+        <t t-call="portal.portal_layout">
+            <t t-set="s" t-value="shipment"/>
+            <div class="mt-3 p-3 border rounded">
+                <small class="text-muted"><t t-out="s['transport_mode'] or ''"/> <t t-out="s['load_type'] or ''"/></small>
+                <h3 class="mb-1" t-out="s['reference']"/>
+                <p class="mb-2"><span class="badge text-bg-primary" t-out="s['state']"/>
+                    <t t-if="s['customer_reference']"> · Your ref. <t t-out="s['customer_reference']"/></t></p>
+                <dl class="row small">
+                    <dt class="col-5 col-md-3">From</dt>
+                    <dd class="col-7 col-md-9"><t t-out="(s['origin_port'] or {}).get('name') or 'Not known yet'"/><t t-if="s['origin_country']">, <t t-out="s['origin_country']"/></t></dd>
+                    <dt class="col-5 col-md-3">To</dt>
+                    <dd class="col-7 col-md-9"><t t-out="(s['destination_port'] or {}).get('name') or 'Not known yet'"/><t t-if="s['destination_country']">, <t t-out="s['destination_country']"/></t></dd>
+                    <dt class="col-5 col-md-3">Carrier</dt>
+                    <dd class="col-7 col-md-9"><t t-out="s['carrier'] or 'Not known yet'"/><t t-if="s['vessel']"> · <t t-out="s['vessel']"/></t><t t-if="s['voyage']"> / <t t-out="s['voyage']"/></t></dd>
+                    <t t-if="s['house_reference']">
+                        <dt class="col-5 col-md-3">House B/L or AWB</dt>
+                        <dd class="col-7 col-md-9" t-out="s['house_reference']"/>
+                    </t>
+                </dl>
+                <t t-call="boss_portal.boss_shipment_dates"/>
+                <t t-if="s['containers']">
+                    <h5 class="mt-4">Containers</h5>
+                    <p class="small mb-1"><t t-foreach="s['containers']" t-as="c"><t t-out="c[1]"/> × <t t-out="c[0]"/><t t-if="not c_last">, </t></t></p>
+                    <ul t-if="s['container_numbers']" class="small">
+                        <li t-foreach="s['container_numbers']" t-as="c"><t t-out="c['number']"/> (<t t-out="c['size']"/>' <t t-out="c['type']"/>)</li>
+                    </ul>
+                </t>
+                <t t-call="boss_portal.boss_shipment_events"/>
+                <h5 class="mt-4">Documents</h5>
+                <p t-if="not s['documents']" class="text-muted small">No document published yet.</p>
+                <ul t-else="" class="small">
+                    <li t-foreach="s['documents']" t-as="d"><a t-attf-href="/my/shipments/#{s['id']}/documents/#{d['id']}" t-out="d['name']"/></li>
+                </ul>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_public_tracking" name="BOSS shipment tracking">
+        <t t-call="portal.frontend_layout">
+            <t t-set="s" t-value="shipment"/>
+            <div class="container my-4" style="max-width: 48rem;">
+                <small class="text-muted">Shipment tracking · BOSS Continental</small>
+                <h3 class="mb-1" t-out="s['reference']"/>
+                <p><span class="badge text-bg-primary" t-out="s['state']"/>
+                    <small class="text-muted ms-2"><t t-out="s['transport_mode'] or ''"/> <t t-out="s['load_type'] or ''"/></small></p>
+                <dl class="row small">
+                    <dt class="col-5 col-md-3">From</dt>
+                    <dd class="col-7 col-md-9"><t t-out="(s['origin_port'] or {}).get('name') or 'Not known yet'"/><t t-if="s['origin_country']">, <t t-out="s['origin_country']"/></t></dd>
+                    <dt class="col-5 col-md-3">To</dt>
+                    <dd class="col-7 col-md-9"><t t-out="(s['destination_port'] or {}).get('name') or 'Not known yet'"/><t t-if="s['destination_country']">, <t t-out="s['destination_country']"/></t></dd>
+                </dl>
+                <t t-call="boss_portal.boss_shipment_dates"/>
+                <p t-if="s['containers']" class="small mt-3 mb-0">Containers:
+                    <t t-foreach="s['containers']" t-as="c"><t t-out="c[1]"/> × <t t-out="c[0]"/><t t-if="not c_last">, </t></t></p>
+                <t t-call="boss_portal.boss_shipment_events"/>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -144,8 +144,8 @@ figures), ADR-006 (route), ADR-007 (weekly rates), ADR-008 (default sale price).
    quantities and completed at the booking — figures of the file meaningless until then.
 3. **The customer document** prints the container type («Container 40' HC») so 40' DV and 40' HC are told apart;
    the ordinary document keeps quantities, amounts and totals; no buying price, margin or internal note is printed.
-   The customer **portal** page (standard) still shows amounts and totals for a rate quotation: out of scope here,
-   noted.
+   The customer **portal** page (standard) still showed amounts and totals for a rate quotation: **now in scope of
+   ADR-010** (rate portal page, list, sidebar, e-mail without amount; no signature or payment), not installed yet.
 4. **Roles**: the flow was re-run as a real pricing user (tariff user + salesperson, not approver): she enters the
    rate from the quotation, it is approved on entry *by her* (approved_by, note), the quotation is priced at once
    and she confirms it without anyone else. A salesperson without tariff rights cannot open the wizard (access

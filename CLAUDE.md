@@ -19,6 +19,8 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
 - `boss_pricing_sale`: shipment inputs on the quotation, cost/sale per line, missing-price actions,
   acceptance snapshot and explicit re-pricing.
 - `boss_web`: web client only (chatter below the form on every screen size); no models.
+- `boss_portal`: customer portal on the standard Odoo portal (roles granted by BOSS, scope per legal entity, rate
+  quotations without totals, booking requests, My Shipments, tracking link); BOSS costs never reach it (ADR-010).
 
 ## Rules
 - Standard Odoo first; every customisation is justified in an ADR (docs/adr).
