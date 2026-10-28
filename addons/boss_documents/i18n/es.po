@@ -13,113 +13,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: boss_documents
-#: model:ir.module.module,shortdesc:boss_documents.module_meta_information
-msgid "BOSS Documents"
-msgstr "Documentos BOSS"
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "File"
-msgstr "Expediente"
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "· Quotation"
-msgstr "· Oferta"
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "Your reference:"
-msgstr "Su referencia:"
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "Services of BOSS:"
-msgstr "Servicios de BOSS:"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Traffic"
-msgstr "Tráfico"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "From"
-msgstr "Origen"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "To"
-msgstr "Destino"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Incoterm"
-msgstr "Incoterm"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Shipper"
-msgstr "Expedidor"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Consignee"
-msgstr "Destinatario"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Carrier"
-msgstr "Transportista"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Vessel / voyage"
-msgstr "Buque / viaje"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "B/L (master / house)"
-msgstr "B/L (máster / house)"
-
-#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "AWB (master / house)"
 msgstr "AWB (máster / house)"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Booking"
-msgstr "Booking"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Customs reference"
-msgstr "Referencia de aduana"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Departed"
-msgstr "Salida real"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "ETD"
-msgstr "ETD (salida prevista)"
 
 #. module: boss_documents
 #. odoo-python
@@ -130,50 +27,25 @@ msgstr "Llegada real"
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "ETA"
-msgstr "ETA (llegada prevista)"
+msgid "B/L (master / house)"
+msgstr "B/L (máster / house)"
+
+#. module: boss_documents
+#: model:ir.module.module,shortdesc:base.module_boss_documents
+msgid "BOSS Documents"
+msgstr "Documentos BOSS"
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Delivered"
-msgstr "Entregado"
+msgid "Booking"
+msgstr "Booking"
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Containers"
-msgstr "Contenedores"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Packages"
-msgstr "Bultos"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Type of unit"
-msgstr "Tipo de unidad"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Pallets"
-msgstr "Palés"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Gross weight"
-msgstr "Peso bruto"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Volume"
-msgstr "Volumen"
+msgid "Carrier"
+msgstr "Transportista"
 
 #. module: boss_documents
 #. odoo-python
@@ -184,50 +56,36 @@ msgstr "Peso tasable"
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Goods"
-msgstr "Mercancía"
+msgid "Consignee"
+msgstr "Destinatario"
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "HS code"
-msgstr "Código arancelario (HS)"
+msgid "Containers"
+msgstr "Contenedores"
+
+#. module: boss_documents
+#: model:ir.module.module,summary:base.module_boss_documents
+msgid ""
+"Customer and supplier documents of BOSS Continental (invoice, credit note, "
+"quotation, order, purchase order): BOSS layout on the standard Odoo document"
+" template, one shipment block (file, route, transport, cargo) on every "
+"document, charge bases always printed, no shipping-address duplicates "
+"(ADR-011)"
+msgstr ""
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "pickup"
-msgstr "recogida"
+msgid "Customs reference"
+msgstr "Referencia de aduana"
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
-msgid "customs at origin"
-msgstr "aduana en origen"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "main carriage"
-msgstr "transporte principal"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "customs at destination"
-msgstr "aduana en destino"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "delivery"
-msgstr "entrega"
-
-#. module: boss_documents
-#. odoo-python
-#: code:addons/boss_documents/models/shipment_block.py:0
-msgid "Pickup"
-msgstr "Recogida"
+msgid "Delivered"
+msgstr "Entregado"
 
 #. module: boss_documents
 #. odoo-python
@@ -236,9 +94,96 @@ msgid "Delivery"
 msgstr "Entrega"
 
 #. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Departed"
+msgstr "Salida real"
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_account_move__display_name
+#: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__display_name
+#: model:ir.model.fields,field_description:boss_documents.field_purchase_order__display_name
+#: model:ir.model.fields,field_description:boss_documents.field_sale_order__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "ETA"
+msgstr "ETA (llegada prevista)"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "ETD"
+msgstr "ETD (salida prevista)"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
+msgid "File"
+msgstr "Expediente"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "From"
+msgstr "Origen"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Goods"
+msgstr "Mercancía"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Gross weight"
+msgstr "Peso bruto"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "HS code"
+msgstr "Código arancelario (HS)"
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_account_move__id
+#: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__id
+#: model:ir.model.fields,field_description:boss_documents.field_purchase_order__id
+#: model:ir.model.fields,field_description:boss_documents.field_sale_order__id
+msgid "ID"
+msgstr ""
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Incoterm"
+msgstr "Incoterm"
+
+#. module: boss_documents
 #: model:ir.model,name:boss_documents.model_account_move
 msgid "Journal Entry"
 msgstr "Asiento contable"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Packages"
+msgstr "Bultos"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Pallets"
+msgstr "Palés"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Pickup"
+msgstr "Recogida"
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_purchase_order
@@ -251,6 +196,87 @@ msgid "Sales Order"
 msgstr "Pedido de venta"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
+msgid "Services of BOSS:"
+msgstr "Servicios de BOSS:"
+
+#. module: boss_documents
 #: model:ir.model,name:boss_documents.model_boss_expediente
 msgid "Shipment file (expediente)"
 msgstr "Expediente"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Shipper"
+msgstr "Expedidor"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "To"
+msgstr "Destino"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Traffic"
+msgstr "Tráfico"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Type of unit"
+msgstr "Tipo de unidad"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Vessel / voyage"
+msgstr "Buque / viaje"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Volume"
+msgstr "Volumen"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
+msgid "Your reference:"
+msgstr "Su referencia:"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "customs at destination"
+msgstr "aduana en destino"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "customs at origin"
+msgstr "aduana en origen"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "delivery"
+msgstr "entrega"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "main carriage"
+msgstr "transporte principal"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "pickup"
+msgstr "recogida"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
+msgid "· Quotation"
+msgstr "· Oferta"
