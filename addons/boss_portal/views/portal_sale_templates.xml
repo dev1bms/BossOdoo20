@@ -10,6 +10,9 @@
             <h2 t-if="sale_order.boss_rate_quotation" class="mb-0 text-break">Rates</h2>
             <h2 t-else="" t-field="sale_order.amount_total" class="mb-0 text-break"/>
         </xpath>
+        <xpath expr="//t[@t-set='subtitle']" position="replace">
+            <t t-set="subtitle"><t t-if="sale_order.boss_rate_quotation">Price per unit of each line</t><t t-else="">Tax Included</t></t>
+        </xpath>
         <xpath expr="//span[@t-else=''][@t-field='sale_order.amount_total']" position="replace">
             <t t-else="">
                 <span t-if="sale_order.boss_rate_quotation">Rates</span>
