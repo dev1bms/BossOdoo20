@@ -55,6 +55,7 @@ class ResConfigSettings(models.TransientModel):
             return
         if rules:
             rules.filtered(lambda r: r.price_markup != markup).write({"price_markup": markup})
+            rules.filtered(lambda r: not r.price_round).write({"price_round": 0.01})
             return
         partner = self.env.company.partner_id
         pricelist = self.env["product.pricelist"]._get_partner_pricelist_multi([partner.id])[partner.id]
@@ -62,6 +63,7 @@ class ResConfigSettings(models.TransientModel):
             self.env["product.pricelist.item"].create({
                 "pricelist_id": pricelist.id, "applied_on": "3_global", "base": BOSS_LINE_COST,
                 "compute_price": "markup", "price_markup": markup,
+                "price_round": 0.01,  # a sale price in cents: two decimals (Ángel, 27/10/2026)
             })
 
     @api.model

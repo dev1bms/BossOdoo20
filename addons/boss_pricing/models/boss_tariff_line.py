@@ -486,14 +486,17 @@ class BossTariffLineWorkspace(models.Model):
             foreign = line.line_foreign_port_ids or tariff.foreign_port_ids
             countries = line.line_country_ids or tariff.country_ids
             provinces = line.line_state_ids or tariff.state_ids
-            scope = [line._ws_label("direction", direction, tariff) or _("Import/export"),
+            scope = [line._ws_label("direction", direction, tariff) or _("any direction"),
                      line._ws_label("transport_mode", mode, tariff) or _("any mode")]
             if load:
                 scope.append(line._ws_label("load_type", load, tariff))
-            if ports:
-                scope.append(", ".join(ports.mapped("code")))
-            if foreign:
-                scope.append(", ".join(foreign.mapped("code")))
+            spanish, abroad = ", ".join(ports.mapped("code")), ", ".join(foreign.mapped("code"))
+            if spanish and abroad:
+                # the route as the business reads it: origin -> destination (Ángel, 27/10/2026)
+                scope.append(f"{abroad} → {spanish}" if direction == "import" else f"{spanish} → {abroad}"
+                             if direction == "export" else f"{spanish} · {abroad}")
+            else:
+                scope += [p for p in (spanish, abroad) if p]
             if countries:
                 scope.append(", ".join(countries.mapped("name")))
             if provinces:

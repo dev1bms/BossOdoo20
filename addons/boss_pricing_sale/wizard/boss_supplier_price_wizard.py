@@ -50,9 +50,9 @@ class BossSupplierPriceWizard(models.TransientModel):
         "Only for this container type", help="The document prices this container type differently.")
     only_this_customer = fields.Boolean(help="Price agreed for this customer only.")
     # The price itself.
-    unit_price = fields.Float(min_display_digits="Product Price")  # required in the form; checked on save
-    min_amount = fields.Float("Minimum", min_display_digits="Product Price")
-    max_amount = fields.Float("Maximum", min_display_digits="Product Price")
+    unit_price = fields.Float(min_display_digits=2)  # required in the form; checked on save
+    min_amount = fields.Float("Minimum", min_display_digits=2)
+    max_amount = fields.Float("Maximum", min_display_digits=2)
     document_page = fields.Char("Page")
     tariff_scope = fields.Char(related="tariff_id.scope_summary", string="Tariff applies to")
     tariff_scope_confirmed = fields.Boolean(
