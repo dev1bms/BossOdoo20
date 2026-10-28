@@ -52,3 +52,23 @@ agente: el que figure en su documento (decisión de Ángel, A01).
   boss20 solo con `--approved-by-angel` tras su respuesta.
 - Prueba automática en `boss_expediente/tests/test_file_followup.py`: con 419000 falla; con el mapa, la factura del
   agente y la del cliente se crean y contabilizan.
+
+## Precio de venta de los suplidos y diferencia entre la marca del servicio y el suplido fiscal (28/10/2026)
+
+Aprobado por Belal el 28/10/2026 (F0-A00): los servicios con la marca **«Pagado por cuenta del cliente»**
+(`boss_paid_on_behalf`; en boss20: ARA, IVA, DUM y PLA) se proponen en la oferta **por el importe pagado, sin el margen
+por defecto** («coste + 20 %», ADR-008). Solo cambia esa propuesta por defecto: un precio pactado en la lista del
+cliente o tecleado por una persona se respeta; sin importe conocido no se propone precio (nunca 0); un importe sin
+documento se muestra como **estimación** («el importe definitivo es el del DUA»); con la referencia del documento, como
+importe del documento. Las ofertas aceptadas, las facturas emitidas, los impuestos y las cuentas no cambian
+(comprobado en boss20: las 2 líneas de ARA existentes, ambas en ofertas aceptadas, conservan su precio). Si BOSS cobra
+por adelantar el dinero, es un servicio propio aparte (p. ej. caución CAU) con su precio y su IVA.
+
+**La marca del servicio no basta para que la operación sea un suplido fiscal.** La marca solo dice «este concepto se
+paga normalmente por cuenta del cliente» y decide el precio por defecto. Para que el importe quede fuera de la base
+imponible del IVA (Ley 37/1992, art. 78.Tres.3º) hacen falta además, en cada operación: que BOSS lo pague **en nombre y
+por cuenta del cliente** en virtud de su mandato; que esté **justificado con el documento a nombre del cliente** (DUA,
+liquidación o factura); que se refacture **por el importe exacto**; y que se registre en **cuentas específicas**
+(419xxx, ver arriba). Por eso Odoo 20 solo aplica el impuesto de suplido cuando la línea lleva la referencia del
+documento («Referencia del coste»): sin ella, el IVA queda pendiente (`_compute_boss_vat`, desde el 26/10). La revisión
+de esas condiciones en casos concretos corresponde a Ángel o al asesor.

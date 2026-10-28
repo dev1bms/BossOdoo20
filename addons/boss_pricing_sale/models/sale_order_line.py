@@ -548,6 +548,12 @@ class SaleOrderLine(models.Model):
             return super()._get_pricelist_price()  # a product that is not a BOSS service: its list price
         if not self._boss_cost_known():
             return 0.0  # no cost yet: the sale price stays missing, never built on a zero cost
+        if self.product_id.boss_paid_on_behalf:
+            # Paid on behalf of the customer (duties, import VAT...): re-invoiced at the amount paid, never with the
+            # default «cost + %» (Belal 28/10/2026, F0-A00; Ley 37/1992 art. 78.Tres.3º). Only this cost-based default
+            # changes: a price agreed in the customer's pricelist or typed by a person is kept. A BOSS fee for
+            # advancing the money is a separate service with its own price.
+            return self.purchase_price
         return item._compute_price(
             product=self.product_id.with_context(**self._get_product_price_context()),
             boss_unit_cost=self.purchase_price, **self._get_pricelist_kwargs())
@@ -558,7 +564,8 @@ class SaleOrderLine(models.Model):
             self.price_unit = 0.0
 
     @api.depends("price_unit", "technical_price_unit", "boss_sale_free", "product_id", "product_uom_id",
-                 "product_uom_qty", "pricelist_item_id", "purchase_price", "boss_cost_status", "boss_manual_cost")
+                 "product_uom_qty", "pricelist_item_id", "purchase_price", "boss_cost_status", "boss_manual_cost",
+                 "boss_manual_cost_note", "product_id.boss_paid_on_behalf")
     def _compute_boss_sale_status(self):
         _ = self.env._
         for line in self:
@@ -581,6 +588,15 @@ class SaleOrderLine(models.Model):
                 else:
                     status, text = "missing", _(
                         "No sale price: type it, agree it in the customer pricelist or tick 'Free of charge'.")
+            elif cost_rule and line.product_id.boss_paid_on_behalf:
+                status = "cost_based"
+                text = _("Paid on behalf of the customer: re-invoiced at the amount paid, %(cost)s per %(uom)s, without "
+                         "margin.", cost=line._boss_money(line.purchase_price), uom=line.product_uom_id.name)
+                if line.boss_manual_cost_note:
+                    text += " " + _("Amount of the document %s.", line.boss_manual_cost_note)
+                else:
+                    text += " " + _("Estimate: the final amount is the one of the customs declaration or invoice in the "
+                                    "customer's name (type its reference in 'Cost reference').")
             elif cost_rule:
                 status = "cost_based"
                 text = _("Pricelist %(pricelist)s, rule '%(rule)s': expected cost %(cost)s per %(uom)s gives "

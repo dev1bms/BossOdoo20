@@ -38,3 +38,8 @@ automatic +20 % calculation, allow the sale price to be edited by hand, and let 
   manual cost just typed showed the price as «typed by a person» for an instant (`_compute_boss_sale_status`).
 - Checks: `dev/check_default_markup.py` (22 checks: setting on/off, cost + 20 %, missing cost, typed price kept, agreed
   pricelist first, non-BOSS product, frozen quotation unchanged).
+
+## Enmienda 28/10/2026 (Belal, F0-A00)
+La regla por defecto no se aplica a los servicios marcados «Pagado por cuenta del cliente»: se proponen por el importe
+pagado, sin margen. Un precio pactado en la lista del cliente o tecleado se respeta. Detalle y condiciones del suplido
+fiscal: `docs/cuentas-suplidos.md`.
