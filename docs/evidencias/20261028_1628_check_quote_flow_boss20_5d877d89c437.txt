@@ -1,0 +1,58 @@
+# Evidence: dev/check_quote_flow.py on boss20
+# Date: 2026-10-28 16:28    
+# Commit tested: 5d877d89c437 (feat(expediente): F1 — end-to-end check of a complete file on boss20 (S1 IMB from quotation to fin)
+# Installed on boss20: boss_documents 20.0.1.0.3 boss_expediente 20.0.1.14.0 boss_portal 20.0.1.0.3 boss_pricing 20.0.1.11.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 15:28:48,168 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 15:28:48,229 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 15:28:49,054 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 orderer of a BOSS import is proposed as consignee: expected res.partner(711,) got res.partner(711,)
+CHECK PASS 1 shipper stays empty (it is the foreign supplier of the customer): expected False got False
+CHECK PASS 1 quantities with 1x40': per container 1, per shipment 1: expected (1.0, 1.0, 1.0) got (1.0, 1.0, 1.0)
+CHECK PASS 1 containers entered after the template: per-container lines take the 40' DV: expected {'THC': ('40', 'DV'), 'T3-PAD': ('40', 'DV'), 'GLO-CCC': ('40', 'DV')} got {'THC': ('40', 'DV'), 'GLO-CCC': ('40', 'DV'), 'T3-PAD': ('40', 'DV')}
+CHECK PASS 1 size-dependent price (T3-PAD 40') found: expected 'ok' got 'ok'
+CHECK PASS 1 containers persisted 2x40': expected [('40', 'DV', 2)] got [('40', 'DV', 2)]
+CHECK PASS 1 quantities with 2x40': per container 2, per shipment 1: expected (2.0, 1.0, 2.0) got (2.0, 1.0, 2.0)
+CHECK PASS 1 THC cost = 2 x 253 from MSC (buying), sale typed separately: expected ('ok', 506.0) got ('ok', 506.0)
+CHECK PASS 1 THC cost source auditable: expected True got True
+   explanation: 2 x 253.00 € per Container = 506.00 € | Source: MSC gastos locales importación (origen China) 09-12/2026 v1 (MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.), valid from 09/01/2026 to 12/31/2026, applies to Import · Sea · FCL (full container) · China, document MSC Tarifas gastos locales carga seca 202
+CHECK PASS 1 freight (FMI) is a manual amount when no rate exists: expected 'manual' got 'manual'
+CHECK PASS 6 BOSS own fee: no supplier, cost ok 0: expected ('boss', 'ok', 0.0) got ('boss', 'ok', 0.0)
+CHECK PASS 7 WFS on an ocean freight: warning: expected True got True
+CHECK PASS 7 WFS on an ocean freight: still a manual amount (no rate of WFS): expected 'manual' got 'manual'
+CHECK PASS 5 wizard pre-filled: MSC, ESVLC, Shanghai abroad, valid one week: expected (res.partner(6,), 'ESVLC', 'CNSHA', 6) got (res.partner(6,), 'ESVLC', 'CNSHA', 6)
+CHECK PASS 5 tariff with the route and validity, approved on entry: expected ('approved', res.users(1,), 'CNSHA', 'ESVLC', datetime.date(2026, 12, 13)) got ('approved', res.users(1,), 'CNSHA', 'ESVLC', datetime.date(2026, 12, 13))
+CHECK PASS 5 priced at once: the freight comes from the rate, 2 x 1500: expected ('ok', 3000.0) got ('ok', 3000.0)
+CHECK PASS 5 source names the rate and its week: expected True got True
+CHECK PASS 5 another origin port (Ningbo) is not priced by the Shanghai rate: expected 'manual' got 'manual'
+CHECK PASS 5 departure outside the week: manual again: expected 'manual' got 'manual'
+   sale prices missing before typing: ['FAD', 'CSM', 'TTE-FCL']
+   cost gate before reasons: none
+CHECK PASS 8 the cost gate names the services without a known cost: expected True got True
+   still unknown: []
+CHECK PASS 8 complete customer and prices: Confirm succeeds: expected '' got ''
+CHECK PASS 8 accepted and frozen: expected ('sale', True) got ('sale', True)
+CHECK PASS 8 one file opened and linked: expected True got True
+CHECK PASS 8 confirming twice does not open a second file: expected 1 got 1
+CHECK PASS 8 still one file after a second Confirm: expected (1, boss.expediente(117,)) got (1, boss.expediente(117,))
+CHECK PASS 8 file receives orderer, consignee, route, containers: expected (res.partner(711,), res.partner(711,), 'CNSHA', 'ESVLC', 2) got (res.partner(711,), res.partner(711,), 'CNSHA', 'ESVLC', 2)
+CHECK PASS 8 no purchase order created by the acceptance: expected 0 got 0
+CHECK PASS 8 no invoice created by the acceptance: expected 0 got 0
+CHECK PASS 8 costs to buy carried into the file: THC from MSC 506, FMI 3000: expected (('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 506.0), ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 3000.0)) got (('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 506.0), ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 3000.0))
+   to buy: {'FMI': ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 3000.0, 'to_order'), 'THC': ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 506.0, 'to_order'), 'BL': ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 79.0, 'to_order'), 'GLO-CCC': ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 54.0, 'to_order'), 'T3-PAD': ('MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.', 100.0, 'to_order'), 'FAD': ('RAMOS VILA, S.L.', 92.0, 'to_order'), 'TTE-FCL': (False, 0.0, 'no_supplier')}
+CHECK PASS 9 accepted quotation keeps its costs after a new rate: expected [('FMI', 'ok', 3000.0, 1800.0), ('THC', 'ok', 506.0, 303.6), ('BL', 'ok', 79.0, 94.8), ('GLO-CCC', 'ok', 54.0, 32.4), ('T3-PAD', 'ok', 100.0, 60.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)] got [('FMI', 'ok', 3000.0, 1800.0), ('THC', 'ok', 506.0, 303.6), ('BL', 'ok', 79.0, 94.8), ('GLO-CCC', 'ok', 54.0, 32.4), ('T3-PAD', 'ok', 100.0, 60.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)]
+CHECK PASS 9 accepted quotation keeps its cost after the rate is archived: expected [('FMI', 'ok', 3000.0, 1800.0), ('THC', 'ok', 506.0, 303.6), ('BL', 'ok', 79.0, 94.8), ('GLO-CCC', 'ok', 54.0, 32.4), ('T3-PAD', 'ok', 100.0, 60.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)] got [('FMI', 'ok', 3000.0, 1800.0), ('THC', 'ok', 506.0, 303.6), ('BL', 'ok', 79.0, 94.8), ('GLO-CCC', 'ok', 54.0, 32.4), ('T3-PAD', 'ok', 100.0, 60.0), ('FAD', 'ok', 92.0, 100.0), ('CSM', 'ok', 0.0, 100.0), ('TTE-FCL', 'no_tariff', 0.0, 100.0)]
+CHECK PASS 9 accepted quotation still names its source: expected True got True
+CHECK PASS 8b contact without country: one message naming the cause: expected True got True
+CHECK PASS 8b the message is short (grouped by cause, not one line per service): expected True got True
+   message: S00668 is not ready to send or accept. |  | Sale price missing on 7 services: FMI, THC, GLO-CCC, T3-PAD, FAD, CSM, TTE-FCL. Type it on the line or set it in the customer's pricelist. |  | VAT pending on 8 services because the customer «[PRUEBA] contacto sin país» has no country: set the country (and tax ID) on the contact, then the VAT follows.
+CHECK PASS 8b pricing alert says why VAT is pending: expected True got True
+CHECK PASS 2 orderer of a BOSS export is proposed as shipper: expected res.partner(711,) got res.partner(711,)
+CHECK PASS 2 consignee stays empty: expected False got False
+CHECK PASS 3 agent business: consignee not copied from the agent: expected False got False
+CHECK PASS 3 traffic code IMA, orderer = agent, parties kept: expected ('IMA', res.partner(714,), res.partner(711,)) got ('IMA', res.partner(714,), res.partner(711,))
+RESULT 39 passed, 0 failed
+# Exit status: 0
