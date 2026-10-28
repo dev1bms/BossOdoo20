@@ -19,6 +19,7 @@ assert env["ir.module.module"].search_count([("name", "=", "boss_portal"), ("sta
     "boss_portal is not installed: nothing to check over HTTP"
 BASE = "http://odoo:8069"
 RUN = secrets.token_hex(3)
+DUMP = False  # True (never committed) prints the HTML served to the portal sessions, base64, for a visual check
 results = []
 
 
@@ -125,6 +126,10 @@ try:
     res = rpc(s["a_comm"], "boss.tariff", "search_read", [[]], {"fields": ["name"], "limit": 1})
     check("2 RPC on supplier tariffs is refused", True, "error" in res)
     page = s["a_comm"].get(f"{BASE}/my/orders/{rate.id}", timeout=30).text
+    thc_label = rate.order_line.filtered(lambda l: not l.display_type)[:1].with_context(lang=cust_a.lang or "es_ES").label
+    check("3b rate quotation page: every rate names its service (Odoo 20 line label), no down payment, Spanish captions",
+          (True, False, True), (bool(thc_label) and thc_label.splitlines()[0] in page, "Down payment" in page or "Anticipo" in page,
+                                "Oferta de tarifas para" in page))
     i = page.find("o_portal_sale_sidebar")
     print("DIAG sidebar:", re.sub(r"\s+", " ", page[max(i - 200, 0):i + 300]))
     j = page.find("<h2")
@@ -161,6 +166,9 @@ try:
     ships = s["a_track"].get(f"{BASE}/my/shipments", timeout=30).text
     check("6 tracking A sees A's shipment; B does not", (True, False), (file.name in ships, file.name in s["b_comm"].get(f"{BASE}/my/shipments", timeout=30).text))
     detail = s["a_track"].get(f"{BASE}/my/shipments/{file.id}", timeout=30).text
+    check("6b shipment page in the customer's language: status and date badges in Spanish, no English captions",
+          (True, True, False, False), ("Reservado" in detail, "Previsto" in detail, ">Booked<" in detail,
+                                       "Last update recorded" in detail))
     check("6 detail: published event, house B/L, estimated dates; no internal note, no master B/L",
           (True, True, True, False, False),
           (f"Loaded on board {RUN}" in detail, f"HBL-{RUN}" in detail, "Estimated" in detail, f"secreto-{RUN}" in detail, f"MBL-{RUN}" in detail))
@@ -179,6 +187,16 @@ try:
     file.action_boss_revoke_tracking()
     env.cr.commit()  # noqa: F821
     check("8 a revoked link: 404", 404, anon.get(f"{BASE}/boss/track/{token}", timeout=30).status_code)
+    if DUMP:
+        import base64
+        pages = {"shipments": (s["a_track"], "/my/shipments"), "shipment": (s["a_track"], f"/my/shipments/{file.id}"),
+                 "rate_quotation": (s["a_comm"], f"/my/orders/{rate.id}"), "quotes": (s["a_comm"], "/my/quotes"),
+                 "home": (s["a_comm"], "/my/home")}
+        for name, (sess, path) in pages.items():
+            html = sess.get(f"{BASE}{path}", timeout=60).text
+            print(f"PAGE-BEGIN {name} {path}")
+            print(base64.b64encode(html.encode()).decode())
+            print(f"PAGE-END {name}")
     users["a_comm"].partner_id.boss_portal_role = False
     env.cr.commit()  # noqa: F821
     check("9 role removed: commercial A no longer lists A's quotations", False, so_a.name in s["a_comm"].get(f"{BASE}/my/quotes", timeout=30).text)
