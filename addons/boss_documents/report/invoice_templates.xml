@@ -12,10 +12,9 @@
             <attribute name="t-if">o.invoice_origin and not o._boss_document_file()</attribute>
         </xpath>
         <xpath expr="//div[@id='informations']" position="after">
-            <t t-call="boss_documents.shipment_block">
-                <t t-set="block" t-value="o._boss_document_block()"/>
-                <t t-set="for_supplier" t-value="o.move_type in ('in_invoice', 'in_refund')"/>
-            </t>
+            <t t-set="block" t-value="o._boss_document_block()"/>
+            <t t-set="for_supplier" t-value="o.move_type in ('in_invoice', 'in_refund')"/>
+            <t t-call="boss_documents.shipment_block"/>
         </xpath>
         <xpath expr="//td[@name='td_quantity']/span[@t-field='line.product_uom_id']" position="attributes">
             <attribute name="groups"/>

@@ -12,6 +12,7 @@ import os
 from datetime import date
 
 assert env.cr.dbname == "boss20"  # noqa: F821
+env = env(context=dict(env.context, lang="en_US"))  # noqa: F821  labels compared in English
 results = []
 
 
@@ -125,12 +126,12 @@ if installed:
         outputs["invoice"] = Report._render_qweb_pdf("account.account_invoices", [invoice.id])[0]
     else:
         print("INFO no invoice could be created for S00162 in this transaction")
-    po = env["purchase.order"].search([("order_line.boss_expediente_id", "=", f38.id)], limit=1)  # noqa: F821
+    po = env["purchase.order"].search([("boss_expediente_id", "=", f38.id)], limit=1)  # noqa: F821
     if not po:
         supplier = env["res.partner"].search([("name", "like", "[PRUEBA]"), ("supplier_rank", ">", 0)], limit=1) or env["res.partner"].create({"name": "[PRUEBA] Naviera documentos", "is_company": True, "supplier_rank": 1})  # noqa: F821
         product = env["product.product"].search([("default_code", "=", "THC")], limit=1)  # noqa: F821
         po = env["purchase.order"].create({"partner_id": supplier.id, "order_line": [(0, 0, {  # noqa: F821
-            "product_id": product.id, "name": "THC [PRUEBA]", "product_qty": 1, "price_unit": 1.0, "boss_expediente_id": f38.id})]})
+            "product_id": product.id, "name": "THC [PRUEBA]", "product_qty": 1, "price_unit": 1.0})], "boss_expediente_id": f38.id})
     html_po = Report._render_qweb_html("purchase.action_report_purchase_order", [po.id])[0].decode()
     check("9 purchase order HTML: block with file, vessel, container; no customer reference, no quotation, no scope line",
           (True, True, True, False, False, False),

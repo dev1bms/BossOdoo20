@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Shipment block of every BOSS document (ADR-011). Call with `block` = record._boss_document_block() and
-         `for_supplier` (purchase order: no customer reference). Three columns, label above value, nothing printed
+    <!-- Shipment block of every BOSS document (ADR-011). Set `block` = record._boss_document_block() and `for_supplier`
+         (purchase order: no customer reference) BEFORE the t-call (Odoo 20: a t-set inside the call body does not
+         reach the called template). Three columns, label above value, nothing printed
          when a column is empty. -->
     <template id="shipment_block">
         <div t-if="block" name="boss_shipment_block" class="boss_shipment_block mb-4 pt-2 pb-1 px-3"

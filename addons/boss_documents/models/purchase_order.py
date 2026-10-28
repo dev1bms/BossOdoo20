@@ -6,7 +6,7 @@ class PurchaseOrder(models.Model):
 
     def _boss_document_file(self):
         self.ensure_one()
-        files = self.order_line.boss_expediente_id
+        files = self.boss_expediente_id or self.order_line.boss_cost_id.expediente_id
         return files if len(files) == 1 else files.browse()
 
     def _boss_document_block(self):
