@@ -102,6 +102,15 @@ HAN, ALM, AWB, ETX y X-R se compran al handler: en la oferta, la línea toma el 
 (solo su tarifa la valora); en el expediente, los servicios aún no pedidos pasan al handler elegido y su coste se
 recalcula (motivo «Cambio de handler»).
 
+## Resumen por grupo de servicio
+
+La pestaña **Resumen** empieza con la tabla del «Resumen» de Odoo 17: una fila por **grupo de servicio** (Flete,
+Transporte terrestre, Gastos locales, Aduana, Almacenaje y almacén, Seguro y mensajería, Profit share, Aranceles e
+impuestos suplidos; el grupo es la categoría del producto) y la fila Total, con **venta acordada, facturada y por
+facturar**, **coste pendiente** (servicios aún sin factura de proveedor), **coste real** (facturas y abonos de proveedor
+contabilizados), **coste previsto** y **margen previsto**. Moneda de la compañía, sin impuestos. La fila Total cuadra con
+las cifras de debajo (venta acordada, coste previsto, margen previsto). Solo responsables de ventas y contabilidad.
+
 ## Previsión de costes
 
 **Expedientes → Previsión de costes** (también vista pivote y gráfico en **Servicios a comprar**) suma el coste previsto

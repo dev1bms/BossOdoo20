@@ -100,6 +100,15 @@ HAN, ALM, AWB, ETX and X-R are bought from the handler: on the quotation the lin
 is the only one (only its tariff prices it); on the file, the services not ordered yet move to the chosen handler and
 their cost is recomputed (reason «Handler changed»).
 
+## Summary by service group
+
+The **Summary** tab starts with the table of the Odoo 17 «Resumen»: one row per **service group** (Freight, Inland
+transport, Local charges, Customs, Storage and warehouse, Insurance and courier, Profit share, Duties and taxes paid on
+behalf; the group is the product category) and a Total row, with the **agreed, invoiced and to-invoice sale**, the
+**cost still expected** (services without a vendor bill yet), the **actual cost** (posted vendor bills and credit
+notes), the **forecast cost** and the **forecast margin**. Company currency, without taxes. The Total row equals the
+figures below it (agreed sale, forecast cost, forecast margin). Sales managers and accounting only.
+
 ## Cost forecast
 
 **Shipment files → Cost forecast** (also pivot and graph views in **Services to buy**) adds up the expected cost of the

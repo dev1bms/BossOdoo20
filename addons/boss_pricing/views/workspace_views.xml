@@ -237,6 +237,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//group[@name='misc']" position="inside">
+                <field name="boss_carrier_group_id" invisible="not is_company"/>
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_boss_ws_tariffs" type="object" class="oe_stat_button" icon="description"
                         invisible="not boss_ws_tariff_count" groups="boss_pricing.group_tariff_user">

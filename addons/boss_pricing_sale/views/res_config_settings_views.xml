@@ -15,6 +15,14 @@
                         </div>
                     </div>
                 </setting>
+                <setting id="boss_spot_rate_auto_approve" string="Freight rates approved on entry"
+                         help="A weekly ocean or air freight rate typed from a quotation is approved at once by the person who enters it: an urgent quotation never waits for an approver in another time zone (Ángel, 27/10/2026). Off: it waits for a tariff approver.">
+                    <field name="boss_spot_rate_auto_approve"/>
+                </setting>
+                <setting id="boss_tariff_document_required" string="Supplier document required"
+                         help="A tariff needs the supplier's document attached to be sent for approval (every price traceable to it). Ángel asked Cristina whether it must be compulsory: switch it off to approve without the file.">
+                    <field name="boss_tariff_document_required"/>
+                </setting>
                 <setting id="boss_fx_policy" string="Supplier cost in another currency"
                          help="What to do when a supplier price is in another currency than the quotation.">
                     <field name="boss_fx_policy"/>

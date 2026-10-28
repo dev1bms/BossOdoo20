@@ -31,10 +31,19 @@
                 <attribute name="help">Who orders the shipment and is invoiced: a BOSS client, or an agent (a forwarder abroad) for its own client.</attribute>
             </xpath>
             <xpath expr="//label[@for='commitment_date'][1]" position="attributes">
-                <attribute name="string">Final delivery to the client</attribute>
+                <attribute name="string">Final delivery to the client (estimate)</attribute>
             </xpath>
             <xpath expr="//label[@for='commitment_date'][2]" position="attributes">
-                <attribute name="string">Final delivery to the client</attribute>
+                <attribute name="string">Final delivery to the client (estimate)</attribute>
+            </xpath>
+            <!-- The invoice address is the customer's fiscal address and the delivery address lives with the
+                 consignee in the Shipment tab (Ángel, 27/10/2026): both standard header fields leave the screen;
+                 Odoo keeps filling them (the delivery one follows the Spanish-side address). -->
+            <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="before">
                 <page string="Shipment" name="boss_shipment">
@@ -49,6 +58,7 @@
                             <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
                             <field name="incoterm" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
                             <field name="incoterm_location" readonly="state in ('sale', 'cancel')" placeholder="Named place of the incoterm"/>
+                            <field name="boss_rate_quotation" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_traffic_code" invisible="not boss_traffic_code"/>
                         </group>
                         <group string="Carrier" name="boss_carrier">
@@ -73,7 +83,7 @@
                             <field name="boss_origin_country_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
                             <field name="boss_origin_port_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
                             <field name="boss_pickup_address_id" readonly="state in ('sale', 'cancel')"
-                                   domain="['|', ('id', 'child_of', partner_id), ('id', 'child_of', boss_shipper_id or partner_id)]"
+                                   domain="[('id', 'child_of', boss_shipper_id or partner_id)]"
                                    context="{'default_parent_id': boss_shipper_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
                                    options="{'always_reload': True}"/>
                             <field name="boss_origin_place" readonly="state in ('sale', 'cancel')"/>
@@ -85,7 +95,7 @@
                             <field name="boss_destination_country_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
                             <field name="boss_destination_port_id" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
                             <field name="boss_delivery_address_id" readonly="state in ('sale', 'cancel')"
-                                   domain="['|', ('id', 'child_of', partner_id), ('id', 'child_of', boss_consignee_id or partner_id)]"
+                                   domain="[('id', 'child_of', boss_consignee_id or partner_id)]"
                                    context="{'default_parent_id': boss_consignee_id or partner_id, 'default_type': 'delivery', 'show_address': 1}"
                                    options="{'always_reload': True}"/>
                             <field name="boss_destination_place" readonly="state in ('sale', 'cancel')"/>
@@ -109,6 +119,10 @@
                             <field name="boss_duties_amount" readonly="state in ('sale', 'cancel')"/>
                         </group>
                     </group>
+                    <separator string="Containers of the shipment (size, type, quantity)" invisible="boss_load_type != 'fcl'"/>
+                    <div class="text-muted small mb-1" invisible="boss_load_type != 'fcl' or not boss_rate_quotation">
+                        Rate quotation: leave the containers empty while the client has not said how many ship; each per-container service is priced for one container of the size on its line, and the document shows unit rates without a total. Enter the containers before accepting.
+                    </div>
                     <field name="boss_container_ids" readonly="state in ('sale', 'cancel')" invisible="boss_load_type != 'fcl'">
                         <list editable="bottom">
                             <field name="size"/>
@@ -162,6 +176,8 @@
                        decoration-danger="boss_cost_kind == 'unknown'" decoration-warning="boss_cost_kind == 'estimate'"/>
                 <field name="boss_unknown_cost_reason" optional="hide" groups="sales_team.group_sale_manager"
                        invisible="boss_cost_kind != 'unknown'" readonly="boss_price_frozen"/>
+                <field name="boss_cost_on_request" optional="hide" string="Cost on request" readonly="boss_price_frozen"
+                       invisible="boss_execution == 'boss' or not boss_pricing_mode"/>
                 <field name="boss_vat_status" string="VAT" widget="badge" optional="hide"
                        decoration-success="boss_vat_status == 'ok'" decoration-danger="boss_vat_status == 'pending'"/>
             </xpath>
@@ -172,6 +188,7 @@
                 <attribute name="optional">hide</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="attributes">
+                <attribute name="string">Selling price (unit)</attribute>
                 <attribute name="readonly">qty_invoiced &gt; 0 or boss_price_frozen</attribute>
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="after">
@@ -198,7 +215,7 @@
             <xpath expr="//field[@name='order_line']//list//field[@name='purchase_price']" position="attributes">
                 <attribute name="optional">show</attribute>
                 <attribute name="readonly">boss_pricing_mode</attribute>
-                <attribute name="string">Unit cost</attribute>
+                <attribute name="string">Buying cost (unit)</attribute>
                 <attribute name="width">80px</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//field[@name='margin_percent']" position="attributes">
@@ -234,7 +251,7 @@
                             <field name="boss_unknown_cost_reason" invisible="not boss_unknown_cost_reason"/>
                             <field name="boss_cost_amount"/>
                             <field name="boss_cost_currency_id" invisible="1"/>
-                            <field name="purchase_price" string="Unit cost (quotation currency)"/>
+                            <field name="purchase_price" string="Buying cost per unit (quotation currency)"/>
                             <field name="price_unit" string="Sale price"/>
                             <field name="boss_sale_status" string="Sale price source"/>
                             <field name="margin_percent" widget="percentage" string="Margin (on sale)"/>

@@ -103,6 +103,24 @@ class ResPartner(models.Model):
     boss_ws_pending_count = fields.Integer("Prices to approve", compute="_compute_boss_ws")
     boss_ws_outdated_count = fields.Integer("Expired or expiring", compute="_compute_boss_ws")
     boss_ws_service_count = fields.Integer("Services", compute="_compute_boss_ws")
+    # One commercial carrier, several legal entities (MSC Spain, MSC Switzerland, MSC USA... each with its own tax
+    # id and bills): the quotation names the carrier, the tariffs and bills keep the legal entity (Ángel and Belal,
+    # meeting of 27/10/2026). Tariffs match on the family: the carrier itself and every legal entity that is part of it.
+    boss_carrier_group_id = fields.Many2one(
+        "res.partner", "Part of carrier", domain="[('is_company', '=', True), ('id', '!=', id)]", index="btree_not_null",
+        help="Commercial carrier this legal entity belongs to (e.g. MSC Spain → Mediterranean Shipping Company). A "
+        "quotation naming the carrier is priced by the tariffs of all its entities; purchases and bills keep this entity.")
+
+    def _boss_carrier_family(self):
+        """The commercial carrier a partner stands for: its group, else its own company."""
+        self.ensure_one()
+        return self.boss_carrier_group_id or self.commercial_partner_id
+
+    def _boss_carrier_family_ids(self):
+        """Every partner of the same carrier family (the carrier and its legal entities)."""
+        family = self._boss_carrier_family()
+        return (family | self.search([("boss_carrier_group_id", "=", family.id)])).ids
+
 
     def write(self, vals):
         # A demo customer can be priced with demo tariffs: only a tariff approver decides who is one.

@@ -11,6 +11,8 @@
                         <group string="How it is priced">
                             <field name="boss_pricing_mode"/>
                             <field name="boss_cost_method"/>
+                            <field name="boss_tariff_date"/>
+                            <field name="categ_id" string="Summary group"/>
                             <field name="boss_open_question" invisible="not boss_open_question"/>
                             <field name="boss_vat_class"/>
                             <field name="boss_paid_on_behalf"/>

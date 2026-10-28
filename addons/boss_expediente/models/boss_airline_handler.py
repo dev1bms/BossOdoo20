@@ -31,5 +31,5 @@ class BossAirlineHandler(models.Model):
         """Handlers known for an airline at an airport (empty when none is recorded)."""
         if not airline or not airport:
             return self.env["res.partner"]
-        return self.search([("airline_id", "=", airline.commercial_partner_id.id), ("airport_id", "=", airport.id)]
+        return self.search([("airline_id", "in", airline._boss_carrier_family_ids()), ("airport_id", "=", airport.id)]
                            ).handler_id

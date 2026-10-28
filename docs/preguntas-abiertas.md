@@ -46,6 +46,13 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | R2-A2 | ¿Quién aprueba los precios semanales de flete? (P19) | C | Aprobador de tarifas; el asistente los deja en borrador o los envía a aprobación | Ángel |
 | R2-A6 | ¿Se usa el transporte convencional por kg tasable (TTE-CON) en envíos FCL? Si sí, el volumen debe verse también en FCL | C | En FCL el volumen está oculto en la pestaña Envío. Comprobado el 27/10 (Belal): TTE-CON se tarifa por «kg tasable terrestre» (factor 333 del documento de IRENEO, tramos); el motor no necesita cambios | Cristina |
 | R-S1 | Caso de las plantillas IAB FOB, IMB FOB, EAB (sentido, modo, carga, incoterm, cliente de BOSS) y lo que gestiona BOSS deducido de sus servicios | C | Cargado como **propuesta** (`dev/setup_templates.py`); se cambia en la plantilla | Cristina |
+| M2-A | Precios de venta de las plantillas (los Excel con los que se cotiza hoy): qué servicios tienen precio fijo y cuáles varían con el coste (reunión 2, fragmentos 4 y 5) | C | Mecanismo listo: precio fijo por servicio en la lista de precios general (manda sobre «coste + 20 %»); faltan las cifras | Cristina |
+| M2-B | ¿El documento del proveedor es obligatorio para aprobar una tarifa? (fragmento 2) | C | Ajuste «Documento del proveedor obligatorio», activo por defecto; se desactiva sin código | Cristina |
+| M2-C | Oferta de tarifas aceptada por el cliente: ¿se abre el expediente al aceptar o al hacer el booking con los contenedores? (fragmento 6) | C | Hoy: la aceptación exige los contenedores y abre el expediente | Ángel |
+| M2-D | Aranceles por código de la mercancía: ¿de dónde salen los tipos (TARIC)? (fragmento 2) | C | El código se registra; la estimación se teclea | Ángel |
+| M2-E | Proveedores habilitados por servicio (camionero, naviera que también transporta) (fragmento 6) | C | Cualquier proveedor, con aviso si no tiene tarifa del servicio | Ángel / Cristina |
+| M2-F | Números a la española (2.500,00): poner a los usuarios de BOSS en español (es_ES) (fragmento 2) | B | Los dos usuarios actuales están en inglés; los decimales mínimos ya son dos | Belal |
+| M2-G | Flete sin ETD conocida: se usa la fecha de la oferta (el precio disponible hoy); confirmar (fragmento 4) | C | Regla aplicada (ADR-009 §1), explicada en la línea | Ángel |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions
 

@@ -479,8 +479,19 @@ class BossExpedienteCost(models.Model):
             inputs.update(Pricing._warehouse_period(self.period_start, self.period_end, file.port_id))
         if related_costs is not None:
             inputs["related_costs"] = related_costs
-        res = Pricing.price_cost(self.product_id, self.uom_id, inputs, file._boss_pricing_date(), file.company_id)
+        res = Pricing.price_cost(self.product_id, self.uom_id, inputs, self._boss_tariff_date(), file.company_id)
         return res, quantity, inputs
+
+    def _boss_tariff_date(self):
+        """Ocean and air freight take the departure (ATD, else ETD, else the date of the accepted quotation); the
+        other services the pricing date of the file (ADR-009)."""
+        self.ensure_one()
+        file = self.expediente_id
+        if self.product_id.boss_tariff_date == "etd":
+            order = file.sale_order_ids.filtered(lambda o: o.state == "sale").sorted("date_order")[:1]
+            return (file.atd and file.atd.date()) or file.etd or fields.Date.to_date(order.date_order) \
+                or fields.Date.context_today(self)
+        return file._boss_pricing_date()
 
     def _boss_price_per_container(self, periods, quantity, inputs):
         """Containers with different dates: each one priced on its own period (MSC demurrage runs until each empty
@@ -493,7 +504,7 @@ class BossExpedienteCost(models.Model):
             one = dict(inputs, line_qty=1, containers=[{"size": container.size, "type_id": container.container_type_id.id,
                                                         "quantity": 1}],
                        **Pricing._warehouse_period(start, end, file.port_id))
-            res = Pricing.price_cost(self.product_id, self.uom_id, one, file._boss_pricing_date(), file.company_id)
+            res = Pricing.price_cost(self.product_id, self.uom_id, one, self._boss_tariff_date(), file.company_id)
             if res.status != "ok":
                 return res, quantity, one
             total += res.amount

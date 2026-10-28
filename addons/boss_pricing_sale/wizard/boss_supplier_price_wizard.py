@@ -60,7 +60,14 @@ class BossSupplierPriceWizard(models.TransientModel):
         help="The scope of the chosen draft tariff matches its supplier document (empty fields = applies to any). "
         "Needed to send it for approval.")
     submit = fields.Boolean("Send for approval now", default=True,
-                            help="Needs the supplier document. Approval is always a separate step.")
+                            help="Approval is a separate step by a tariff approver (the supplier document is needed "
+                            "when the Sales setting requires it).")
+    auto_approve = fields.Boolean(compute="_compute_auto_approve",
+                                  help="Freight rates typed from a quotation are approved on entry (Sales setting).")
+    lineage_id = fields.Many2one(
+        "boss.tariff", "New version of", compute="_compute_lineage_id",
+        help="This supplier already has a tariff for this route and service: the rate is saved as its next version "
+        "(the previous rates stay as history and the newest valid one is used).")
 
     # One compute per field: a value given by the caller (form, import, RPC) never blanks the others
     # (the ORM leaves the siblings of a shared compute empty: odoo/orm/models.py, _add_precomputed_values).
@@ -69,16 +76,59 @@ class BossSupplierPriceWizard(models.TransientModel):
         for wiz in self:
             wiz.partner_id = wiz.sale_line_id.boss_supplier_id or wiz.sale_line_id.order_id.boss_carrier_id
 
-    @api.depends("sale_line_id", "partner_id", "valid_from")
+    @api.depends("sale_line_id", "partner_id", "valid_from", "direction", "port_ids", "foreign_port_ids")
     def _compute_tariff_name(self):
+        # one tariff per supplier, service and route (origin -> destination): its name says so
         for wiz in self:
             year = (wiz.valid_from or fields.Date.today()).year
-            wiz.tariff_name = f"{wiz.partner_id.name or ''} {wiz.sale_line_id.product_id.default_code or ''} {year}".strip()
+            spanish, abroad = ", ".join(wiz.port_ids.mapped("code")), ", ".join(wiz.foreign_port_ids.mapped("code"))
+            route = ""
+            if spanish and abroad:
+                route = f"{abroad} → {spanish}" if wiz.direction != "export" else f"{spanish} → {abroad}"
+            wiz.tariff_name = " ".join(part for part in (
+                wiz.partner_id.name or "", wiz.sale_line_id.product_id.default_code or "", route, str(year)) if part)
 
     @api.depends("sale_line_id")
     def _compute_valid_from(self):
+        # the rate of this week (Ángel, 27/10/2026): never a date weeks away taken from the shipment
         for wiz in self:
-            wiz.valid_from = wiz.sale_line_id.order_id.boss_planned_date or fields.Date.today()
+            wiz.valid_from = fields.Date.context_today(wiz)
+
+    @api.depends("sale_line_id", "spot_rate")
+    def _compute_auto_approve(self):
+        for wiz in self:
+            wiz.auto_approve = wiz.spot_rate and wiz.sale_line_id.order_id.company_id.boss_spot_rate_auto_approve
+
+    @api.depends("partner_id", "direction", "transport_mode", "load_type", "carrier_id", "port_ids", "foreign_port_ids",
+                 "country_ids", "only_this_customer", "currency_id", "product_id")
+    def _compute_lineage_id(self):
+        for wiz in self:
+            wiz.lineage_id = wiz._boss_find_lineage()
+
+    def _boss_find_lineage(self):
+        """The latest version of the tariff that already holds this supplier, route and service: a new rate is a
+        new version of it, never another tariff («the tariff is the same, just the price changes», Ángel,
+        27/10/2026). Empty when nothing matches, or when the latest version is still a draft (add to it instead)."""
+        Tariff = self.env["boss.tariff"]
+        if not (self.partner_id and self.product_id and self.sale_line_id):
+            return Tariff
+        order = self.sale_line_id.order_id
+        customer = order.partner_id.commercial_partner_id if self.only_this_customer else Tariff.customer_id
+        domain = [
+            ("partner_id", "=", self.partner_id.id), ("company_id", "=", order.company_id.id),
+            ("state", "in", ("approved", "to_approve")), ("active", "=", True),
+            ("direction", "=", self.direction or False), ("transport_mode", "=", self.transport_mode or False),
+            ("load_type", "=", self.load_type or False), ("carrier_id", "=", self.carrier_id.id or False),
+            ("customer_id", "=", customer.id or False), ("currency_id", "=", self.currency_id.id),
+            ("line_ids.product_id", "=", self.product_id.id),
+        ]
+        for tariff in Tariff.search(domain, order="version desc, id desc"):
+            if (set(tariff.port_ids.ids) == set(self.port_ids.ids)
+                    and set(tariff.foreign_port_ids.ids) == set(self.foreign_port_ids.ids)
+                    and set(tariff.country_ids.ids) == set(self.country_ids.ids) and not tariff.state_ids):
+                latest = Tariff.search([("lineage_id", "=", tariff.lineage_id.id)], order="version desc", limit=1)
+                return latest if latest.state != "draft" else Tariff
+        return Tariff
 
     @api.depends("sale_line_id")
     def _compute_spot_rate(self):
@@ -158,18 +208,43 @@ class BossSupplierPriceWizard(models.TransientModel):
     def action_save(self):
         self.ensure_one()
         self._check_complete()
-        if self.submit and not (self.document or (self.tariff_id and self.tariff_id.document)):
-            raise UserError(self.env._("Attach the supplier document to send the price for approval."))
+        company = self.sale_line_id.order_id.company_id
+        if ((self.submit or self.auto_approve) and company.boss_tariff_document_required
+                and not (self.document or (self.tariff_id or self.lineage_id).document)):
+            raise UserError(self.env._("Attach the supplier document to send the price for approval (Sales setting "
+                                       "«Supplier document required»)."))
         if self.tariff_id and self.tariff_scope_confirmed and not self.tariff_id.scope_confirmed:
             self.tariff_id.scope_confirmed = True  # reviewed here, next to the scope summary
-        tariff = self.tariff_id or self.env["boss.tariff"].create(self._tariff_values())
-        self.env["boss.tariff.line"].create({
-            "tariff_id": tariff.id, "product_id": self.product_id.id, "uom_id": self.uom_id.id,
+        order = self.sale_line_id.order_id
+        tariff = self.tariff_id
+        base = self.lineage_id if not tariff else self.env["boss.tariff"]
+        if base:
+            # the same tariff, one more version: the earlier rates stay as history, this one starts on valid_from
+            values = {"valid_from": self.valid_from, "valid_to": self.valid_to}
+            if self.document:
+                values.update({"document": self.document, "document_name": self.document_name})
+            if self.document_reference:
+                values["document_reference"] = self.document_reference
+            tariff = base._boss_new_version(values)
+        tariff = tariff or self.env["boss.tariff"].create(self._tariff_values())
+        types = self.container_type_id.ids if self.price_by_container_type else []
+        line_values = {
+            "product_id": self.product_id.id, "uom_id": self.uom_id.id,
             "unit_price": self.unit_price, "min_amount": self.min_amount, "max_amount": self.max_amount,
             "document_page": self.document_page, "container_size": self.container_size,
-            "container_type_ids": [(6, 0, self.container_type_id.ids if self.price_by_container_type else [])],
-        })
-        if self.submit:
+            "container_type_ids": [(6, 0, types)],
+        }
+        previous = tariff.line_ids.filtered(
+            lambda l: l.product_id == self.product_id and l.uom_id == self.uom_id
+            and (l.container_size or False) == (self.container_size or False)
+            and set(l.container_type_ids.ids) == set(types)) if base else self.env["boss.tariff.line"]
+        if previous:
+            previous[:1].write(line_values)  # the replaced rate of the new version
+        else:
+            self.env["boss.tariff.line"].create(dict(line_values, tariff_id=tariff.id))
+        if self.auto_approve:
+            tariff._boss_approve_on_entry(order.name)
+        elif self.submit:
             tariff.action_submit()
         self.sale_line_id._boss_recompute_cost()
         return {"type": "ir.actions.act_window_close"}

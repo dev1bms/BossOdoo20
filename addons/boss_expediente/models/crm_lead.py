@@ -1,5 +1,7 @@
 from odoo import Command, api, fields, models
 
+from .boss_expediente import PACKAGE_TYPES
+
 # Opportunity field -> quotation field (same names, one meaning). Passed once to a new quotation, never synchronised.
 # Route (ADR-006): the stored inputs only; the quotation derives its Spanish port, country abroad, province and date.
 ROUTE_FIELDS = ("boss_business", "boss_direction", "boss_transport_mode", "boss_load_type", "boss_carrier_id",
@@ -11,6 +13,7 @@ ROUTE_FIELDS = ("boss_business", "boss_direction", "boss_transport_mode", "boss_
 TO_QUOTATION = {
     **{name: name for name in ROUTE_FIELDS},
     "boss_pallets": "boss_pallets", "boss_packages": "boss_packages", "boss_goods_value": "boss_goods_value",
+    "boss_package_type": "boss_package_type", "boss_hs_code": "boss_hs_code",
     "boss_goods_description": "boss_goods_description", "boss_incoterm_id": "incoterm",
     "boss_scope_pickup": "boss_scope_pickup", "boss_scope_origin_customs": "boss_scope_origin_customs",
     "boss_scope_main": "boss_scope_main", "boss_scope_destination_customs": "boss_scope_destination_customs",
@@ -34,6 +37,8 @@ class CrmLead(models.Model):
     boss_scope_delivery = fields.Boolean("Delivery")
     boss_goods_description = fields.Char("Goods")
     boss_packages = fields.Integer("Packages")
+    boss_package_type = fields.Selection(PACKAGE_TYPES, "Type of unit")
+    boss_hs_code = fields.Char("Goods code (HS)")
     boss_pallets = fields.Integer("Pallets")
     boss_goods_value = fields.Monetary("Goods value", currency_field="company_currency")
     boss_container_ids = fields.One2many("boss.shipment.container", "lead_id", "Containers")

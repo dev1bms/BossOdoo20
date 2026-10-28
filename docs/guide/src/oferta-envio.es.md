@@ -24,7 +24,29 @@ Todo se puede cambiar después.
   elija la que toca. Si no tiene, créela desde el mismo campo («Crear y editar»): queda como dirección del cliente.
 - **Fechas**: ETD (salida del puerto de origen) y ETA (llegada al de destino). La fecha clave —ETA en importación, ETD
   en exportación, cruzado y nacional— es la **fecha de tarifa**: elige la versión de cada tarifa de proveedor. La fecha
-  de vaciado de un LCL (en el expediente) nunca elige la tarifa. La «Entrega final al
+  de vaciado de un LCL (en el expediente) nunca elige la tarifa. **Excepción (Ángel, 27/10): el flete marítimo y
+  aéreo toma siempre la salida (ETD)**, en importación y exportación; mientras no se conoce la ETD, la fecha de la
+  oferta (el flete disponible hoy). La ⓘ de la línea dice qué fecha usó.
+- **Direcciones y partes**: la dirección de factura es la fiscal del ordenante y la de entrega va con el
+  destinatario en esta pestaña (la cabecera no las muestra). La dirección de **recogida** se elige entre las del
+  **expedidor**; la de **entrega** entre las del **destinatario** (sus almacenes). Ambas pueden quedar vacías.
+- **Transportista**: se nombra el transportista comercial (p. ej. MSC) aunque facture otra entidad legal del grupo
+  (MSC España, MSC Suiza): en el contacto de cada entidad, «Pertenece al transportista». Las tarifas valen para toda
+  la familia; la línea, la compra y la factura conservan la entidad legal.
+- **Carga**: bultos con su **tipo de bulto** (cajas, palés, jaulas, bultos, botellas, sacos) y el **código de la
+  mercancía (HS)**, que pasa al expediente; los aranceles siguen siendo una estimación tecleada.
+- **Oferta de tarifas** (casilla en el grupo Caso): el cliente pide precios de 20', 40' y 40'HC sin decir cuántos
+  contenedores embarca. Deje los contenedores vacíos: cada línea por contenedor se valora para **un** contenedor del
+  tamaño de la línea, el PDF muestra «por Contenedor 40'» y ningún total, y el cliente calcula. Antes de aceptar,
+  introduzca los contenedores reales: el expediente los necesita.
+- **Coste a petición**: un camionero que cotiza caso por caso no tiene tarifa. Elija el proveedor, marque «Coste a
+  petición» en la línea (columna opcional) y teclee la venta: la oferta se acepta y el coste se escribe en el
+  expediente cuando el proveedor responde.
+- **Precio del flete desde la oferta (⊕)**: válido desde hoy, una semana (ampliable); si el proveedor ya tiene
+  tarifa para esa ruta y servicio, el precio se guarda como **nueva versión** de la misma tarifa (los anteriores quedan
+  como historial y se usa el más nuevo vigente en la fecha). Los fletes tecleados así quedan **aprobados al
+  introducirlos** por quien los teclea (ajuste de Ventas), para no esperar a nadie en otra zona horaria; el documento
+  del proveedor es obligatorio mientras el ajuste «Documento del proveedor obligatorio» esté activo. La «Entrega final al
   cliente» de la cabecera es otra cosa: la entrega en el almacén, que puede ser semanas después de la ETA.
 - **Peso real, peso volumen y peso tasable** (Ángel, 27/10/2026): peso volumen = m³ × factor del modo (**aéreo 167,
   terrestre 333, marítimo 1000** kg/m³); peso tasable = **el mayor** del bruto y el volumen. Los proveedores cobran a

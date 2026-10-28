@@ -35,6 +35,13 @@ class ProductTemplate(models.Model):
         help="How supplier prices of this service are usually computed; it is the default of a new supplier "
         "price. Each supplier price line uses the method of its own document.",
     )
+    boss_tariff_date = fields.Selection(
+        [("key", "Key date of the shipment (ETA of an import, ETD otherwise)"),
+         ("etd", "Departure (ETD); the quotation date while the ETD is unknown")],
+        "Tariff date", default="key", required=True,
+        help="Which date of the shipment chooses the version of the supplier tariff. Ocean and air freight always "
+        "take the departure, import or export (Ángel, 27/10/2026); the other services the key date of the "
+        "shipment (ETA of an import, ETD of an export).")
     boss_open_question = fields.Char(
         "Open question",
         help="Reference of the open business question (docs/preguntas-abiertas.md) that "

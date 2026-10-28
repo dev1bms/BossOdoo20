@@ -11,6 +11,9 @@ from odoo.tools.binary import BinaryBytes
 
 assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
 env = env(context=dict(env.context, tracking_disable=True, lang="en_US"))  # noqa: F821
+from odoo.addons.boss_services.models.service_groups import assign_service_groups  # noqa: E402
+
+assign_service_groups(env)  # service groups and the freight tariff date (the upgrade does it on the deploy)
 results = []
 
 
@@ -95,6 +98,7 @@ wiz = Wizard.with_context(default_sale_line_id=fmi.id).create({})
 check("5 wizard pre-filled: MSC, ESVLC, Shanghai abroad, valid one week", (msc, "ESVLC", "CNSHA", 6),
       (wiz.partner_id, wiz.port_ids.mapped("code")[0], wiz.foreign_port_ids.mapped("code")[0],
        (wiz.valid_to - wiz.valid_from).days))
+imb.boss_etd = date(2026, 12, 10)  # freight rates take the departure (ADR-009)
 wiz.write({"unit_price": 1500.0, "tariff_name": "[PRUEBA] MSC flete Shanghái-Valencia semana", "submit": False,
            "valid_from": date(2026, 12, 7), "document_reference": "[PRUEBA] oferta semanal",
            # the weekly offer (e-mail or PDF of the carrier) is the document every price must be traceable to
@@ -102,23 +106,21 @@ wiz.write({"unit_price": 1500.0, "tariff_name": "[PRUEBA] MSC flete Shanghái-Va
            "document_name": "oferta-semanal.txt"})
 wiz.action_save()
 rate = env["boss.tariff"].search([("name", "=", "[PRUEBA] MSC flete Shanghái-Valencia semana")], limit=1)
-check("5 draft tariff with the route and validity", ("draft", "CNSHA", "ESVLC", date(2026, 12, 13)),
-      (rate.state, rate.foreign_port_ids.mapped("code")[0], rate.port_ids.mapped("code")[0], rate.valid_to))
-check("5 not approved yet: the freight stays manual", "manual", fmi.boss_cost_status)
-rate.action_submit()
-rate.with_user(belal).action_approve()
-fmi._boss_recompute_cost()
-check("5 approved: the freight is priced from the rate, 2 x 1500", ("ok", 3000.0), (fmi.boss_cost_status, round(fmi.boss_cost_amount, 2)))
+# since the meeting of 27/10 (part 2) a freight rate typed from the quotation is approved on entry by its author
+# (Sales setting), so an urgent quotation never waits for an approver in another time zone
+check("5 tariff with the route and validity, approved on entry", ("approved", env.user, "CNSHA", "ESVLC", date(2026, 12, 13)),
+      (rate.state, rate.approved_by_id, rate.foreign_port_ids.mapped("code")[0], rate.port_ids.mapped("code")[0], rate.valid_to))
+check("5 priced at once: the freight comes from the rate, 2 x 1500", ("ok", 3000.0), (fmi.boss_cost_status, round(fmi.boss_cost_amount, 2)))
 check("5 source names the rate and its week", True, "[PRUEBA] MSC flete" in fmi.boss_cost_explanation and "CNSHA" in fmi.boss_cost_explanation)
 # another route is not priced by it
 other = imb.copy({"boss_origin_port_id": port("CNNGB", "sea").id})
 fmi_other = other.order_line.filtered(lambda l: l.product_id.default_code == "FMI")
 check("5 another origin port (Ningbo) is not priced by the Shanghai rate", "manual", fmi_other.boss_cost_status)
-# outside the week neither
-imb.boss_eta = date(2026, 12, 20)
+# outside the week neither (the departure chooses the freight rate)
+imb.boss_etd = date(2026, 12, 20)
 fmi._boss_recompute_cost()
-check("5 outside the week: manual again", "manual", fmi.boss_cost_status)
-imb.boss_eta = date(2026, 12, 10)
+check("5 departure outside the week: manual again", "manual", fmi.boss_cost_status)
+imb.boss_etd = date(2026, 12, 10)
 fmi._boss_recompute_cost()
 
 # 8. Confirm: readiness message grouped by cause, then one file, no duplicate, no purchase, no invoice

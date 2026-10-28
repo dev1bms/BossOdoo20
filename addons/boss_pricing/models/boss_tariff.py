@@ -96,8 +96,14 @@ class BossTariff(models.Model):
             parts = [label("direction") or _("any direction"), label("transport_mode") or _("any mode")]
             if tariff.load_type:
                 parts.append(label("load_type"))
-            for names in (tariff.port_ids.mapped("code"), tariff.foreign_port_ids.mapped("code"),
-                          tariff.country_ids.mapped("name"), tariff.state_ids.mapped("name")):
+            spanish, abroad = ", ".join(tariff.port_ids.mapped("code")), ", ".join(tariff.foreign_port_ids.mapped("code"))
+            if spanish and abroad:
+                # the route as the business reads it: origin -> destination
+                parts.append(f"{abroad} → {spanish}" if tariff.direction == "import" else f"{spanish} → {abroad}"
+                             if tariff.direction == "export" else f"{spanish} · {abroad}")
+            else:
+                parts += [p for p in (spanish, abroad) if p]
+            for names in (tariff.country_ids.mapped("name"), tariff.state_ids.mapped("name")):
                 if names:
                     parts.append(", ".join(names))
             if tariff.carrier_id:
@@ -153,7 +159,7 @@ class BossTariff(models.Model):
                 continue
             if not tariff.line_ids:
                 raise UserError(self.env._("Add at least one price before sending '%s'.", tariff.name))
-            if not tariff.document:
+            if not tariff.document and tariff.company_id.boss_tariff_document_required:
                 raise UserError(self.env._(
                     "Attach the supplier document of '%s': every price must be traceable to it.",
                     tariff.name))
@@ -176,6 +182,22 @@ class BossTariff(models.Model):
             tariff._workflow_write({"state": "approved", "approved_by_id": self.env.uid,
                                     "approved_date": fields.Datetime.now()})
 
+    def _boss_approve_on_entry(self, origin):
+        """A freight rate typed from a quotation is approved at once by its author (company setting; Ángel,
+        27/10/2026: an urgent quotation in another time zone never waits for an approver). The approval is recorded
+        like any other, with who and when, and a note says it was on entry."""
+        for tariff in self:
+            if not tariff.company_id.boss_spot_rate_auto_approve:
+                raise UserError(self.env._("Freight rates are not approved on entry (Sales settings)."))
+            if tariff.state == "draft":
+                tariff.action_submit()
+            if tariff.state == "to_approve":
+                tariff._workflow_write({"state": "approved", "approved_by_id": self.env.uid,
+                                        "approved_date": fields.Datetime.now()})
+                tariff.message_post(body=self.env._(
+                    "Approved on entry: freight rate typed from %s (Sales setting «Freight rates entered from a "
+                    "quotation are approved on entry»).", origin))
+
     def action_back_to_draft(self):
         self.filtered(lambda t: t.state == "to_approve")._workflow_write({"state": "draft"})
 
@@ -183,10 +205,15 @@ class BossTariff(models.Model):
         self.ensure_one()
         if self.state != "approved":
             raise UserError(self.env._("Only an approved tariff gets new versions; edit the draft instead."))
+        return self._boss_new_version({"valid_from": fields.Date.today(), "valid_to": False})._get_form_action()
+
+    def _boss_new_version(self, values):
+        """Next version of this tariff's lineage: a draft copy (prices included) with the given header values."""
+        self.ensure_one()
         latest = self.search([("lineage_id", "=", self.lineage_id.id)], order="version desc", limit=1)
-        new = self.copy({"name": self.name, "valid_from": fields.Date.today(), "valid_to": False})
+        new = self.copy(dict({"name": self.name}, **values))
         new._workflow_write({"lineage_id": self.lineage_id.id, "version": latest.version + 1})
-        return new._get_form_action()
+        return new
 
     def _get_form_action(self):
         return {"type": "ir.actions.act_window", "res_model": "boss.tariff", "res_id": self.id,
@@ -252,9 +279,10 @@ class BossTariff(models.Model):
         for name in ("direction", "transport_mode", "load_type"):
             if self[name]:
                 conditions[name] = {self[name]}
-        for name in ("carrier_id", "customer_id"):
-            if self[name]:
-                conditions[name] = {self[name].id}
+        if self.carrier_id:
+            conditions["carrier_id"] = {self.carrier_id._boss_carrier_family().id}
+        if self.customer_id:
+            conditions["customer_id"] = {self.customer_id.id}
         if self.port_ids:
             conditions["port_id"] = set(self.port_ids.ids)
         if self.foreign_port_ids:

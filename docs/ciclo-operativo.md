@@ -304,6 +304,17 @@ probado en Chrome con S00311 (THC 253 → 303,60; `docs/evidencias/20261027_1646
 ocupan el ancho estándar máximo (1400 px) y el chatter va debajo en cualquier pantalla
 (`docs/evidencias/20261027_1705_chrome_chatter_debajo_boss_web.md`).
 
+**Segunda reunión, siete fragmentos recuperados (28/10, Belal):** ADR-009 y `docs/matriz-reunion-2026-10-27.md`
+(filas M2-1…M2-23). Hecho con el código montado en boss20 (`dev/check_meeting2.py` 47/47; regresiones 39/39, 53/53,
+23/23, 38/38, 22/22): fecha de tarifa del flete = salida (ETD, si no la fecha de la oferta); una tarifa por ruta con
+versiones sucesivas desde el asistente y aprobación al introducir (ajuste); documento obligatorio como ajuste; familia
+de transportista (entidades legales); oferta de tarifas sin cantidades ni total; coste a petición; tipo de bulto y
+código HS; cabecera sin direcciones; etiquetas venta/compra; dos decimales; resumen del expediente por grupo de
+servicio (categorías de Odoo 17). **Sin desplegar: espera la aprobación de Belal** (boss_services 20.0.1.4.0 con
+migración de categorías, boss_pricing 20.0.1.11.0, boss_pricing_sale 20.0.1.13.0, boss_expediente 20.0.1.12.0). Tras el
+despliegue: comprobar en Chrome la pestaña Envío, el asistente, el PDF de una oferta de tarifas y el Resumen.
+`dev/server_shell_wip.sh` ahora crea las columnas nuevas dentro de la transacción (`dev/wip_bootstrap.py`).
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de

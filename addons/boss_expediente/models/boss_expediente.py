@@ -47,6 +47,9 @@ STATES = [
     ("cancel", "Cancelled"),
 ]
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
+# Type of unit of the cargo: the Odoo 17 taxonomy of a partida (x_studio_unit_type), as Ángel asked (27/10/2026).
+PACKAGE_TYPES = [("CT", "Cartons"), ("PL", "Pallets"), ("CR", "Crates"), ("PC", "Packages"), ("BT", "Bottles"),
+                 ("BG", "Bags")]
 # Shipment data copied ONCE from the accepted quotation (file field: quotation field). From then on the file holds
 # the actual data and the quotation keeps what was agreed; differences are shown, never synchronised.
 FROM_ORDER = {
@@ -59,6 +62,7 @@ FROM_ORDER = {
     "delivery_address_id": "boss_delivery_address_id", "destination_place": "boss_destination_place",
     "etd": "boss_etd", "eta": "boss_eta", "shipper_id": "boss_shipper_id",
     "consignee_id": "boss_consignee_id", "goods_description": "boss_goods_description", "packages": "boss_packages",
+    "package_type": "boss_package_type", "hs_code": "boss_hs_code",
     "gross_kg": "boss_gross_kg", "volume_m3": "boss_volume_m3", "awb_kg": "boss_awb_kg", "pallets": "boss_pallets",
     **{f"scope_{scope}": f"boss_scope_{scope}" for scope in SCOPES},
 }
@@ -176,6 +180,8 @@ class BossExpediente(models.Model):
     # cargo
     goods_description = fields.Char("Goods")
     packages = fields.Integer()
+    package_type = fields.Selection(PACKAGE_TYPES, "Type of unit")
+    hs_code = fields.Char("Goods code (HS)", help="Customs tariff code of the goods: it decides the duties.")
     gross_kg = fields.Float("Gross weight (kg)", digits=(12, 2), tracking=True)
     volume_m3 = fields.Float("Volume (m³)", digits=(12, 3), tracking=True)
     awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2))
@@ -305,6 +311,8 @@ class BossExpediente(models.Model):
                                      groups=MARGIN_GROUPS)
     completeness = fields.Text("To do", compute="_compute_amounts", compute_sudo=True)
     financial_closed = fields.Boolean("Financially closed", readonly=True, copy=False, tracking=True)
+    summary_html = fields.Html("Buying and selling by service group", compute="_compute_summary_html",
+                               compute_sudo=True, sanitize=False, groups=MARGIN_GROUPS)
     financial_closed_date = fields.Date(readonly=True, copy=False)
     financial_closed_by = fields.Many2one("res.users", readonly=True, copy=False)
 
@@ -415,7 +423,8 @@ class BossExpediente(models.Model):
         day = self._boss_pricing_date()
         return {
             "direction": self.direction, "transport_mode": self.transport_mode, "load_type": self.load_type,
-            "carrier_id": self.carrier_id.id, "port_id": self.port_id.id, "country_id": self.country_id.id,
+            "carrier_id": self.carrier_id._boss_carrier_family().id if self.carrier_id else False,
+            "port_id": self.port_id.id, "country_id": self.country_id.id,
             "foreign_port_id": (self[f"{abroad_side(self.direction)}_port_id"].id if abroad_side(self.direction)
                                 else False),
             "state_id": self.inland_state_id.id, "customer_id": partner.id,
@@ -681,6 +690,85 @@ class BossExpediente(models.Model):
     def _boss_user_can(self, groups):
         user = self.env.user
         return any(user.has_group(group) for group in groups.split(","))
+
+    def _boss_service_group(self, product):
+        """Name of the service group of a product: its category under «BOSS services», else «Other»."""
+        root = self.env.ref("boss_services.product_category_services", raise_if_not_found=False)
+        category = product.categ_id
+        return category.name if category and category != root else self.env._("Other")
+
+    def _boss_summary_rows(self):
+        """Buying and selling by service group (the product category of each service), like the Odoo 17 «Resumen»
+        (Ángel, 27/10/2026): agreed sale, invoiced to the customer and still to invoice; cost still expected, actual
+        (posted vendor bills and credit notes) and forecast; forecast margin. Company currency, untaxed; the same
+        documents and rules as the figures above, so the total row equals them. Returns [(group, figures)] with a
+        last («Total») row."""
+        self.ensure_one()
+        company, currency = self.company_id, self.company_id.currency_id
+        today = fields.Date.context_today(self)
+        account = self.analytic_account_id
+
+        def company_amount(amount, from_currency, date):
+            return from_currency._convert(amount, currency, company, fields.Date.to_date(date) or today)
+
+        rows = defaultdict(lambda: {"sale": 0.0, "invoiced": 0.0, "pending": 0.0, "actual": 0.0})
+        for allocation in self.allocation_ids.filtered(lambda a: a.order_id.state == "sale"):
+            rows[self._boss_service_group(allocation.product_id)]["sale"] += company_amount(
+                allocation.amount, allocation.currency_id, allocation.order_id.date_order)
+        for item in self._boss_journal_items(("out_invoice", "out_refund")):
+            rows[self._boss_service_group(item.product_id)]["invoiced"] -= item.balance * account_share(item, account)
+        for item in self._boss_journal_items(("in_invoice", "in_refund", "in_receipt")):
+            rows[self._boss_service_group(item.product_id)]["actual"] += item.balance * account_share(item, account)
+        for need in self.cost_ids:
+            rows[self._boss_service_group(need.product_id)]["pending"] += need.pending_amount_company
+        purchase_lines = self.purchase_order_ids.filtered(lambda p: p.state == "purchase").order_line.filtered(
+            lambda l: not l.display_type)
+        billed_by_line = self.cost_ids._boss_billed_by_purchase_line(purchase_lines)
+        for line in purchase_lines.filtered(lambda l: not l.boss_cost_id):
+            ordered = company_amount(line.price_subtotal, line.currency_id, line.order_id.date_order)
+            rows[self._boss_service_group(line.product_id)]["pending"] += max(
+                ordered - billed_by_line.get(line.id, 0.0), 0.0)
+        order = [self.env.ref(xmlid, raise_if_not_found=False).name for xmlid in (
+            "boss_services.product_category_freight", "boss_services.product_category_inland",
+            "boss_services.product_category_local", "boss_services.product_category_customs",
+            "boss_services.product_category_storage", "boss_services.product_category_insurance",
+            "boss_services.product_category_profit_share", "boss_services.product_category_duties")]
+        ordered_rows = sorted(rows.items(), key=lambda kv: (order.index(kv[0]) if kv[0] in order else len(order), kv[0]))
+        total = {"sale": 0.0, "invoiced": 0.0, "pending": 0.0, "actual": 0.0}
+        result = []
+        for group, figures in ordered_rows:
+            figures["to_invoice"] = figures["sale"] - figures["invoiced"]
+            figures["forecast"] = figures["actual"] + figures["pending"]
+            figures["margin"] = figures["sale"] - figures["forecast"]
+            for key in total:
+                total[key] += figures[key]
+            result.append((group, figures))
+        total.update({"to_invoice": total["sale"] - total["invoiced"], "forecast": total["actual"] + total["pending"]})
+        total["margin"] = total["sale"] - total["forecast"]
+        result.append((self.env._("Total"), total))
+        return result
+
+    def _compute_summary_html(self):
+        _ = self.env._
+        headers = (_("Service group"), _("Agreed sale"), _("Invoiced"), _("To invoice"), _("Cost still expected"),
+                   _("Actual cost (bills)"), _("Forecast cost"), _("Forecast margin"))
+        keys = ("sale", "invoiced", "to_invoice", "pending", "actual", "forecast", "margin")
+        for file in self:
+            currency = file.company_id.currency_id
+            money = lambda amount: formatLang(self.env, amount, currency_obj=currency)  # noqa: E731
+            rows = file._boss_summary_rows()
+            head = Markup("").join(Markup("<th class=\"%s\">%s</th>") % ("text-end" if i else "", h) for i, h in enumerate(headers))
+            body = Markup("").join(
+                Markup("<tr class=\"%s\"><td>%s</td>%s</tr>") % (
+                    "fw-bold table-active" if i == len(rows) - 1 else "", group,
+                    Markup("").join(Markup("<td class=\"text-end\">%s</td>") % money(figures[k]) for k in keys))
+                for i, (group, figures) in enumerate(rows))
+            file.summary_html = Markup(
+                "<table class=\"table table-sm o_boss_summary\"><thead><tr>%s</tr></thead><tbody>%s</tbody></table>"
+                "<p class=\"text-muted small mb-0\">%s</p>") % (
+                head, body, _("Company currency, without taxes. Actual cost = posted vendor bills and credit notes; "
+                              "cost still expected = services not billed yet (forecast); invoiced = posted customer "
+                              "invoices less credit notes. Services without a group: «Other»."))
 
     def _compute_amounts(self):
         """Every figure from documents, company currency, untaxed unless stated. Posted documents, confirmed orders,
