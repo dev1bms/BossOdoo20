@@ -205,12 +205,12 @@ msgid "Write the text for the customer before publishing «%s»."
 msgstr "Escriba el texto para el cliente antes de publicar «%s»."
 
 #. module: boss_portal
-#: model:portal.entry,name:boss_portal.portal_my_shipments
+#: model:portal.entry,name:boss_portal.portal_entry_my_shipments
 msgid "My Shipments"
 msgstr "Mis envíos"
 
 #. module: boss_portal
-#: model:portal.entry,description:boss_portal.portal_my_shipments
+#: model:portal.entry,description:boss_portal.portal_entry_my_shipments
 msgid "Follow your shipments: route, dates, containers, events and documents published by BOSS"
 msgstr "Siga sus envíos: ruta, fechas, contenedores, novedades y documentos publicados por BOSS"
 
