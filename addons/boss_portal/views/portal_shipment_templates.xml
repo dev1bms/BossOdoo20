@@ -138,8 +138,7 @@
                     <dd class="col-7 col-md-9"><t t-out="(s['destination_port'] or {}).get('name') or 'Not known yet'"/><t t-if="s['destination_country']">, <t t-out="s['destination_country']"/></t></dd>
                 </dl>
                 <t t-call="boss_portal.boss_shipment_dates"/>
-                <p t-if="s['containers']" class="small mt-3 mb-0">Containers:
-                    <t t-foreach="s['containers']" t-as="c"><t t-out="c[1]"/> × <t t-out="c[0]"/><t t-if="not c_last">, </t></t></p>
+                <p t-if="s['containers']" class="small mt-3 mb-0"><span>Containers:</span>&#160;<t t-foreach="s['containers']" t-as="c"><t t-out="c[1]"/> × <t t-out="c[0]"/><t t-if="not c_last">, </t></t></p>
                 <t t-call="boss_portal.boss_shipment_events"/>
             </div>
         </t>
