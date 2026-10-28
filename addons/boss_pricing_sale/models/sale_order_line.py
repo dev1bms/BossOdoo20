@@ -78,9 +78,10 @@ class SaleOrderLine(models.Model):
         "The file shows its cost as missing until the supplier bill arrives.")
     boss_cost_on_request = fields.Boolean(
         "Cost asked case by case", copy=False,
-        help="The supplier gives no tariff for this service (inland trucking, for instance) and quotes each shipment "
-        "on request: the service stays on the quotation with its sale price, the quotation can be accepted, and the "
-        "cost is typed in the file when the supplier answers (Ángel, 27/10/2026).")
+        help="The supplier named on the line has no tariff for this service (inland trucking, for instance) and "
+        "quotes each shipment on request: the service stays on the quotation with its sale price, the quotation can "
+        "be accepted, and the cost is typed in the file when the supplier answers (Ángel, 27/10/2026). Only when no "
+        "supplier price exists: missing shipment data, a price waiting for approval or a conflict keep their path.")
     # Amounts shown with 2 decimals unless more are needed (0,3779 €/kg keeps its 4): «Spanish way, two decimals,
     # everywhere» (Ángel, 27/10/2026). Stored precision unchanged (Product Price).
     price_unit = fields.Float(digits="Product Price", min_display_digits=2)
@@ -332,9 +333,11 @@ class SaleOrderLine(models.Model):
             if (status == "ok" and res.currency and res.currency != line.currency_id
                     and line.order_id.company_id.boss_fx_policy == "none"):
                 status = "currency"
-            if (line.boss_cost_on_request and not line.boss_manual_cost
-                    and status in ("no_tariff", "manual", "missing_input", "pending_approval", "conflict")):
-                status = "on_request"  # the supplier quotes case by case: cost typed in the file when known
+            if line.boss_cost_on_request and line.boss_supplier_id and status == "no_tariff":
+                # the supplier named on the line has no price for this service and quotes case by case (inland
+                # trucking): cost typed in the file when known. Never for missing shipment data, a price waiting
+                # for approval, a conflict or a freight offer (those keep their own path).
+                status = "on_request"
             line.update({
                 "boss_cost_status": status,
                 "boss_cost_amount": res.amount,

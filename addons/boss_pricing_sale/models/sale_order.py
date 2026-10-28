@@ -327,17 +327,32 @@ class SaleOrder(models.Model):
                     lines="\n".join(f"- {line.product_id.display_name}" for line in unknown)))
 
     def _boss_check_containers(self):
-        """A rate quotation gives rates per container size: the file needs the actual containers, so acceptance
-        waits until they are entered (Ángel, 27/10/2026: the client tells the number of containers when booking)."""
-        for order in self:
+        """A rate quotation gives rates per container size (20', 40', 40' HC...) without knowing how many ship: the
+        file needs the actual containers, so acceptance waits until they are entered, and the alternatives that
+        are not shipped are named so that the person removes them or adds the container (Ángel, 27/10/2026: the
+        client tells the number of containers when booking). Other quotations keep their behaviour (ADR-003)."""
+        _ = self.env._
+        for order in self.filtered("boss_rate_quotation"):
             per_container = order.order_line.filtered(
                 lambda l: l.product_id.boss_pricing_mode and not l.display_type
                 and l.product_uom_id.boss_quantity_source in ("container", "teu"))
-            if order.boss_load_type == "fcl" and per_container and not order.boss_container_ids:
-                raise UserError(self.env._(
+            if not per_container:
+                continue
+            if not order.boss_container_ids:
+                raise UserError(_(
                     "%s cannot be accepted yet: enter the containers of the shipment (size, type, quantity) in the "
                     "Shipment tab. The quotation gives rates per container; the file needs the actual containers.",
                     order.name))
+            shipped = {(c.size, c.container_type_id) for c in order.boss_container_ids}
+            shipped |= {(size, self.env["boss.container.type"]) for size, _type in shipped}
+            unused = per_container.filtered(
+                lambda l: l.boss_container_size and (l.boss_container_size, l.boss_container_type_id) not in shipped)
+            if unused:
+                raise UserError(_(
+                    "%(order)s: these rates are for containers that are not in the shipment: %(lines)s. Remove the "
+                    "lines the client did not book, or add the container to the shipment.", order=order.name,
+                    lines=", ".join(f"{l.product_id.default_code or l.product_id.name} {l.boss_container_size}' "
+                                    f"{l.boss_container_type_id.code or ''}".strip() for l in unused)))
 
     def action_confirm(self):
         self._boss_check_ready()
