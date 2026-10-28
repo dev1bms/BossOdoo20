@@ -111,6 +111,42 @@ order.write({"order_line": [Command.create({"product_id": plain.id})]})
 plain_line = order.order_line.filtered(lambda l: l.product_id == plain)
 check("5 non-BOSS product: list price 10", 10.0, round(plain_line.price_unit, 2))
 
+# 5b. paid on behalf of the customer (Belal 28/10/2026, F0-A00): re-invoiced at the amount paid, never cost + 20 %
+flagged = sorted(env["product.template"].search([("boss_paid_on_behalf", "=", True)]).mapped("default_code"))
+print(f"      services with the explicit flag «Paid on behalf»: {flagged}")
+check("5b the services re-invoiced at cost are the ones with the explicit flag (not a list of codes)", True,
+      bool(flagged) and all(env["product.product"].search([("default_code", "=", c)]).boss_paid_on_behalf for c in flagged))
+ob = env["sale.order"].create({
+    "partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl",
+    "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
+    "boss_destination_port_id": port("ESVLC", "sea").id, "boss_eta": date(2026, 12, 10), "boss_duties_amount": 500.0,
+    "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_dv").id, "quantity": 1})],
+    "order_line": [Command.create({"product_id": product("THC").id, "product_uom_id": product("THC").uom_id.id,
+                                   "boss_container_size": "40", "boss_container_type_id": ref("boss_pricing.container_type_dv").id}),
+                   Command.create({"product_id": product("ARA").id, "product_uom_id": product("ARA").uom_id.id})]})
+ara = ob.order_line.filtered(lambda l: l.product_id.default_code == "ARA")
+thc_ob = ob.order_line.filtered(lambda l: l.product_id.default_code == "THC")
+check("5b duties (ARA) with no amount yet: no price proposed (never 0 taken as a price)", ("missing", 0.0),
+      (ara.boss_sale_status, ara.price_unit))
+ara.write({"boss_manual_cost": 500.0})
+check("5b duties 500 paid -> sale 500, without margin, shown as an estimate", (500.0, "cost_based", True, True),
+      (round(ara.price_unit, 2), ara.boss_sale_status, "without margin" in (ara.boss_sale_explanation or ""),
+       "Estimate" in (ara.boss_sale_explanation or "")))
+ara.boss_manual_cost_note = "[PRUEBA] DUA 26ES0046"
+check("5b with the reference of the customs declaration: the amount is the document's, no longer an estimate",
+      (True, False), ("[PRUEBA] DUA 26ES0046" in ara.boss_sale_explanation, "Estimate" in ara.boss_sale_explanation))
+check("5b THC on the same quotation keeps cost + 20 %", ("cost_based", True),
+      (thc_ob.boss_sale_status, abs(thc_ob.price_unit - round(thc_ob.purchase_price * 1.2, 2)) < 0.011))
+ara.price_unit = 510.0
+check("5b a selling price typed by a person is kept", ("manual", 510.0), (ara.boss_sale_status, round(ara.price_unit, 2)))
+Item.create({"pricelist_id": default_pricelist.id, "applied_on": "0_product_variant", "product_id": product("ARA").id,
+             "uom_id": product("ARA").uom_id.id, "compute_price": "fixed", "fixed_price": 520.0})
+ob.write({"order_line": [Command.create({"product_id": product("ARA").id, "product_uom_id": product("ARA").uom_id.id,
+                                         "boss_manual_cost": 500.0, "boss_manual_cost_note": "[PRUEBA] DUA 2"})]})
+ara2 = ob.order_line.filtered(lambda l: l.product_id.default_code == "ARA")[-1:]
+check("5b a price agreed in the pricelist for the service is kept (only the cost + % default changes)",
+      ("agreed", 520.0), (ara2.boss_sale_status, round(ara2.price_unit, 2)))
+
 # 6. accepted quotations do not move
 if accepted:
     accepted.order_line._boss_recompute_cost()

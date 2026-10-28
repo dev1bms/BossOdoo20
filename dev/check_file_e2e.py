@@ -192,10 +192,8 @@ line_of(order, "CSM").price_unit = 60.0
 manual("1 BOSS own fee (CSM): selling price typed (no supplier cost)")
 order.action_boss_update_costs()
 ara = line_of(order, "ARA")
-gap("S1 duties paid on behalf re-invoiced at the exact amount, apart from any BOSS fee", "decision",
-    "F0-A00 (Ángel) / F9", f"default sale {ara.price_unit:.2f} for {ara.boss_manual_cost:.2f} paid")
-ara.price_unit = ara.boss_manual_cost
-manual("1 duties (ARA): selling price corrected to the amount paid (the default adds the cost + % margin)")
+check("1 duties paid on behalf proposed at the amount paid, without margin (F0-A00)", (500.0, "cost_based"),
+      (round(ara.price_unit, 2), ara.boss_sale_status))
 for l in order.order_line.filtered("product_id"):
     print(f"      {l.product_id.default_code:8} {l.boss_cost_status:16} cost {l.boss_cost_amount:9.2f} "
           f"{l.boss_cost_currency_id.name or '':3} sale {l.price_unit:9.2f} vat {l.boss_vat_status}")

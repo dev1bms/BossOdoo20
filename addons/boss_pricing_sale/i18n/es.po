@@ -2959,3 +2959,25 @@ msgstr "el proveedor"
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "Attach the supplier document to send the price for approval (Sales setting «Supplier document required»)."
 msgstr "Adjunte el documento del proveedor para enviar el precio a aprobación (ajuste de Ventas «Documento del proveedor obligatorio»)."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Paid on behalf of the customer: re-invoiced at the amount paid, %(cost)s per %(uom)s, without margin."
+msgstr "Suplido: se refactura por el importe pagado, %(cost)s por %(uom)s, sin margen."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid "Amount of the document %s."
+msgstr "Importe del documento %s."
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order_line.py:0
+msgid ""
+"Estimate: the final amount is the one of the customs declaration or invoice in the customer's name (type its "
+"reference in 'Cost reference')."
+msgstr ""
+"Estimación: el importe definitivo es el del DUA o la factura a nombre del cliente (teclee su referencia en "
+"«Referencia del coste»)."
