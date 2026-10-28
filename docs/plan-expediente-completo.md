@@ -93,6 +93,15 @@ Sin esa decisión, cada fase siguiente se planifica sobre una fecha que no se pu
 | F1 | **Hecha el 28/10/2026, reforzada el mismo día** (roles, conciliación probada, estado de salida, huecos clasificados; `docs/evidencias/20261028_f1_ronda2.md`). El recorrido S1 llega al cierre con 20 huecos declarados y 6 pasos manuales.: arnés `dev/check_file_e2e.py` (S1 35/0, 20 huecos con su fase) y correcciones desplegadas; además se encontró y corrigió que el formulario del expediente no abría (`docs/evidencias/20261028_f1_arnes_e2e.md`) |
 | F2-F17 | Pendientes |
 
+## Estimación actualizada (28/10/2026, tras F1)
+Un solo dato real: F1 estaba estimada como M (8-30 h de un desarrollador sin asistente) y se ha hecho en una jornada con
+el asistente, incluida su ronda de refuerzo y la corrección de 9 defectos encontrados por las comprobaciones (formulario
+del expediente, P30 bancario, expediente cerrado, servicios vacíos en la oferta de tarifas, traducciones del portal,
+estado de salida de las comprobaciones, suplidos con margen...). Con un solo dato **no se recalcula el resto** ni se
+cambia el alcance: las fases que quedan dependen sobre todo de datos (migración, F2) y de decisiones (paquetes de
+`docs/paquetes-aprobacion-f0.md`), no de código. Segunda medida: el ensayo de F2 en rollback. Ninguna función se
+aplaza por el cálculo de horas anterior.
+
 ## Orden recomendado para empezar
 1. **F0 esta semana**: paquetes de preguntas para Ángel y Cristina agrupados por etapa del expediente, con fecha límite;
    decisión de Belal sobre capacidad y sobre la base de producción.
