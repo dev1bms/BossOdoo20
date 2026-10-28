@@ -4,7 +4,7 @@
                "representative), quotations and invoices of the customer's own legal entity, rate quotations without "
                "totals, booking requests reviewed by BOSS, My Shipments with published events and documents, and a "
                "revocable tracking link. BOSS costs and margins never reach the customer (ADR-010).",
-    "version": "20.0.1.0.0",
+    "version": "20.0.1.0.1",
     "category": "Website/Website",
     "author": "BiDATiA",
     "license": "LGPL-3",

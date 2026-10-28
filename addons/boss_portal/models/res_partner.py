@@ -51,4 +51,10 @@ class ResPartner(models.Model):
 
     def write(self, vals):
         self._boss_check_portal_manager(vals)
-        return super().write(vals)
+        res = super().write(vals)
+        if set(vals) & {*PORTAL_FIELDS, "parent_id", "is_company"} and self.sudo().user_ids:
+            # Odoo caches the evaluated access domain per user (BaseModel._access_domain, ormcache): without this a
+            # removed role would keep working until the next cache reset, in every worker (found by check_portal 9).
+            # The invalidation is signalled to the other workers on commit, like a change of the user's groups.
+            self.env.transaction.invalidate_ormcache()
+        return res
