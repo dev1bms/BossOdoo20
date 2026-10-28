@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form.boss.portal</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="boss_pricing_sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div class="alert alert-info mb-2" role="status" invisible="boss_booking_state != 'requested'">
+                    <strong>Booking requested from the portal</strong>
+                    by <field name="boss_booking_requested_by" class="d-inline" readonly="1" options="{'no_open': True}"/>
+                    on <field name="boss_booking_requested_on" class="d-inline" readonly="1"/>:
+                    <field name="boss_booking_summary" class="d-block" readonly="1"/>
+                    Enter the containers in the Shipment tab and accept the quotation, or mark the request as handled.
+                    <button name="action_boss_booking_handled" type="object" string="Mark handled" class="btn-link"/>
+                </div>
+                <field name="boss_booking_state" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

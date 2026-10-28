@@ -55,6 +55,9 @@ personas (el sistema ya los admite). Ninguna tarifa real se aprueba en nombre de
 | M2-G | Flete sin ETD conocida: se usa la fecha de la oferta (el precio disponible hoy); confirmar (fragmento 4) | C | Regla aplicada (ADR-009 §1), explicada en la línea | Ángel |
 | M2-H | «Coste a petición» (proveedor nombrado sin precio del servicio, p. ej. camionero caso por caso) se acepta sin la excepción de responsable de B22; el resto de costes desconocidos siguen necesitando el motivo de un responsable | C | Aplicado así tras la revisión 2 (ADR-009, revisión §1) | Cristina |
 | M2-I | Consolidaciones (un máster, varias houses, costes compartidos): ¿expediente máster con expedientes hijos (A) o partida dentro del expediente como en Odoo 19 (B)? Fuente del 17/09 de Cristina (MBL/MAWB ↔ expediente, HBL/HAWB ↔ partida) no está en los documentos legibles aquí | C + B | Hoy: un expediente = una partida; nada construido | Cristina y Belal |
+| P10-A | Portal: ¿una empresa de un grupo (otra entidad legal) puede ver los envíos de su filial? Hoy no: el alcance es la propia empresa del contacto (ADR-010) | C | Nada abierto por defecto | Cristina y Belal |
+| P10-B | Portal: ¿qué ve el destinatario o el expedidor que no es el ordenante? Hoy nada: solo el ordenante (cliente del expediente) | C | Nada abierto por defecto | Cristina |
+| P10-C | Portal: ¿instalar el módulo Website (sitio público) o basta el portal? Hoy el portal funciona sin él | B | Sin instalar | Belal |
 | M2-J | Dos decimales «siempre»: aplicado como mínimo dos y cuatro solo cuando el valor los tiene (precios por kg); ¿vale, o los precios por kg pasan a «por 100 kg»? | C | Aplicado el mínimo de dos | Ángel |
 
 ### Cuestiones contables y fiscales sin decidir · Open accounting and tax questions

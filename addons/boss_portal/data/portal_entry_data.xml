@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="portal_my_shipments" model="portal.entry">
+        <field name="name">My Shipments</field>
+        <field name="description">Follow your shipments: route, dates, containers, events and documents published by BOSS</field>
+        <field name="url">/my/shipments</field>
+        <field name="placeholder_count">boss_shipment_count</field>
+        <field name="category">client_category</field>
+        <field name="sequence" eval="10"/>
+    </record>
+</odoo>

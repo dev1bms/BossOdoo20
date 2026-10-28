@@ -20,3 +20,7 @@ permisos y espera a Belal); comprobados en boss20 con el código montado (rollba
 3. La ⓘ listaba el ámbito «ESVLC · CNSHA» (puerto español primero, la lectura que Ángel señaló) → «CNSHA → ESVLC».
 
 Registro de prueba que queda en boss20: tarifa 169 (solo para el cliente [PRUEBA]), ETD de S00311.
+
+**Despliegue de las tres correcciones** (aprobado por Belal, 28/10; servidor en reposo): `dev/deploy.sh update
+boss_pricing,boss_pricing_sale` → boss_pricing_sale 20.0.1.14.0, regla 27 con `price_round` 0,01, ámbito de la línea
+«CNSHA → ESVLC». En Chrome, S00311 › «Update costs»: FMI «Priced», venta **1,984.27**, coste 1,653.56.

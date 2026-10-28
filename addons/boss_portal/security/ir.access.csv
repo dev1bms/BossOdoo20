@@ -1,0 +1,7 @@
+id,name,model_id,group_id/id,operation,domain
+boss_portal_restrict_sale_order,"BOSS portal: quotations of the granted customer only, commercial roles",sale.order,,crud,"[] if not user.share else [('partner_id.commercial_partner_id', '=', user.partner_id.boss_portal_sales_scope_id.id or -1)]"
+boss_portal_restrict_sale_order_line,"BOSS portal: quotation lines of the granted customer only, commercial roles",sale.order.line,,crud,"[] if not user.share else [('order_id.partner_id.commercial_partner_id', '=', user.partner_id.boss_portal_sales_scope_id.id or -1)]"
+boss_portal_restrict_account_move,"BOSS portal: customer invoices and credit notes of the granted customer only, commercial roles",account.move,,crud,"[] if not user.share else [('move_type', 'in', ('out_invoice', 'out_refund')), ('partner_id.commercial_partner_id', '=', user.partner_id.boss_portal_sales_scope_id.id or -1)]"
+boss_portal_restrict_account_move_line,"BOSS portal: lines of the customer's own invoices only, commercial roles",account.move.line,,crud,"[] if not user.share else [('move_id.move_type', 'in', ('out_invoice', 'out_refund')), ('move_id.partner_id.commercial_partner_id', '=', user.partner_id.boss_portal_sales_scope_id.id or -1)]"
+boss_portal_restrict_purchase_order,"BOSS portal: no purchase orders for portal users (v1)",purchase.order,,crud,"[] if not user.share else [('id', '=', 0)]"
+boss_portal_restrict_purchase_order_line,"BOSS portal: no purchase order lines for portal users (v1)",purchase.order.line,,crud,"[] if not user.share else [('id', '=', 0)]"

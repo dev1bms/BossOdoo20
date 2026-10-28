@@ -1,0 +1,12 @@
+# check_portal.py on boss20 with the local addons mounted (dev/server_shell_wip.sh; boss_portal NOT installed: its XML/models are not loaded except the two QWeb files of check_portal_qweb, loaded in the rolled-back transaction). Code after a9fffaf (ADR-010): NOT deployed
+CHECK PASS 1 THC line has a supplier cost (253 from MSC): expected ('ok', True) got ('ok', True)
+CHECK PASS 1 the portal user reads the selling price of his own line: expected 303.6 got 303.6
+CHECK PASS 1 every buying-side field of the line is refused on read (24 fields): expected [] got []
+CHECK PASS 1 the cost fields are not even listed to the portal user (fields_get): expected [] got []
+CHECK PASS 1 search_read and a search on the cost are refused: expected (True, True) got (True, True)
+CHECK PASS 1 export of the cost is refused: expected True got True
+CHECK PASS 1 quotation-level internal fields are refused (margin, pricing alert, snapshots, haulier): expected [] got []
+CHECK PASS 1 no access to snapshots, tariffs, tariff prices, files, cost needs: expected [True, True, True, True, True] got [True, True, True, True, True]
+CHECK PASS 1 purchase order where the customer is the vendor: visible only while boss_portal is not installed: expected True got True
+CHECK SKIP 2..9 boss_portal is not installed on boss20 yet: roles, scope, signing, booking, shipments, tracking token are checked after its installation
+RESULT 9 passed, 0 failed
