@@ -466,3 +466,5 @@ check("13 approval on entry OFF: Wendy's rate waits, she cannot approve it herse
 company.boss_spot_rate_auto_approve = True
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

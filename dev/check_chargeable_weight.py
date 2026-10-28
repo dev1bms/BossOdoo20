@@ -138,3 +138,5 @@ if accepted:
     check(f"{accepted.name}: frozen quantities, costs and prices unchanged", before, after)
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)

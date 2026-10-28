@@ -39,3 +39,5 @@ html = str(env["ir.qweb"]._render("boss_portal.boss_shipment_events", values))  
 check("events: the published text and the source of the update", (True, True), ("Loaded on board" in html, "BOSS operations" in html))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
+if len(results) - sum(results):  # a failed check fails the run (dev/uat_run.sh records the exit status)
+    raise SystemExit(1)
