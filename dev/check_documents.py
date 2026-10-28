@@ -122,7 +122,7 @@ if installed:
         check("8 invoice HTML: block with file and quotation, vessel, container, reference; «Source» column replaced; units printed; no cost field",
               (True, True, True, True, False, True, False),
               ("E260038" in html_inv, "S00162" in html_inv, "MSC ISABELLA" in html_inv, "MSCU1234567" in html_inv,
-               ">Source<" in html_inv, "Container" in html_inv, "boss_cost" in html_inv))
+               'name="origin"' in html_inv, "Container" in html_inv, "boss_cost" in html_inv))
         outputs["invoice"] = Report._render_qweb_pdf("account.account_invoices", [invoice.id])[0]
     else:
         print("INFO no invoice could be created for S00162 in this transaction")

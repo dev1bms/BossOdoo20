@@ -5,10 +5,15 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     def _boss_document_file(self):
-        """The file of this invoice, credit note or bill: the single file of its lines (an invoice that mixes files
-        prints the file on each line instead of one block)."""
+        """The file of this invoice, credit note or bill: the single file of its lines (set by the file's invoicing
+        wizard), else the file of the quotation the lines come from (an invoice created from the order). An invoice
+        that mixes files prints no block."""
         self.ensure_one()
-        files = self.invoice_line_ids.boss_expediente_id
+        lines = self.invoice_line_ids
+        files = lines.boss_expediente_id
+        if not files:
+            sale_lines = lines.sale_line_ids
+            files = sale_lines.boss_allocation_ids.expediente_id or sale_lines.order_id.boss_expediente_id
         return files if len(files) == 1 else files.browse()
 
     def _boss_document_block(self):
