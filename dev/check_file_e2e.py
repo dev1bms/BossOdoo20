@@ -85,6 +85,22 @@ bank = env["account.journal"].search([("type", "=", "bank"), ("company_id", "=",
 purchase_0 = env["account.tax"].search([("type_tax_use", "=", "purchase"), ("amount", "=", 0),
                                          ("company_id", "=", company.id)], limit=1)
 files_before = env["boss.expediente"].search_count([])
+
+# ---- 0b. every form opens (smoke test): the form view loads and every field of the latest records reads ------------
+# (28/10/2026: the file form failed for everybody — a computed field called an API Odoo 20 removed — and no check read it)
+broken = []
+for model in sorted(m for m in env.registry if m.startswith("boss.") and not env[m]._transient and not env[m]._abstract) \
+        + ["sale.order", "sale.order.line", "purchase.order", "account.move", "res.partner", "product.template"]:
+    try:
+        with env.cr.savepoint():
+            env[model].get_view(view_type="form")
+            env[model].sudo().search([], limit=3, order="id desc").read()
+    except Exception as exc:  # noqa: BLE001  any error here is a screen that does not open
+        broken.append(f"{model}: {type(exc).__name__}: {' '.join(str(exc).split())[:160]}")
+    env.invalidate_all()
+check("0b every BOSS form opens (form view and every field of the latest records)", [], broken)
+guide = env["product.template"].search([("boss_pricing_mode", "!=", False)], limit=1).action_boss_ws_guide()
+check("0b the guide button of the pricing workspace opens its link", True, guide["url"].startswith("http"))
 print(f"MODE {MODE} | files before {files_before} | bank journal {bank.code} | setting P30 {company.boss_bill_before_invoice}")
 
 # ---- 0. parties, users and approved supplier prices ([PRUEBA], fictitious figures) --------------------------------

@@ -86,7 +86,7 @@ class ProductTemplate(models.Model):
                 "view_mode": "form", "views": [(False, "form")], "target": "current"}
 
     def action_boss_ws_guide(self):
-        url = self.env["ir.config_parameter"].sudo().get_param(
+        url = self.env["ir.config_parameter"].sudo().get_str(
             "boss_pricing.guide_url", "https://doc.bosscontinental.com/new/#/")
         return {"type": "ir.actions.act_url", "url": url, "target": "new"}
 
