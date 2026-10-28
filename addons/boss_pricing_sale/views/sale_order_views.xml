@@ -45,6 +45,11 @@
             <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <!-- BOSS names only the incoterm; the place is the route (ports, province), not a separate text
+                 (Ángel, 28/10/2026). The standard field stays as the anchor of sale_stock and delivery. -->
+            <xpath expr="//group[@name='sale_shipping']/field[@name='incoterm_location']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//page[@name='order_lines']" position="before">
                 <page string="Shipment" name="boss_shipment">
                     <group>
@@ -56,9 +61,7 @@
                             <field name="boss_direction" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_transport_mode" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_load_type" readonly="state in ('sale', 'cancel')"/>
-                            <field name="incoterm" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>
-                            <field name="incoterm_location" readonly="state in ('sale', 'cancel')" placeholder="Named place of the incoterm"/>
-                            <field name="boss_rate_quotation" readonly="state in ('sale', 'cancel')"/>
+                            <field name="incoterm" readonly="state in ('sale', 'cancel')" options="{'no_create': True}"/>                            <field name="boss_rate_quotation" readonly="state in ('sale', 'cancel')"/>
                             <field name="boss_traffic_code" invisible="not boss_traffic_code"/>
                         </group>
                         <group string="Carrier" name="boss_carrier">
