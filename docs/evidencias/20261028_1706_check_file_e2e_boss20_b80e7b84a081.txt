@@ -1,0 +1,114 @@
+# Evidence: dev/check_file_e2e.py on boss20
+# Date: 2026-10-28 17:06    
+# Commit tested: b80e7b84a081 (fix(portal): rate quotation lines named by their service (Odoo 20 label, name was empty), no down pa)
+# Installed on boss20: boss_documents 20.0.1.0.4 boss_expediente 20.0.1.15.0 boss_portal 20.0.1.0.5 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 16:07:03,960 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 16:07:04,021 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 16:07:04,850 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+MODE rollback | files before 22 | bank journal BNK1 | setting P30 block_payment
+CHECK PASS 0b every BOSS form opens (form view and every field of the latest records): expected [] got []
+CHECK PASS 0b the guide button of the pricing workspace opens its link: expected True got True
+      roles: comercial = salesman; operaciones = salesman + purchase user; contabilidad = full accounting (not administrator) + salesman + purchase user; tariffs approved by devbms
+CHECK PASS 0 approved [PRUEBA] supplier prices (local EUR, freight USD, customs, trucking): expected ['approved', 'approved', 'approved', 'approved'] got ['approved', 'approved', 'approved', 'approved']
+MANUAL 1 duties (ARA): the amount paid on behalf is typed as a manual cost (no tariff for duties)
+MANUAL 1 BOSS own fee (CSM): selling price typed (no supplier cost)
+GAP [decision] S1 duties paid on behalf re-invoiced at the exact amount, apart from any BOSS fee → F0-A00 (Ángel) / F9 (today: default sale 600.00 for 500.00 paid)
+MANUAL 1 duties (ARA): selling price corrected to the amount paid (the default adds the cost + % margin)
+      FMI      ok               cost   1000.00 USD sale   1072.57 vat ok
+      THC      ok               cost    200.00 EUR sale    240.00 vat ok
+      BL       ok               cost     50.00 EUR sale     60.00 vat ok
+      GLO-CCC  ok               cost     30.00 EUR sale     36.00 vat ok
+      T3-PAD   ok               cost     40.00 EUR sale     48.00 vat ok
+      FAD      ok               cost    100.00 EUR sale    120.00 vat ok
+      CSM      ok               cost      0.00 EUR sale     60.00 vat ok
+      TTE-FCL  ok               cost    300.00 EUR sale    360.00 vat ok
+      ARA      manual           cost      0.00 EUR sale    500.00 vat ok
+CHECK PASS 1 every supplier service priced (tariff, or manual amount with its note): expected [] got []
+CHECK PASS 1 freight from the USD rate of the departure week: expected ('ok', 'USD') got ('ok', 'USD')
+CHECK PASS 1 nothing blocks acceptance (VAT decided, every sale price set): expected [] got []
+CHECK PASS 2 the salesman accepts: one file with its analytic account: expected ('sale', 1, True) got ('sale', 1, True)
+CHECK PASS 2 one purchase need per bought service: expected 8 got 8
+CHECK PASS 2 the salesman cannot read the cost variance of a need (cost groups only): expected 'refused' got 'refused'
+      «You do not have enough rights to access the field "variance_company" on Service to buy or extra cost of a shipment file (boss.expediente.cost). Please contact your system administr»
+GAP [feature] S1 operator of the file and milestone plan of its traffic → F5 (plan per traffic: Cristina) (today: the salesman is the responsible, no activities)
+GAP [feature] S1 documents folder of the file → F6 (today: attachments in the chatter only)
+      purchase orders seen by superuser 4, by operations 4, by the salesman 0
+CHECK PASS 3 operations creates the RFQs: carrier EUR + carrier USD + customs broker + haulier (duties need no order): expected [('[PRUEBA] E2E Agente de aduanas', 'EUR'), ('[PRUEBA] E2E Naviera', 'EUR'), ('[PRUEBA] E2E Naviera', 'USD'), ('[PRUEBA] E2E Transportista', 'EUR')] got [('[PRUEBA] E2E Agente de aduanas', 'EUR'), ('[PRUEBA] E2E Naviera', 'EUR'), ('[PRUEBA] E2E Naviera', 'USD'), ('[PRUEBA] E2E Transportista', 'EUR')]
+CHECK PASS 3 duties (ARA) wait for the broker's bill without order: expected 'awaiting_bill' got 'awaiting_bill'
+MANUAL 3 supplier confirmation: the supplier's reference typed on each order
+CHECK PASS 3 every order confirmed by operations with the supplier's reference: expected [('purchase', True), ('purchase', True), ('purchase', True), ('purchase', True)] got [('purchase', True), ('purchase', True), ('purchase', True), ('purchase', True)]
+GAP [decision] S1 «In transit» without departure date, booking or container number → F5 (conditions: Cristina) (today: accepted)
+CHECK PASS 4 ATD and actual pickup shown on every file (import ATD, export pickup): expected (True, True) got (True, True)
+CHECK PASS 4 operations puts the file in transit: expected 'in_transit' got 'in_transit'
+GAP [decision] S1 «Delivered» without arrival, customs release or delivery date → F7 (conditions: Cristina) (today: accepted)
+GAP [feature] S1 customs status, channel and release (levante) of the DUA → F7 (fields: Cristina) (today: only the DUA number)
+GAP [feature] S1 transport order (OT) to the haulier from Odoo → F7
+CHECK PASS 5 operations marks the file delivered: expected 'delivered' got 'delivered'
+CHECK PASS 6 operations marks every ordered service performed: expected ['performed', 'performed', 'performed', 'performed', 'performed', 'performed', 'performed'] got ['performed', 'performed', 'performed', 'performed', 'performed', 'performed', 'performed']
+MANUAL 6 vendor bills: supplier reference, date and the tax of the supplier document typed by accounting
+CHECK PASS 6 the salesman cannot post a vendor bill: expected 'refused' got 'refused'
+      «You don't have the access rights to post an invoice.»
+CHECK PASS 6 accounting posts the bill; its lines carry the file: expected ('posted', True) got ('posted', True)
+CHECK PASS 6 THC billed 220 for 200 ordered: variance to review: expected (True, 20.0) got (True, 20.0)
+CHECK PASS 6 freight bill in USD posted, at the order price: expected ('USD', 1000.0) got ('USD', 1000.0)
+GAP [decision] S1 USD variance split into price and exchange rate → F8 (P03: Ángel) (today: one variance figure)
+CHECK PASS 6 duties bill without order: carries the file, the duties need is billed: expected (boss.expediente(139,), 'billed') got (boss.expediente(139,), 'billed')
+CHECK PASS 6 actual cost = posted bills - supplier credit note (USD at the bill rate), duties counted once: expected 2123.81 got 2123.81
+CHECK PASS 7 accounting cannot issue the carrier's payment before the customer is invoiced (P30, payment wizard): expected 'refused' got 'refused'
+      «FACTURA/2026/12/0001 ([PRUEBA] NAV-1) cannot be paid yet: - E260139 · [THC] Terminal handling (FCL, per container): not invoiced to the customer yet - E260139 · [BL] Master bill of»
+CHECK PASS 7 operations cannot register payments at all: expected 'refused' got 'refused'
+      «You are not allowed to create 'Pay' (account.payment.register) records. This operation is allowed for the following groups: - Accounting / Invoicing - Accounting / Invoicing & Bank»
+CHECK PASS 7 a bank movement that already happened is recorded and flagged (bill note, file «To do»), not blocked: expected (True, True, True, True) got (True, True, True, True)
+CHECK PASS 7 ... the reconciliation itself is accepted: expected 'accepted' got 'accepted'
+GAP [decision] S1 P30 on a bank movement already made: record and flag (implemented) or block → F0-A81 (Ángel + Cristina)
+CHECK PASS 8 everything invoiced (partial THC, then the rest): expected (2496.57, 0.0) got (2496.57, 0.0)
+CHECK PASS 8 the customer invoice lines carry the file: expected True got True
+GAP [decision] S1 duties invoiced apart from the services (separate invoice or section) → F0-A21 (Ángel) / F9 (today: duties are one more line of the invoice)
+GAP [decision] S1 legal mention of every 0 % tax, company IBAN and agreed series on the invoice → F4 (texts, bank, series: Ángel) (today: no bank account on the company; legal notes on some 0 % taxes only)
+CHECK PASS 9 cobro THC: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 240.0, True, 240.0) got (True, True, 240.0, True, 240.0)
+CHECK PASS 9 cobro resto: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 2390.13, True, 2390.13) got (True, True, 2390.13, True, 2390.13)
+CHECK PASS 9 pago [PRUEBA] NAV-1: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 340.0, True, 330.0) got (True, True, 340.0, True, 330.0)
+CHECK PASS 9 pago [PRUEBA] NAV-USD-1: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 893.81, True, 893.81) got (True, True, 893.81, True, 893.81)
+CHECK PASS 9 pago [PRUEBA] ADU-1: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 100.0, True, 100.0) got (True, True, 100.0, True, 100.0)
+CHECK PASS 9 pago [PRUEBA] TTE-1: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 300.0, True, 300.0) got (True, True, 300.0, True, 300.0)
+CHECK PASS 9 pago [PRUEBA] ADU-SUPLIDOS: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 500.0, True, 500.0) got (True, True, 500.0, True, 500.0)
+CHECK PASS 9 collected = the customer invoices: expected 2630.13 got 2630.13
+CHECK PASS 9 paid = the bills less the supplier credit note (company currency): expected 2123.81 got 2123.81
+GAP [feature] S1 supplier payments by SEPA batch (XML generated, never sent) → F8
+CHECK PASS 9 servicio compartido: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 1210.0, True, 1210.0) got (True, True, 1210.0, True, 1210.0)
+CHECK PASS 9 a customer invoice shared 50/50 with another file adds 50 % of its collection: expected (605.0, 0.0) got (605.0, 0.0)
+CHECK PASS 9 coste compartido: nothing left to pay, every term line reconciled, matched = total, bank line reconciled for the amount paid: expected (True, True, 1000.0, True, 1000.0) got (True, True, 1000.0, True, 1000.0)
+CHECK PASS 9 a vendor bill shared 50/50 with another file adds 50 % of its payment to «paid»: expected (0.0, 500.0) got (0.0, 500.0)
+CHECK PASS 10 operations closes operations: expected 'closed' got 'closed'
+GAP [decision] S1 conditions of the operational close and freeze of the shipment data → F10 (Cristina) (today: a click, nothing frozen)
+CHECK PASS 10 the financial close waits for the cost variances to be reviewed: expected 'refused' got 'refused'
+      «E260139 cannot be closed financially: 2 cost variances to review»
+CHECK PASS 10 variances to review: THC billed above the order, BL lowered by the supplier credit note: expected ['BL', 'THC'] got ['BL', 'THC']
+MANUAL 10 variances reviewed by accounting with a note (THC +20, BL -10)
+CHECK PASS 10 nothing left in «To do»: expected False got False
+CHECK PASS 10 operations cannot close financially (checked on the server): expected 'refused' got 'refused'
+      «Only Accounting / Invoicing can do this on a file.»
+CHECK PASS 10 accounting closes financially: expected True got True
+CHECK PASS 10 accounting (not administrator) cannot reopen it: expected 'refused' got 'refused'
+      «Only Accounting / Administrator can do this on a file.»
+CHECK PASS 10 nothing is posted on a financially closed file (reopen first): expected 'refused' got 'refused'
+      «Draft Bill ([PRUEBA] tarde) cannot be posted: - file E260139 is financially closed: an accounting manager reopens it first»
+CHECK PASS 10 no RFQ from a financially closed file: expected 'refused' got 'refused'
+      «E260139 is financially closed: an accounting manager reopens it first.»
+CHECK PASS 10 no customer invoice from a financially closed file: expected 'refused' got 'refused'
+      «E260139 is financially closed: an accounting manager reopens it first.»
+GAP [decision] S1 posting on a closed file blocked (implemented) or only warned → F0-A80 (Ángel)
+      E260139: sale 2496.57 invoiced 2496.57 actual cost 2123.81 final margin 372.76 collected 2630.13 paid 2123.81
+CHECK PASS 10 final margin = invoiced - actual cost: expected 372.76 got 372.76
+GAP [feature] S2 air export (EAB) quotation to financial close → F11
+GAP [feature] S3 air import (IAB) with NOA, handler and storage period → F11
+GAP [feature] S4 sea export FCL (EMB) with cut-offs and detention → F12
+GAP [feature] S5 LCL import and export → F12
+GAP [feature] S6 road / national → F12
+GAP [feature] S7 agent's business in USD with profit share → F13
+RESULT 52 passed, 0 failed, 20 gaps (0 defect, 9 decision, 11 feature), 6 manual steps | file E260139 | order S00752
+# Exit status: 0

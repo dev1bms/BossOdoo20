@@ -1,0 +1,82 @@
+# Evidence: dev/check_meeting2.py on boss20
+# Date: 2026-10-28 16:57    
+# Commit tested: 76ccb678bb89 (feat(expediente): P30 on a bank movement already made is recorded and flagged (bill note, file To do)
+# Installed on boss20: boss_documents 20.0.1.0.3 boss_expediente 20.0.1.15.0 boss_portal 20.0.1.0.4 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 15:57:56,363 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 15:57:56,424 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 15:57:57,250 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 service groups by code (Odoo 17 categories): freight, local, customs, inland, storage, duties, insurance: expected [product.category(117,), product.category(119,), product.category(120,), product.category(118,), product.category(121,), product.category(124,), product.category(122,)] got [product.category(117,), product.category(119,), product.category(120,), product.category(118,), product.category(121,), product.category(124,), product.category(122,)]
+CHECK PASS 1 freight services take the departure as tariff date, the others the key date: expected ('etd', 'etd', 'etd', 'etd', 'key', 'key') got ('etd', 'etd', 'etd', 'etd', 'key', 'key')
+CHECK PASS 2 settings: freight rates approved on entry ON, supplier document required ON (Cristina to confirm): expected (True, True) got (True, True)
+CHECK PASS 3 header: invoice and delivery address fields hidden: expected {'partner_invoice_id': '1', 'partner_shipping_id': '1'} got {'partner_invoice_id': '1', 'partner_shipping_id': '1'}
+CHECK PASS 3 pickup address chosen among the shipper's addresses: expected True got True
+CHECK PASS 3 delivery address chosen among the consignee's addresses: expected True got True
+CHECK PASS 3 labels: final delivery is an estimate; selling price and buying cost; containers heading: expected (True, True, True, True) got (True, True, True, True)
+CHECK PASS 3 selling price and buying cost shown with two decimals unless more are needed (stored with 4): expected (2, 2, 4, 4) got (2, 2, 4, 4)
+CHECK PASS 3 supplier price amounts shown with two decimals: expected 2 got 2
+CHECK PASS 4 carrier family: the Spanish and the Swiss MSC and the group are one family: expected True got True
+CHECK PASS 5 template IMB FOB fills the incoterm FOB, the direction, mode and load type: expected ('FOB', 'import', 'sea', 'fcl') got ('FOB', 'import', 'sea', 'fcl')
+CHECK PASS 5 pickup at the shipper's address, cargo unit type and goods code stored: expected (res.partner(814,), 72, 'CT', '6109100010') got (res.partner(814,), 72, 'CT', '6109100010')
+CHECK PASS 5 unit type and goods code go to the file: expected ('CT', '6109100010') got ('CT', '6109100010')
+CHECK PASS 6 quotation naming the MSC group: THC priced by the tariff of MSC Spain (253): expected ('ok', 253.0) got ('ok', 253.0)
+CHECK PASS 6 quotation naming MSC Switzerland (legal entity): same tariff, same cost: expected ('ok', 253.0) got ('ok', 253.0)
+CHECK PASS 6 the supplier of the line stays the legal entity of the tariff (MSC Spain): expected res.partner(6,) got res.partner(6,)
+CHECK PASS 6 another carrier (CMA) is not priced by MSC: expected 'no_tariff' got 'no_tariff'
+CHECK PASS 6 the tariff scope reads as a route, origin -> destination: expected True got True
+CHECK PASS 7 the approved weekly rate of Ángel: USD, one week, CNSZX -> ESVLC: expected ('approved', 'USD', datetime.date(2026, 10, 27), datetime.date(2026, 11, 7)) got ('approved', 'USD', datetime.date(2026, 10, 27), datetime.date(2026, 11, 7))
+CHECK PASS 7 ocean freight priced on the ETD 30/10 (inside the week) although the ETA 16/11 is outside: expected ('ok', True) got ('ok', True)
+CHECK PASS 7 USD rate (2,500 USD per 40') converted to EUR on the line by the FX policy of the quotation date: expected ('USD', 2500.0, 'EUR', 2234.54) got ('USD', 2500.0, 'EUR', 2234.54)
+CHECK PASS 7 explanation names the departure as tariff date: expected True got True
+CHECK PASS 7 THC (local charge) keeps the key date ETA: expected 'ok' got 'ok'
+CHECK PASS 7 ETD unknown: the quotation date (today, inside the week) chooses the rate: expected ('ok', True) got ('ok', True)
+CHECK PASS 7 ETD 20/11, after the week: no rate, manual amount: expected 'manual' got 'manual'
+CHECK PASS 8 wizard: valid from today (this week's rate), one week, origin -> destination order, approval on entry: expected (datetime.date(2026, 10, 28), 6, 'CNSHA', 'ESVLC', True, False) got (datetime.date(2026, 10, 28), 6, 'CNSHA', 'ESVLC', True, False)
+CHECK PASS 8 rate of 1/11: new tariff, approved on entry by its author, with a note: expected ('approved', res.users(1,), True) got ('approved', res.users(1,), True)
+CHECK PASS 8 the quotation is priced at once (no refresh, no approver): 2,000: expected ('ok', 2000.0) got ('ok', 2000.0)
+CHECK PASS 8 replacements of 8, 13 and 17 November are versions 2, 3, 4 of the same tariff (each a version of the latest; no new tariff): expected ([boss.tariff(256,), boss.tariff(257,), boss.tariff(258,)], [1, 2, 3, 4], ['approved', 'approved', 'approved', 'approved'], 1, True) got ([boss.tariff(256,), boss.tariff(257,), boss.tariff(258,)], [1, 2, 3, 4], ['approved', 'approved', 'approved', 'approved'], 1, True)
+CHECK PASS 8 old rates preserved: 2000, 2100, 2200, 2300: expected [2000.0, 2100.0, 2200.0, 2300.0] got [2000.0, 2100.0, 2200.0, 2300.0]
+CHECK PASS 8 the newest version valid on the ETD wins: 5/11 v1 2000, 10/11 v2 2100, 15/11 v3 2200, 20/11 and 25/11 v4 2300: expected {5: ('ok', 2000.0, 1), 10: ('ok', 2100.0, 2), 15: ('ok', 2200.0, 3), 20: ('ok', 2300.0, 4), 25: ('ok', 2300.0, 4)} got {5: ('ok', 2000.0, 1), 10: ('ok', 2100.0, 2), 15: ('ok', 2200.0, 3), 20: ('ok', 2300.0, 4), 25: ('ok', 2300.0, 4)}
+CHECK PASS 8 a December rate entered early (v5) does not touch November: 20/11 still 2300: expected ('ok', 2300.0, 4) got ('ok', 2300.0, 4)
+CHECK PASS 8 S00009: accepted quotation unchanged by the new versions: expected [('BL', 60.0, 75.0), ('DEM', 90.0, 120.0), ('DEM', 90.0, 120.0), ('THC', 180.0, 280.0), ('THC', 240.0, 280.0), ('ARA', 0.0, 350.0), ('OCU', 0.0, 160.0)] got [('BL', 60.0, 75.0), ('DEM', 90.0, 120.0), ('DEM', 90.0, 120.0), ('THC', 180.0, 280.0), ('THC', 240.0, 280.0), ('ARA', 0.0, 350.0), ('OCU', 0.0, 160.0)]
+CHECK PASS 8 approval on entry OFF: the rate waits for an approver and the freight stays manual: expected ('to_approve', 'manual') got ('to_approve', 'manual')
+CHECK PASS 8 supplier document required ON: a rate without the file cannot be sent (message names the document): expected True got True
+CHECK PASS 9 THC with MSC: cost 253, selling price 210 agreed (pricelist), not cost + 20 %: expected (253.0, 'agreed', 210.0) got (253.0, 'agreed', 210.0)
+CHECK PASS 9 FMI without an agreed price: cost + 20 % (1500 -> 1800): expected ('cost_based', 1800.0) got ('cost_based', 1800.0)
+CHECK PASS 9 same shipment with CMA: THC cost 190, selling price still 210, margin follows the cost: expected (190.0, 210.0, 'agreed', 20.0) got (190.0, 210.0, 'agreed', 20.0)
+CHECK PASS 9 a typed selling price survives a carrier/supplier change: expected ('manual', 253.0, 215.0) got ('manual', 253.0, 215.0)
+CHECK PASS 10 TTE-CON with a trucker that quotes case by case: cost on request, kind on request (not unknown): expected ('on_request', 'on_request', True) got ('on_request', 'on_request', True)
+CHECK PASS 10 on request without a supplier named: stays «no supplier price», unknown cost: expected ('no_tariff', 'unknown') got ('no_tariff', 'unknown')
+CHECK PASS 10 IRENEO has a price but the weights are missing: «missing shipment data» stays, not on request: expected ('missing_input', 'unknown') got ('missing_input', 'unknown')
+CHECK PASS 10 a freight without offer keeps «manual amount» (type the offer), not on request: expected ('manual', 'unknown') got ('manual', 'unknown')
+CHECK PASS 10 the quotation is accepted without the trucker's cost (no manager exception needed): expected ('', 'sale') got ('', 'sale')
+CHECK PASS 10 the file shows the cost of TTE-CON as unknown, to be typed when the trucker answers: expected (True, 0.0, 'on_request') got (True, 0.0, 'on_request')
+CHECK PASS 10 cost typed in the file: known, 150 still expected: expected (False, 150.0) got (False, 150.0)
+CHECK PASS 11 summary rows: local charges (THC) sale 280 cost 253; inland (TTE) sale 300 cost 150: expected (280.0, 253.0, 300.0, 150.0) got (280.0, 253.0, 300.0, 150.0)
+CHECK PASS 11 nothing invoiced yet: invoiced 0, to invoice = sale, actual cost 0: expected (0.0, 580.0, 0.0) got (0.0, 580.0, 0.0)
+CHECK PASS 11 the total row equals the file figures (agreed sale, forecast cost, forecast margin): expected True got True
+CHECK PASS 11 the summary table is on the file (groups, invoiced vs to invoice, expected vs actual cost): expected True got True
+CHECK PASS 11 vendor bill posted (THC 253): actual cost 253 in local charges, nothing still expected there (not counted twice): expected (253.0, 0.0, 253.0) got (253.0, 0.0, 253.0)
+CHECK PASS 11 inland (TTE) still expected 150, not billed: expected (150.0, 0.0) got (150.0, 0.0)
+CHECK PASS 11 partial customer invoice (THC 280) less a credit note of 80: invoiced 200, to invoice 80; TTE 300 still to invoice: expected (200.0, 80.0, 0.0, 300.0) got (200.0, 80.0, 0.0, 300.0)
+CHECK PASS 11 totals after the cycle equal the file figures (invoiced, actual, pending, forecast, margin): expected True got True
+CHECK PASS 11 figures: invoiced 200, actual 253, pending 150, forecast 403, margin 177 (580 - 403): expected (200.0, 253.0, 150.0, 403.0, 177.0) got (200.0, 253.0, 150.0, 403.0, 177.0)
+CHECK PASS 12 rate quotation without containers: 20' DV, 40' DV and 40' HC each priced for one container of its kind: expected (1.0, 1.0, 1.0, 'ok', 253.0, 'ok', 'ok') got (1.0, 1.0, 1.0, 'ok', 253.0, 'ok', 'ok')
+CHECK PASS 12 the document shows the three alternatives with their basis (20' DV, 40' DV, 40' HC) and no amount column or total: expected (True, True, True, False, False, False) got (True, True, True, False, False, False)
+CHECK PASS 12 no buying price, margin or internal note in the customer document: expected (False, False, False, False) got (False, False, False, False)
+CHECK PASS 12 a normal quotation document keeps its quantities and totals: expected (True, True, True) got (True, True, True)
+CHECK PASS 12 acceptance waits for the containers of the shipment: expected True got True
+CHECK PASS 12 the alternatives the client did not book are named (THC 20' DV, THC 40' DV, FMI 40' DV), not silently dropped nor turned into containers: expected (True, True, True, False, 1) got (True, True, True, False, 1)
+CHECK PASS 12 after removing them the quotation is accepted: file with 1 x 40' HC and one THC need: expected ('sale', [('40', 'HC')], 1) got ('sale', [('40', 'HC')], 1)
+CHECK PASS 12 an ordinary quotation without containers is not touched by the gate (per-container line quantity 0): expected (0.0, '') got (0.0, '')
+CHECK PASS 13 Wendy: tariff user and salesperson, not an approver; Pepe: salesperson only: expected (True, False, False) got (True, False, False)
+CHECK PASS 13 Wendy's rate: version of the Shanghai tariff, approved on entry BY WENDY, priced at once: expected (True, 'approved', res.users(130,), 'ok', 2050.0) got (True, 'approved', res.users(130,), 'ok', 2050.0)
+CHECK PASS 13 the entry is recorded: created by Wendy, note «Approved on entry» in the tariff: expected (res.users(130,), True) got (res.users(130,), True)
+CHECK PASS 13 Wendy completes the quotation without waiting for anyone: accepted, file opened: expected ('sale', True) got ('sale', True)
+CHECK PASS 13 Pepe (no tariff rights) cannot enter supplier prices: expected 'access' got 'access'
+CHECK PASS 13 approval on entry OFF: Wendy's rate waits, she cannot approve it herself, the freight stays manual: expected ('to_approve', 'approver only', 'manual') got ('to_approve', 'approver only', 'manual')
+RESULT 69 passed, 0 failed
+# Exit status: 0

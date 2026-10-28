@@ -89,8 +89,8 @@ Sin esa decisión, cada fase siguiente se planifica sobre una fecha que no se pu
 ## Estado de las fases
 | Fase | Estado |
 |---|---|
-| F0 | En curso: paquetes de preguntas para Ángel, Cristina y Belal (28/10) |
-| F1 | **Hecha el 28/10/2026**: arnés `dev/check_file_e2e.py` (S1 35/0, 20 huecos con su fase) y correcciones desplegadas; además se encontró y corrigió que el formulario del expediente no abría (`docs/evidencias/20261028_f1_arnes_e2e.md`) |
+| F0 | Preguntas preparadas (28/10): `docs/decisiones-f0.md` y un Excel por persona; pendientes de enviar y responder |
+| F1 | **Hecha el 28/10/2026, reforzada el mismo día** (roles, conciliación probada, estado de salida, huecos clasificados; `docs/evidencias/20261028_f1_ronda2.md`). El recorrido S1 llega al cierre con 20 huecos declarados y 6 pasos manuales.: arnés `dev/check_file_e2e.py` (S1 35/0, 20 huecos con su fase) y correcciones desplegadas; además se encontró y corrigió que el formulario del expediente no abría (`docs/evidencias/20261028_f1_arnes_e2e.md`) |
 | F2-F17 | Pendientes |
 
 ## Orden recomendado para empezar
