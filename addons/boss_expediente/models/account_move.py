@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
@@ -26,6 +28,38 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     boss_bill_warning = fields.Text("Supplier bill checks", compute="_compute_boss_bill_warning")
+    boss_paid_before_invoice = fields.Boolean(
+        "Paid before the customer invoice", readonly=True, copy=False,
+        help="P30: this supplier bill was matched with a bank movement (a payment already made) before its services "
+        "were invoiced to the customer. The movement is recorded, because the books must match the bank; the file "
+        "shows it in «To do» until the services are invoiced.")
+
+    def _boss_files(self):
+        """Files of this move: on its lines, or through the analytic account of its lines."""
+        lines = self.invoice_line_ids.filtered(lambda l: l.display_type == "product")
+        files = lines.boss_expediente_id
+        accounts = lines.distribution_analytic_account_ids
+        if accounts:
+            files |= self.env["boss.expediente"].sudo().search([("analytic_account_id", "in", accounts.ids)])
+        return files
+
+    def _boss_flag_paid_before_invoice(self):
+        """Called after a reconciliation: a bill of the file now (partly) paid while P30 still holds it."""
+        for bill in self.filtered(lambda m: m.move_type == "in_invoice" and m.state == "posted"
+                                  and not m.boss_paid_before_invoice
+                                  and m.company_id.boss_bill_before_invoice in ("block", "block_payment")
+                                  and m.payment_state in ("paid", "in_payment", "partial")):
+            problems = bill._boss_bill_order_problems()
+            if not problems:
+                continue
+            bill.sudo().boss_paid_before_invoice = True
+            note = self.env._("Paid by a bank movement before its services were invoiced to the customer (P30). "
+                              "The movement is recorded because it happened; invoice these services:")
+            body = Markup("<p>%s</p><ul>%s</ul>") % (note, Markup("").join(Markup("<li>%s</li>") % p for p in problems))
+            bill.sudo().message_post(body=body, message_type="comment", subtype_xmlid="mail.mt_note")
+            for file in bill._boss_files():
+                file.sudo().message_post(body=Markup("<p>%s: %s</p>") % (bill.display_name, note),
+                                         message_type="comment", subtype_xmlid="mail.mt_note")
 
     def _boss_bill_needs(self):
         """File services billed by this vendor bill: through its purchase lines, or (amounts paid on behalf, billed
@@ -88,6 +122,9 @@ class AccountMove(models.Model):
             lines = move.invoice_line_ids.filtered(
                 lambda l: l.display_type == "product" and l.product_id.boss_pricing_mode)
             problems = []
+            for file in move._boss_files().filtered("financial_closed"):
+                problems.append(_("file %s is financially closed: an accounting manager reopens it first",
+                                  file.display_name))
             if move.move_type in ("out_invoice", "out_refund"):
                 for line in lines:
                     if line.sale_line_ids.filtered(lambda s: s.boss_vat_status == "pending"):
@@ -146,6 +183,12 @@ class AccountMoveLine(models.Model):
     boss_expediente_id = fields.Many2one("boss.expediente", "File", index="btree_not_null", copy=True,
                                          help="File this invoice line belongs to (one sale line may be in several "
                                          "files).")
+
+    def reconcile(self):
+        bills = self.move_id.filtered(lambda m: m.move_type == "in_invoice")
+        res = super().reconcile()
+        bills._boss_flag_paid_before_invoice()
+        return res
 
     @api.model_create_multi
     def create(self, vals_list):
