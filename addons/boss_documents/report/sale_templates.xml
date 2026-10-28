@@ -9,10 +9,9 @@
             <attribute name="t-if">not doc._boss_document_block() and (doc.partner_shipping_id == doc.partner_invoice_id and doc.partner_invoice_id != doc.partner_id or doc.partner_shipping_id != doc.partner_invoice_id)</attribute>
         </xpath>
         <xpath expr="//div[@id='informations']" position="after">
-            <t t-call="boss_documents.shipment_block">
-                <t t-set="block" t-value="doc._boss_document_block()"/>
-                <t t-set="for_supplier" t-value="False"/>
-            </t>
+            <t t-set="block" t-value="doc._boss_document_block()"/>
+            <t t-set="for_supplier" t-value="False"/>
+            <t t-call="boss_documents.shipment_block"/>
         </xpath>
     </template>
 </odoo>
