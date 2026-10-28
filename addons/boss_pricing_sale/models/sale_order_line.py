@@ -593,7 +593,8 @@ class SaleOrderLine(models.Model):
                 text = _("Paid on behalf of the customer: re-invoiced at the amount paid, %(cost)s per %(uom)s, without "
                          "margin.", cost=line._boss_money(line.purchase_price), uom=line.product_uom_id.name)
                 if line.boss_manual_cost_note:
-                    text += " " + _("Amount of the document %s.", line.boss_manual_cost_note)
+                    text += " " + _("Reference typed: %s. The system does not check the document nor that the amount "
+                                    "matches it.", line.boss_manual_cost_note)
                 else:
                     text += " " + _("Estimate: the final amount is the one of the customs declaration or invoice in the "
                                     "customer's name (type its reference in 'Cost reference').")
