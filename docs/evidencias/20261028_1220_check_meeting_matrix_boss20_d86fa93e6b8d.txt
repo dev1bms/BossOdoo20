@@ -1,0 +1,41 @@
+# Evidence: dev/check_meeting_matrix.py on boss20
+# Date: 2026-10-28 12:20    
+# Commit tested: d86fa93e6b8d (fix(portal): space after «Containers:» on the tracking page)
+# Installed on boss20: boss_expediente 20.0.1.13.0 boss_portal 20.0.1.0.3 boss_pricing 20.0.1.11.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 11:20:25,959 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 11:20:26,020 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 11:20:26,850 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 3 delivery address choosable among the customer's warehouses (Zaragoza): expected 'Z' got 'Z'
+CHECK PASS 4 inland delivery to Zaragoza priced by IRENEO zone 3 (chargeable 666 kg at 333): expected ('ok', True) got ('ok', True)
+   IRENEO zone 3, Zaragoza, 666 kg: 205.44 | explanation: Bracket up to 700 for 666: 205.44 € | Source: IRENEO Tarifas MAD 2026 v2 (IRENEO LOGÍSTICA, S.L.), valid from 07/15/2026, applies to any direction · any mode · 
+CHECK PASS 4 switching the warehouse to València keeps a zone-3 price: expected ('V', 'ok') got ('V', 'ok')
+CHECK PASS 4 switching the warehouse to Alcalá (Madrid): no IRENEO price (MAD zones not loaded), nothing invented: expected ('M', 'no_tariff', 0.0) got ('M', 'no_tariff', 0.0)
+CHECK PASS 7 inland carrier = supplier of the road line; main carrier = MSC: expected (res.partner(10,), res.partner(6,)) got (res.partner(10,), res.partner(6,))
+CHECK PASS 2 typed address becomes a delivery contact of the customer and gives the province: expected (res.partner(644,), 'delivery', 'Z') got (res.partner(644,), 'delivery', 'Z')
+CHECK PASS 21 proposal: consignee = orderer: expected res.partner(640,) got res.partner(640,)
+CHECK PASS 21 explicit consignee kept after re-choosing the direction: expected res.partner(642,) got res.partner(642,)
+CHECK PASS 12 incoterm named place saved: expected ('FOB', 'Shanghai port') got ('FOB', 'Shanghai port')
+CHECK PASS 17 storage 15 days: MSC demurrage 40'HC estimated 485 (private check figure): expected ('ok', 485.0, True) got ('ok', 485.0, True)
+CHECK PASS 17 storage 0 days (the usual case): no demurrage cost, explicit estimate: expected ('ok', 0.0) got ('ok', 0.0)
+CHECK PASS 16 goods value unknown: insurance says what is missing, never 0 %: expected True got True
+   SEG status: no_tariff No approved supplier price of [SEG] Cargo insurance in transit (% of insured value) per Sh
+CHECK PASS 35 Spanish customer: THC EX -> table row EX/PRO (Art.22), FAD NR -> NR/any (21%): expected {'THC': ('EX', 'ok', account.tax(72,)), 'FAD': ('NR', 'ok', account.tax(6,))} got {'THC': ('EX', 'ok', account.tax(72,)), 'FAD': ('NR', 'ok', account.tax(6,))}
+   Spanish taxes: {'THC': ['0% EXEMPT Art.22'], 'FAD': ['21% S']}
+CHECK PASS 35 EU business customer: THC EX -> table row EX/COM: expected ('EX', 'ok', account.tax(30,)) got ('EX', 'ok', account.tax(30,))
+   EU taxes: {'THC': ['0% EU S'], 'FAD': ['0% EU S']}
+CHECK PASS 35 third-country customer: THC EX -> table row EX/TER: expected ('EX', 'ok', account.tax(41,)) got ('EX', 'ok', account.tax(41,))
+   third-country taxes: {'THC': ['0% EX S'], 'FAD': ['0% EX S']}
+CHECK PASS 35 Canary Islands customer: THC EX -> table row EX/CAN: expected ('EX', 'ok', account.tax(37,)) got ('EX', 'ok', account.tax(37,))
+CHECK PASS 35 customer without country: VAT pending, no tax applied: expected ('pending', 0) got ('pending', 0)
+CHECK PASS 35 fiscal position «Canary Islands» on the quotation does not change BOSS taxes: expected {'THC': ('EX', 'ok', account.tax(72,)), 'FAD': ('NR', 'ok', account.tax(6,))} got {'THC': ('EX', 'ok', account.tax(72,)), 'FAD': ('NR', 'ok', account.tax(6,))}
+CHECK PASS 29 new version copies every price of the document: expected 10 got 10
+CHECK PASS 31 accepted S00595 keeps its costs after v2 of «MSC gastos locales importación»: expected [('THC', 'ok', 253.0, 280.0)] got [('THC', 'ok', 253.0, 280.0)]
+CHECK PASS 31 a new quotation uses the new version (+10): expected 263.0 got 263.0
+CHECK PASS 28 the new quotation names version, supplier, document and page: expected True got True
+CHECK PASS 7 file receives the haulier from the road line: expected 10 got 10
+RESULT 23 passed, 0 failed
+# Exit status: 0

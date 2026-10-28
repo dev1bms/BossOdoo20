@@ -1,0 +1,59 @@
+# Evidence: dev/check_portal.py on boss20
+# Date: 2026-10-28 12:11    
+# Commit tested: c44b69cce97d (fix(portal): unique external id for the My Shipments portal card (install failed on the id shared wi)
+# Installed on boss20: boss_expediente 20.0.1.13.0 boss_portal 20.0.1.0.0 boss_pricing 20.0.1.11.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 11:11:43,094 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 11:11:43,155 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 11:11:43,983 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 THC line has a supplier cost (253 from MSC): expected ('ok', True) got ('ok', True)
+CHECK PASS 1 the portal user reads the selling price of his own line: expected 303.6 got 303.6
+CHECK PASS 1 every buying-side field of the line is refused on read (24 fields): expected [] got []
+CHECK PASS 1 the cost fields are not even listed to the portal user (fields_get): expected [] got []
+CHECK PASS 1 search_read and a search on the cost are refused: expected (True, True) got (True, True)
+CHECK PASS 1 export of the cost is refused: expected True got True
+CHECK PASS 1 quotation-level internal fields are refused (margin, pricing alert, snapshots, haulier): expected [] got []
+CHECK PASS 1 no access to snapshots, tariffs, tariff prices, files, cost needs: expected [True, True, True, True, True] got [True, True, True, True, True]
+CHECK PASS 1 purchase order where the customer is the vendor: visible only while boss_portal is not installed: expected False got False
+CHECK PASS 2 commercial A sees A's quotations only: expected {576, 575} got {576, 575}
+CHECK PASS 2 approver A sees A's quotations only: expected {576, 575} got {576, 575}
+CHECK PASS 2 tracking A sees no quotation: expected set() got set()
+CHECK PASS 2 a contact of A without role sees nothing (the standard portal rule alone no longer opens A's orders): expected set() got set()
+CHECK PASS 2 a contact of A granted customer B sees nothing (scope must be his own legal entity): expected set() got set()
+CHECK PASS 2 commercial B sees B only: expected {577} got {577}
+CHECK PASS 2 opening A's quotation by id as B is refused: expected True got True
+CHECK PASS 2 lines follow their quotation: B cannot read A's lines: expected True got True
+CHECK PASS 3 commercial A sees A's posted invoice, not a vendor bill of the same partner: expected {36} got {36}
+CHECK PASS 3 tracking A and commercial B see no invoice of A: expected (set(), set()) got (set(), set())
+CHECK PASS 3 a purchase order where customer A is the vendor is not visible to A's portal users (standard rule closed): expected (0, True) got (0, True)
+CHECK PASS 4 sign: approver yes; commercial, tracking, token link (public) no: expected (True, False, False, False) got (True, False, False, False)
+CHECK PASS 4 a rate quotation is never signed or paid: expected (False, False) got (False, False)
+CHECK PASS 4 back-office (no viewer) keeps the standard behaviour: expected True got True
+CHECK PASS 4 the rate quotation uses the rate portal page and the rate e-mail: expected ('boss_portal.sale_order_portal_content_rate', 'boss_portal.email_template_rate_quotation') got ('boss_portal.sale_order_portal_content_rate', 'boss_portal.email_template_rate_quotation')
+CHECK PASS 5 commercial A cannot request a booking (authorised representative only): expected True got True
+CHECK PASS 5 a line of another quotation, a per-B/L line, 100 containers, nothing chosen: refused: expected [True, True, True, True] got [True, True, True, True]
+CHECK PASS 5 the approver's request is recorded: 2 x 40' HC, pending BOSS review: expected ('requested', [(1876, 2, '40', 'HC')], res.users(37,)) got ('requested', [(1876, 2, '40', 'HC')], res.users(37,))
+CHECK PASS 5 nothing confirmed, no file, no invoice, prices unchanged: expected ('sent', False, 0, 303.6) got ('sent', False, 0, 303.6)
+CHECK PASS 5 the salesperson gets an activity and an internal note: expected (True, True) got (True, True)
+CHECK PASS 5 a second request while pending is refused: expected True got True
+CHECK PASS 5 expired rates cannot be booked: expected True got True
+CHECK PASS 6 nothing internal in the shipment values (cost note, internal event, internal note, master B/L, amounts): expected [False, False, False, False, False, False] got [False, False, False, False, False, False]
+CHECK PASS 6 only the published event, with its customer text: expected ['Container loaded on board'] got ['Container loaded on board']
+CHECK PASS 6 estimated dates are not actual ones: ETD/ETA set, ATD/ATA/delivered unknown: expected (datetime.date(2026, 11, 20), datetime.date(2026, 12, 5), None, None, None) got (datetime.date(2026, 11, 20), datetime.date(2026, 12, 5), None, None, None)
+CHECK PASS 6 the tracking view has no parties, references, container numbers or documents: expected [] got []
+CHECK PASS 6 the account view shows the house B/L and the container number: expected ('[PRUEBA] HBL-A1', ['PRUE1234567']) got ('[PRUEBA] HBL-A1', ['PRUE1234567'])
+CHECK PASS 7 a document of another record cannot be published on the file: expected True got True
+CHECK PASS 7 the published document is listed; the attachment stays private: expected (['[PRUEBA] aviso de llegada.pdf'], False) got (['[PRUEBA] aviso de llegada.pdf'], False)
+CHECK PASS 7 an event cannot be published without its customer text: expected True got True
+CHECK PASS 8 the link finds its shipment; a wrong or short token does not: expected (boss.expediente(95,), boss.expediente(), boss.expediente()) got (boss.expediente(95,), boss.expediente(), boss.expediente())
+CHECK PASS 8 a new link stops the earlier one: expected (boss.expediente(), boss.expediente(95,)) got (boss.expediente(), boss.expediente(95,))
+CHECK PASS 8 a revoked link stops working: expected boss.expediente() got boss.expediente()
+CHECK PASS 8 the shipment scope: tracking A has A's file, B has none: expected (True, False) got (True, False)
+CHECK FAIL 9 role removed: commercial A sees no quotation and no invoice at once: expected (set(), set()) got ({576, 575}, {36})
+CHECK PASS 9 portal access revoked (user archived): no scope: expected (False, False) got (False, False)
+CHECK PASS 9 only a sales manager grants portal roles (a salesperson cannot): expected True got True
+RESULT 45 passed, 1 failed
+# Exit status: 0

@@ -1,0 +1,40 @@
+# Evidence: dev/check_portal_http.py on boss20
+# Date: 2026-10-28 12:16    
+# Commit tested: 271d30e566ff (fix(portal): rate quotation sidebar says «price per unit of each line» instead of «Tax Included»)
+# Installed on boss20: boss_expediente 20.0.1.13.0 boss_portal 20.0.1.0.2 boss_pricing 20.0.1.11.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 11:17:01,170 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 11:17:01,233 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 11:17:02,078 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 the four portal users log in: expected [True, True, True, True] got [True, True, True, True]
+CHECK PASS 1 /my/quotes: commercial A lists A's quotations, not B's: expected (True, False) got (True, False)
+CHECK PASS 1 /my/quotes: tracking A lists no quotation; B lists only B's: expected (False, True, False) got (False, True, False)
+CHECK PASS 1 B opening A's quotation by id is sent away: expected True got True
+CHECK PASS 2 RPC read of a cost field by commercial A is refused: expected True got True
+CHECK PASS 2 RPC read of the selling price by commercial A works: expected 300.0 got 300.0
+CHECK PASS 2 RPC on supplier tariffs is refused: expected True got True
+DIAG sidebar: t-3 pb-5"> <body data-bs-spy="scroll" data-target=".navspy" data-offset="50"> <div class="container o_portal_sidebar"> <div class="row o_portal_sale_sidebar" data-is-partially-paid="false"> <div class="d-flex col-lg-4 col-xl-3 d-none d-lg-block d-print-none order-lg-first"> <div class="o_portal_sidebar_content flex-grow-1 min-w-0 mb-4 mb-lg-0" id="sidebar_content"> <div class="
+DIAG first h2: <h2 class="mb-0 text-break">Tarifas</h2> </div> <span class="text-muted small">Precio por unidad de cada línea</span> </div> 
+CHECK PASS 3 rate quotation page: three alternatives with their basis, rates, no total, no signature: expected (True, True, True, True, False, False) got (True, True, True, True, False, False)
+CHECK PASS 3 no hypothetical total in the page data (attribute absent or 0), «Tax Included» replaced: expected (True, False) got (True, False)
+CHECK PASS 3 rate quotation document: basis per line, no total table: expected (True, False) got (True, False)
+CHECK PASS 3 a shipment quotation keeps its totals: expected True got True
+CHECK PASS 4 commercial A cannot accept; the token link (logged out) cannot accept: expected (True, True) got (True, True)
+CHECK PASS 4 the token link cannot start a payment: expected True got True
+CHECK PASS 5 commercial A: booking refused (authorised representative only): expected True got True
+CHECK PASS 5 approver A: booking request sent, quotation not confirmed, no file: expected (True, 'requested', 'sent', False) got (True, 'requested', 'sent', False)
+CHECK PASS 5 a second request while pending is refused: expected True got True
+CHECK PASS 6 tracking A sees A's shipment; B does not: expected (True, False) got (True, False)
+CHECK PASS 6 detail: published event, house B/L, estimated dates; no internal note, no master B/L: expected (True, True, True, False, False) got (True, True, True, False, False)
+CHECK PASS 6 B opening A's shipment gets 404: expected 404 got 404
+CHECK PASS 7 the published document downloads for A: expected (200, b'%PDF-1.4 prueba portal') got (200, b'%PDF-1.4 prueba portal')
+CHECK PASS 7 an unpublished document of the same file: 404; B: 404; direct /web/content: refused: expected (404, 404, True) got (404, 404, True)
+CHECK PASS 8 tracking link: shipment shown without parties, references or documents: expected (200, True, False, False, False) got (200, True, False, False, False)
+CHECK PASS 8 a wrong token: 404: expected 404 got 404
+CHECK PASS 8 a revoked link: 404: expected 404 got 404
+CHECK PASS 9 role removed: commercial A no longer lists A's quotations: expected False got False
+RESULT 25 passed, 0 failed
+# Exit status: 0

@@ -323,6 +323,11 @@ factura de proveedor, factura parcial de cliente y abono; M2-23 (partidas) rebaj
 20.0.1.11.0, boss_pricing_sale 20.0.1.13.0, boss_expediente 20.0.1.12.0; guía v=20261028a); comprobado en Chrome
 (`docs/evidencias/20261028_1135_chrome_despliegue_reunion2.md`).
 
+**Portal de clientes (28/10, ADR-010):** `boss_portal` instalado; roles por contacto concedidos por BOSS, alcance
+por entidad legal, costes solo internos, oferta de tarifas sin total, reserva revisada por BOSS, Mis envíos y enlace
+de seguimiento revocable. `check_portal` 46/46, `check_portal_http` 25/25; defecto de caché de acceso encontrado y
+corregido (`docs/evidencias/20261028_1222_portal_instalacion.md`). Ninguna cuenta de cliente real activada.
+
 Cobertura técnica de Hoja1 (`docs/mapeo-hoja1.md`: 25 hechas, 3 parciales por documentos que no existen) **no es** el
 avance del proyecto: para usarlo en producción faltan las aprobaciones de negocio (24 tarifas activas para pruebas
 por delegación de Belal, ninguna aprobada todavía por Cristina; cuentas de suplidos y P30/P32 por ratificar por Ángel), los documentos que faltan y la decisión de

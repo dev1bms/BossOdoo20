@@ -1,6 +1,7 @@
 # ADR-010 — Customer portal: roles granted by BOSS, scope per legal entity, BOSS costs never reach the customer
 
-Status: accepted (technical), 28/10/2026 — first version, **not installed** (needs Belal's approval). Requirement:
+Status: accepted (technical), 28/10/2026 — first version, **installed on boss20 28/10 12:10** (Belal's approval;
+`docs/evidencias/20261028_1222_portal_instalacion.md`). Requirement:
 Belal, 28/10/2026 (project owner: portal direction approved for development); confidentiality of costs and margins:
 Ángel, meeting of 27/10/2026, and ADR-009 (rate quotations without a total). Module `boss_portal` (depends on
 `boss_expediente`, `portal`, `sale`, `account`); the cost-field protection lives in `boss_pricing_sale` and
@@ -84,6 +85,9 @@ Belal, 28/10/2026 (project owner: portal direction approved for development); co
     from BOSS's records.
 
 ## Consequences and limits
+- Odoo 20 caches the evaluated access domain per user (`BaseModel._access_domain`): changing a portal role, its
+  customer or the contact's company invalidates the ORM cache (signalled to the other workers on commit), otherwise a
+  removed role kept working (found on boss20 by `check_portal` 9 and fixed).
 - Revocation: removing the role (or archiving the portal user with the standard wizard) cuts quotations, invoices and
   shipments at once; a token e-mail link to a quotation still shows it (standard Odoo; view only) until the quotation
   token is reset. Sharing a quotation by e-mail remains a staff action.
@@ -91,6 +95,5 @@ Belal, 28/10/2026 (project owner: portal direction approved for development); co
 - Consolidations (one master, several houses): the portal shows one file = one shipment of one customer; master
   documents are never published automatically (decision M2-I).
 - Next phase (automatic tracking): `docs/portal-seguimiento-integraciones.md`.
-- Checks: `dev/check_portal.py` (part 1 field protection, run now: 9/9; part 2 roles/booking/shipments/token after
-  installation), `dev/check_portal_qweb.py` (templates against Odoo 20: 4/4), `dev/check_portal_http.py` (real portal
-  sessions over HTTP, after installation).
+- Checks on boss20 after installation: `dev/check_portal.py` 46/46 (ORM, real portal users), `dev/check_portal_http.py`
+  25/25 (real portal sessions over HTTP), `dev/check_portal_qweb.py` 4/4; tracking link seen in Chrome and revoked (404).
