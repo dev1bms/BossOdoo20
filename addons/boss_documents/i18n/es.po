@@ -24,18 +24,18 @@ msgstr "Expediente"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "Quotation"
-msgstr "Oferta"
+msgid "· Quotation"
+msgstr "· Oferta"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "Your reference"
-msgstr "Su referencia"
+msgid "Your reference:"
+msgstr "Su referencia:"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
-msgid "Services of BOSS"
-msgstr "Servicios de BOSS"
+msgid "Services of BOSS:"
+msgstr "Servicios de BOSS:"
 
 #. module: boss_documents
 #. odoo-python
@@ -222,3 +222,15 @@ msgstr "aduana en destino"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "delivery"
 msgstr "entrega"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Pickup"
+msgstr "Recogida"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/shipment_block.py:0
+msgid "Delivery"
+msgstr "Entrega"

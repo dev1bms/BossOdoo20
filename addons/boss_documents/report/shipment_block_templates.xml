@@ -2,28 +2,23 @@
 <odoo>
     <!-- Shipment block of every BOSS document (ADR-011). Set `block` = record._boss_document_block() and `for_supplier`
          (purchase order: no customer reference) BEFORE the t-call (Odoo 20: a t-set inside the call body does not
-         reach the called template). Three columns, label above value, nothing printed
-         when a column is empty. -->
+         reach the called template). Three columns, label above value, nothing printed when a column is empty.
+         Captions are plain text of their element (not nested inline spans) so that Odoo extracts them as clean
+         translatable terms. -->
     <template id="shipment_block">
         <div t-if="block" name="boss_shipment_block" class="boss_shipment_block mb-4 pt-2 pb-1 px-3"
              style="border-top: 2px solid; border-bottom: 1px solid #dee2e6; page-break-inside: avoid;">
             <div class="d-flex justify-content-between align-items-baseline mb-2">
                 <div>
-                    <span t-if="block['reference']" class="fw-bold">
-                        <span>File</span> <span t-out="block['reference']"/>
-                    </span>
-                    <span t-if="block['quotation'] and not for_supplier" class="text-muted">
-                        · <span>Quotation</span> <span t-out="block['quotation']"/>
-                    </span>
+                    <span t-if="block['reference']" class="fw-bold">File <t t-out="block['reference']"/></span>
+                    <span t-if="block['quotation'] and not for_supplier" class="text-muted">· Quotation <t t-out="block['quotation']"/></span>
                 </div>
-                <div t-if="block['customer_reference'] and not for_supplier">
-                    <span>Your reference</span>: <span class="fw-bold" t-out="block['customer_reference']"/>
-                </div>
+                <div t-if="block['customer_reference'] and not for_supplier">Your reference: <span class="fw-bold" t-out="block['customer_reference']"/></div>
             </div>
             <div class="row small">
-                <t t-foreach="(('route', 'Route'), ('transport', 'Transport'), ('cargo', 'Cargo'))" t-as="column">
-                    <div class="col-4" t-if="block['columns'][column[0]]">
-                        <t t-foreach="block['columns'][column[0]]" t-as="row">
+                <t t-foreach="('route', 'transport', 'cargo')" t-as="column">
+                    <div class="col-4" t-if="block['columns'][column]">
+                        <t t-foreach="block['columns'][column]" t-as="row">
                             <div class="mb-1">
                                 <div class="text-muted" style="font-size: 0.85em; line-height: 1.1;" t-out="row[0]"/>
                                 <div t-out="row[1]"/>
@@ -32,9 +27,7 @@
                     </div>
                 </t>
             </div>
-            <div t-if="block['scope'] and not for_supplier" class="small text-muted mt-1">
-                <span>Services of BOSS</span>: <span t-out="block['scope']"/>
-            </div>
+            <div t-if="block['scope'] and not for_supplier" class="small text-muted mt-1">Services of BOSS: <t t-out="block['scope']"/></div>
         </div>
     </template>
 </odoo>

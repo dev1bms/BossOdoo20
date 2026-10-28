@@ -12,5 +12,12 @@
         <xpath expr="//span[@t-field='line.uom_id.name']" position="attributes">
             <attribute name="groups"/>
         </xpath>
+        <xpath expr="//div[@id='informations']/div[@t-if='o.incoterm_id']" position="attributes">
+            <attribute name="t-if">o.incoterm_id and not o._boss_document_block()</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='line.price_unit']" position="replace">
+            <span t-out="line.price_unit"
+                  t-options="{'widget': 'float', 'precision': 2 if round(line.price_unit, 2) == line.price_unit else 4}"/>
+        </xpath>
     </template>
 </odoo>

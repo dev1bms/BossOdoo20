@@ -11,6 +11,17 @@
         <xpath expr="//div[@id='informations']/div[@name='origin']" position="attributes">
             <attribute name="t-if">o.invoice_origin and not o._boss_document_file()</attribute>
         </xpath>
+        <xpath expr="//div[@id='informations']/div[@name='reference']" position="attributes">
+            <attribute name="t-if">o.ref and not o._boss_document_file()</attribute>
+        </xpath>
+        <xpath expr="//div[@id='informations']/div[@name='incoterm_id']" position="attributes">
+            <attribute name="t-if">o.invoice_incoterm_id and not o._boss_document_file()</attribute>
+        </xpath>
+        <!-- Unit price with two decimals; four only when the price has them (per-kg rates), meeting 2 M2-11 -->
+        <xpath expr="//td[@name='td_price_unit']/span[@t-field='line.price_unit']" position="replace">
+            <span t-if="not hide_prices" class="text-nowrap" t-out="line.price_unit"
+                  t-options="{'widget': 'float', 'precision': 2 if round(line.price_unit, 2) == line.price_unit else 4}"/>
+        </xpath>
         <xpath expr="//div[@id='informations']" position="after">
             <t t-set="block" t-value="o._boss_document_block()"/>
             <t t-set="for_supplier" t-value="o.move_type in ('in_invoice', 'in_refund')"/>

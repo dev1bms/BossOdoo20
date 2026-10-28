@@ -107,6 +107,11 @@ if installed:
           ("E260038" in html_so, "MSC ISABELLA" in html_so, "MEDUSH123456 / BOSS26SH0042" in html_so, "MSCU1234567" in html_so,
            "PO-[PRUEBA]-2026-77" in html_so, "Shipping Address" in html_so, "Container" in html_so))
     outputs["quotation"] = Report._render_qweb_pdf("sale.action_report_saleorder", [so.id])[0]
+    check("7b quotation HTML (Spanish customer): captions translated, numbers in Spanish format, delivery as own row, no duplicate reference row",
+          (True, True, True, True, False),
+          ("Expediente E260038" in html_so, "9.850 kg" in html_so, "58,400 m³" in html_so, "Entrega" in html_so,
+           'name="informations_reference"' in html_so))
+    outputs["rate_quotation"] = Report._render_qweb_pdf("sale.action_report_saleorder", [so_rate.id])[0]
     # invoice of the file
     wiz = env["sale.advance.payment.inv"].with_context(active_model="sale.order", active_ids=so.ids).create({"advance_payment_method": "delivered"})  # noqa: F821
     invoices = so.invoice_ids
@@ -123,6 +128,7 @@ if installed:
               (True, True, True, True, False, True, False),
               ("E260038" in html_inv, "S00162" in html_inv, "MSC ISABELLA" in html_inv, "MSCU1234567" in html_inv,
                'name="origin"' in html_inv, "Container" in html_inv, "boss_cost" in html_inv))
+        check("8b invoice HTML: unit prices with two decimals, not four", (True, False), ("1.800,00" in html_inv, "1.800,0000" in html_inv))
         outputs["invoice"] = Report._render_qweb_pdf("account.account_invoices", [invoice.id])[0]
     else:
         print("INFO no invoice could be created for S00162 in this transaction")
