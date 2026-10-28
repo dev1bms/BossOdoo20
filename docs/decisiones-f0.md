@@ -1,1792 +1,285 @@
-# Decisiones F0 del plan «expediente completo» (28/10/2026)
+# Decisiones F0 del plan «expediente completo» — revisadas (28/10/2026)
 
-Preguntas que bloquean las fases del plan (`docs/plan-expediente-completo.md`), agrupadas por persona y por etapa del expediente. **Nada de esto está decidido**: «Hoy en Odoo 17» es material para la pregunta, no la regla, y «Mientras tanto» es lo que hace Odoo 20 hasta la respuesta (estado explícito, nunca una suposición). Cada respuesta se registra con nombre y fecha en `docs/preguntas-abiertas.md`.
+Belal no puede consultar a Cristina ni a Ángel por cada duda. Por eso cada pregunta se ha buscado primero en la documentación del proyecto, el proyecto Odoo 19, los Excel de SharePoint («NEW ODOO»), Odoo 17 de producción y, si no había respuesta, en la práctica del sector y la documentación de Odoo. Resultado en tres grupos:
 
-| Persona | Preguntas | Prioridad alta | Primera fecha límite |
-|---|---|---|---|
-| Ángel | 82 | 36 | 04/11/2026 |
-| Cristina | 123 | 25 | 30/10/2026 |
-| Belal | 26 | 12 | 30/10/2026 |
+1. **Para la reunión**: esenciales, sin respuesta en ninguna fuente, y un supuesto equivocado causaría daño legal, económico o irreversible.
+2. **Supuestos adoptados**: no esenciales; se aplica la mejor práctica documentada, es reversible y queda a la vista del responsable para corregirla si no está de acuerdo.
+3. **Ya respondidas**: la respuesta existe en una fuente (citada).
 
-## Ángel
-### Etapa 0 Partes y datos maestros
-**F0-A01 · alta · antes del 04/11/2026** — ¿Cargamos en Odoo 20 las condiciones de pago que usa hoy Odoo 17 y cada cliente y proveedor migrado conserva la suya?
+| Persona | Para la reunión | Supuestos adoptados | Ya respondidas | Duplicadas |
+|---|---|---|---|---|
+| Ángel | 2 | 57 | 20 | 3 |
+| Cristina | 2 | 83 | 37 | 1 |
+| Belal | 3 | 12 | 7 | 4 |
 
-- Por qué: Sin condiciones de pago, las facturas de los contactos migrados no tienen el vencimiento correcto. Bloquea la carga de contactos (F2) y la facturación (F9).
-- Opciones: Sí: todas las de Odoo 17 y cada contacto con la suya / Sí, pero Ángel revisa antes la lista y quita las que no se usan / No: se definen de nuevo (Ángel da la lista)
-- Hoy en Odoo 17: Hoy en Odoo 17 hay 15 condiciones de pago, desde pago inmediato hasta 90 días y fin de mes siguiente.
-- Mientras tanto: Odoo 20 todavía no tiene las de 6, 20, 60, 75 y 90 días. Los contactos se cargan sin condición de pago propia y quedan marcados como pendientes de Ángel; no se asigna ninguna por suposición.
-- Bloquea: F2, F9
-
-**F0-A02 · alta · antes del 04/11/2026** — ¿Se traen desde Odoo 17 las cuentas bancarias de los proveedores?
-
-- Por qué: Sin ellas no se puede pagar a proveedores por transferencia o remesa desde Odoo 20. Forma parte del alcance de la migración de contactos que fija Belal (F2).
-- Opciones: Sí, de todos los proveedores migrados / Solo de los proveedores que se pagan por transferencia o remesa / No: se dan de alta a mano cuando haga falta
-- Hoy en Odoo 17: Hoy en Odoo 17 los proveedores llevan una forma de pago (transferencia, remesa…) y, los que se pagan por banco, su cuenta bancaria.
-- Mientras tanto: Los proveedores se cargan sin cuenta bancaria; el pago por banco queda pendiente de esta decisión. Los números de cuenta nunca salen de Odoo.
-- Bloquea: F2, F8 · con Belal
-
-**F0-A03 · alta · antes del 05/11/2026** — ¿Se copian a Odoo 20 los límites de crédito que tienen hoy los clientes en Odoo 17?
-
-- Por qué: El aviso de crédito de la oferta y del expediente solo funciona si el cliente tiene límite. Bloquea la carga de contactos (F2) y el control al abrir el expediente (F5).
-- Opciones: Sí, tal cual / Sí, después de que Ángel los revise / No: se fijan de nuevo en Odoo 20 / No se usan límites de crédito
-- Hoy en Odoo 17: Hoy en Odoo 17 algunos clientes tienen límite de crédito (ligado al seguro de crédito) y no se abre un expediente si el cliente lo supera.
-- Mientras tanto: Los contactos se cargan sin límite de crédito propio, así que el aviso de crédito no salta para ellos; pendiente de Ángel.
-- Bloquea: F2, F5, F9
-
-**F0-A04 · alta · antes del 06/11/2026** — ¿Qué niveles de reclamación de cobro quiere en Odoo 20?
-
-- Por qué: Define cómo se reclaman los cobros a los clientes migrados. Se cargan con los contactos (F2) y se usan en el cobro (F9).
-- Opciones: Uno solo a los 7 días del vencimiento, como hoy / Los tres niveles estándar de Odoo / Otros niveles que indicará Ángel
-- Hoy en Odoo 17: Hoy en Odoo 17 hay un solo nivel de reclamación, «7 días».
-- Mientras tanto: Quedan los tres niveles estándar de Odoo sin uso; no se envía ningún recordatorio (la tarea automática está apagada hasta el arranque).
-- Bloquea: F2, F9
-
-### Etapa 1 Oferta
-**F0-A00 · alta · antes del 04/11/2026** — Los suplidos (aranceles ARA, IVA de importación, etc.), ¿se facturan al cliente por el importe exacto pagado, sin el margen por defecto? Y si BOSS cobra algo por adelantar ese dinero, ¿se factura aparte como honorario propio (no como suplido)?
-
-- Por qué: Hoy la regla general «venta = coste + 20 %» se aplica también a los suplidos: en la prueba del 28/10 unos aranceles de 500 € salieron a 600 € y hubo que corregir la venta a mano a 500 €. Un suplido es dinero del cliente que BOSS adelanta; si lleva margen deja de ser suplido. Bloquea la oferta (F3) y la factura (F9).
-- Opciones: Sí: suplidos siempre al importe exacto; el adelanto de fondos, si se cobra, es un honorario aparte / Sí al importe exacto, y no se cobra nada por adelantar / Otra regla (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 los suplidos (conceptos ARA, IVA, PLA, DUM) van en factura de impuestos con «0% EXEMPT NS».
-- Mientras tanto: La regla de venta por defecto no se cambia sin su respuesta: el operativo teclea la venta del suplido igual al coste. No se generaliza ningún cambio a otros servicios.
-- Bloquea: F3, F9
-
-**P17 (ya abierta) · alta · antes del 04/11/2026** — ¿Confirma que, para un cliente español, los servicios exentos (fletes, gastos de terminal, transporte internacional…) se facturan como «exento por el artículo 22», y que a los clientes de Canarias, Ceuta y Melilla se les factura como «no sujeto por localización»?
-
-- Por qué: Decide el IVA y la casilla del 303 de casi todas las facturas a clientes españoles. Afecta a la legalidad de la primera factura real (F4) y a las ofertas (F3).
-- Opciones: Sí, las dos reglas / Sí la del artículo 22; Canarias, Ceuta y Melilla de otra forma (indicar) / No: como hoy en Odoo 17 (sujeto al 0 %)
-- Hoy en Odoo 17: Hoy en Odoo 17 esos servicios llevan «0% S» (sujeto al 0 %), que se declara en otra casilla del 303.
-- Mientras tanto: Odoo 20 lo aplica así como propuesta aprobada por Belal el 23/10, marcada como pendiente de ratificación de Ángel.
-- Bloquea: F3, F4
-
-**P17-NS (ya abierta) · alta · antes del 04/11/2026** — ¿Qué IVA llevan la caución (CAU) y el quebranto bancario (QBR) cuando el cliente es español?
-
-- Por qué: Mientras no se decida, ninguna oferta con caución o quebranto a un cliente español se puede confirmar (F3) ni facturar (F4).
+## 1. Para la reunión
+### Ángel (2)
+**P17-NS** — Para un cliente español, ¿la caución (CAU) y el quebranto (QBR) llevan el mismo impuesto que hoy en Odoo 17 («0% S», sujeto al 0 %, casilla 150), sí o no? Si no, indique cuál.
+- Por qué hay que preguntarlo: Las fuentes se contradicen: la tabla de Ángel dice «no sujeto», Odoo 17 usa «sujeto al 0 %» y el impuesto «NS» de Odoo solo vale para suplidos. Si se elige mal, ese ingreso desaparece del 303 o se declara mal en todas las ofertas con caución o quebranto. Mientras tanto, esas ofertas a clientes españoles no se pueden confirmar.
 - Opciones: Sujeto al 0 %, como hoy en Odoo 17 / No sujeto / Exento (indicar el artículo) / 21 % / Distinto para cada uno (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 la caución y el quebranto llevan «0% S» (sujeto al 0 %).
 - Mientras tanto: «IVA pendiente» en esas líneas: la oferta no se puede enviar ni confirmar.
-- Bloquea: F3, F4
+- Buscado en: docs/preguntas-abiertas.md:69 y :201; .research/05_sharepoint_excel.md:274-276 y :326 (clase NS para CAU y QBR en la tabla de Ángel del 31/08); Odoo 17 account.tax 60 «0% S»; l10n_es de Odoo 20: «0% EXEMPT NS» es de tipo «ignore» (solo sirve para suplidos y deja el ingreso fuera del 303)
 
-**P11 (ya abierta) · alta · antes del 05/11/2026** — ¿Confirma que los gastos de terminal (THC) llevan todos el mismo IVA de servicio exento, sin separar ninguna parte al 21 %?
-
-- Por qué: El THC está en casi todas las importaciones marítimas; su IVA debe ser correcto en la primera factura real (F4).
-- Opciones: Sí, todo exento / No: una parte va al 21 % (indicar cuál)
-- Mientras tanto: Se aplica «todo exento» como propuesta aprobada por Belal el 23/10, pendiente de ratificación de Ángel.
-- Bloquea: F3, F4
-
-**M2-D (ya abierta) · alta · antes del 06/11/2026** — Para estimar los aranceles en la oferta según el código de la mercancía, ¿de dónde salen los porcentajes?
-
-- Por qué: Solo afecta a la estimación de aranceles en la oferta (F3), que hoy se teclea; la respuesta decide si hay que construir una tabla o una consulta.
-- Opciones: Se teclean en cada oferta, como ahora / De una tabla propia que mantiene BOSS / De la base oficial TARIC de la UE (consulta externa) / Los da el agente de aduanas en cada caso
-- Mientras tanto: El código de la mercancía se guarda y la estimación de aranceles se teclea; no se calcula nada.
-- Bloquea: F3
-
-**M2-G (ya abierta) · alta · antes del 06/11/2026** — Cuando todavía no se conoce la fecha de salida, ¿confirma que el flete se cotiza con el precio vigente el día de la oferta?
-
-- Por qué: Decide qué versión de la tarifa de flete se usa en ofertas sin fecha de salida (F3). Ya está aplicado: solo falta confirmarlo.
-- Opciones: Sí / No: el flete queda sin precio hasta conocer la salida / Se usa la fecha de salida prevista que dé el cliente
-- Mientras tanto: Se aplica así y la línea de la oferta lo explica; queda pendiente de confirmación de Ángel.
-- Bloquea: F3
-
-**M2-J (ya abierta) · alta · antes del 06/11/2026** — En los precios por kilo, ¿le vale ver dos decimales como mínimo y hasta cuatro cuando el precio los tiene, o prefiere que esos precios se expresen «por 100 kg»?
-
-- Por qué: Ya está aplicado en ofertas y tarifas (F3); solo falta confirmarlo.
-- Opciones: Vale así (mínimo dos, hasta cuatro) / Pasar esos precios a «por 100 kg»
-- Mientras tanto: Aplicado: mínimo dos decimales y cuatro solo si el valor los tiene; pendiente de confirmación de Ángel.
-- Bloquea: F3
-
-**P01/P02-a (ya abierta) · media · antes del 11/11/2026** — ¿Hay un margen mínimo por oferta o por expediente? Si lo hay, ¿cuál es?
-
-- Por qué: Sin este valor, un expediente con margen bajo o negativo se factura y se cierra sin que nadie lo revise (F10).
-- Opciones: No hay margen mínimo / Sí: un porcentaje (indicar) / Sí: un importe mínimo por expediente (indicar) / Distinto por tráfico o por cliente (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 un aviso de margen bloquea la factura y el cierre hasta que un responsable lo desbloquea con motivo.
-- Mientras tanto: Sin margen mínimo: ninguna oferta ni expediente avisa por margen bajo; queda pendiente.
-- Bloquea: F10 · con Cristina
-
-**P03-a (ya abierta) · media · antes del 11/11/2026** — Para un coste en dólares, ¿confirma que se convierte a euros con el tipo de cambio del día de la oferta y que ese tipo queda fijo al aceptarla?
-
-- Por qué: Fija el coste y el margen en euros de todos los fletes en dólares; condiciona el control de facturas de proveedor (F8) y la facturación (F9).
-- Opciones: Sí / No: tipo del día de la factura del proveedor / No: tipo que fije la naviera para el expediente
-- Hoy en Odoo 17: Hoy en Odoo 17 cada expediente guarda los tipos diarios del BCE en su «fecha importante» y, si se quiere, el tipo de la naviera.
-- Mientras tanto: Ajuste «tipo del día de la oferta, fijo al aceptar», aprobado por Belal el 23/10 y pendiente de ratificación de Ángel.
-- Bloquea: F8, F9, F13
-
-**P43-D11 (ya abierta) · media · antes del 13/11/2026** — El precio único de venta del almacenaje aéreo (ALM), ¿lleva el mismo IVA que hoy tiene el almacenaje en la tabla de IVA de BOSS (21 %), sin ninguna regla especial?
-
-- Por qué: Se necesita para construir la venta única de almacenaje del aéreo (F11).
-- Opciones: Sí / No (indicar el IVA)
-- Mientras tanto: No hay precio de venta automático de almacenaje: se teclea y lleva el IVA de la tabla de BOSS; la regla queda pendiente.
-- Bloquea: F11
-
-**P44-IVA (ya abierta) · media · antes del 13/11/2026** — Si se crea el servicio propio de almacén fuera del aeropuerto que pidió Cristina (por palé, metro cúbico, entradas y salidas), ¿qué IVA lleva?
-
-- Por qué: Hace falta para crear ese servicio con su IVA en el aéreo (F11).
-- Opciones: 21 %, como el almacenaje del aeropuerto en la tabla de IVA de BOSS / Depende del tráfico o del cliente (indicar la regla) / Otro IVA (indicar)
-- Mientras tanto: El servicio no se crea hasta que Cristina lo apruebe y Ángel fije su IVA; ese coste se teclea a mano.
-- Bloquea: F11 · con Cristina
-
-### Etapa 2 Apertura
-**F0-A05 · media · antes del 11/11/2026** — Si un cliente supera su límite de crédito, ¿qué pasa al abrir su expediente?
-
-- Por qué: Sin control, se puede abrir y operar un envío de un cliente por encima de su riesgo (F5).
-- Opciones: Solo un aviso / No se abre hasta que lo autorice un responsable (indicar quién) / No se abre hasta que el saldo baje del límite
-- Hoy en Odoo 17: Hoy en Odoo 17 no se puede crear el expediente si el cliente supera su límite de crédito.
-- Mientras tanto: En la oferta solo sale el aviso de crédito estándar de Odoo 20 (punto 36 de la reunión del 27/10); al abrir el expediente no se comprueba nada; pendiente de Ángel.
-- Bloquea: F5
-
-**M2-C (ya abierta) · media · antes del 11/11/2026** — En una oferta de tarifas (precios por contenedor sin cantidades), ¿cuándo se abre el expediente: al aceptar el cliente la oferta o cuando hace la reserva con los contenedores?
-
-- Por qué: Decide cuándo nace el expediente de los clientes con oferta de tarifas y qué pasa con la petición de reserva del portal (F5).
-- Opciones: Al aceptar la oferta (como ahora en Odoo 20) / Al hacer la reserva con los contenedores
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente se crea con un botón desde la oferta y existe un pre-expediente que no se puede facturar.
-- Mientras tanto: Al aceptar se piden los contenedores y se abre el expediente; la regla figura como pendiente de Ángel.
-- Bloquea: F5 · con Cristina
-
-### Etapa 5 Destino y aduana
-**P18 (ya abierta) · alta · antes del 04/11/2026** — ¿Confirma estas cuentas para los suplidos: IVA de importación 419001 al facturar al cliente y 419003 en la factura del agente; aranceles 419002 y 419004; antidumping 419005 en los dos sentidos; impuesto del plástico 419006 y 419007?
-
-- Por qué: Sin estas cuentas no se pueden registrar la factura del agente de aduanas ni la refacturación de los suplidos al cliente (F4, F7, F9).
-- Opciones: Sí, este mapa / Una sola pareja de cuentas (repercutido y soportado) para todos / Otras cuentas (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 se usan las subcuentas 419001 a 419007 (pasivo corriente, no conciliables).
-- Mientras tanto: Aplicado en boss20 el 26/10 por mandato de Belal para sustituir la cuenta 419000, que no servía; pendiente de ratificación de Ángel.
-- Bloquea: F4, F7, F9
-
-**F0-A06 · alta · antes del 06/11/2026** — En los despachos de importación, ¿con qué garantía se pagan los impuestos a la aduana (la 031, la garantía de BOSS o la del cliente) y en qué casos se cobra caución (CAU) al cliente?
-
-- Por qué: Decide cuándo se cotiza la caución (F3) y qué se registra en el bloque de aduana del expediente (F7).
-- Opciones: Caución solo cuando se usa la garantía de BOSS / Caución siempre que BOSS paga los impuestos por cuenta del cliente, con cualquier garantía / Se decide por cliente (indicar) / Otra regla (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 cada partida guarda el tipo de garantía. En la hoja «Nuevo Odoo», Cristina dejó escrito como requisito (no como decisión) que la forma de pago de los impuestos (garantía 031 o de BOSS) sale de la ficha del cliente y que con ella se generan la venta y la compra de la caución.
-- Mientras tanto: El expediente no registra qué garantía se usa; la caución se añade a mano y queda sin precio aprobado; pendiente.
-- Bloquea: F3, F7 · con Cristina
-
-### Etapa 6 Entrega y contenedores
-**F0-A07 · media · antes del 11/11/2026** — ¿Un expediente puede pasar a «Entregado» sin estar facturado al cliente?
-
-- Por qué: Es una de las condiciones de la etapa de entrega (F7).
-- Opciones: Sí: la facturación va aparte / No: debe estar facturado, como hoy en Odoo 17 / Sí, pero con un aviso
-- Hoy en Odoo 17: Hoy en Odoo 17 no se pasa a Entregado si el expediente no está facturado; además se exige la fecha de descarga y el levante cuando BOSS lleva la aduana.
-- Mientras tanto: El paso a «Entregado» no comprueba nada; la condición queda pendiente de Cristina y Ángel.
-- Bloquea: F7 · con Cristina
-
-### Etapa 7 Proveedores
-**P30-a (ya abierta) · alta · antes del 04/11/2026** — ¿Confirma que la factura de un proveedor se puede contabilizar al llegar, pero no se puede pagar hasta que ese servicio esté facturado al cliente (salvo costes que asume BOSS y fletes pagados por adelantado)?
-
-- Por qué: Es la regla central del pago a proveedores (F8).
-- Opciones: Sí / Solo avisar, sin bloquear el pago / Bloquear también la contabilización
-- Hoy en Odoo 17: Hoy en Odoo 17 no existe ese bloqueo; es un requisito escrito por Cristina en «Nuevo Odoo».
-- Mientras tanto: Ajuste «Bloquear el pago (contabilizar permitido)», aprobado por Belal el 23/10, pendiente de ratificación de Ángel y Cristina.
-- Bloquea: F8 · con Cristina
-
-**A01 (ya abierta) · alta · antes del 05/11/2026** — ¿Qué IVA de compra lleva cada tipo de factura de proveedor: naviera española, handler, agente de aduanas (honorarios y suplidos), agente extranjero y transportista?
-
-- Por qué: Un IVA de compra mal elegido descuadra el 303. Bloquea la base contable (F4) y el registro de facturas de proveedor (F8).
-- Opciones: Una tabla fija por tipo de proveedor que da Ángel / El mismo criterio que hoy en Odoo 17 / Lo elige quien registra según el documento, sin regla
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura de suplidos del agente de aduanas lleva «0% EXEMPT INC OP» y una factura de naviera «0% S INC».
-- Mientras tanto: Lo elige quien registra la factura, sin regla; en las pruebas hay facturas de una naviera española con IVA intracomunitario, que no corresponde. Pendiente de Ángel.
-- Bloquea: F4, F8
-
-**P37-b (ya abierta) · alta · antes del 05/11/2026** — ¿Qué cuentas de gasto usa Odoo 20 para cada familia de servicio y para las comisiones? ¿Las mismas que hoy en Odoo 17 (una cuenta 607 por familia, con 607400 para el flete y 607401 para el profit share, y 623008 para comisiones)?
-
-- Por qué: Sin estas cuentas el coste de cada expediente cae en una cuenta genérica y no se puede comparar con Odoo 17 ni cerrar el mes por familia (F4, F8, F13).
-- Opciones: Las mismas que en Odoo 17 / Las de Odoo 17 con cambios (indicar) / Otras cuentas (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el coste de cada familia de servicio va a su cuenta del grupo 607 (por ejemplo 607400 gastos por flete y 607401 profit share) y las comisiones a 623008.
-- Mientras tanto: Todas las facturas de proveedor van a la cuenta genérica de compras 600000; no se usa en facturas reales hasta que Ángel decida.
-- Bloquea: F4, F8, F13
-
-**P33 (ya abierta) · media · antes del 06/11/2026** — ¿Confirma que los servicios de proveedores se compran con pedido de compra y que los suplidos (IVA y aranceles del DUA) se registran directamente con la factura del agente de aduanas, sin pedido?
-
-- Por qué: Define cómo entra el coste en el expediente (F7, F8). Ya está aplicado: falta confirmarlo.
-- Opciones: Sí / No: los suplidos también con pedido / No: sin pedidos de compra, como hoy en Odoo 17
-- Hoy en Odoo 17: Hoy en Odoo 17 no se usa la app de Compras: las facturas de proveedor se registran directamente contra las previsiones del expediente.
-- Mientras tanto: Funciona así como propuesta aprobada por Belal el 23/10, pendiente de ratificación de Cristina y Ángel.
-- Bloquea: F7, F8 · con Cristina
-
-**F0-A08 · media · antes del 11/11/2026** — ¿Se impide contabilizar la factura de un proveedor que se paga por transferencia o remesa si no tiene cuenta bancaria registrada?
-
-- Por qué: Evita facturas de proveedor que luego no se pueden pagar por banco (F8).
-- Opciones: Sí, bloquear, como hoy en Odoo 17 / Solo avisar / No comprobar
-- Hoy en Odoo 17: Hoy en Odoo 17 no se puede confirmar la factura de un proveedor con forma de pago transferencia o remesa sin cuenta bancaria.
-- Mientras tanto: No se comprueba nada; pendiente de Ángel.
-- Bloquea: F8
-
-**F0-A09 · media · antes del 11/11/2026** — ¿Cómo se tratan los pagos a un proveedor antes de recibir su factura (por ejemplo, proformas del DUA o del handling)?
-
-- Por qué: Sin esto, los aranceles y el handling pagados antes de la llegada no cuentan en el coste ni en lo pagado del expediente (F8).
-- Opciones: Anticipo ligado al expediente, sin esperar a facturar al cliente / Anticipo ligado al expediente, solo si el servicio ya está facturado al cliente / No se paga nada antes de la factura
-- Hoy en Odoo 17: Hoy en Odoo 17 se pagan desde el banco proformas de proveedor (DUA, handling de AWB) antes de que llegue la factura.
-- Mientras tanto: No hay circuito: un pago anticipado no queda ligado al expediente ni a la regla de pago; pendiente de Ángel.
-- Bloquea: F8
-
-**F0-A10 · media · antes del 11/11/2026** — En Odoo 20, ¿quién revisa las facturas de proveedor que llegan sin expediente o que no cuadran con lo previsto?
-
-- Por qué: El coste real y el margen definitivo dependen de que cada factura llegue a su expediente (F8).
-- Opciones: Contabilidad (Ángel), con una lista de control en Odoo / El operativo del expediente / Contabilidad las detecta y el operativo las resuelve
-- Hoy en Odoo 17: Hoy en Odoo 17 se lleva en un proyecto «Facturas de proveedores» que gestiona Ángel, con etapas como «No sabemos expediente», «No cuadran previsiones» y «Reclamada».
-- Mientras tanto: No hay lista de control; cada factura se registra a mano desde el pedido o como coste sin pedido; pendiente.
-- Bloquea: F8
-
-**F0-A11 · media · antes del 11/11/2026** — ¿Quiere que Odoo 20 lea automáticamente las facturas de proveedor (OCR), sabiendo que cada PDF se envía a un servicio externo de Odoo?
-
-- Por qué: Ahorra tecleo y enlaza la factura con su pedido y su expediente, pero envía datos fuera. Se diseña en F8 y solo se activaría en el arranque (F15).
-- Opciones: Sí, desde el arranque / Más adelante / No
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay lectura automática: las facturas se teclean.
-- Mientras tanto: Desactivado; las facturas se teclean y no sale ningún dato.
-- Bloquea: F8, F15 · con Belal
-
-**F0-A12 · baja · antes del 11/11/2026** — ¿Quiere un buzón de correo para facturas de proveedor que cree la factura en borrador en Odoo al recibirla?
-
-- Por qué: Depende de la infraestructura de correo que decide Belal; se diseña con las facturas de proveedor (F8) y solo se activaría en el arranque (F15).
-- Opciones: Sí, desde el arranque / Más adelante / No
-- Hoy en Odoo 17: Hoy en Odoo 17 las facturas de proveedor se registran a mano y se siguen en el proyecto «Facturas de proveedores».
-- Mientras tanto: Sin buzón ni servidor de correo: no entra ningún correo en Odoo 20.
-- Bloquea: F8, F15 · con Belal
-
-**P03-b (ya abierta) · media · antes del 11/11/2026** — Cuando la factura de un proveedor en dólares llega con otro tipo de cambio que el previsto, ¿la diferencia se trata como diferencia de cambio, separada de la diferencia de precio?
-
-- Por qué: Sin separarlas, cada expediente con flete en dólares queda bloqueado o mal explicado al cerrar (F8, F10).
-- Opciones: Sí, aparte y sin bloquear el cierre del expediente / Sí, aparte, pero hay que revisarla antes de cerrar / No: todo junto como diferencia a revisar
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente guarda los tipos diarios del BCE y puede fijar además el tipo de la naviera.
-- Mientras tanto: La diferencia mezcla precio y tipo de cambio: todo flete en dólares aparece «a revisar»; pendiente de Ángel.
-- Bloquea: F8, F10
-
-**P30-b (ya abierta) · media · antes del 11/11/2026** — Si una factura de proveedor tiene varios servicios y solo uno está sin facturar al cliente, ¿se retiene el pago de toda la factura o solo el de ese servicio?
-
-- Por qué: Decide si contabilidad puede hacer pagos parciales a proveedores (F8).
-- Opciones: Toda la factura / Solo el importe de ese servicio (se paga el resto)
-- Mientras tanto: Se retiene toda la factura; pendiente de Ángel y Cristina.
-- Bloquea: F8 · con Cristina
-
-**P30-c (ya abierta) · media · antes del 11/11/2026** — ¿La retención del pago debe valer también cuando contabilidad paga conciliando directamente el extracto del banco o casando apuntes a mano?
-
-- Por qué: Si no, un pago conciliado desde el banco se salta la regla (F8).
-- Opciones: Sí, por cualquier camino / No, solo al registrar el pago desde la factura
-- Mientras tanto: Solo se controla el pago registrado desde la factura o desde el asistente de pagos; la conciliación bancaria y la manual no lo comprueban todavía (hueco conocido).
-- Bloquea: F8 · con Cristina
-
-**P30-d (ya abierta) · media · antes del 11/11/2026** — Si un proveedor envía un abono, ¿se puede aplicar a una factura suya que sigue retenida por esta regla?
-
-- Por qué: Completa el alcance de la regla de pago a proveedores (F8).
-- Opciones: Sí, el abono se aplica siempre / No: la factura sigue retenida hasta facturar al cliente
-- Mientras tanto: Los abonos de proveedor no se comprueban; la regla queda pendiente de Ángel y Cristina.
-- Bloquea: F8 · con Cristina
-
-**P32 (ya abierta) · media · antes del 11/11/2026** — ¿Confirma que las facturas de proveedor de servicios se controlan por lo realmente prestado (lo que el operativo marca como hecho) y no por lo pedido?
-
-- Por qué: Decide cuándo se puede registrar la factura del proveedor de un pedido (F8).
-- Opciones: Sí, por lo prestado / No, por lo pedido
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura se casa con las previsiones de compra del expediente, sin pedidos de compra.
-- Mientras tanto: Funciona por lo prestado como propuesta aprobada por Belal el 23/10, pendiente de ratificación de Ángel.
-- Bloquea: F8
-
-**P39 (ya abierta) · baja · antes del 20/11/2026** — ¿Se registran en Odoo 20 los gastos pequeños de empleados o con tarjeta de empresa (taxis, mensajería, tasas pagadas con tarjeta) imputándolos al expediente?
-
-- Por qué: Si se dan, faltarían en el coste real y el margen del expediente (F17, fase condicional).
-- Opciones: Sí, los pagados por empleados y con tarjeta / Solo los pagados con tarjeta de empresa / No
-- Mientras tanto: Propuesta aprobada por Belal el 23/10, pendiente de ratificación de Ángel: sin la app de Gastos (no está instalada); esos gastos no llegan al coste del expediente.
-- Bloquea: F17 · con Belal
-
-### Etapa 8 Factura al cliente
-**P45-a (ya abierta) · alta · antes del 04/11/2026** — ¿Debe BOSS enviar sus facturas a la AEAT desde el 1/1/2027? Si es así, ¿por SII o por VERI*FACTU?
-
-- Por qué: Puede ser obligatorio para la primera factura real del 1/1/2027 y el plazo legal no está verificado (lo confirma Ángel o el asesor). Bloquea la preparación en modo de pruebas (F4) y el arranque (F15).
+**P45-a** — ¿Está BOSS Continental hoy obligada al SII (facturación superior a 6 M€, inscrita en el REDEME o grupo de IVA), sí o no? Si la respuesta es no, aplica VERI*FACTU: por ley desde el 1/1/2027 para sociedades (RDL 15/2025), aunque Hacienda anunció el 05/10/2026 un nuevo aplazamiento a octubre de 2028 que todavía no está en el BOE.
+- Por qué hay que preguntarlo: Si BOSS está en el SII y se activa VERI*FACTU (o al revés), las facturas desde el 1/1/2027 incumplirían la obligación legal de envío (multas de la LGT). Solo Ángel o el asesor saben si BOSS está en el SII, y esto decide qué módulo se instala, el certificado y el cierre de la base (F0-A40, F0-A43).
 - Opciones: Sí, por SII (indicar desde cuándo) / Sí, por VERI*FACTU (indicar desde cuándo) / Todavía no es obligatorio (indicar desde cuándo lo será) / Lo confirma el asesor fiscal (indicar fecha de respuesta)
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay SII ni VERI*FACTU instalados.
 - Mientras tanto: Ningún módulo instalado en Odoo 20; nada se envía a la AEAT.
-- Bloquea: F4, F15
-
-**F0-A13 · alta · antes del 05/11/2026** — ¿Qué mención legal debe imprimir la factura cuando un servicio lleva IVA 0 % a un cliente de fuera de la UE (exportación o transporte internacional)?
-
-- Por qué: Una factura con IVA 0 % debe indicar el motivo de la exención; hoy ese caso sale sin texto. Afecta a la primera factura real (F4, F9).
-- Opciones: El texto que indique Ángel o el asesor / El mismo texto del artículo 22 que ya sale en las facturas exentas a clientes españoles
-- Mientras tanto: Ese IVA no tiene mención: la factura sale sin el motivo del 0 % y no se usa en facturas reales hasta tenerla.
-- Bloquea: F4, F9
-
-**F0-A14 · alta · antes del 05/11/2026** — ¿Qué mención legal debe imprimir la factura cuando el servicio no está sujeto al IVA español por ser para Canarias, Ceuta o Melilla?
-
-- Por qué: La factura debe explicar por qué no lleva IVA; hoy ese caso sale sin texto (F4, F9).
-- Opciones: El texto que indique Ángel o el asesor / Ninguna mención
-- Mientras tanto: La factura sale sin mención para ese caso; pendiente de Ángel.
-- Bloquea: F4, F9
-
-**F0-A15 · alta · antes del 05/11/2026** — ¿Qué mención debe imprimir la factura en los suplidos (IVA y aranceles pagados en nombre del cliente)?
-
-- Por qué: La factura debe dejar claro que los suplidos no forman parte de la base del IVA (F4, F9).
-- Opciones: El texto que indique Ángel o el asesor / Ninguna: basta con mostrarlos aparte, fuera de la base imponible
-- Mientras tanto: Sin mención y sin sección propia de suplidos en la factura; pendiente de Ángel.
-- Bloquea: F4, F9
-
-**P37-a (ya abierta) · alta · antes del 05/11/2026** — ¿Qué cuentas de ingreso usa Odoo 20 para cada familia de servicio? ¿Las mismas que hoy en Odoo 17 (705001 flete terrestre, 705002 aduana, 705003 gastos locales, 705004 flete, 705005 profit share, 705006 locales extraordinarios, 705007 seguro y courier, 705008 almacén y 705009 consultoría)?
-
-- Por qué: Sin estas cuentas la venta de cada expediente cae en una cuenta genérica y no hay cuenta de resultados por familia (F4, F13).
-- Opciones: Las mismas que en Odoo 17 / Las de Odoo 17 con cambios (indicar) / Otras cuentas (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 la venta de cada familia de servicio va a su cuenta, de 705001 a 705009.
-- Mientras tanto: Toda la venta va a la cuenta genérica 700000; no se usa en facturas reales hasta que Ángel decida.
-- Bloquea: F4, F13
-
-**F0-A16 · alta · antes del 06/11/2026** — ¿Qué debe ir al pie de la factura: los datos de inscripción en el Registro Mercantil y algún texto de condiciones de pago o condiciones generales?
-
-- Por qué: Son datos legales y comerciales de la factura; hoy no sale ninguno (F4, F9).
-- Opciones: Solo la inscripción en el Registro Mercantil / Inscripción y un texto de condiciones de pago (lo da Ángel) / Inscripción y condiciones generales (las da Ángel)
-- Mientras tanto: La factura sale sin pie legal ni condiciones; pendiente de Ángel.
-- Bloquea: F4, F9
-
-**F0-A17 · alta · antes del 06/11/2026** — ¿Qué cuenta bancaria de BOSS se imprime en las facturas a clientes: una sola, o una para euros y otra para dólares?
-
-- Por qué: Sin cuenta, el cliente no sabe dónde pagar (F4, F9). El número de cuenta lo introduce Ángel directamente en Odoo; no se envía por correo ni por chat.
-- Opciones: Una sola cuenta en euros para todas / Una para euros y otra para dólares, según la moneda de la factura / Según el cliente (indicar la regla)
-- Hoy en Odoo 17: Hoy en Odoo 17 las facturas imprimen una cuenta bancaria de BOSS.
-- Mientras tanto: La factura sale sin cuenta bancaria; pendiente de Ángel.
-- Bloquea: F4, F9
-
-**F0-A18 · alta · antes del 06/11/2026** — Desde el 1/1/2027, ¿qué numeración llevan en Odoo 20 las facturas, los abonos y las facturas de proveedor?
-
-- Por qué: La primera factura real debe seguir una serie continua que no choque con la de Odoo 17 (F4 la prepara, F15 la activa).
-- Opciones: Los formatos de hoy con el año 27: «F27 MM-NNNN» (serie mensual), «FR27 NNNN» y «BILL/2027/MM/NNNN» / Esos formatos para facturas y abonos; las de proveedor con el formato de Odoo 20 / Formato nuevo (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 las facturas son «F26 MM-NNNN» (serie mensual), los abonos «FR26 NNNN» y las facturas de proveedor «BILL/2026/MM/NNNN».
-- Mientras tanto: Odoo 20 numera solo en pruebas con su formato estándar (por ejemplo INV/2026/00001); la serie definitiva se prepara y se activa en el arranque cuando Ángel decida.
-- Bloquea: F4, F15
-
-**F0-A19 · alta · antes del 06/11/2026** — ¿Factura BOSS algún servicio con IVA reducido (10 % o 4 %)? Si es así, ¿cuáles y en qué casos?
-
-- Por qué: Si existen, la primera factura real con esos servicios llevaría un IVA incorrecto (F4).
-- Opciones: No, nunca / Sí (indicar servicios y casos)
-- Hoy en Odoo 17: Hoy en Odoo 17 la creación de facturas contempla líneas al 4 % y al 10 %; no se ha comprobado si se usan.
-- Mientras tanto: La tabla de IVA de BOSS no tiene tipos reducidos; ningún servicio los usa hasta que Ángel lo indique.
-- Bloquea: F4
-
-**P31 (ya abierta) · alta · antes del 06/11/2026** — ¿Confirma que no se puede contabilizar la factura de un cliente de España (o sin país) que no tenga NIF u otra identificación, que a los clientes extranjeros se les factura sin exigir NIF y que una dirección incompleta solo avisa?
-
-- Por qué: Decide qué datos del cliente son obligatorios para la primera factura real (F4, F9).
-- Opciones: Sí, así / Además, bloquear si falta la dirección / Exigir también NIF a los clientes de la UE
-- Hoy en Odoo 17: Hoy en Odoo 17 se bloquea a los clientes de España o sin país que no tienen NIF; a los extranjeros no.
-- Mientras tanto: Funciona así como propuesta aprobada por Belal el 23/10, pendiente de ratificación de Ángel.
-- Bloquea: F4, F9
-
-**P45-b (ya abierta) · alta · antes del 06/11/2026** — ¿Factura BOSS a alguna administración pública que exija factura electrónica (Facturae)?
-
-- Por qué: Si es así, esas facturas no se podrían emitir desde Odoo 20 sin prepararlo antes (F4, F15).
-- Opciones: Sí (indicar a quién) / No
-- Hoy en Odoo 17: Hoy en Odoo 17 está instalado el módulo de Facturae; no se ha comprobado si se usa.
-- Mientras tanto: Facturae no está instalado en Odoo 20; pendiente de Ángel.
-- Bloquea: F4, F15
-
-**F0-A20 · alta · antes del 11/11/2026** — ¿Qué fecha lleva la factura al cliente: el día en que se emite, o una fecha del envío (por ejemplo, la llegada en importación o la salida en exportación), como hace hoy Odoo 17?
-
-- Por qué: La fecha decide el periodo de IVA y el mes de la venta de la primera factura real (F9, F10).
-- Opciones: El día de emisión / Una fecha del envío (indicar cuál) / Otra regla (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura toma como fecha la «fecha importante» del expediente.
-- Mientras tanto: La factura lleva la fecha del día en que se contabiliza (comportamiento estándar de Odoo); la regla queda pendiente de Ángel.
-- Bloquea: F9, F10
-
-**F0-A21 · media · antes del 11/11/2026** — ¿Los suplidos se facturan en una factura aparte de los servicios, como hoy, o en la misma factura con una sección propia?
-
-- Por qué: Decide cómo se construye la facturación de las importaciones con despacho (F9).
-- Opciones: Factura aparte, como hoy / Misma factura con una sección de suplidos / Según el cliente (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 los suplidos van en una factura aparte de tipo «impuestos», solo con el IVA 0 % de suplidos y con su propio vencimiento.
-- Mientras tanto: Servicios y suplidos salen en la misma factura, sin sección propia; pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A22 · media · antes del 11/11/2026** — Si los suplidos van en factura aparte, ¿usan la misma serie de numeración que las facturas de servicios o una propia?
-
-- Por qué: Decide el diario y la numeración de las facturas de suplidos (F9).
-- Opciones: La misma serie, como hoy / Una serie propia (indicar formato)
-- Hoy en Odoo 17: Hoy en Odoo 17 las facturas de suplidos usan la misma serie mensual que el resto.
-- Mientras tanto: Una sola serie para todo; pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A23 · media · antes del 11/11/2026** — ¿Los suplidos tienen, para cada cliente, un vencimiento distinto del de los servicios?
-
-- Por qué: Los suplidos son dinero que adelanta BOSS; su vencimiento afecta a la tesorería (F9).
-- Opciones: Sí: cada cliente con su vencimiento de suplidos, copiado de Odoo 17 / No: el mismo vencimiento que los servicios
-- Hoy en Odoo 17: Hoy en Odoo 17 cada cliente puede tener una condición de pago aparte para las facturas de impuestos (por ejemplo 30 días frente a 60 días de los servicios).
-- Mientras tanto: Mismo vencimiento que los servicios; pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A24 · media · antes del 11/11/2026** — ¿Las facturas de suplidos cuentan en la declaración anual de operaciones con terceros (modelo 347)?
-
-- Por qué: Afecta a los importes declarados por cliente en el 347 (F9).
-- Opciones: Sí, como hoy / No, se excluyen
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura de suplidos se marca como operación normal para el 347.
-- Mientras tanto: Odoo 20 las cuenta como cualquier otra factura; pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A25 · media · antes del 11/11/2026** — ¿Se impide facturar a un cliente que no tiene condición de pago configurada?
-
-- Por qué: Evita facturas con un vencimiento equivocado (F9).
-- Opciones: Sí, como hoy en Odoo 17 / No: se factura con pago inmediato / Solo avisar
-- Hoy en Odoo 17: Hoy en Odoo 17 no se genera la factura si el cliente (creado desde el 01/02/2025) no tiene configurados los días de pago.
-- Mientras tanto: No se comprueba; sin condición, el vencimiento es la fecha de la factura (estándar de Odoo). Pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A26 · media · antes del 11/11/2026** — ¿Se piden anticipos o proformas a los clientes (por ejemplo, para pagar aranceles e IVA antes del despacho)?
-
-- Por qué: Si se usan, el cobro y el reparto por expediente tienen que contemplarlos (F9).
-- Opciones: Sí, con factura de anticipo / Sí, con proforma sin valor fiscal / No
-- Mientras tanto: No hay circuito de anticipos; una factura de anticipo no se reparte al expediente. Pendiente de Ángel.
-- Bloquea: F9
-
-**P03-c (ya abierta) · media · antes del 11/11/2026** — ¿Quiere fijar un tipo de cambio por expediente (por ejemplo, el de la naviera) que se use en todas sus facturas, como hoy en Odoo 17 en marítimo?
-
-- Por qué: Decide con qué tipo se factura en euros un flete en dólares (F8, F9).
-- Opciones: Sí, obligatorio en marítimo antes de facturar / Sí, opcional / No: tipo del BCE de cada fecha
-- Hoy en Odoo 17: Hoy en Odoo 17 un expediente marítimo no se puede facturar sin fijar su tipo de cambio (el de la naviera o el del BCE de su fecha).
-- Mientras tanto: No hay tipo por expediente: se usa el tipo de Odoo de cada fecha; pendiente de Ángel.
-- Bloquea: F8, F9
-
-**P03-d (ya abierta) · media · antes del 11/11/2026** — ¿A quién se factura en dólares?
-
-- Por qué: Sin esta regla no se puede facturar en dólares a los agentes (F9, F13).
-- Opciones: A los agentes extranjeros cuando el flete está en dólares / Siempre en euros / Lo decide el comercial en cada oferta
-- Hoy en Odoo 17: Hoy en Odoo 17 algunas facturas a agentes salen en dólares.
-- Mientras tanto: La factura sale en la moneda del pedido (hoy todo en euros); no se puede elegir otra. Pendiente de Ángel.
-- Bloquea: F9, F13
-
-**P03-e (ya abierta) · media · antes del 11/11/2026** — Cuando una oferta en dólares se factura en euros, ¿se añade una línea de quebranto bancario (QBR)? Si es así, ¿con qué porcentaje y sobre qué importe?
-
-- Por qué: Hoy se cobra en las facturas en euros de fletes en dólares; sin la regla no se puede reproducir (F9, F13).
-- Opciones: Sí, 1 % sobre el flete en dólares / Sí, con otro porcentaje o base (indicar) / No se cobra quebranto
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura en euros lleva una línea «QUEBRANTO BANCARIO» de alrededor del 1 % del flete en dólares (deducido de una factura; la base no está confirmada).
-- Mientras tanto: No hay línea de quebranto. La propuesta aprobada por Belal el 23/10 (quebranto solo cuando una oferta en dólares se factura en euros) está pendiente de ratificación de Ángel, y el porcentaje sin decidir.
-- Bloquea: F9, F13
-
-**P03-f (ya abierta) · baja · antes del 11/11/2026** — En una factura en euros de un flete en dólares, ¿debe verse también el importe original en dólares de cada línea?
-
-- Por qué: Es un dato de presentación de la factura (F9).
-- Opciones: Sí / No
-- Hoy en Odoo 17: Hoy en Odoo 17 cada línea de la factura en euros guarda el importe original en dólares (no se ha comprobado si se imprime).
-- Mientras tanto: Solo se muestra el importe en euros; pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A27 · media · antes del 13/11/2026** — Cuando BOSS factura un reparto de beneficio (profit share) a un agente extranjero, ¿qué IVA lleva?
-
-- Por qué: Necesario para liquidar los expedientes de agente (F13).
-- Opciones: El mismo que hoy en Odoo 17 («0% EX S») / Otro (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el profit share facturado a un agente lleva «0% EX S» y va a la cuenta 705005.
-- Mientras tanto: No se factura profit share en Odoo 20; pendiente de Ángel.
-- Bloquea: F13
-
-### Etapa 9 Cobros y pagos
-**F0-A81 · alta · antes del 04/11/2026** — P30 impide EMITIR el pago de una factura de proveedor antes de facturar el servicio al cliente. Si el pago ya ha salido del banco (por ejemplo, un cargo directo de la naviera), ¿le parece bien que al conciliar el extracto Odoo lo registre y lo marque como «pagado antes de facturar al cliente» en la factura y en el expediente, en lugar de impedir la conciliación?
-
-- Por qué: Impedir la conciliación dejaría la contabilidad distinta del banco real. Lo implementado el 28/10: el asistente de pago sigue bloqueado; la conciliación de un movimiento real se acepta, deja una nota en la factura y en el expediente y aparece en «Pendiente» hasta que se facture al cliente.
-- Opciones: Sí: registrar y marcar (lo implementado) / No: tampoco se puede conciliar hasta facturar al cliente / Registrar y además avisar a una persona (indicar quién)
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay ningún bloqueo de pago.
-- Mientras tanto: Se aplica «registrar y marcar», sin bloquear la conciliación, hasta su respuesta.
-- Bloquea: F8 · con Cristina
-
-**F0-A28 · alta · antes del 06/11/2026** — ¿Qué cuentas bancarias de BOSS (banco y moneda) se llevan en Odoo 20 desde el arranque?
-
-- Por qué: Sin diarios bancarios no se pueden registrar cobros y pagos, y los de dólares no tienen dónde ir (F4, F8, F9).
-- Opciones: Todas las de hoy en Odoo 17 / Solo las que siguen activas (indicar) / Una en euros y una en dólares para empezar
-- Hoy en Odoo 17: Hoy en Odoo 17 hay varios diarios bancarios en euros y en dólares, de varios bancos.
-- Mientras tanto: Solo existe un diario bancario genérico sin cuenta; cobros y pagos en dólares no tienen diario. Pendiente de Ángel.
-- Bloquea: F4, F8, F9
-
-**F0-A29 · media · antes del 11/11/2026** — ¿Cómo entran los movimientos del banco en Odoo 20: conexión automática con los bancos o importación de extractos en fichero?
-
-- Por qué: Decide cómo se concilian cobros y pagos (F9) y qué se activa en el arranque (F15); la conexión automática envía datos a un servicio externo.
-- Opciones: Conexión automática desde el arranque / Ficheros de extracto / Ficheros al principio y conexión después
-- Hoy en Odoo 17: Hoy en Odoo 17 hay conexión automática con tres bancos.
-- Mientras tanto: Sin conexión ni importación: en las pruebas los movimientos se teclean.
-- Bloquea: F9, F15 · con Belal
-
-**F0-A30 · media · antes del 11/11/2026** — ¿Qué apuntes automáticos quiere al conciliar el banco (comisiones bancarias en euros y en dólares, retenciones…)?
-
-- Por qué: Agiliza la conciliación de cobros y pagos (F9).
-- Opciones: Los mismos que hoy en Odoo 17 / Solo comisiones bancarias / Ángel da la lista
-- Hoy en Odoo 17: Hoy en Odoo 17 hay apuntes automáticos para comisiones bancarias en euros y en dólares y para una retención fiscal de un banco.
-- Mientras tanto: Solo los dos estándar de Odoo (traspasos internos y comisiones bancarias); pendiente de Ángel.
-- Bloquea: F9
-
-**F0-A31 · media · antes del 11/11/2026** — ¿Los pagos a proveedores se harán con remesas generadas en Odoo 20 (fichero SEPA que se sube al banco) o desde la banca, conciliando después en Odoo?
-
-- Por qué: Define el último paso del ciclo de proveedores (F8) y cómo se cierra el expediente.
-- Opciones: Remesas SEPA desde Odoo 20 / Desde la banca, y en Odoo solo se concilia / Pagos uno a uno
-- Hoy en Odoo 17: Hoy en Odoo 17 hay una marca de remesa en el contacto pero ningún módulo de remesas; probablemente se pagan desde la banca (sin comprobar).
-- Mientras tanto: Solo pagos registrados a mano; el fichero de remesa se puede generar pero nunca se envía.
-- Bloquea: F8
-
-**F0-A32 · media · antes del 13/11/2026** — Con un agente que es a la vez cliente y proveedor, ¿se compensan sus facturas a cobrar y a pagar y se liquida solo la diferencia?
-
-- Por qué: Afecta a la liquidación de los expedientes de agente (F13).
-- Opciones: Sí, se compensan / No, cada una se cobra y se paga aparte / Solo con acuerdo escrito del agente
-- Mientras tanto: Cada factura se cobra y se paga por separado; no hay compensación. Pendiente de Ángel.
-- Bloquea: F13
-
-### Etapa 10 Cierre operativo
-**P01/P02-b (ya abierta) · media · antes del 11/11/2026** — Si un expediente queda por debajo del margen mínimo, ¿qué pasa y quién lo desbloquea?
-
-- Por qué: Evita facturar y cerrar expedientes con margen bajo sin revisión (F10).
-- Opciones: Solo un aviso / No se puede facturar ni cerrar hasta que lo desbloquee Cristina con motivo / No se puede facturar ni cerrar hasta que lo desbloquee Ángel con motivo / No se puede facturar ni cerrar hasta que lo desbloquee el comercial responsable
-- Hoy en Odoo 17: Hoy en Odoo 17 un aviso de margen impide facturar y cerrar hasta que se desbloquea con motivo; el aviso llega a Cristina.
-- Mientras tanto: Sin aviso ni bloqueo por margen; pendiente de Ángel y Cristina.
-- Bloquea: F10 · con Cristina
-
-### Etapa 11 Cierre financiero y de mes
-**F0-A33 · alta · antes del 06/11/2026** — ¿Cómo y cuándo se bloquean los periodos contables en Odoo 20, y quién lo hace?
-
-- Por qué: Protege los meses cerrados de cambios; el procedimiento se escribe con la base contable (F4) y se aplica en el cierre de mes (F10).
-- Opciones: Cada mes, el día X del mes siguiente (indicar X y quién) / Cada trimestre, al presentar el IVA / Con el mismo ritmo que hoy en Odoo 17 (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el periodo y el IVA están bloqueados hasta el 30/09/2026 y el ejercicio hasta el 31/12/2025; las facturas de un mes se siguen emitiendo a primeros del siguiente antes de bloquear.
-- Mientras tanto: Ninguna fecha de bloqueo en Odoo 20; pendiente de Ángel.
-- Bloquea: F4, F10
-
-**F0-A34 · media · antes del 11/11/2026** — ¿El cierre financiero de un expediente exige que todo esté cobrado y pagado?
-
-- Por qué: Define cuándo el margen de un expediente es definitivo y ya no se toca (F10).
-- Opciones: Sí, cobrado y pagado / Cobrado, sin exigir pagado / Solo facturado (cliente y proveedores)
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay cierre financiero; la lista de ayuda «Cierre automático» propone los expedientes entregados hace más de 14 días, con todo lo comprado y vendido facturado y beneficio positivo.
-- Mientras tanto: El cierre financiero exige la lista «Pendiente» vacía y no mira cobros ni pagos; pendiente de Ángel.
-- Bloquea: F10
-
-**F0-A35 · media · antes del 11/11/2026** — ¿Quién puede reabrir un expediente cerrado financieramente?
-
-- Por qué: Después del cierre financiero no se debe contabilizar nada sobre el expediente salvo que alguien autorizado lo reabra (F10).
-- Opciones: Solo Ángel / Ángel y Cristina / Todo el equipo de contabilidad
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay cierre financiero; tras el cierre operativo solo unos pocos usuarios pueden modificar el expediente.
-- Mientras tanto: Hoy solo pueden reabrir los usuarios con permiso de administrador de contabilidad (control técnico añadido el 28/10, no una decisión); pendiente de Ángel.
-- Bloquea: F10
-
-**F0-A36 · media · antes del 11/11/2026** — Al cierre de mes, ¿se periodifican los costes ya prestados sin factura del proveedor y la venta prestada sin facturar?
-
-- Por qué: Pone el coste y la venta de cada expediente en el mes correcto (F10).
-- Opciones: Sí, costes y ventas / Solo costes / No
-- Hoy en Odoo 17: Hoy en Odoo 17 existe la cuenta 607800 «Compras pendientes de recibir factura de proveedor»; no se ha comprobado su uso mensual.
-- Mientras tanto: No se periodifica nada; pendiente de Ángel.
-- Bloquea: F10
-
-**F0-A37 · media · antes del 11/11/2026** — ¿Quiere un aviso a fin de mes a cada operativo con sus expedientes sin facturar o sin cerrar, con copia a Ángel?
-
-- Por qué: Permite comprobar que todo el mes está facturado y cerrado antes del cierre contable (F10).
-- Opciones: Sí, mensual (indicar el día) / Sí, pero semanal / No
-- Hoy en Odoo 17: Hoy en Odoo 17 un correo mensual «CIERRE MENSUAL» pide a cada responsable facturar y cerrar sus expedientes, con copia a Ángel.
-- Mientras tanto: Solo la lista «Pendiente» de cada expediente; no hay aviso mensual. Durante las pruebas un aviso sería una tarea en Odoo, sin correo.
-- Bloquea: F10 · con Cristina
-
-**F0-A38 · media · antes del 11/11/2026** — Si llega la factura de un proveedor con fecha de un mes ya bloqueado, ¿con qué fecha contable se registra?
-
-- Por qué: Decide cómo entran las facturas tardías sin tocar meses cerrados (F10).
-- Opciones: En el primer día abierto, conservando la fecha de la factura / Se desbloquea el mes y se registra con su fecha / Con la fecha de recepción
-- Hoy en Odoo 17: Hoy en Odoo 17 la fecha contable de la factura de proveedor es la fecha de la factura.
-- Mientras tanto: Como no hay fechas de bloqueo, se registra con la fecha de la factura; pendiente de Ángel.
-- Bloquea: F10
-
-**F0-A80 · alta · antes del 11/11/2026** — Cuando un expediente está cerrado financieramente, ¿se impide contabilizar nuevas facturas o abonos sobre él hasta que un responsable de contabilidad lo reabra?
-
-- Por qué: Antes del 28/10 se podía contabilizar sobre un expediente cerrado, lo que dejaba sin sentido el cierre y su reapertura reservada al responsable. Implementado el 28/10: se rechaza con el mensaje «reábralo primero».
-- Opciones: Sí, bloquear (lo implementado) / Solo avisar, sin bloquear / Bloquear solo las facturas de cliente
-- Hoy en Odoo 17: Hoy en Odoo 17 un expediente cerrado no admite cambios salvo para el grupo gestor.
-- Mientras tanto: Se bloquea hasta su respuesta; se puede pasar a «solo avisar» sin perder datos.
-- Bloquea: F10
-
-**P38 (ya abierta) · media · antes del 11/11/2026** — ¿El margen del expediente debe descontar un coste interno por los servicios propios de BOSS (despacho, gestión, operativa)? Si es así, ¿con qué importe?
-
-- Por qué: Decide si el margen definitivo es beneficio neto o margen tras costes externos (F10).
-- Opciones: No: margen tras costes externos, como ahora / Sí: un importe por servicio (indicar) / Sí: un porcentaje (indicar)
-- Mientras tanto: El margen es «tras costes externos» (no es beneficio neto), como propuesta aprobada por Belal el 23/10, pendiente de ratificación de Ángel.
-- Bloquea: F10
-
-**F0-A39 · media · antes del 13/11/2026** — ¿Se mantiene la comisión al recomendador de clientes? Si es así, ¿con qué regla?
-
-- Por qué: Si existe, es un coste de esos expedientes que hoy no aparece en el coste ni en el margen de Odoo 20 (F13).
-- Opciones: Sí, con la misma regla de Odoo 17 / Sí, con otra regla (indicar) / No
-- Hoy en Odoo 17: Hoy en Odoo 17 un informe calcula para cada expediente cerrado de un cliente recomendado un 40 % de (beneficio − 95 €) y se registra como factura del recomendador en la cuenta 623008 Comisiones; es código, no una regla aprobada.
-- Mientras tanto: No existe en Odoo 20: la comisión no entra en el coste ni en el margen; pendiente de Ángel.
-- Bloquea: F13
-
-**P45-c (ya abierta) · media · antes del 13/11/2026** — ¿Qué declaraciones de impuestos se preparan desde Odoo 20 a partir de enero de 2027 (IVA 303, intracomunitarias 349, resumen anual 390, operaciones con terceros 347)?
-
-- Por qué: Decide qué informes fiscales hay que comprobar antes del arranque (F15).
-- Opciones: Todas desde Odoo 20 / Solo algunas (indicar) / Las prepara la gestoría fuera de Odoo
-- Hoy en Odoo 17: Hoy en Odoo 17 está instalado el módulo de informes fiscales españoles.
-- Mientras tanto: Odoo 20 ya prepara borradores de 303, 347, 349 y 390 con su tarea automática; nada se presenta.
-- Bloquea: F15
-
-### Etapa P Proyecto y arranque
-**F0-A40 · alta · antes del 04/11/2026** — ¿Con qué base de datos arranca BOSS el 1/1/2027: la base de Odoo 20 que se usa ahora para las pruebas, anulando antes todo lo de prueba, o una base nueva y limpia?
-
-- Por qué: La base actual ya tiene facturas, abonos y pagos de prueba de 2026 y números gastados; si pasa a ser la base real, quedarían en los libros. Bloquea la instalación de SII o VERI*FACTU (F4), las pruebas que contabilizan (F1, F14) y el arranque (F15).
-- Opciones: La base actual, anulando antes los registros de prueba por las vías de Odoo / Una base nueva y limpia
-- Mientras tanto: La base actual sigue como base de trabajo y de pruebas; no se instala SII ni VERI*FACTU hasta que Ángel y Belal decidan.
-- Bloquea: F1, F4, F14, F15 · con Belal
-
-**F0-A41 · alta · antes del 04/11/2026** — Hasta el arranque, ¿se pueden contabilizar en la base actual de Odoo 20 facturas, abonos y pagos de prueba?
-
-- Por qué: Hay dos instrucciones que se contradicen: la norma de trabajo del 27/10 lo permite y la prueba contable prevista para Ángel lo prohíbe antes del 1/1. Bloquea el modo que contabiliza de la prueba de punta a punta (F1) y la prueba contable (F14).
-- Opciones: Sí, y se anulan antes del arranque / Sí, porque se arrancará en una base nueva / No: las comprobaciones que contabilizan se deshacen siempre al terminar
-- Mientras tanto: Las comprobaciones automáticas se deshacen al terminar y los recorridos en pantalla se paran antes de contabilizar, hasta que Ángel y Belal decidan.
-- Bloquea: F1, F14 · con Belal
-
-**F0-A42 · alta · antes del 06/11/2026** — Desde el 1/1/2027, ¿toda la contabilidad nueva (facturas, cobros, pagos y bancos) se lleva solo en Odoo 20?
-
-- Por qué: Si una parte siguiera en Odoo 17, cambiarían la base legal de la factura, los bancos y los cobros que se preparan ahora (F4, F9) y el arranque (F15). Hay dos supuestos distintos: el hito del 26/10 (Odoo 20 único sistema) y el criterio de migración heredado de Odoo 19 (facturas y contabilidad se quedan en Odoo 17 salvo que Ángel decida otra cosa).
-- Opciones: Sí, todo en Odoo 20 / Facturas en Odoo 20 y contabilidad general en Odoo 17 unos meses / Otra (indicar)
-- Mientras tanto: El plan supone Odoo 20 como único sistema desde el 1/1/2027 (hito aprobado por Belal el 26/10) y la contabilidad de 2026 y anteriores en Odoo 17 en solo lectura; queda pendiente de la confirmación de Ángel.
-- Bloquea: F4, F9, F15
-
-**F0-A43 · alta · antes del 20/11/2026** — Si hay que enviar facturas a la AEAT desde el arranque, ¿quién aporta el certificado electrónico de la empresa y en qué fecha se pasa del modo de pruebas al envío real?
-
-- Por qué: La primera factura real lo necesitaría con certificado (F15). El certificado lo carga Ángel o el asesor directamente en Odoo; no se envía por correo ni por chat.
-- Opciones: Ángel lo carga en Odoo antes del arranque y el envío real empieza el 1/1/2027 / Lo gestiona el asesor fiscal (indicar fecha) / No hace falta todavía, porque no hay envío obligatorio desde el arranque
-- Mientras tanto: Si se instala SII o VERI*FACTU, funciona en modo de pruebas, sin certificado y sin envío.
-- Bloquea: F15
-
-**F0-A44 · media · antes del 20/11/2026** — ¿Cómo se cargan los saldos de apertura en Odoo 20 el 1/1/2027?
-
-- Por qué: Sin saldos de apertura, el balance y los bancos de Odoo 20 no cuadran con Odoo 17 (F15).
-- Opciones: Asiento de apertura con el balance de cierre de 2026, provisional y ajustado tras cerrar 2026 / Solo saldos de bancos, clientes y proveedores / Otra forma (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 existe un diario de apertura.
-- Mientras tanto: Odoo 20 no tiene asiento de apertura; no se carga nada hasta que Ángel decida.
-- Bloquea: F15
-
-**F0-A45 · media · antes del 20/11/2026** — Las facturas de 2026 pendientes de cobro o de pago el 1/1/2027, ¿se cobran y se pagan en Odoo 20 o en Odoo 17?
-
-- Por qué: Decide si hay que migrarlas y cómo se cierran los expedientes que tengan facturas en los dos sistemas (F15).
-- Opciones: Se migran una a una a Odoo 20 / Se cobran y se pagan en Odoo 17 hasta liquidarlas / Saldo por cliente y proveedor en Odoo 20
-- Mientras tanto: No se migra ninguna factura pendiente; pendiente de Ángel.
-- Bloquea: F15
-
-**F0-A46 · media · antes del 20/11/2026** — Las facturas de clientes y de proveedores con fecha de diciembre de 2026 que se emitan o se reciban en enero de 2027, ¿se registran en Odoo 17 o en Odoo 20?
-
-- Por qué: Evita números duplicados y facturas de 2026 repartidas entre los dos sistemas en el arranque (F15).
-- Opciones: En Odoo 17 hasta cerrar 2026 / En Odoo 20 desde el 1/1, con fecha de diciembre / Las de clientes en Odoo 17 y las de proveedores en Odoo 20
-- Hoy en Odoo 17: Hoy en Odoo 17 las facturas de un mes se siguen emitiendo a primeros del mes siguiente antes de bloquear el periodo (por ejemplo, facturas de septiembre numeradas en octubre).
-- Mientras tanto: Sin regla; pendiente de Ángel.
-- Bloquea: F15
-
-## Cristina
-### Etapa 0 Partes y datos maestros
-**F0-C01 · alta · antes del 04/11/2026** — ¿Qué personas de BOSS necesitan usuario en Odoo 20 para las pruebas y el arranque, y qué papel tiene cada una (comercial, operativo, compras o aprobador de tarifas)? Los usuarios de contabilidad los indica Ángel.
-
-- Por qué: Sin su propio usuario, usted no puede aprobar tarifas y operaciones no puede probar el expediente. Hoy solo existen dos usuarios internos.
-- Opciones: Envío la lista de personas con su papel / Primero yo y un operativo para las pruebas; el resto antes del 1/12 / Otra (indicar)
-- Mientras tanto: Solo hay dos usuarios internos (Belal y Ángel). De las 22 tarifas aprobadas, 21 las aprobó Belal por delegación y 1 Ángel, solo para pruebas. Nada se aprueba en su nombre.
-- Bloquea: F2, F3, F14
-
-**F0-C02 · alta · antes del 04/11/2026** — Al traer los contactos de Odoo 17, ¿qué papel tiene en Odoo 20 cada tipo de contacto (Cliente, Agente, Proveedor, Cliente + Proveedor, expedidor o destinatario español o extranjero, Acreedor) y cada marca (agente, naviera, agente de aduanas, transportista terrestre, aerolínea)?
-
-- Por qué: Sin esta correspondencia no se pueden elegir bien las partes del expediente: ordenante, expedidor, destinatario, agente, transportista y agente de aduanas. Y sin contactos migrados no se puede abrir ningún expediente real. Qué contactos se migran (tipos y antigüedad) lo decide Belal aparte.
-- Opciones: Uno a uno, igual que en Odoo 17 (Belal prepara la tabla y yo la reviso) / Con cambios (indicar cuáles)
-- Hoy en Odoo 17: Hoy en Odoo 17 cada contacto tiene un tipo, varias marcas de papel, un código interno y un KAM. Entre ellos hay contactos que en realidad son lugares (códigos postales, ciudades).
-- Mientras tanto: Solo hay 2 clientes y 8 proveedores reales. Hasta su respuesta, los papeles de los contactos migrados quedan como «pendiente de decisión», sin asignar ninguno por suposición.
-- Bloquea: F2
-
-**R-A3 (ya abierta) · alta · antes del 04/11/2026** — En un expediente de agente, ¿el ordenante tiene que ser un contacto de tipo Agente (y en uno de cliente de BOSS, de tipo Cliente), como comprueba Odoo 17?
-
-- Por qué: Decide si el sistema rechaza o solo avisa cuando el ordenante no tiene el tipo esperado. Afecta a la migración de contactos y a las ofertas de agente.
-- Opciones: Sí: comprobar y no dejar seguir / Solo avisar / No comprobar
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente de agente guarda el ordenante, el agente y a quién se factura, y comprueba que el ordenante sea de tipo Agente.
-- Mientras tanto: Se guarda si el negocio es de BOSS o del agente, y el código de tráfico. El tipo de contacto del ordenante no se comprueba («pendiente de decisión»).
-- Bloquea: F2, F3
-
-**P20 (ya abierta) · media · antes del 11/11/2026** — ¿El operativo debe ver los precios de venta? ¿Y el comercial debe ver el coste de proveedor y el margen?
-
-- Por qué: Fija los permisos de las pantallas de oferta y de expediente. Si se decide tarde, habrá que cambiar permisos con los usuarios ya trabajando.
-- Opciones: Todos los usuarios de ventas ven venta, coste y margen (como ahora) / El comercial ve la venta y el margen, pero no el coste de proveedor / El operativo no ve la venta / Otra (indicar)
-- Mientras tanto: Se aplica el estándar de Odoo por rol: los usuarios de ventas ven la venta y el coste de la oferta, compras ve el lado proveedor, y el gestor comercial y contabilidad lo ven todo.
-- Bloquea: F6
-
-**P35 (ya abierta) · media · antes del 11/11/2026** — Dentro del expediente, ¿quién puede ver las facturas de proveedor y el coste real?
-
-- Por qué: Al reunir documentos y facturas en el expediente hay que saber quién ve cada cosa. Si se hace mal, un comercial vería los costes de proveedor.
-- Opciones: Solo compras, contabilidad y el gestor comercial (como ahora) / También el operativo del expediente / También el comercial del expediente / Otra (indicar)
-- Mientras tanto: Las facturas de proveedor y el coste real solo los ven compras, contabilidad y el gestor comercial.
-- Bloquea: F6
-
-**P35-B (ya abierta) · media · antes del 11/11/2026** — ¿Cada comercial debe ver solo sus propios clientes, ofertas y expedientes, o los de todo BOSS?
-
-- Por qué: Es el requisito escrito de su documento «Nuevo Odoo» (hoja CRM) que acompaña a la pregunta P35, y no está confirmado. Cambia los permisos de todo el equipo comercial.
-- Opciones: Solo los suyos / Los suyos y los de su equipo / Todos
-- Mientras tanto: Cada usuario ve lo que le da su permiso estándar de Ventas. No hay ninguna regla propia de BOSS por comercial («pendiente de decisión»).
-- Bloquea: F6
-
-**F0-C04 · media · antes del 13/11/2026** — ¿Es correcta la lista de qué handler atiende a cada aerolínea en cada aeropuerto? Viene de Odoo 17 y tiene 47 combinaciones: Madrid 30, Barcelona 13, Málaga 2, Valencia 1 y Bilbao 1.
-
-- Por qué: La oferta y el expediente aéreo proponen el handler a partir de esta lista, así que conviene validarla antes de las pruebas de importación aérea.
-- Opciones: Correcta / Correcta con cambios (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 esta relación está en una tabla de configuración de handling (48 filas, una de ellas archivada).
-- Mientras tanto: Odoo 20 propone el handler según esa lista sin validar; el operativo puede cambiarlo.
-- Bloquea: F11
-
-**F0-C05 · media · antes del 13/11/2026** — Belal preparará la correspondencia entre los conceptos de Odoo 17 y los 77 servicios de Odoo 20. ¿La revisa y valida usted, o la persona que designe?
-
-- Por qué: Sin esa correspondencia no se pueden migrar los servicios pendientes de los expedientes abiertos ni comprobar las sumas por concepto contra Odoo 17.
-- Opciones: La reviso yo cuando esté preparada / La revisa otra persona (indicar papel)
-- Hoy en Odoo 17: Hoy en Odoo 17 cada línea de previsión lleva un concepto (por ejemplo flete, THC o transporte).
-- Mientras tanto: No hay correspondencia validada y no se migra ningún servicio pendiente.
-- Bloquea: F15
-
-### Etapa 1 Oferta
-**F0-C06 · alta · antes del 06/11/2026** — ¿Quién reúne los documentos de tarifa que faltan, y para qué fecha? Faltan: segundo handler aéreo, Iberia, demoras de ONE, Maersk, ZIM y OOCL, gastos locales de Hapag-Lloyd, CFS de grupaje, despacho de exportación y despacho aéreo, acuerdos de profit share, inspecciones, CES, transporte de contenedor y recargo de combustible.
-
-- Por qué: Faltan documentos de 39 servicios. Sin ellos, cada oferta real necesita teclear el coste a mano.
-- Opciones: Lo coordino yo con operaciones para el (fecha) / Lo hace (persona o papel) para el (fecha)
-- Mientras tanto: Esos servicios salen como «Sin precio de proveedor»: se teclea el coste con motivo o se añade el precio desde la oferta.
-- Bloquea: F3, F11, F12
-
-**F0-C07 · alta · antes del 06/11/2026** — De esos servicios, ¿cuáles no tendrán nunca tarifa fija y se cotizarán siempre caso por caso con el proveedor (por ejemplo, el camión o el arrastre)?
-
-- Por qué: Así se marcan como «coste a petición», en lugar de quedarse esperando un documento que no va a llegar.
-- Opciones: Indico la lista / Ninguno: todos tendrán tarifa
-- Mientras tanto: Si hay un proveedor elegido sin precio, la línea queda como «Coste a petición». Los demás costes desconocidos necesitan el motivo de un responsable.
-- Bloquea: F3
-
-**F0-C08 · alta · antes del 06/11/2026** — ¿Los servicios de una plantilla cambian según el Incoterm (por ejemplo, EXW añade la recogida y los gastos en origen, y DAP o DDP quitan la entrega), o los ajusta el operativo a mano?
-
-- Por qué: Decide si hace falta una plantilla por Incoterm o basta con una por caso.
-- Opciones: Sí: indico qué cambia con cada Incoterm / No: una plantilla por caso y el operativo ajusta
-- Hoy en Odoo 17: Hoy, según su hoja de procesos, EXW, FOB y FCA se cotizan; DAP y DDP abren expediente con los documentos; y CFR y CIF no llevan oferta.
-- Mientras tanto: Hay una plantilla por caso y el Incoterm de la plantilla se copia a la oferta.
-- Bloquea: F3
-
-**F0-C09 · alta · antes del 06/11/2026** — ¿Qué servicios lleva «siempre» y cuáles «a veces» una oferta de exportación marítima FCL, de grupaje (LCL) de importación y de exportación, y de transporte terrestre?
-
-- Por qué: Sin estas plantillas no hay servicios propuestos para esos casos, que nunca se han probado en Odoo 20.
-- Opciones: Exportación FCL (propuesta para revisar): siempre recogida, THC, BL, T3, despacho de exportación, honorarios, flete y los gastos de naviera que van con el THC; a veces CES, demoras, ocupación, VGM, AMS/ENS, EUR1, fumigación, seguro y quebranto / Indico la lista de cada caso / Indico primero la de exportación FCL; las de grupaje y terrestre más adelante (indicar fecha)
-- Mientras tanto: No hay plantilla de exportación marítima, grupaje ni terrestre: los servicios se añaden a mano.
-- Bloquea: F3, F12
-
-**F0-C11 · media · antes del 06/11/2026** — El documento de ocupación de MSC no tiene columna para el 40' HC. ¿Se usa la del 40' DV?
-
-- Por qué: Hoy un 40' HC no tiene precio de ocupación.
-- Opciones: Sí, la del 40' DV / No: pido el precio a MSC
-- Mientras tanto: El 40' HC sale como «Sin precio de proveedor» en la ocupación.
-- Bloquea: F3 (solo la ocupación del 40' HC de MSC)
-
-**F0-C12 · media · antes del 06/11/2026** — En las entregas en la provincia de Madrid, IRENEO cobra por zona MAD o MAD-EXT (según el código postal y un radio de 30 km). ¿Puede conseguir de IRENEO, o confirmar usted, la zona de cada población?
-
-- Por qué: Sin esas zonas, las entregas en Madrid no tienen precio de transporte.
-- Opciones: Pido la lista a IRENEO / La confirmo yo (envío la lista)
-- Mientras tanto: Las entregas en la provincia de Madrid salen como «Sin precio de proveedor».
-- Bloquea: F3 (solo entregas en Madrid), F12
-
-**F0-C13 · media · antes del 06/11/2026** — En el almacén G-5 de IRENEO, ¿los 5 días libres se descuentan siempre, o al superarlos se cobra desde el día 1?
-
-- Por qué: Con 10 días de estancia, una lectura da el doble que la otra.
-- Opciones: Se descuentan / Al superarlos, se cobra desde el día 1 / Lo confirmo con IRENEO
-- Mientras tanto: El precio está marcado como «A consultar» (cargado como «descontados»), así que la oferta sale «A consultar».
-- Bloquea: F3 (solo el almacén G-5), F11
-
-**F0-C14 · media · antes del 06/11/2026** — Las facturas reales de MSC de septiembre y octubre cobran menos THC de importación por contenedor que su tarifa vigente. ¿Hay un acuerdo o una edición distinta con MSC?
-
-- Por qué: El coste previsto sale algo mayor que lo que MSC factura, y eso desvirtúa el margen.
-- Opciones: Hay un acuerdo: envío el documento / Vale la tarifa publicada / Lo pregunto a MSC
-- Mientras tanto: Vale el documento de la tarifa: el coste previsto de THC es algo mayor que lo facturado.
-- Bloquea: F3 (solo el THC de importación de MSC)
-
-**F0-C15 · media · antes del 06/11/2026** — Las condiciones de demoras y ocupaciones de la licitación de Leroy Merlin terminaron el 31/05/2026. ¿Hay condiciones para 2026-27?
-
-- Por qué: Sin ellas, los envíos de este cliente usan las tarifas públicas de cada naviera.
-- Opciones: Sí: envío el documento / No: se usan las tarifas públicas
-- Mientras tanto: Desde junio de 2026 se usan las tarifas públicas de la naviera.
-- Bloquea: F3 (solo envíos de Leroy Merlin)
-
-**F0-C16 · media · antes del 06/11/2026** — El recargo FuelEU de la naviera, ¿se repercute al cliente o lo asume BOSS?
-
-- Por qué: En una factura real reciente no se cobró al cliente. Hace falta una regla comercial.
-- Opciones: Se repercute siempre / No se repercute / Depende del cliente (indicar)
-- Hoy en Odoo 17: Hoy, en una factura real de octubre de 2026, el FuelEU no se cobró al cliente.
-- Mientras tanto: En la oferta de prueba va «Sin cargo» y su coste cuenta en el margen. Se decide a mano en cada oferta.
-- Bloquea: F3 (solo ofertas con FuelEU)
-
-**F0-C17 · media · antes del 06/11/2026** — En el despacho de importación hay dos agentes de aduanas con precio. ¿La oferta propone uno por defecto, o el operativo elige siempre?
-
-- Por qué: El 28/09 usted indicó que elige el operativo; en la revisión con Ángel se planteó proponer uno por defecto.
-- Opciones: El operativo elige siempre / Proponer uno por defecto (indicar cuál y en qué casos)
-- Mientras tanto: La línea pide elegir uno de los dos agentes con precio.
-- Bloquea: F3 (solo ratificación: hoy elige el operativo) · con Ángel
-
-**F0-C18 · media · antes del 06/11/2026** — Al recotizar una oferta ya aceptada, ¿la «venta aceptada» y el «margen en la aceptación» del expediente deben conservar los valores originales, o mostrar los recotizados?
-
-- Por qué: Cambia las cifras «en la aceptación» del resumen del expediente; en una prueba, la venta y el margen bajaron después de recotizar.
-- Opciones: Conservar los originales y mostrar los nuevos aparte / Mostrar los recotizados (como ahora)
-- Mientras tanto: Se muestran los recotizados; los originales quedan en el historial de precios.
-- Bloquea: F3 (no bloquea: solo cambia qué cifra se muestra)
-
-**F0-C19 · media · antes del 06/11/2026** — En «Recotizar», ¿la casilla «Recalcular el coste» debe venir marcada en todas las líneas, o desmarcada?
-
-- Por qué: Hoy, para cambiar un solo precio, hay que desmarcar las líneas una a una.
-- Opciones: Marcada (como ahora) / Desmarcada
-- Mientras tanto: Viene marcada en todas las líneas.
-- Bloquea: F3 (no bloquea: solo cambia un valor por defecto)
-
-**F0-C20 · baja · antes del 06/11/2026** — ¿Necesita en Odoo 20 la oferta en formato corto que usan hoy, o bastan la oferta normal y la oferta de tarifas por unidad (sin totales)?
-
-- Por qué: Si la necesita, entra en la fase de oferta; si no, queda fuera del plan.
-- Opciones: Bastan las de Odoo 20 / Necesito el formato corto (envío un ejemplo)
-- Hoy en Odoo 17: Hoy en Odoo 17 las ofertas spot se imprimen en un formato corto.
-- Mientras tanto: Queda fuera del plan; se usan la oferta normal y la oferta de tarifas.
-- Bloquea: F3 (opcional)
-
-**M2-A (ya abierta) · alta · antes del 06/11/2026** — En sus Excel de venta, ¿qué servicios tienen un precio de venta fijo (el mismo aunque cambie la naviera) y cuáles varían con el coste? ¿Puede enviar esos Excel para cargarlos?
-
-- Por qué: Sin esos precios, la venta sale de «coste + 20 %» o se teclea, y las pruebas no tienen precios reales que se puedan repetir.
-- Opciones: Envío los Excel y marco fijo o variable en cada servicio / Todos tienen precio fijo / Todos varían con el coste
-- Hoy en Odoo 17: Hoy se cotiza con sus Excel de venta, fuera de Odoo 17.
-- Mientras tanto: La venta sale de «coste + 20 %» (ajuste puesto por indicación de Belal, sin su aprobación) o se teclea. No hay ningún precio fijo de venta cargado.
-- Bloquea: F3
-
-**M2-B (ya abierta) · media · antes del 06/11/2026** — Para aprobar una tarifa, ¿es obligatorio adjuntar el documento del proveedor?
-
-- Por qué: Hoy es obligatorio por defecto. Si decide otra cosa, solo cambia un ajuste.
-- Opciones: Sí, siempre (como ahora) / No es obligatorio / Obligatorio salvo excepciones (indicar)
-- Mientras tanto: El ajuste «Documento del proveedor obligatorio» está activo, pendiente de su ratificación.
-- Bloquea: F3 (solo ratificación: ya funciona con la regla aplicada)
-
-**M2-E (ya abierta) · media · antes del 06/11/2026** — ¿Hay que limitar qué proveedores pueden prestar cada servicio (por ejemplo, qué camioneros, o una naviera que también hace el transporte), o vale cualquier proveedor con un aviso si no tiene tarifa?
-
-- Por qué: Una lista por servicio evita elegir proveedores equivocados, pero alguien tiene que mantenerla.
-- Opciones: Cualquier proveedor, con aviso (como ahora) / Lista de proveedores por servicio (indicar)
-- Mientras tanto: Se acepta cualquier proveedor, con un aviso si no tiene tarifa del servicio.
-- Bloquea: F3 (solo ratificación: ya funciona con la regla aplicada) · con Ángel
-
-**M2-H (ya abierta) · media · antes del 06/11/2026** — Si se elige un proveedor que no tiene precio para ese servicio (por ejemplo, el camión caso por caso), ¿la oferta se puede aceptar como «coste a petición» sin autorización de un responsable, mientras los demás costes desconocidos sí la necesitan?
-
-- Por qué: Funciona así desde la revisión del 28/10. Falta su confirmación.
-- Opciones: Sí, como ahora / También necesita la autorización de un responsable / Otra (indicar)
-- Mientras tanto: Aplicado así, pendiente de su ratificación. El expediente muestra el coste como desconocido hasta que se teclea.
-- Bloquea: F3 (solo ratificación: ya funciona con la regla aplicada)
-
-**P01 (ya abierta) · alta · antes del 06/11/2026** — ¿Qué clientes tienen precios pactados propios? Sus listas se cargarían antes de las pruebas con clientes reales.
-
-- Por qué: La oferta real y las pruebas comerciales usan la lista de cada cliente. Sin esas listas, todo sale de la venta general.
-- Opciones: Envío la lista de clientes con sus precios / Ninguno: todos con la venta general
-- Mientras tanto: La venta sale de la lista general o se teclea. Solo un cliente tiene lista propia, creada en pruebas.
-- Bloquea: F3, F14
-
-**P09 (ya abierta) · alta · antes del 06/11/2026** — Sobre la detención (DET): ¿lleva código propio cuando la naviera la factura aparte (como MSC), y va dentro de la demora (DEM) cuando la naviera cobra las dos juntas (como Hapag-Lloyd)?
-
-- Por qué: Cambia cómo se cotiza y cómo se casa la factura de la naviera.
-- Opciones: Sí, así / Siempre con código propio / Siempre dentro de DEM
-- Hoy en Odoo 17: Hoy en Odoo 17 no existe el concepto DET.
-- Mientras tanto: DET está configurado como código propio, por contenedor y día. Es la propuesta del 07/10, aplicada por decisión de Belal y pendiente de su ratificación.
-- Bloquea: F3, F12
-
-**P10 (ya abierta) · alta · antes del 06/11/2026** — Usted indicó que la tasa energética (ETX) solo se aplica en importación, que se compra al handler por AWB máster y que se vende una vez por expediente. Para dejarla lista falta confirmar: ¿es solo de importación aérea, el «Recargo de mantenimiento del servicio» de WFS (punto 49 de su tarifa) es ese coste, y la cobran solo WFS, Iberia y Swissport?
-
-- Por qué: El punto 49 de WFS se asignó a ETX sin su confirmación. Si no es ese coste, las ofertas de importación aérea con WFS llevarían un importe que no corresponde.
-- Opciones: Sí a las tres cosas / El punto 49 de WFS no es ETX (indicar qué es) / Otro handler también la cobra, o también se aplica fuera del aéreo (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 existe «ETX – Energy tax». En el programa de previsiones la cobran WFS, Iberia y Swissport; DHL, IAS y ACL no.
-- Mientras tanto: ETX está configurada así para pruebas, con el punto 49 de WFS como coste y pendiente de su confirmación. Como la tarifa de WFS espera aprobación, la línea sale «pendiente de aprobación».
-- Bloquea: F3, F11
-
-**P13 (ya abierta) · alta · antes del 06/11/2026** — Para la caución (CAU) y el seguro (SEG), ¿qué porcentajes, tasas por país y mínimos se aplican, y de qué documento salen?
-
-- Por qué: Sin valores aprobados, la oferta no calcula ni la CAU ni el SEG.
-- Opciones: Envío los valores con su documento / Se cotizan siempre caso por caso
-- Mientras tanto: El método por porcentaje existe, pero no hay valores aprobados: CAU y SEG no tienen coste calculado.
-- Bloquea: F3 · con Ángel
-
-**P16 (ya abierta) · alta · antes del 06/11/2026** — De los servicios sin definir (VET, GT3, DES, VAC, POS, IMO, DVD, GAV y DUM), ¿cuáles se usan de verdad, con su unidad de cobro, proveedor y documento, y cuáles se retiran?
-
-- Por qué: Mientras no se definan, estos servicios no se pueden cotizar ni migrar sin coste manual.
-- Opciones: Para cada uno: se usa (unidad, proveedor y documento) o se retira / VET como inspección veterinaria por documento, igual que SAN (propuesta del 07/10, sin confirmar)
-- Hoy en Odoo 17: Hoy en Odoo 17 VET existe como «Veterinaria».
-- Mientras tanto: GT3, DES, VAC, POS, IMO, DVD, GAV y DUM salen como «Pendiente de decisión»; se puede poner un coste manual. VET ya se cotiza con coste manual, por documento como SAN: es la propuesta del 07/10, aplicada para pruebas y pendiente de su confirmación.
-- Bloquea: F3
-
-**P19 (ya abierta) · alta · antes del 06/11/2026** — Hay 22 tarifas de proveedor aprobadas solo para pruebas (21 por delegación de Belal y 1 por Ángel), y las de WFS y el recargo FuelEU de MSC esperan aprobación. ¿Las revisa y aprueba usted con su usuario, o designa a otra persona?
-
-- Por qué: La oferta real debe salir de tarifas aprobadas por usted. Hoy solo 13 de los 52 servicios con tarifa tienen un precio aprobado, y solo para pruebas.
-- Opciones: Las reviso y apruebo yo / Las apruebo yo y designo a otra persona (indicar papel) para cuando no esté / Designo a otra persona (indicar papel) y yo reviso después
-- Mientras tanto: Las tarifas están aprobadas por delegación solo para pruebas. WFS y FuelEU salen como «pendiente de aprobación».
-- Bloquea: F3, F11
-
-**P24 (ya abierta) · alta · antes del 06/11/2026** — ¿Es correcta esta lista de países de «Lejano Oriente» para el recargo FuelEU de MSC: China, Hong Kong, Taiwán, Japón, Corea del Sur, Vietnam, Tailandia, Malasia, Singapur, Indonesia, Filipinas y Camboya?
-
-- Por qué: Sin la lista confirmada, una importación de MSC desde fuera de China no tiene FuelEU calculado.
-- Opciones: Correcta / Con cambios (indicar)
-- Mientras tanto: La lista es la propuesta del 07/10. Una importación MSC desde Vietnam o Corea sale como «Precio pendiente de aprobación».
-- Bloquea: F3
-
-**P24-B (ya abierta) · alta · antes del 06/11/2026** — ¿Qué tráficos se consideran «short sea», con un THC distinto del general?
-
-- Por qué: Forma parte de la pregunta P24, junto con la lista de Lejano Oriente, y completa la lectura de los gastos portuarios.
-- Opciones: Indico los tráficos o países / No hay THC distinto para short sea
-- Mientras tanto: No hay lista de tráficos short sea («pendiente de decisión»).
-- Bloquea: F3
-
-**P28 (ya abierta) · alta · antes del 06/11/2026** — En 2026, ¿el handling de IRENEO (manipulación y rayos X en aéreo) sigue con los precios de 2025? Para el transporte ya está la carta de IRENEO con la subida desde el 15/07/2026.
-
-- Por qué: La carta solo cubre el transporte. Sin confirmar el handling, esos precios no se pueden aprobar para 2026.
-- Opciones: Sí, con los precios de 2025 / No: pido la tarifa 2026 a IRENEO
-- Mientras tanto: La tarifa IRENEO 2026 está aprobada solo para pruebas, por delegación de Belal (transporte con la subida de la carta desde el 15/07). El handling sigue con los precios de 2025, sin confirmar.
-- Bloquea: F3, F12
-
-**P29 (ya abierta) · alta · antes del 06/11/2026** — Tramos de WFS «hasta 7 días / más de 7»: si la estancia pasa de 7 días, ¿el precio alto se aplica solo a los días siguientes o a toda la estancia?
-
-- Por qué: El documento no lo dice y, en estancias largas, la diferencia es grande.
-- Opciones: Solo a los días siguientes (como ahora) / A toda la estancia / Lo confirmo con una factura real de más de 7 días
-- Mientras tanto: El precio alto se aplica solo a los días siguientes (propuesta aprobada por Belal el 23/10, pendiente de su ratificación).
-- Bloquea: F3, F11
-
-**P34 (ya abierta) · baja · antes del 06/11/2026** — ¿Hace falta para el arranque el precio cerrado para varios envíos (tipo licitación de Leroy)? Si hace falta, ¿para qué clientes, con qué duración y con qué cantidades máximas?
-
-- Por qué: Hoy cada envío de un acuerdo se cotiza y se acepta por separado. Construirlo antes del 1/1 quitaría tiempo a otras fases.
-- Opciones: Después del arranque / Para el 1/1 (indicar clientes, duración y cantidades)
-- Hoy en Odoo 17: Hoy en Odoo 17 existe un acuerdo por cliente, tráfico, rutas e Incoterm, con ofertas y validez encadenadas.
-- Mientras tanto: Cada envío se cotiza por separado. Una oferta aceptada puede repartirse entre varios expedientes.
-- Bloquea: F3 (opcional)
-
-**P40 (ya abierta) · alta · antes del 06/11/2026** — Almacenaje de WFS «por 24 horas»: ¿se cuentan periodos de 24 h desde la llegada, o días naturales?
-
-- Por qué: Si la salida es a una hora anterior a la de llegada, las dos lecturas dan importes distintos (de lunes a las 10:00 a viernes a las 10:00 son 4 periodos o 5 días). Las fuentes se contradicen y la pregunta del 25/09 quedó sin respuesta.
-- Opciones: Periodos de 24 h desde la llegada (como ahora) / Días naturales / Lo confirmo con una factura real de WFS
-- Mientras tanto: Se aplican periodos de 24 h (propuesta aprobada por Belal el 23/10, pendiente de su ratificación). La tarifa de WFS sigue esperando aprobación.
-- Bloquea: F3, F11
-
-**P41 (ya abierta) · alta · antes del 06/11/2026** — Almacenaje de WFS «por 100 kg»: ¿se cobra por cada 100 kg o fracción, o en proporción al peso?
-
-- Por qué: Usted habló el 08/09 de «fracción de 100 kg» y la edición de WFS de 2025 también lo decía, pero la de 2026 no lo dice.
-- Opciones: Por 100 kg o fracción (como ahora) / En proporción al peso
-- Mientras tanto: Se aplica «o fracción» (propuesta aprobada por Belal el 23/10, pendiente de su ratificación).
-- Bloquea: F3, F11
-
-**P42 (ya abierta) · alta · antes del 06/11/2026** — El mínimo de almacenaje de WFS (puntos 1 a 3 del documento), ¿se aplica por estancia de la AWB o por día?
-
-- Por qué: En esos puntos el documento no indica la unidad del mínimo, y eso cambia el importe de los envíos pequeños.
-- Opciones: Por estancia de la AWB (como ahora) / Por día
-- Mientras tanto: Se aplica el mínimo por estancia (propuesta aprobada por Belal el 23/10, pendiente de su ratificación).
-- Bloquea: F3, F11
-
-**R-S1 (ya abierta) · alta · antes del 06/11/2026** — ¿Son correctas las listas de servicios «siempre» y «a veces» propuestas para las tres plantillas actuales: importación aérea FOB, importación marítima FCL FOB y exportación aérea?
-
-- Por qué: La plantilla rellena el caso y propone los servicios de cada oferta. Hoy estas listas son una propuesta sin validar.
-- Opciones: Correctas / Con cambios (indicar servicio por servicio)
-- Hoy en Odoo 17: Hoy en Odoo 17 la oferta se apoya en una plantilla de gastos locales y en sus Excel de venta.
-- Mientras tanto: Las tres plantillas están cargadas como propuesta. Al aplicar una plantilla solo se añaden los servicios que faltan, con un aviso.
-- Bloquea: F3
-
-**R2-A1 (ya abierta) · media · antes del 06/11/2026** — Cuando se teclea el coste de un flete para una oferta, ¿debe guardarse también como precio reutilizable para esa ruta y semana?
-
-- Por qué: Decide si los fletes tecleados alimentan las tarifas o se quedan solo en esa oferta.
-- Opciones: Siempre como precio reutilizable / Solo cuando el comercial lo elige (como ahora) / Nunca: solo en la línea
-- Mientras tanto: Hay dos caminos: un coste manual que se queda solo en la línea, o un precio semanal con ruta y validez creado desde la oferta, que se guarda como versión de la tarifa.
-- Bloquea: F3 (solo ratificación: ya funciona con la regla aplicada) · con Ángel
-
-**R2-A2 (ya abierta) · media · antes del 06/11/2026** — El flete semanal que se teclea desde una oferta, ¿queda aprobado al introducirlo, o tiene que esperar a que lo apruebe un aprobador de tarifas?
-
-- Por qué: En la segunda reunión Ángel pidió que no tuviera que esperar aprobación (pensando en los casos de madrugada). Falta su ratificación como responsable de tarifas.
-- Opciones: Aprobado al introducirlo, con el autor registrado (como ahora) / Debe esperar a un aprobador / Aprobado al introducirlo solo para algunos usuarios (indicar)
-- Mientras tanto: El ajuste «Fletes aprobados al introducirlos» está activo, solo para fletes tecleados desde una oferta.
-- Bloquea: F3 (solo ratificación: ya funciona con la regla aplicada) · con Ángel
-
-**R2-A3 (ya abierta) · alta · antes del 06/11/2026** — En los servicios cuya venta varía con el coste, ¿vale «coste + 20 %» como venta propuesta por defecto (siempre editable), o qué porcentaje prefiere?
-
-- Por qué: El 20 % lo indicó Belal después de hablar con Ángel. Falta su confirmación como responsable de precios.
-- Opciones: +20 % para todos / Otro porcentaje (indicar) / Un porcentaje distinto por grupo de servicio (indicar) / Sin venta por defecto: siempre pactada o tecleada
-- Mientras tanto: Está activo «coste + 20 %» en la tarifa general; el precio tecleado o el pactado tienen prioridad. Pendiente de su ratificación.
-- Bloquea: F3
-
-**R2-A6 (ya abierta) · media · antes del 06/11/2026** — ¿Se usa el transporte terrestre convencional, el que se cobra por peso tasable, en envíos de contenedor completo (FCL)? Si se usa, el volumen tendría que verse también en las ofertas FCL.
-
-- Por qué: Ese transporte se cobra por peso tasable, que necesita el volumen, y hoy en las ofertas FCL el volumen no se muestra.
-- Opciones: No: en FCL siempre se usa el transporte de contenedor / Sí, a veces: mostrar el volumen también en FCL
-- Mientras tanto: En las ofertas FCL el volumen sigue oculto («pendiente de decisión»).
-- Bloquea: F3 (solo FCL con transporte convencional)
-
-**P21 (ya abierta) · baja · antes del 11/11/2026** — Además de la oferta por envío y de la oferta de tarifas por unidad, ¿hacen falta ofertas de tarifa por ruta válidas para varios envíos (por ejemplo, un FCL mensual Shanghái–Valencia)?
-
-- Por qué: Cambia cómo se organiza la oferta y cómo se acepta.
-- Opciones: No: bastan las actuales / Sí (indicar el caso)
-- Mientras tanto: Una oferta corresponde a un envío. Existe la oferta de tarifas por unidad (20', 40', 40' HC), sin total.
-- Bloquea: F6
-
-**P22 (ya abierta) · baja · antes del 11/11/2026** — Para ofrecer alternativas (por ejemplo, dos navieras), ¿se hacen varias ofertas dentro de la misma oportunidad, o una sola oferta con secciones opcionales?
-
-- Por qué: Decide cómo ve el cliente las alternativas.
-- Opciones: Varias ofertas en la misma oportunidad (como ahora) / Una oferta con secciones opcionales
-- Mientras tanto: Varias ofertas dentro de la misma oportunidad (estándar de Odoo).
-- Bloquea: F6
-
-**P23 (ya abierta) · baja · antes del 11/11/2026** — ¿Qué validez lleva una oferta por defecto? ¿Y se puede aceptar una oferta ya caducada?
-
-- Por qué: Fija la fecha de fin de cada oferta y si se puede aceptar una ya vencida.
-- Opciones: 15 días; una oferta caducada no se acepta sin recotizarla / 30 días; una oferta caducada no se acepta sin recotizarla / Otra (indicar los días y qué pasa al caducar)
-- Hoy en Odoo 17: Hoy en Odoo 17 una tarea pasa a perdidas las ofertas fuera de validez, y no se abre expediente de una oferta vencida hace más de 15 días.
-- Mientras tanto: Validez estándar de Odoo, sin ninguna regla propia de BOSS («pendiente de decisión»).
-- Bloquea: F6
-
-**P26 (ya abierta) · baja · antes del 11/11/2026** — ¿Se fusionan los códigos que se propuso juntar (CSM, CSA y CST; AMS y ENS; inspecciones), o se mantienen separados?
-
-- Por qué: Cambia el catálogo de servicios y la correspondencia para la migración.
-- Opciones: Se mantienen separados (como ahora) / Se fusionan (indicar cuáles)
-- Mientras tanto: Se mantienen los códigos originales.
-- Bloquea: F6
-
-**P05 (ya abierta) · baja · antes del 13/11/2026** — ¿Se puede enviar al cliente una oferta con algún coste todavía pendiente, solo con un aviso (como ahora)?
-
-- Por qué: Ya funciona así; falta su ratificación.
-- Opciones: Sí, solo con aviso / No: bloquear el envío
-- Mientras tanto: Hay aviso pero no bloqueo; solo bloquean el IVA pendiente y la venta sin indicar. Pendiente de su ratificación.
-- Bloquea: F14
-
-**P06 (ya abierta) · baja · antes del 13/11/2026** — Si la tarifa de un proveedor cambia mientras una oferta sigue dentro de su validez, ¿se mantiene el precio ofertado al cliente, o se recotiza la oferta?
-
-- Por qué: Hoy una tarifa nueva no cambia las ofertas aceptadas y, para cambiarlas, se recotizan con motivo. Falta su ratificación.
-- Opciones: Se mantiene; solo se recotiza con motivo (como ahora) / Se recotiza siempre que cambie la tarifa / Otra (indicar)
-- Mientras tanto: Una tarifa nueva no cambia las ofertas aceptadas; para cambiar una hay que recotizarla con motivo. Pendiente de su ratificación.
-- Bloquea: F14
-
-**P07 (ya abierta) · baja · antes del 13/11/2026** — ¿Solo el gestor comercial puede recotizar una oferta aceptada, y siempre con motivo (como ahora)?
-
-- Por qué: Ya funciona así; falta su ratificación.
-- Opciones: Sí / También el comercial de la oferta / Otra (indicar)
-- Mientras tanto: Solo el gestor comercial recotiza, y con motivo. Pendiente de su ratificación.
-- Bloquea: F14
-
-**P11 (ya abierta) · baja · antes del 13/11/2026** — Los gastos portuarios (PAD), ¿se cotizan dentro de T3 (como ahora) o dentro de los gastos de naviera (GLO)? ¿Y se presentan al cliente aparte o junto al THC, como «THC + gastos portuarios»?
-
-- Por qué: Ya se cotizan dentro de T3; falta su ratificación y decidir la presentación. El IVA del THC lo decide Ángel aparte.
-- Opciones: Dentro de T3 (como ahora) y presentados aparte / Dentro de T3 y presentados junto al THC como «THC + gastos portuarios» / Dentro de GLO (indicar cómo se presentan)
-- Mientras tanto: T3-PAD se cotiza dentro de T3, pendiente de su ratificación.
-- Bloquea: F14
-
-**P12 (ya abierta) · baja · antes del 13/11/2026** — Las demoras, ocupaciones, VGM y gastos de naviera (GLO), ¿se venden con un precio tecleado o pactado? ¿Y el profit share no se vende nunca, como dijo el 29/09?
-
-- Por qué: Ya funciona así; falta su ratificación. Ojo: lo que decida sobre los expedientes de agente puede cambiar lo del profit share.
-- Opciones: Sí, como ahora / Con cambios (indicar)
-- Mientras tanto: Configurado así, pendiente de su ratificación.
-- Bloquea: F14
-
-**P43 (ya abierta) · media · antes del 13/11/2026** — Para la venta única de almacenaje aéreo (ALM), ¿qué regla vale en las ofertas nuevas?
-
-- Por qué: Las fuentes dan tres versiones y ninguna está confirmada. Hasta que se decida, el sistema no propone venta de ALM.
+- Buscado en: Odoo 17 ir.module.module: l10n_es_edi_sii y l10n_es_edi_verifactu sin instalar (28/10); RDL 15/2025 (https://www.iberley.es/noticias/se-retrasan-2027-las-fechas-aplicacion-efectiva-veri-factu-35738, https://teamsystem.es/magazine/verifactu-se-retrasa-2027/); anuncio 2028 sin BOE (https://www.macrosuma.es/post/hacienda-anuncia-un-nuevo-aplazamiento-de-verifactu-hasta-octubre-de-2028, https://www.dsi-net.com/verifactu-aplazamiento-2028/)
+
+### Cristina (2)
+**P43** — ¿La venta única de almacenaje aéreo (ALM) para todos los clientes es la regla que usted dio el 25/09 (48 h libres; superadas, por día y por 100 kg o fracción desde la llegada; con mínimo; desde el 8.º día otro importe para toda la estancia) y con los importes de ese día? Sí o no; si es no, indique la regla que vale.
+- Por qué hay que preguntarlo: Es un precio de venta único para todos los clientes, que solo fija Cristina. Las fuentes se contradicen: el 25/09 frente a las ofertas impresas con 3 días y el día 10. Además, el 08/10 Cristina dijo que los importes estaban pendientes. Una regla equivocada pondría precios de almacenaje erróneos en todas las importaciones aéreas.
 - Opciones: La del 25/09: 48 h libres; al superarlas, por día y por 100 kg o fracción desde la llegada; desde el 8.º día, otro importe para toda la estancia; con mínimo / La de las ofertas actuales: 3 días libres (4 si llega en viernes), cambio de importe el día 10 y variante si llega con DHL / Depende del handler o del cliente (indicar) / Mayor coste del proveedor + porcentaje (indicar)
-- Hoy en Odoo 17: Hoy las ofertas de importación aérea imprimen 3 días libres y otro importe desde el día 10 (con una variante si llega con DHL), y el programa de previsiones calcula lo mismo.
 - Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
+- Buscado en: docs/respuestas-cristina.md fila 7 (tres versiones, estado D); docs/especificacion-alm-venta.md; docs/preguntas-abiertas.md línea 33 (aprobada por Belal el 23/10); BossOdoo19/docs/agents/DECISIONS.md fila «Unified sell price: ALM only» (08/10: «values pending from Cristina»); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx IAB FOB (las ofertas actuales imprimen otra regla)
 
-**P43-D2 (ya abierta) · media · antes del 13/11/2026** — Para la venta de ALM, ¿qué peso se usa: el bruto, el tasable que figura en la AWB, o el tasable calculado (1 m³ = 167 kg)?
-
-- Por qué: El número de unidades de 100 kg cambia según el peso elegido, y con él el importe.
-- Opciones: Peso bruto / Peso tasable de la AWB / Peso tasable calculado (1 m³ = 167 kg)
-- Hoy en Odoo 17: Hoy el programa de previsiones cobra por 100 kg o fracción del peso tasable.
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P43-D3 (ya abierta) · media · antes del 13/11/2026** — En la venta de almacenaje, ¿un «día» es un periodo de 24 h desde la llegada, o un día natural?
-
-- Por qué: La regla no lo dice, y la compra a WFS está pendiente de la misma lectura.
-- Opciones: Periodos de 24 h desde la llegada / Días naturales
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P43-D4 (ya abierta) · media · antes del 13/11/2026** — ¿El mínimo de venta de ALM es por estancia o por día? ¿Se cobra aunque la mercancía salga dentro de las horas libres?
-
-- Por qué: La regla del 25/09 no da la unidad del mínimo.
-- Opciones: Por estancia, y no se cobra dentro de las horas libres / Por estancia, y se cobra también dentro de las horas libres / Por día
-- Hoy en Odoo 17: Hoy las ofertas aplican un mínimo por estancia.
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P43-D5 (ya abierta) · media · antes del 13/11/2026** — Para el umbral de «8 días o más», ¿el día de llegada cuenta como día 1? Si se cuentan periodos de 24 h, ¿son 8 periodos?
-
-- Por qué: Un día más multiplica el importe, porque el precio de larga estancia se aplica a toda la estancia.
-- Opciones: Sí, el día de llegada es el día 1 / No, se empieza a contar al día siguiente
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P43-D6 (ya abierta) · media · antes del 13/11/2026** — ¿Cuándo empieza y cuándo termina la estancia? En importación, ¿de la llegada (NOA) a la recogida? En exportación, ¿de la entrega al handler a la salida del vuelo?
-
-- Por qué: Así lo indicó en un correo del 25/09; la versión anterior usaba la entrada y la salida del almacén.
-- Opciones: Sí, así / Con otros eventos (indicar)
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P43-D7 (ya abierta) · media · antes del 13/11/2026** — ¿La regla de venta de ALM se aplica solo al aéreo o también al grupaje marítimo (LCL)? ¿En todos los aeropuertos o solo en Madrid y Barcelona?
-
-- Por qué: Según un correo del 28/09, ALM cubre aéreo y LCL, pero la regla no lo dice.
-- Opciones: Solo aéreo, en todos los aeropuertos / Solo aéreo, en Madrid y Barcelona / Aéreo y LCL
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11
-
-**P44 (ya abierta) · media · antes del 13/11/2026** — ¿Se cargan las tarifas de almacenaje especial del handler (frío, mercancía peligrosa, mercancía valiosa, animales vivos) para que la oferta las aplique según el tipo de carga?
-
-- Por qué: La tarifa de ALM de WFS que está cargada es solo para carga general.
-- Opciones: Sí, todas / Solo algunas (indicar) / No: se escriben a mano
-- Mientras tanto: Con carga especial, el coste se escribe a mano.
-- Bloquea: F11 · con Ángel
-
-**P44-B (ya abierta) · media · antes del 13/11/2026** — ¿Se crea un código propio para el almacén fuera del aeropuerto? Si se crea, ¿con qué unidades de cobro (palé, m³, entradas y salidas)?
-
-- Por qué: Lo pidió el 08/10 y forma parte de la pregunta P44. El IVA y las unidades se cierran con Ángel.
-- Opciones: Sí (indicar unidades) / No
-- Mientras tanto: No se crea ningún código sin aprobación.
-- Bloquea: F11 · con Ángel
-
-**P43-D12 (ya abierta) · baja · antes del 20/11/2026** — Si la estancia real dura más que la cotizada, ¿la venta queda fija y el exceso se refactura aparte con motivo, o se recalcula la venta?
-
-- Por qué: En Odoo 20 la venta nunca cambia sola.
-- Opciones: Venta fija y exceso refacturado con motivo / Se recalcula la venta
-- Mientras tanto: La venta no cambia sola; el exceso se puede refacturar como coste adicional con motivo.
-- Bloquea: F11 (no bloquea el inicio), F14
-
-**P43-D13 (ya abierta) · baja · antes del 20/11/2026** — La carga especial (frío, peligrosa, valiosa), ¿tiene su propia venta de ALM o sigue la misma regla?
-
-- Por qué: La regla de venta no habla de la carga especial.
-- Opciones: Misma regla / Venta propia (indicar) / Siempre tecleada
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11 (no bloquea el inicio), F14
-
-**P43-D14 (ya abierta) · baja · antes del 20/11/2026** — ¿Desde qué fecha vale la regla de venta de ALM, hasta cuándo y en qué moneda?
-
-- Por qué: En las pruebas del proyecto anterior se cargó desde el 25/09/2026, sin fecha de fin y en EUR, pero nunca se confirmó.
-- Opciones: Desde el 25/09/2026, sin fin, en EUR / Otra (indicar)
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11 (no bloquea el inicio), F14
-
-**P43-D8 (ya abierta) · baja · antes del 20/11/2026** — El mínimo de venta de ALM del 25/09 es menor que el mínimo que cobra WFS. ¿Se acepta vender por debajo del coste en estancias pequeñas, o la venta no puede bajar nunca del coste?
-
-- Por qué: Afecta al margen de los envíos pequeños, y por eso lo deciden usted y Ángel.
-- Opciones: Se acepta / La venta no baja nunca del coste
-- Mientras tanto: El sistema no propone venta de ALM: se teclea («pendiente de decisión»).
-- Bloquea: F11 (no bloquea el inicio), F14 · con Ángel
-
-### Etapa 2 Apertura
-**F0-C22 · media · antes del 11/11/2026** — Además de Abierto, En tránsito, Entregado y Operaciones cerradas, ¿quiere los estados «Llegado» y «Pendiente de cierre», como en Odoo 17?
-
-- Por qué: Los estados ordenan todo el ciclo y sus condiciones. Sin «Llegado» no se ve qué expedientes están en destino pendientes de aduana o de entrega.
-- Opciones: Añadir Llegado y Pendiente de cierre (como Odoo 17) / Añadir solo Llegado / Mantener los cuatro actuales
-- Hoy en Odoo 17: Hoy en Odoo 17 hay cinco etapas: Pendiente de salida, En tránsito, Llegado, Entregado y Pendiente de cierre.
-- Mientras tanto: Cuatro estados (más Cancelado) que se cambian sin ninguna condición («pendiente de decisión»).
-- Bloquea: F5, F7, F10, F11, F12
-
-**F0-C23 · media · antes del 11/11/2026** — ¿Cómo se asigna el operativo responsable de un expediente: a mano al abrirlo, o automáticamente por cliente y tráfico, como en Odoo 17?
-
-- Por qué: Sin operativo no hay cola de trabajo ni avisos por persona. Hoy el responsable es el comercial de la oferta.
-- Opciones: A mano al abrir el expediente / Automático por cliente y tráfico (tabla que mantiene operaciones) / Automático por tráfico, con excepciones por cliente
-- Hoy en Odoo 17: Hoy en Odoo 17 hay una tabla que asigna el operativo por cliente y tráfico, y el expediente guarda por separado el operativo y el KAM.
-- Mientras tanto: El responsable del expediente es el comercial de la oferta; la figura del operativo no existe («pendiente de decisión»).
-- Bloquea: F5, F10
-
-**F0-C24 · media · antes del 11/11/2026** — Para la importación marítima FCL, que es la primera que se va a construir, ¿valida esta lista de hitos, o la acorta? Antes de la salida: envío confirmado, instrucciones recibidas, booking emitido y confirmado, mercancía lista, recogida hecha, mercancía en puerto, documentos de aduana y poder recibidos, aduana presentada y despachada, instrucciones de embarque (SI) presentadas y buque salido. En tránsito: pre-alerta recibida y enviada, documentos de aduana recibidos, revisados y enviados, aduana autorizada y llegada a puerto. En destino: aduana presentada, levante, facturado, entrega gestionada y entregado. Después: facturas de proveedor recibidas y revisadas, y cobros y pagos hechos.
-
-- Por qué: Cada hito sería una tarea del operativo al abrir el expediente, y es lo que indica qué falta en cada envío.
-- Opciones: Valido la lista tal cual / Lista más corta (tacho los que sobran) / Otra lista (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 existen estas cuatro listas de subhitos (13, 9, 5 y 5 pasos). En un expediente reciente de 2026 estaban vacías, así que no consta que se sigan usando.
-- Mientras tanto: El expediente no tiene hitos ni tareas («pendiente de decisión»).
-- Bloquea: F5
-
-**F0-C25 · media · antes del 11/11/2026** — ¿Qué hitos son obligatorios, es decir, impiden pasar al estado siguiente si no están hechos?
-
-- Por qué: Separa la lista de ayuda de los controles de verdad. Demasiados hitos obligatorios frenarían al operativo.
-- Opciones: Ninguno: los hitos solo sirven de guía / Los que marque en la lista / Todos
-- Hoy en Odoo 17: Hoy en Odoo 17, al completar el último paso de cada lista, el expediente pasa a la etapa siguiente.
-- Mientras tanto: No hay hitos, y ningún cambio de estado tiene condiciones.
-- Bloquea: F5, F7, F10
-
-**F0-C26 · media · antes del 11/11/2026** — ¿Todos los hitos los hace el operativo del expediente, o algunos los hace otra persona (comercial, compras, administración)?
-
-- Por qué: Cada hito se asigna como tarea a una persona, así que hay que saber a quién.
-- Opciones: Todos el operativo / Algunos otra persona (indicar cuáles y quién)
-- Hoy en Odoo 17: Hoy en Odoo 17 la factura al cliente la prepara el operativo y la revisa administración, y las facturas de proveedor las registra administración.
-- Mientras tanto: El expediente no tiene tareas asignadas.
-- Bloquea: F5
-
-**F0-C27 · media · antes del 11/11/2026** — ¿Qué datos operativos debe tener todo expediente? Marque los que procedan: fecha de mercancía lista, fecha de booking, seguro (pedido, emitido o sin seguro), quién lleva el transporte, quién contrata el flete, fecha de entrega planificada y fecha de la última revisión.
-
-- Por qué: Sin ellos no se pueden calcular sus indicadores (de mercancía lista a salida, o llegados sin entrega planificada) ni los avisos de supervisión.
-- Opciones: Todos los de la lista / Solo algunos (indicar) / Añadir otros (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente tiene todos esos datos y guarda el historial de cambios de ETD y ETA.
-- Mientras tanto: Solo existen la ETD, la ETA y el historial de sus cambios; el resto queda «pendiente de decisión».
-- Bloquea: F5
-
-**M2-I (ya abierta) · media · antes del 11/11/2026** — Para grupajes y consolidaciones (un BL o AWB máster con varias houses y costes compartidos), ¿qué forma prefiere: un expediente máster con expedientes hijos, o un expediente con varias partidas dentro, como en Odoo 17?
-
-- Por qué: Si elige partidas, la aduana y los documentos tendrán que ir en la partida; por eso se diseñan desde ahora para poder moverlos. Consta una indicación suya del 17/09 (máster = expediente, house = partida), pero no se ha encontrado por escrito.
-- Opciones: Expediente máster con expedientes hijos / Partidas dentro del expediente (como Odoo 17) / Después del arranque; mientras tanto, un expediente por house con las referencias del máster
-- Hoy en Odoo 17: Hoy en Odoo 17 cada expediente tiene partidas (aduana, expedidor y destinatario, HBL, Incoterm, contenedores); casi todos tienen una sola.
-- Mientras tanto: Cada expediente equivale a una partida; no hay nada construido para consolidar.
-- Bloquea: F16, F6, F7 · con Belal
-
-**F0-C28 · media · antes del 13/11/2026** — ¿Qué hitos llevan la importación aérea y la exportación aérea (por ejemplo: NOA, recogida en el handler, entrega al handler, salida del vuelo)?
-
-- Por qué: La exportación aérea forma parte de la aceptación final y nunca se ha recorrido en Odoo 20.
-- Opciones: Indico la lista de cada una / La de marítimo adaptada (Belal la prepara y yo la reviso)
-- Hoy en Odoo 17: Hoy en Odoo 17 las listas de subhitos se hicieron para la importación marítima; no está comprobado cómo se usan en aéreo.
-- Mientras tanto: Sin hitos («pendiente de decisión»).
-- Bloquea: F11
-
-**F0-C29 · media · antes del 13/11/2026** — ¿Qué hitos llevan la exportación marítima FCL, el grupaje (LCL) y el transporte terrestre?
-
-- Por qué: Son tráficos que nunca se han ejecutado en Odoo 20.
-- Opciones: Indico la lista de cada uno / La de importación marítima adaptada (Belal la prepara y yo la reviso)
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay listas propias para exportación, grupaje ni terrestre: las de importación marítima se adaptan según el sentido.
-- Mientras tanto: Sin hitos («pendiente de decisión»).
-- Bloquea: F12
-
-**F0-C30 · baja · antes del 20/11/2026** — En una consolidación, ¿con qué base se reparten los costes del máster entre las houses: peso tasable, volumen, peso bruto o a partes iguales?
-
-- Por qué: Solo hace falta si se construye la consolidación.
-- Opciones: Peso tasable / Volumen / Peso bruto / A partes iguales / Según el caso (a mano)
-- Hoy en Odoo 17: Hoy en Odoo 17 existe una herramienta que reparte líneas entre partidas.
-- Mientras tanto: Se reparte a mano entre expedientes.
-- Bloquea: F16 · con Ángel
-
-### Etapa 3 Reserva y salida
-**F0-C31 · media · antes del 11/11/2026** — ¿Qué tiene que cumplirse para pasar un expediente a «En tránsito»?
-
-- Por qué: Hoy se puede marcar «En tránsito» sin fecha de salida, así que el estado no es fiable.
-- Opciones: Como en Odoo 17: ETD o ATD pasada, sin números de contenedor provisionales, que no sea preexpediente, seguro confirmado o emitido, y expedidor y destinatario reales / Solo la ATD informada / Distinto según el tráfico (indicar) / Otra lista (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 se exige la ETD o ATD pasada, ningún contenedor provisional, que no sea un preexpediente, el seguro confirmado o emitido, y expedidor y destinatario reales.
-- Mientras tanto: El paso a «En tránsito» no tiene condiciones («pendiente de decisión»).
-- Bloquea: F5
-
-**F0-C32 · media · antes del 11/11/2026** — ¿Es obligatorio tener la confirmación del proveedor (su referencia o su acuse en el pedido) antes de pasar a «En tránsito»?
-
-- Por qué: Hoy el paso «el proveedor confirma» no deja rastro en ningún pedido.
-- Opciones: Sí, en todos los pedidos / Solo en el transporte principal (naviera o aerolínea) / No: solo se anota
-- Mientras tanto: El pedido admite la referencia del proveedor, pero no se exige.
-- Bloquea: F5, F8
-
-**F0-C33 · media · antes del 11/11/2026** — ¿Valida un catálogo fijo de tipos de evento del envío? Propuesta: booking enviado y confirmado, pre-alerta recibida y enviada, borradores aprobados, documentos de aduana enviados, despacho, levante, entrega programada, entrega hecha, vacío devuelto, retraso, incidencia, aviso de llegada, y entrada y salida de almacén.
-
-- Por qué: Con tipos fijos, los eventos quedan ligados a las fechas, se publican igual en el portal y sirven para los indicadores.
-- Opciones: Valido la lista / Con cambios (indicar)
-- Mientras tanto: Los eventos son texto libre (por ejemplo «Salida» o «Booking confirmado») y no están ligados a las fechas.
-- Bloquea: F5
-
-**F0-C34 · media · antes del 11/11/2026** — ¿Qué tipos de evento se publican por defecto al cliente en el portal? El operativo podrá cambiarlo en cada caso.
-
-- Por qué: Decide qué ve el cliente en «Mis envíos» sin trabajo extra del operativo.
-- Opciones: Salida, llegada, levante y entrega / Ninguno: siempre a mano / Otra lista (indicar)
-- Mientras tanto: No se publica nada por defecto: el personal publica a mano cada evento.
-- Bloquea: F5, F6
-
-**F0-C35 · media · antes del 11/11/2026** — ¿En qué hitos se prepara un aviso al cliente o al agente (por ejemplo: levante, entrega programada, entrega hecha, cambio de ETD o ETA), y a quién va dirigido?
-
-- Por qué: Sin esto se perdería lo que hoy se avisa al agente. Durante las pruebas no se envía ningún correo: el aviso quedaría como tarea con el correo preparado.
-- Opciones: Como en Odoo 17: al agente en el levante, la entrega programada y la entrega hecha / También al cliente (indicar hitos) / Ninguno
-- Hoy en Odoo 17: Hoy en Odoo 17, solo en los tráficos de agente, se crea una tarea con un correo preparado para el agente en el levante, la entrega programada y la entrega hecha; además, cada cambio de fechas deja una nota.
-- Mientras tanto: No hay avisos, y el correo saliente está desactivado durante las pruebas.
-- Bloquea: F5, F7
-
-**F0-C36 · media · antes del 13/11/2026** — En exportación, ¿qué datos necesita el expediente? Marque los que procedan: fechas de corte (documentos, instrucciones de embarque (SI), VGM, entrega del contenedor lleno y grupaje), tipo de BL y forma de liberación (original, SWB, télex) y BL máster verificado.
-
-- Por qué: Sin cortes ni SI/VGM no se puede llevar una exportación marítima.
-- Opciones: Todos los de la lista / Solo algunos (indicar) / Añadir otros (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente tiene esos cortes y la marca de BL máster verificado, y hay un aviso para los cortes y fechas que faltan.
-- Mientras tanto: Estos datos no existen; la exportación marítima no se ha ejecutado nunca en Odoo 20.
-- Bloquea: F12
-
-### Etapa 4 Documentos
-**F0-C37 · media · antes del 11/11/2026** — ¿Valida esta lista de tipos de documento del expediente? Booking, CR, factura comercial, packing list, certificados, orden de aduana, despacho, MBL, HBL, MAWB, HAWB, aviso de llegada, pre-DUA, DUA, factura, factura de proveedor, Entréguese, Admítase, levante, DAE, oferta al cliente, oferta de proveedor, H1 y orden de transporte.
-
-- Por qué: Sin tipos no se puede filtrar, ni decidir qué llega al portal, ni exigir un documento en un paso (por ejemplo, el levante antes de entregar).
-- Opciones: Valido la lista / Con cambios (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 existe esta lista (23 tipos más la orden de transporte), pero casi ningún documento reciente está clasificado.
-- Mientras tanto: Los documentos se adjuntan al expediente sin tipo.
-- Bloquea: F6
-
-**F0-C38 · media · antes del 11/11/2026** — ¿Qué documentos son obligatorios en cada etapa (por ejemplo, el levante antes de «Entregado», o el BL antes de «En tránsito»)?
-
-- Por qué: De esto dependen las condiciones de los estados, las del cierre y la lista «Pendiente».
-- Opciones: Indico documento y etapa / Ninguno es obligatorio
-- Mientras tanto: Ningún documento es obligatorio.
-- Bloquea: F6, F7, F10
-
-**F0-C39 · media · antes del 11/11/2026** — ¿Qué documentos ve el cliente en el portal: solo los que el operativo publica uno a uno (como ahora), o algunos tipos que se publican siempre (por ejemplo HBL, aviso de llegada, DUA y levante, y su factura)?
-
-- Por qué: El cliente solo debe ver los de su propio envío; los documentos del máster pueden llevar datos de otros clientes.
-- Opciones: Solo los que publica el operativo / Algunos tipos siempre (indicar)
-- Mientras tanto: Solo lo que el personal publica a mano, y solo del envío del propio cliente.
-- Bloquea: F6
-
-**F0-C40 · media · antes del 11/11/2026** — ¿Quiere pedir desde el expediente documentos al cliente o al agente (factura comercial, packing list, certificados), con un enlace de subida y una fecha límite? Si es así, ¿qué documentos y en qué momento?
-
-- Por qué: Hoy estos documentos se reclaman fuera de Odoo y el expediente no muestra qué falta. El envío de los correos se activaría en el arranque.
-- Opciones: Sí (indicar documentos y momento) / No: se siguen pidiendo fuera de Odoo
-- Mientras tanto: No existe; los documentos se piden fuera de Odoo.
-- Bloquea: F6
-
-**F0-C42 · media · antes del 11/11/2026** — Además de la orden de transporte, ¿cuáles de estos documentos debe emitir Odoo 20 para el arranque, y en qué orden: confirmación de booking, instrucciones de embarque (SI), pre-alerta, delivery order, carátula del expediente y listado de mercancía?
-
-- Por qué: Cada documento es trabajo de desarrollo; sin un orden de prioridad no cabe todo antes del 1/1.
-- Opciones: Indico la lista en orden de prioridad / Ninguno para el arranque
-- Hoy en Odoo 17: Hoy en Odoo 17 salen del sistema la orden de transporte, el HBL, la AWB y su etiqueta, el manifiesto de carga y el listado de mercancía.
-- Mientras tanto: Ninguno de esos documentos existe en Odoo 20; se hacen fuera.
-- Bloquea: F7, F12
-
-**F0-C43 · baja · antes del 11/11/2026** — ¿Hace falta para el arranque el seguimiento automático con navieras y aerolíneas, o basta con registrar los eventos a mano y a partir de las fechas?
-
-- Por qué: No existe ni en Odoo 17 ni en Odoo 20, y el plan lo deja fuera del 1/1.
-- Opciones: Basta a mano (fuera del 1/1) / Hace falta (indicar navieras o aerolíneas)
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay seguimiento automático.
-- Mientras tanto: Los eventos se registran a mano o a partir de las fechas.
-- Bloquea: F6
-
-**P10-A (ya abierta) · media · antes del 11/11/2026** — En el portal, ¿una empresa de un grupo puede ver los envíos de otra entidad legal del mismo grupo (por ejemplo, de su filial)?
-
-- Por qué: Hoy cada contacto solo ve los envíos de su propia empresa. Abrirlo obliga a definir los grupos.
-- Opciones: No (como ahora) / Sí, cuando BOSS lo conceda para ese grupo
-- Mientras tanto: No: cada contacto ve solo los envíos de su propia empresa.
-- Bloquea: F6 · con Belal
-
-**P10-B (ya abierta) · media · antes del 11/11/2026** — En el portal, ¿qué puede ver el expedidor o el destinatario que no es el ordenante del envío?
-
-- Por qué: Hoy solo el ordenante ve el envío.
-- Opciones: Nada (como ahora) / Solo el seguimiento (fechas y eventos) / El seguimiento y los documentos publicados
-- Mientras tanto: Nada: solo el ordenante ve el envío.
-- Bloquea: F6
-
-**F0-C44 · media · antes del 13/11/2026** — ¿BOSS seguirá emitiendo desde Odoo 20 las AWB (house y máster) y sus etiquetas? Si es así, ¿con qué datos de los bultos (piezas, medidas, peso, clase de tarifa, mercancía peligrosa, valor declarado)?
-
-- Por qué: Sin esos datos bien ordenados no se puede generar la AWB. Si no hace falta, se ahorra ese trabajo.
-- Opciones: Sí, con esos datos / Sí, con otros datos (indicar) / No: se hacen fuera de Odoo
-- Hoy en Odoo 17: Hoy en Odoo 17 se emiten AWB house y máster (unas 200) y sus etiquetas; a veces la descripción de la carga va escrita a mano en la plantilla.
-- Mientras tanto: No existe en Odoo 20.
-- Bloquea: F11
-
-**F0-C45 · media · antes del 13/11/2026** — ¿BOSS emite sus propios HBL como NVOCC y el manifiesto de carga? ¿Deben salir de Odoo 20 desde el 1/1?
-
-- Por qué: Depende también de cómo se lleven las consolidaciones.
-- Opciones: Sí, desde el 1/1 / Sí, pero después del arranque / No
-- Hoy en Odoo 17: Hoy en Odoo 17 se emiten HBL (unos 280) y manifiestos de carga.
-- Mientras tanto: No existe en Odoo 20.
-- Bloquea: F12, F16
-
-### Etapa 5 Destino y aduana
-**F0-C47 · media · antes del 11/11/2026** — ¿Qué datos de aduana debe registrar el expediente? Marque los que procedan: número de DUA, canal (verde, naranja, rojo), fecha de admisión, fecha de levante, fecha de envío de documentos al agente de aduanas, tipo de garantía y si la aduana la lleva BOSS.
-
-- Por qué: El despacho es la mayor parte de «En tránsito» y «Llegado». Sin el levante registrado no puede haber condición de entrega ni aviso al agente.
-- Opciones: Todos los de la lista / Solo algunos (indicar) / Añadir otros (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 la partida tiene el DUA y su fichero, canal, admisión, levante, documentos enviados, retraso de aduana, tipo de garantía y estado aduanero.
-- Mientras tanto: Solo existen la referencia del DUA y el agente de aduanas («pendiente de decisión»).
-- Bloquea: F7
-
-**F0-C48 · media · antes del 11/11/2026** — ¿Qué estados de aduana quiere seguir: pendiente, documentos enviados, presentado y levante, u otros?
-
-- Por qué: Permiten ver en qué punto está cada despacho y avisar a tiempo.
-- Opciones: Pendiente, documentos enviados, presentado y levante / Los de Odoo 17: pendiente, documentos enviados y gestionado / Otros (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el estado aduanero puede ser Pendiente, Documentos enviados o Gestionado.
-- Mientras tanto: No hay estado de aduana.
-- Bloquea: F7
-
-**F0-C49 · media · antes del 11/11/2026** — Si existe el estado «Llegado», ¿qué tiene que cumplirse para pasar a él: que haya pasado la ATA, como en Odoo 17, u otra cosa?
-
-- Por qué: Solo aplica si decide tener el estado «Llegado».
-- Opciones: ATA informada y ya pasada / Otra condición (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17, si la ATA está vacía se copia la ETA, y se exige que la ATA haya pasado.
-- Mientras tanto: El estado «Llegado» no existe.
-- Bloquea: F7
-
-**F0-C50 · media · antes del 11/11/2026** — ¿Debe Odoo 20 emitir el aviso de llegada al cliente? Si es así, ¿con qué datos?
-
-- Por qué: Es un documento operativo que hoy se hace fuera del sistema.
-- Opciones: Sí (indicar los datos o enviar un ejemplo) / No para el arranque
-- Hoy en Odoo 17: Hoy en Odoo 17 el aviso de llegada se guarda como documento, pero no lo emite el sistema.
-- Mientras tanto: No existe en Odoo 20.
-- Bloquea: F7
-
-### Etapa 6 Entrega y contenedores
-**F0-C51 · media · antes del 11/11/2026** — ¿Qué tiene que cumplirse para pasar a «Entregado»? Por ejemplo: levante cuando BOSS lleva la aduana, fecha de descarga en importación, y fecha y hora de entrega informadas y ya pasadas cuando BOSS hace el transporte.
-
-- Por qué: Hoy se puede marcar «Entregado» sin ATA, sin entrega y sin levante, así que el estado no sirve para el cierre. Si además tiene que estar facturado lo deciden Ángel y usted aparte.
-- Opciones: Todo lo anterior (como Odoo 17, sin contar la factura) / Solo la fecha de entrega / Distinto según el tráfico (indicar) / Otra lista (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 se exige estar facturado, la fecha de descarga en importación (en aéreo se toma la ETA), el levante si la aduana la lleva BOSS y la fecha de entrega ya pasada, salvo que no haya transporte.
-- Mientras tanto: El paso a «Entregado» no tiene condiciones («pendiente de decisión»).
-- Bloquea: F7
-
-**F0-C53 · media · antes del 11/11/2026** — ¿Qué debe llevar la orden de transporte al camionero? Marque lo que proceda: direcciones completas de recogida y entrega, persona de contacto, franja horaria, contenedores con precinto, terminal o depósito (Entréguese/Admítase), notas de entrega, peso y bultos, y referencias.
-
-- Por qué: Es el documento operativo más usado. Sin él, el tramo terrestre no se puede ordenar desde Odoo 20.
-- Opciones: Todo lo de la lista / Solo algunos (indicar) / Añadir otros (envío una OT de ejemplo)
-- Hoy en Odoo 17: Hoy en Odoo 17 la OT (más de 1.700 emitidas) lleva origen y destino con dirección, contenedores con precinto, fecha y hora de entrega, notas, referencias, expedidor y destinatario, y días de retraso.
-- Mientras tanto: El pedido al transportista solo imprime nombre y ciudad de recogida y de entrega; la OT se hace fuera de Odoo 20.
-- Bloquea: F7
-
-**F0-C54 · media · antes del 11/11/2026** — ¿La orden de transporte se emite desde el pedido de compra al transportista, o desde el expediente?
-
-- Por qué: Decide dónde la busca el operativo y cómo se archiva.
-- Opciones: Desde el pedido al transportista / Desde el expediente
-- Hoy en Odoo 17: Hoy en Odoo 17 la OT es un documento propio, ligado al expediente o a la partida.
-- Mientras tanto: La OT no existe en Odoo 20.
-- Bloquea: F7
-
-**F0-C55 · media · antes del 11/11/2026** — ¿Con cuántos días de antelación al último día libre de un contenedor hay que avisar al operativo para que lo devuelva? ¿Y a quién más?
-
-- Por qué: Hoy la demora solo aparece cuando ya es un coste.
-- Opciones: (indicar días) al operativo / (indicar días) al operativo y al comercial
-- Mientras tanto: No hay último día libre ni aviso; la demora solo se ve al recalcular el coste.
-- Bloquea: F7
-
-### Etapa 7 Proveedores
-**P33 (ya abierta) · media · antes del 11/11/2026** — ¿Qué costes se piden al proveedor con pedido de compra, y cuáles se registran sin pedido (como los derechos e IVA del DUA)?
-
-- Por qué: Ya funciona así; falta su ratificación y la de Ángel.
-- Opciones: Como ahora: pedido para los servicios de proveedor y suplidos sin pedido / Otra regla (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 no se usan pedidos de compra: se registran previsiones y después la factura del proveedor.
-- Mientras tanto: Pedido para los servicios de proveedor y suplidos sin pedido, pendiente de ratificación.
-- Bloquea: F8 · con Ángel
-
-### Etapa 8 Factura al cliente
-**F0-C56 · media · antes del 13/11/2026** — Cuando un expediente se factura a varias partes (por ejemplo, el flete al agente y los gastos locales al destinatario), ¿cómo prefiere hacerlo: con un segundo pedido de venta dentro del mismo expediente, o indicando en cada línea a quién se factura?
-
-- Por qué: Hoy un expediente factura a un solo cliente; otro pagador obliga a hacer otra oferta.
-- Opciones: Segundo pedido de venta en el mismo expediente / Indicar en cada línea a quién se factura
-- Hoy en Odoo 17: Hoy en Odoo 17 cada línea de venta lleva su entidad y se hace una factura por entidad.
-- Mientras tanto: Un solo cliente por expediente; otro pagador necesita otra oferta.
-- Bloquea: F13
-
-**F0-C57 · media · antes del 13/11/2026** — ¿El expediente debe registrar si el flete es prepaid o collect? ¿Y eso decide a quién se factura el flete?
-
-- Por qué: Sin ese dato no se puede facturar desde el expediente el flete collect ni la nota de cargo al agente.
-- Opciones: Sí, y decide a quién se factura / Sí, solo como dato / No
-- Hoy en Odoo 17: Hoy en Odoo 17 el expediente guarda si es prepaid o collect y a quién se factura.
-- Mientras tanto: Ese dato no existe.
-- Bloquea: F12, F13
-
-**F0-C58 · media · antes del 13/11/2026** — ¿Cómo se liquida el profit share con el agente: se le vende, va como línea negativa en la factura al agente ordenante, el abono del agente se registra como ingreso, o depende del caso?
-
-- Por qué: Sin esto no se puede liquidar un expediente de agente: el reparto no aparece ni en la venta, ni en el margen, ni en el resumen.
-- Opciones: Según el caso, como en Odoo 17 (los cuatro casos) / Solo algunos de esos casos (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 se dan cuatro casos: factura del agente de origen con profit share, abono del agente, factura de BOSS al agente con el profit share como ingreso, y línea negativa en la factura al agente ordenante.
-- Mientras tanto: El profit share solo se compra, nunca se vende. No hay ningún expediente de agente en Odoo 20.
-- Bloquea: F13
-
-**F0-C59 · media · antes del 13/11/2026** — ¿Hace falta una factura que agrupe varios expedientes (por ejemplo, la facturación periódica a un cliente)?
-
-- Por qué: Cambia cómo se hace la factura y cómo se imprime.
-- Opciones: Sí (indicar para qué clientes) / No: una factura por expediente
-- Hoy en Odoo 17: Hoy en Odoo 17 existe una facturación masiva que junta varios expedientes.
-- Mientras tanto: Una factura por expediente.
-- Bloquea: F13
-
-### Etapa 9 Cobros y pagos
-**P30 (ya abierta) · media · antes del 11/11/2026** — Su requisito escrito dice que no se pague ni se contabilice una factura de proveedor si el servicio no está facturado al cliente. ¿Qué quería evitar: el pago, la contabilización o las dos cosas? ¿Y siguen valiendo las excepciones del coste que asume BOSS y del flete pagado por adelantado a un agente?
-
-- Por qué: El alcance contable lo decide Ángel, pero el requisito es suyo: hace falta saber qué quería decir antes de que él lo ratifique.
-- Opciones: Solo el pago (como ahora), con esas excepciones / La contabilización y el pago, con esas excepciones / Solo avisar, sin bloquear / Otra (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el pago no se bloquea por este motivo.
-- Mientras tanto: La factura de proveedor se puede contabilizar, pero su pago queda bloqueado hasta facturar al cliente (propuesta aprobada por Belal el 23/10, pendiente de ratificar por Ángel y por usted).
-- Bloquea: F8 · con Ángel
-
-### Etapa 10 Cierre operativo
-**F0-C60 · media · antes del 11/11/2026** — ¿Qué tiene que cumplirse para el cierre operativo? Por ejemplo: estar «Entregado», hitos y documentos obligatorios hechos, toda la venta facturada, ningún aviso de margen pendiente y valoraciones hechas.
-
-- Por qué: Hoy un expediente se cierra sin condiciones y sigue siendo editable, así que el cierre no sirve para el cierre de mes.
-- Opciones: Todo lo anterior (como Odoo 17) / Solo estar Entregado y con la venta facturada / Otra lista (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 el cierre operativo exige estar Entregado o Pendiente de cierre, toda la venta facturada, ningún aviso de margen sin desbloquear y las valoraciones hechas.
-- Mientras tanto: El cierre operativo es un botón sin condiciones («pendiente de decisión»).
-- Bloquea: F10
-
-**F0-C61 · media · antes del 11/11/2026** — ¿Quién puede hacer el cierre operativo, y quién puede reabrir o cambiar datos de un expediente cerrado?
-
-- Por qué: Después del cierre, los datos del envío tienen que quedar fijos, porque de ellos dependen los costes y la comisión.
-- Opciones: Cierra el operativo y solo el gestor puede reabrir / Cierra el operativo o el gestor, y solo yo puedo reabrir / Otra (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 cierra el operativo del expediente (o dos usuarios autorizados) y, una vez cerrado, solo informática puede modificarlo.
-- Mientras tanto: Cualquiera puede cerrar y reabrir, y un expediente cerrado sigue siendo editable.
-- Bloquea: F10
-
-**F0-C62 · media · antes del 11/11/2026** — ¿Quiere un cierre comercial, aparte del operativo, que haga el comercial?
-
-- Por qué: Odoo 17 separa los dos cierres; Odoo 20 tiene un cierre operativo y un cierre financiero.
-- Opciones: Sí, como en Odoo 17 / No: bastan el cierre operativo y el financiero
-- Hoy en Odoo 17: Hoy en Odoo 17 hay un cierre comercial aparte que hace el comercial.
-- Mientras tanto: No existe el cierre comercial.
-- Bloquea: F10
-
-**F0-C63 · media · antes del 11/11/2026** — ¿En qué plazo debe cerrarse operativamente un expediente entregado: una semana después de la entrega, a final del mes de la fecha importante, u otro?
-
-- Por qué: Aparece en su documento de requisitos, pero sin confirmar. De esto dependen los avisos de expedientes sin cerrar.
-- Opciones: Una semana después de la entrega / A final del mes de la fecha importante / Otro (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 un aviso señala los expedientes entregados que llevan más de 14 días sin cerrar, y otro a final de mes pide facturar y cerrar.
-- Mientras tanto: No hay plazo ni aviso.
-- Bloquea: F10
-
-**F0-C64 · media · antes del 11/11/2026** — ¿Qué avisos de supervisión quiere, y con qué umbrales? Por ejemplo: ETA pasada sin ATA, expediente sin revisar durante N días, cortes, mercancía lista, ETD o seguro sin informar, y venta pendiente de facturar a final de mes.
-
-- Por qué: Sin avisos, los expedientes atascados pasan desapercibidos. La propuesta es que en Odoo 20 sean tareas para el operativo, sin correo.
-- Opciones: Los de Odoo 17, con sus umbrales / Solo algunos (indicar cada uno con su umbral)
-- Hoy en Odoo 17: Hoy en Odoo 17 llegan correos con: avisos de cortes, mercancía lista, ETD y seguro (lunes, miércoles y viernes); expedientes sin revisar más de 2 días laborables (7 para el comercial); entregados sin cerrar más de 14 días; pendientes de facturar y de cerrar a final de mes; y un resumen semanal de cierres.
-- Mientras tanto: No hay avisos programados.
-- Bloquea: F10
-
-**F0-C65 · media · antes del 11/11/2026** — ¿Quién recibe cada aviso: el operativo, el comercial (KAM), usted en copia?
-
-- Por qué: Cada aviso se asigna como tarea a una persona.
-- Opciones: El operativo, conmigo en copia / El operativo y el comercial / Otra (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 los avisos llegan por correo a cada operativo; el de fin de mes va con copia a Ángel, y el resumen semanal de cierres va al KAM con copia a usted.
-- Mientras tanto: No hay avisos.
-- Bloquea: F10
-
-**F0-C66 · baja · antes del 11/11/2026** — ¿Hay que valorar a clientes y proveedores al cerrar el expediente, como en Odoo 17?
-
-- Por qué: Si se mantiene, pasa a ser un requisito del cierre; si no, queda fuera del plan.
-- Opciones: Sí, obligatorio para cerrar / Sí, opcional / No
-- Hoy en Odoo 17: Hoy en Odoo 17 el cierre operativo exige las valoraciones desde el 01/03/2025.
-- Mientras tanto: No existen valoraciones.
-- Bloquea: F10
-
-**F0-C67 · baja · antes del 11/11/2026** — ¿Las incidencias del envío deben registrar coste, horas, causa, acción correctora y estado, para poder restarlas del margen?
-
-- Por qué: Permite medir las incidencias y lo que cuestan. Si no lo pide, queda fuera del plan.
-- Opciones: Sí / No: basta una nota
-- Hoy en Odoo 17: Hoy en Odoo 17 la incidencia guarda coste, horas, solución, acción preventiva, departamento y estado.
-- Mientras tanto: Las incidencias son un evento de texto libre.
-- Bloquea: F10
-
-### Etapa 11 Cierre financiero y de mes
-**F0-C68 · media · antes del 11/11/2026** — ¿Con qué criterios quiere ver la rentabilidad de varios expedientes juntos: por mes, cliente, comercial, operativo o tráfico?
-
-- Por qué: Hoy el margen solo se ve expediente por expediente. El informe se construye junto con el cierre.
-- Opciones: Por todos esos criterios / Solo por algunos (indicar)
-- Mientras tanto: Las cifras se ven en cada expediente, y el análisis contable solo incluye lo contabilizado.
-- Bloquea: F10 · con Ángel
-
-### Etapa P Proyecto y arranque
-**F0-C69 · alta · antes del 30/10/2026** — Si no da tiempo a todo antes del 1/1, ¿qué tráficos tienen que estar en Odoo 20 desde el 1/1 y cuáles pueden seguir unas semanas en Odoo 17: expedientes de agente (profit share, fletes collect, varios pagadores), exportación marítima, grupaje (LCL), terrestre y consolidaciones?
-
-- Por qué: Con un solo desarrollador el plan completo no cabe antes del 1/1. Belal decide la capacidad y necesita saber qué tráficos son imprescindibles para el arranque.
+**F0-C69** — ¿Qué tiene que funcionar en Odoo 20 el 1/1/2027: solo importación marítima FCL y aéreo (importación y exportación), mientras agentes (profit share, collect, varios pagadores), exportación marítima, LCL, terrestre, consolidaciones y clientes de almacén siguen unas semanas en Odoo 17? Sí / No (indicar cuáles más son imprescindibles el 1/1).
+- Por qué hay que preguntarlo: Decide qué envíos reales no podrán llevarse en Odoo 20 el 1/1 y obliga a operaciones a trabajar con dos sistemas. Si se elige mal, el 2 de enero habrá tráficos sin sistema (o con facturación en un Odoo 17 que contabilidad ya no usa). Solo Cristina sabe qué volumen y qué clientes pesan en cada tráfico, y Belal necesita la respuesta antes del 30/10 para planificar.
 - Opciones: Todos tienen que estar en Odoo 20 el 1/1 / Importación marítima FCL y aéreo el 1/1; el resto puede seguir unas semanas en Odoo 17 / Otra combinación (indicar)
 - Mientras tanto: No está decidido qué tráficos entran antes del 1/1. El orden del plan pone primero la importación marítima FCL y el aéreo; ningún tráfico queda fuera por suposición.
-- Bloquea: F0, F12, F13, F16 · con Belal
+- Buscado en: docs/plan-expediente-completo.md l.78-87 (≈792 h frente a ≈270 h); docs/decisiones-f0.md l.1539-1552 y F0-B11/B13/B17 (l.1683-1731); docs/preguntas-abiertas.md l.272 (F0-A42: Odoo 20 único sistema contable desde el 1/1). Sin respuesta en Nuevo Odoo.xlsx ni en Odoo 19
 
-**F0-C70 · alta · antes del 30/10/2026** — Los clientes de almacén (entradas, palés, almacenaje mensual), ¿deben llevarse en Odoo 20 desde el 1/1, o siguen en Odoo 17?
-
-- Por qué: El almacén está fuera del plan actual. Si tiene que entrar el 1/1, es trabajo nuevo y cambia la capacidad.
-- Opciones: Siguen en Odoo 17 por ahora / Tienen que estar en Odoo 20 el 1/1
-- Hoy en Odoo 17: Hoy en Odoo 17 las entradas de almacén crean previsiones de compra y de venta, y hay un recordatorio mensual de almacenaje.
-- Mientras tanto: Fuera del plan; la gestión de almacén no está instalada en Odoo 20.
-- Bloquea: F0, F15 · con Belal
-
-**F0-C71 · media · antes del 13/11/2026** — ¿Quién de operaciones repite cada prueba con envíos reales: importación marítima FCL, importación y exportación aéreas, exportación marítima y terrestre, y la prueba comercial?
-
-- Por qué: La aceptación de cada tráfico la tienen que dar las personas de BOSS antes del 1/12.
-- Opciones: Indico persona o papel para cada prueba
-- Mientras tanto: Las pruebas no tienen responsable asignado.
-- Bloquea: F14
-
-**F0-C72 · media · antes del 13/11/2026** — ¿Qué cuenta como «envío real representativo» para dar por buena una prueba (por ejemplo, un cliente migrado, una naviera con tarifa aprobada y un caso de los últimos meses)?
-
-- Por qué: Evita dar por buena una prueba hecha solo con datos de demostración.
-- Opciones: Lo del ejemplo / Otro criterio (indicar)
-- Mientras tanto: Las pruebas se hacen con registros de prueba, sin un criterio de envío representativo.
-- Bloquea: F14
-
-**F0-C73 · media · antes del 20/11/2026** — ¿Qué expediente de Odoo 17 cuenta como «abierto» el 1/1 y pasa a Odoo 20: todos los no cerrados, o solo los que aún no han llegado (pendientes de salida y en tránsito)?
-
-- Por qué: Sin esto, el primer día los envíos en curso no tendrían expediente en Odoo 20.
-- Opciones: Todos los no cerrados de 2026 / Solo los pendientes de salida y en tránsito; el resto se termina en Odoo 17 / Otro criterio (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 hay entre 500 y 1.000 expedientes pendientes de salida, menos de 100 en tránsito y más de 200 en cada una de las demás etapas, incluidos algunos antiguos sin cerrar.
-- Mientras tanto: No se migra ningún expediente hasta que usted decida.
-- Bloquea: F15 · con Belal
-
-**F0-C74 · media · antes del 20/11/2026** — De cada expediente abierto que pase a Odoo 20, ¿qué datos deben llegar: etapa, partes, contenedores, referencias, fechas y servicios pendientes de comprar o de facturar? ¿Falta o sobra algo?
-
-- Por qué: Fija el alcance de la migración y cómo se comprueba después contra Odoo 17.
-- Opciones: Todo lo de la lista / Menos (indicar) / Más (indicar)
-- Mientras tanto: No se migra ningún expediente hasta que usted decida.
-- Bloquea: F15 · con Belal
-
-**P36 (ya abierta) · media · antes del 20/11/2026** — A partir del 1/1/2027, ¿los expedientes nuevos se numeran desde E270001, o se continúa la numeración de Odoo 17? En ningún caso se puede repetir un número de Odoo 17.
-
-- Por qué: Las pruebas han gastado números: si no se cambia nada, el primer expediente de 2027 sería el E270109, y los E26 de Odoo 20 coinciden con los de Odoo 17.
-- Opciones: E27 desde el 0001 / Continuar la numeración de Odoo 17 / Otra (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 los expedientes se numeran con E, el año y 4 cifras (por ejemplo E261280).
-- Mientras tanto: Numeración E26xxxx de pruebas; el cambio se hace en el arranque.
-- Bloquea: F15 · con Belal
-
-## Belal
-### Etapa 0 Partes y datos maestros
-**F0-B01 · alta · antes del 30/10/2026** — ¿Desde qué antigüedad de actividad se migra un contacto? Los demás se consultarían solo en Odoo 17.
-
-- Por qué: Hay unos 21.600 contactos activos y no se ha medido cuántos tienen uso reciente; migrarlos todos alarga la carga y la limpieza de duplicados. Bloquea la carga de contactos (F2).
-- Opciones: Con actividad desde el 1/1/2025 / Con actividad desde el 1/1/2024 / Todos los activos, sin límite de antigüedad / Otra fecha (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 hay expedientes de las series E21 a E26. No se ha medido cuántos contactos tienen actividad reciente.
-- Mientras tanto: No se migra nada. El histórico sigue consultable en Odoo 17 y el criterio figura como «pendiente de decisión».
-- Bloquea: F2, F15
-
-**R-A4 (ya abierta) · alta · antes del 30/10/2026** — ¿Qué contactos de Odoo 17 se pasan a Odoo 20 para el arranque (qué tipos de contacto) y van con sus direcciones de entrega y recogida (almacenes)?
-
-- Por qué: Sin clientes, agentes, navieras, transportistas y agentes de aduanas reales no se puede abrir ningún expediente real; hoy boss20 solo tiene 2 clientes y 8 proveedores reales. La oferta elige la entrega entre las direcciones del destinatario y la recogida entre las del expedidor, y el transporte terrestre se tarifica según esa dirección. Bloquea la carga de contactos (F2), la operación en pruebas (F14) y el arranque (F15).
-- Opciones: Todos los tipos con actividad (clientes, proveedores, agentes, cliente + proveedor, expedidores y destinatarios españoles y extranjeros, acreedores), con todas sus direcciones de entrega y recogida / Solo clientes, proveedores, agentes y transportistas, con sus direcciones; expedidores, destinatarios y acreedores se crean cuando hagan falta / Solo clientes, proveedores, agentes y transportistas, sin direcciones: las direcciones se crean al hacer cada oferta / Otra selección (indicar qué tipos y si van con sus direcciones)
-- Hoy en Odoo 17: Hoy en Odoo 17 hay unos 21.600 contactos activos. El tipo se marca con 8 valores (Pendiente, Cliente, Agente, Proveedor, Cliente + Proveedor, Shipper/Consignee extranjero, Shipper/Consignee español y Acreedor) y con casillas de rol (agente, transportista, agente de aduanas, camionero, aerolínea, expedidor/destinatario, proveedor).
-- Mientras tanto: No se carga ningún contacto ni dirección de Odoo 17. boss20 sigue con los contactos dados de alta a mano, las direcciones se crean desde la oferta y la migración figura como «pendiente de decisión de Belal».
-- Bloquea: F2, F14, F15
-
-**F0-B02 · alta · antes del 04/11/2026** — Los contactos de Odoo 17 que en realidad son lugares (ciudades o códigos postales con el tipo «Pendiente»), ¿se dejan fuera de la migración?
-
-- Por qué: Hay lugares mezclados con empresas: si se migran, ensucian la búsqueda de clientes y proveedores en las ofertas. Afecta a la carga de contactos (F2).
-- Opciones: Sí, se excluyen todos / Se revisan uno a uno antes de decidir / Se migran igual
-- Hoy en Odoo 17: Hoy en Odoo 17 hay contactos tipo lugar con el tipo «Pendiente», por ejemplo «338 - Huai An City» o «08510 - RODA DE TER».
-- Mientras tanto: No se carga ninguno. La lista de contactos tipo lugar se prepara solo para revisarla.
-- Bloquea: F2
-
-**F0-B04 · alta · antes del 04/11/2026** — ¿Se migran desde Odoo 17 las cuentas bancarias de los proveedores?
-
-- Por qué: Sin la cuenta bancaria del proveedor no se pueden preparar pagos ni remesas desde Odoo 20. Son datos sensibles y Ángel tiene que estar de acuerdo con la carga. Bloquea F2 y después los pagos (F8).
-- Opciones: Sí, de todos los proveedores migrados / Solo de los proveedores con facturas en 2026 / No; se dan de alta a mano la primera vez que se paga
-- Hoy en Odoo 17: Hoy en Odoo 17 una automatización impide contabilizar la factura de un proveedor que cobra por transferencia o remesa si no tiene cuenta bancaria. No está verificado, pero las remesas parecen hacerse fuera de Odoo.
-- Mientras tanto: No se carga ninguna cuenta bancaria. El pago a proveedores queda «pendiente de decisión» y nunca se envía nada al banco.
-- Bloquea: F2, F8, F15 · con Ángel
-
-**F0-B05 · alta · antes del 04/11/2026** — Al migrar, ¿se agrupan en una misma familia las distintas empresas de un mismo transportista (por ejemplo, las cinco de MSC) para que compartan sus tarifas?
-
-- Por qué: Si una tarifa o una factura llega a nombre de MSC Suiza o MSC EE. UU. y no está en la familia MSC, no casa con las tarifas de MSC. Hoy ningún contacto tiene familia. Afecta a F2.
-- Opciones: Sí, todas las navieras y aerolíneas que tengan varias empresas / Solo MSC por ahora; las demás cuando aparezcan / No agrupar: cada empresa con sus propias tarifas
-- Hoy en Odoo 17: Hoy en Odoo 17 MSC son cinco contactos separados: España SLU, España Madrid, Portugal, Suiza y EE. UU.
-- Mientras tanto: Ningún contacto tiene familia, así que las tarifas solo casan con la empresa exacta del documento.
-- Bloquea: F2
-
-**M2-F (ya abierta) · alta · antes del 04/11/2026** — ¿Se ponen todos los usuarios de BOSS en español, para que los números y las fechas salgan a la española (2.500,00)?
-
-- Por qué: Ángel pidió los números a la española para su prueba, y hoy los usuarios están en inglés con el formato de EE. UU. Afecta a la creación de usuarios por rol (F2) y a la sesión de prueba con Ángel.
-- Opciones: Sí, todos en español / Cada usuario elige su idioma / Español para todos salvo quien pida inglés
-- Mientras tanto: Cada usuario conserva su idioma actual (inglés) y no se cambia el de nadie sin decisión.
-- Bloquea: F2
-
-### Etapa 1 Oferta
-**F0-B06 · baja · antes del 13/11/2026** — Un expediente marítimo con forma de carga «terrestre» (caso E260010), ¿es un caso válido o el sistema debe impedirlo?
-
-- Por qué: Hoy el sistema acepta esa combinación sin avisar, y no se sabe si es un error de datos o un caso real. Hay que saberlo antes de probar exportación, grupaje y terrestre (F12).
-- Opciones: Impedirlo: el modo y la forma de carga deben coincidir / Avisar sin impedir / Es un caso válido (explicar cuál)
-- Mientras tanto: El sistema la acepta como hoy, sin aviso ni bloqueo, y E260010 queda como caso por revisar.
-- Bloquea: F12
-
-### Etapa 4 Documentos
-**F0-B07 · media · antes del 11/11/2026** — La carpeta de documentos de cada expediente, ¿se construye como un módulo aparte o dentro del módulo que hoy imprime los documentos?
-
-- Por qué: Decide cómo se organiza el archivo por expediente y cómo se garantiza que el cliente solo vea lo publicado. Bloquea el diseño de F6.
-- Opciones: Módulo aparte (propuesta del plan: separa archivo e impresión) / Dentro del módulo de impresión de documentos
-- Hoy en Odoo 17: Hoy en Odoo 17 cada adjunto de un expediente o de una partida se archiva automáticamente en la carpeta «Expedientes».
-- Mientras tanto: No hay carpeta por expediente. Los documentos se adjuntan al expediente y el portal publica solo lo que se elige, como hoy.
-- Bloquea: F6
-
-**F0-B08 · media · antes del 11/11/2026** — ¿Cómo deben llegar al expediente los correos y documentos de navieras, agentes y clientes?
-
-- Por qué: Define el diseño del archivo de documentos (F6) y la infraestructura de correo que hace falta en el arranque (F15). Cambia la forma de trabajar de los operativos, por eso Cristina tiene que estar de acuerdo.
-- Opciones: Una dirección de correo por expediente / Una dirección por carpeta o tipo de documento / Desde Outlook, con el complemento de Odoo / Subida manual por el operativo
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay dirección de correo por expediente. Las ofertas se envían desde Outlook y el correo se sube al registro.
-- Mientras tanto: No hay entrada de correo: los documentos se suben a mano al expediente.
-- Bloquea: F6, F15 · con Cristina
-
-**F0-B09 · baja · antes del 20/11/2026** — ¿Se migran a Odoo 20 los documentos históricos de los expedientes de Odoo 17 (unos 49.700)?
-
-- Por qué: Un expediente nuevo puede necesitar documentos de uno antiguo (envíos repetidos, reclamaciones, inspecciones), pero migrarlos todos es un trabajo grande del arranque (F15).
-- Opciones: No: se consultan en Odoo 17 en solo lectura (propuesta del plan) / Solo los de los expedientes que sigan abiertos el 1/1 / Todos
-- Hoy en Odoo 17: Hoy en Odoo 17 la carpeta «Expedientes» guarda unos 49.700 documentos desde enero de 2024, enlazados al expediente o a la partida; pocos tienen tipo.
-- Mientras tanto: No se migra ningún documento: siguen en Odoo 17.
-- Bloquea: F15
-
-### Etapa 7 Proveedores
-**F0-B10 · media · antes del 06/11/2026** — ¿Se activa ya en boss20 la descarga diaria automática de los tipos de cambio del Banco Central Europeo?
-
-- Por qué: Los costes en dólares se pasan a euros con el tipo del día, pero la tarea diaria está apagada y el tipo está parado en el último cargado. Las desviaciones y las facturas en USD saldrían con tipos viejos (F8, F9).
-- Opciones: Sí, ya (es una llamada externa que solo descarga tipos públicos) / Solo a partir del arranque / No; los tipos se cargan a mano
-- Hoy en Odoo 17: Hoy en Odoo 17 los tipos llegan cada día del BCE y cada expediente guarda los tipos de su fecha importante y, si se quiere, los de la naviera.
-- Mientras tanto: La tarea diaria sigue apagada. El sistema usa el último tipo cargado y los tipos se cargan a mano cuando hace falta.
-- Bloquea: F8, F9
-
-### Etapa P Proyecto y arranque
-**F0-B11 · alta · antes del 30/10/2026** — El plan completo necesita unas 790 horas (estimación del plan) y un solo desarrollador tiene unas 270 hasta el 31/12. ¿Qué salida eliges?
-
-- Por qué: Incluso el mínimo para arrancar (entre 450 y 575 h) no cabe. Sin esta decisión, cada fase se planifica sobre una fecha que no se puede cumplir. Afecta al orden y a las fechas de F5 a F16.
+### Belal (3)
+**F0-B11** — ¿qué salida eliges para el déficit de capacidad: (a) segundo desarrollador; (b) arranque por tráficos el 1/1, con importación FCL con DUA, aéreo, proveedores, facturación, cobros, pagos y cierres en Odoo 20, mientras agentes, exportación marítima, grupaje, terrestre y consolidación siguen unas semanas en Odoo 17; o (c) mover la fecha del 1/1 (indicar cuál)?
+- Por qué hay que preguntarlo: compromete dinero o personas, fija el alcance y la fecha del arranque y ordena las fases F5 a F16. Esta respuesta resuelve también F0-B12, F0-B13, F0-B17 y F0-C69, la de Cristina y Belal.
 - Opciones: Segundo desarrollador / Arranque por tráficos: el 1/1 funciona en Odoo 20 solo lo que se elija en F0-B13; el resto sigue unas semanas en Odoo 17 / Mover la fecha de arranque (indicar la nueva) / Una mezcla (indicar)
 - Mientras tanto: Se sigue el orden recomendado (F1, luego F2 y F4, luego F5 a F10) con las fechas actuales. Las fases de tráficos, agentes, consolidación y gastos quedan «pendiente de decisión de Belal», sin fecha comprometida.
-- Bloquea: F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16
+- Buscado en: docs/plan-expediente-completo.md:78-87 y :852 (≈792 h frente a ≈270 h; núcleo de 450 a 575 h); docs/ciclo-operativo.md:66-83 (hitos aprobados y déficit de S45 y S46)
 
-**F0-B12 · alta · antes del 30/10/2026** — En las semanas del 2 al 15 de noviembre faltan unas 59 h y 43 h de desarrollo. ¿Qué se hace?
-
-- Por qué: En esas semanas coinciden los contactos, la base legal de la factura y el ciclo del expediente. Si no se decide, la entrega del 20/11 quedará incompleta sin saber qué falta.
-- Opciones: Aplazar a diciembre la factura en euros de ofertas en dólares (quebranto), el almacenaje especial y el precio para varios envíos, y los informes de rentabilidad, con el acuerdo de Ángel y Cristina en lo que es de cada uno / Aceptar una entrega parcial el 20/11 / Cubrirlo con un segundo desarrollador / Otra cosa (indicar)
-- Mientras tanto: Las tareas siguen planificadas como hoy, con el déficit a la vista. No se aplaza nada sin tu decisión.
-- Bloquea: F2, F3, F4, F5
-
-**F0-B13 · alta · antes del 30/10/2026** — ¿Qué tiene que funcionar obligatoriamente en Odoo 20 el 1/1/2027?
-
-- Por qué: Con la capacidad actual no cabe todo. Esta decisión fija qué fases se terminan antes del arranque y cuáles después, y qué se prueba en diciembre (F14). Los agentes (F0-B17), las consolidaciones (M2-I, de Cristina) y los gastos de empleados (P39, de Ángel) se deciden aparte.
-- Opciones: Solo el núcleo: importación marítima FCL con DUA, aéreo (importación y exportación), proveedores, facturación, cobros, pagos y cierres / El núcleo más la exportación marítima, el grupaje y el terrestre / Otra combinación (indicar)
-- Mientras tanto: Solo lo que el plan llama núcleo mínimo se planifica con fecha. Lo demás queda sin fecha y marcado «pendiente de decisión de Belal».
-- Bloquea: F11, F12, F14, F15
-
-**F0-B14 · alta · antes del 30/10/2026** — ¿Aceptas que la red de seguridad del proyecto sean las comprobaciones que se ejecutan en boss20, y que las pruebas internas de los módulos (sin ejecutar desde el 27/10) queden solo como referencia?
-
-- Por qué: Hoy no hay ninguna prueba de punta a punta que funcione sobre lo desplegado, y cuatro módulos no tienen pruebas propias. F1 construye esa prueba en boss20.
-- Opciones: Sí / No: hay que volver a ejecutar también las pruebas de los módulos (requiere una excepción a la política del 27/10)
-- Mientras tanto: Se aplica la política del 27/10: solo comprobaciones en boss20. Las pruebas de los módulos no se ejecutan.
-- Bloquea: F1
-
-**F0-B15 · alta · antes del 30/10/2026** — Hasta que se decida la base de producción, ¿las pruebas pueden seguir contabilizando en boss20 facturas, abonos y pagos marcados como prueba?
-
-- Por qué: Tu política del 27/10 lo permite, pero la tarea del escenario contable de Ángel dice «nunca en los libros reales de boss20 antes del 1/1». Cada prueba contabilizada deja asientos de 2026 y gasta numeración si boss20 acaba siendo la base real.
-- Opciones: Sí, como permite la política del 27/10 / No: las comprobaciones se deshacen al terminar y los recorridos en pantalla paran antes de contabilizar / Sí, pero solo hasta una fecha (indicar)
-- Mientras tanto: Las comprobaciones automáticas se deshacen al terminar y no dejan asientos. Los recorridos en pantalla paran antes de contabilizar.
-- Bloquea: F1, F14 · con Ángel
-
-**F0-B16 · alta · antes del 04/11/2026** — ¿boss20 será la base de producción desde el 1/1/2027, anulando antes las pruebas, o se arranca en una base nueva y limpia?
-
-- Por qué: boss20 ya tiene facturas, abonos y pagos de prueba de 2026 y 108 números de expediente gastados. Si se activa VERI*FACTU en una base que luego es la real, su cadena de registros empezaría con facturas de prueba. Bloquea VERI*FACTU o SII en modo de pruebas (F4) y el arranque (F15).
+**F0-B16** — ¿la producción del 1/1/2027 será (a) boss20, anulando antes por las vías de Odoo las facturas, abonos y pagos de prueba, o (b) una base nueva y limpia con la configuración de boss20?
+- Por qué hay que preguntarlo: no tiene vuelta atrás. Fija dónde empieza la cadena de VERI*FACTU o SII ante la AEAT, la numeración de facturas y expedientes de 2027, y si los asientos de prueba de 2026 quedan en los libros reales. La respuesta necesita el acuerdo de Ángel.
 - Opciones: boss20, anulando antes las pruebas contabilizadas por las vías normales de Odoo / Una base nueva y limpia con la configuración de boss20 / Decidirlo antes de la operación en pruebas (indicar fecha)
 - Mientras tanto: boss20 sigue como base de desarrollo y pruebas. No se instala VERI*FACTU ni SII y no se activa nada con efectos externos.
-- Bloquea: F1, F4, F14, F15 · con Ángel
+- Buscado en: docs/plan-expediente-completo.md:668-669, 682 y 859 (last_value 108, huecos de numeración, estrategia de base); CLAUDE.md:36-46
 
-**F0-B17 · media · antes del 06/11/2026** — ¿La liquidación de los expedientes de agente (profit share, fletes collect o prepaid, varios pagadores en un expediente) entra antes del 1/1/2027?
-
-- Por qué: Es una fase grande que compite por la misma capacidad. Si no entra, hay que saber dónde se llevan esos expedientes en enero (F13, F14).
-- Opciones: Sí, antes del arranque / No: los expedientes de agente siguen unas semanas en Odoo 17 después del 1/1 / Solo una parte (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 BOSS factura el profit share al agente (o lo pone en negativo en su factura) en USD y registra los abonos de los agentes.
-- Mientras tanto: La fase queda sin fecha comprometida. Un expediente de agente se puede crear, pero su profit share no se liquida en Odoo 20.
-- Bloquea: F13, F14 · con Cristina
-
-**F0-B19 · media · antes del 11/11/2026** — Los expedientes que sigan abiertos el 1/1, ¿se pasan a Odoo 20 o se terminan en Odoo 17?
-
-- Por qué: Si se terminan en Odoo 17, habrá dos sistemas a la vez y cierres con facturas repartidas entre ambos. Si se pasan, hacen falta la migración y su ensayo (F15). Qué cuenta como expediente «abierto» lo decide Cristina aparte.
-- Opciones: Se pasan todos a Odoo 20, con lo pendiente de comprar y de facturar / Se terminan en Odoo 17 (los dos sistemas conviven unas semanas) / Depende del tráfico (indicar)
-- Mientras tanto: No se carga ningún expediente; solo se prepara la lectura de Odoo 17. La decisión figura como «pendiente de decisión de Belal y Cristina».
-- Bloquea: F15 · con Cristina
-
-**F0-B21 · media · antes del 11/11/2026** — ¿Dónde se ensaya la migración de los expedientes abiertos: en boss20 deshaciendo todo al terminar, o en una copia temporal en el servidor como excepción a la política del 27/10?
-
-- Por qué: La tarea de ensayo habla de una copia local, y la política del 27/10 prohíbe copias y pruebas locales. Un ensayo deshecho al final puede medir mal los tiempos del cambio (F15).
-- Opciones: En boss20, deshaciendo todo al terminar / En una copia temporal en el servidor, borrada al terminar (sería una excepción a la política del 27/10) / Otra opción (indicar)
-- Mientras tanto: Se aplica la política vigente: el ensayo se hace en boss20 deshaciendo todo al terminar, sin ninguna copia.
-- Bloquea: F15
-
-**F0-B22 · media · antes del 11/11/2026** — ¿Por qué servidor y con qué dominio enviará Odoo 20 los correos de BOSS (ofertas, facturas, avisos, portal)?
-
-- Por qué: Sin servidor de salida no sale ningún correo desde Odoo 20. Se diseña ahora (F6) y se activa en el arranque (F15).
-- Opciones: El proveedor de correo actual de BOSS, con su dominio (indicar cuál) / Un servicio de envío aparte, con el dominio de BOSS / Otro (indicar)
-- Hoy en Odoo 17: Hoy Odoo 17 está alojado en la plataforma de Odoo y usa sus direcciones genéricas de respuesta y de rebote; las ofertas se envían desde Outlook.
-- Mientras tanto: boss20 no tiene servidor de correo y no se envía nada a clientes ni a proveedores.
-- Bloquea: F6, F15
-
-**F0-B23 · media · antes del 11/11/2026** — ¿Qué dominio usarán las direcciones de entrada de Odoo 20 (por ejemplo, para recibir facturas de proveedor o documentos de un expediente)?
-
-- Por qué: Sin un dominio de entrada no funciona ninguna dirección que reciba correo en Odoo. Ángel decide aparte si las facturas de proveedor entran por correo. Afecta al diseño de F6 y al arranque (F15).
-- Opciones: Un subdominio solo para Odoo / El dominio principal de BOSS, con buzones que Odoo lee / Ninguna entrada de correo de momento
-- Hoy en Odoo 17: Hoy en Odoo 17 no hay servidor de correo entrante propio y la dirección del proyecto «Facturas de proveedores» está inactiva; esas facturas se controlan en ese proyecto, con una tarea por factura.
-- Mientras tanto: No hay entrada de correo: facturas y documentos se suben a mano.
-- Bloquea: F6, F15
-
-**F0-B24 · media · antes del 13/11/2026** — Cuando la base tenga datos reales, ¿se hacen copias de seguridad automáticas de la base y de sus ficheros? ¿Desde cuándo?
-
-- Por qué: La regla de trabajo actual prohíbe las copias, pero con datos reales una avería sin copia haría perder contactos, expedientes y contabilidad. El calendario prevé copias diarias con restauración probada antes de la entrega del 20/11, la operación en pruebas las pide para empezar, y el cambio (F15) necesita un plan de vuelta atrás.
+**F0-B24** — ¿autorizas, como excepción a tu regla de no hacer copias, la copia diaria de la base y del filestore de boss20 guardada fuera del servidor, con una restauración de prueba, (a) desde la carga de contactos reales (F2) o (b) solo desde el 1/1?
+- Por qué hay que preguntarlo: contradice una regla tuya y solo tú puedes levantarla. Sin copias, una avería con datos reales no tiene arreglo, y el cambio no tiene plan de vuelta atrás. La restauración de prueba necesita además una base temporal.
 - Opciones: Sí, diarias, guardadas fuera del servidor y con restauración probada, desde que haya datos reales (contactos migrados y operación en pruebas) / Sí, diarias, guardadas fuera del servidor y con restauración probada, solo desde el arranque del 1/1 / Sí, diarias en el mismo servidor / No
-- Hoy en Odoo 17: Hoy Odoo 17 está alojado en la plataforma de Odoo; no se ha comprobado su política de copias.
 - Mientras tanto: Sigue la regla actual: no se hace ninguna copia, y la tarea de copias automáticas queda «pendiente de decisión».
-- Bloquea: F14, F15
+- Buscado en: C:/Users/BelalAlswerki/.claude/CLAUDE.md (regla del 25/09: nunca copias de la base ni del filestore); dev/boss_tasks/seed_launch.py:886-894 (I02: copia diaria fuera del servidor y restauración probada); docs/plan-expediente-completo.md:696
 
-**F0-B25 · media · antes del 20/11/2026** — ¿En qué fecha se activa el envío real de correo desde Odoo 20?
+## 2. Supuestos adoptados (reversibles)
+| Persona | Id | Pregunta | Supuesto adoptado | Fuente | Confianza |
+|---|---|---|---|---|---|
+| Ángel | F0-A81 | P30 impide EMITIR el pago de una factura de proveedor antes de facturar el servicio al cliente. Si el pago ya ha salido del banco (por ejemplo, un cargo directo de la naviera), ¿le parece bien que al conciliar el extracto Odoo lo registre y lo marque como «pagado antes de facturar al cliente» en la factura y en el expediente, en lugar de impedir la conciliación? | Registrar y marcar (lo implementado): un movimiento real del banco se concilia siempre, para que la contabilidad cuadre con el extracto. Se deja una nota en la factura y en el expediente y un punto en «Pendiente» hasta que se facture al cliente. El asistente de pago sigue bloqueado (P30). No se avisa a nadie más, salvo que Ángel o Cristina lo pidan. | docs/preguntas-abiertas.md:253 y :24 (P30); docs/ciclo-operativo.md §«Factura de proveedor y facturación al cliente (P30)»; commit 76ccb67; principio de imagen fiel del PGC (la contabilidad refleja el banco real) | alta |
+| Ángel | F0-A80 | Cuando un expediente está cerrado financieramente, ¿se impide contabilizar nuevas facturas o abonos sobre él hasta que un responsable de contabilidad lo reabra? | Sí, bloquear (lo implementado). Mientras un expediente esté cerrado financieramente, no se contabiliza sobre él ninguna factura ni abono hasta que un responsable de contabilidad lo reabra. Es como en Odoo 17, donde un expediente cerrado solo lo modifica el grupo gestor. Se puede pasar a «solo avisar» sin perder datos. | docs/preguntas-abiertas.md:266; Odoo 17 (expediente cerrado solo editable por el grupo gestor, texto de la pregunta); commit 76ccb67 | alta |
+| Ángel | F0-A01 | ¿Cargamos en Odoo 20 las condiciones de pago que usa hoy Odoo 17 y cada cliente y proveedor migrado conserva la suya? | Sí: se cargan las condiciones de pago de Odoo 17 que use al menos un contacto y cada cliente y proveedor conserva la suya. Las de 75 y 90 días se marcan para que Ángel las revise, porque superan el plazo máximo legal de 60 días entre empresas. | Odoo 17 account.payment.term (15 registros, leídos el 28/10: inmediato, 6, 15, 20, 21, 25, 30, 45, 60, 75 y 90 días, fin de mes siguiente…); Ley 3/2004 art. 4 (modificada por la Ley 15/2010): máximo 60 días entre empresas | alta |
+| Ángel | F0-A03 | ¿Se copian a Odoo 20 los límites de crédito que tienen hoy los clientes en Odoo 17? | Sí, se copian tal cual los límites de crédito de Odoo 17, que están ligados al seguro de crédito. Ángel puede revisarlos después en cada contacto. Así el aviso de crédito funciona desde el primer día. | Odoo 17 (algunos clientes con límite ligado al seguro de crédito, texto de la pregunta); docs/matriz-reunion-2026-10-27.md punto 36 (aviso estándar de Odoo 20) | alta |
+| Ángel | F0-A04 | ¿Qué niveles de reclamación de cobro quiere en Odoo 20? | Un solo nivel de reclamación a los 7 días del vencimiento, como hoy en Odoo 17. La tarea automática sigue apagada hasta el arranque. | Odoo 17: un nivel «7 días» (texto de la pregunta); docs/preguntas-abiertas.md:424 (F0-B26: tareas automáticas) | alta |
+| Ángel | P01/P02-a | ¿Hay un margen mínimo por oferta o por expediente? Si lo hay, ¿cuál es? | Margen mínimo orientativo del 10 % por grupo de servicios, con una tolerancia de 10 €, como hoy en Odoo 17. Solo avisa en la oferta y en el expediente; Ángel puede cambiar el valor en un ajuste. | docs/respuestas-cristina.md fila 17 (odoo17_source/summary_utils/models/summary_utils.py 35-38: 10 % y 10 € por grupo; BossOdoo19 BOSS_DECISIONS_LOG fila 19: «solo aviso») | media |
+| Ángel | P44-IVA | Si se crea el servicio propio de almacén fuera del aeropuerto que pidió Cristina (por palé, metro cúbico, entradas y salidas), ¿qué IVA lleva? | Si Cristina crea el servicio, se le da la misma clase que el almacenaje ALM: NR, que sigue las reglas de Ángel. Para un cliente español es el 21 %, y para un cliente de la UE o de fuera queda exento o no sujeto según esas reglas. Mientras Cristina no lo cree, no hay nada que hacer. | .research/05_sharepoint_excel.md:251 (ALM NR, CIVA › F2); BossOdoo19/docs/iva_rules.md (Ángel 31/08: capas origen/destino y contraparte) | media |
+| Ángel | M2-D | Para estimar los aranceles en la oferta según el código de la mercancía, ¿de dónde salen los porcentajes? | Se teclean en cada oferta, como ahora. Es solo una estimación, y la cifra real sale del DUA del agente de aduanas. No se construye ninguna tabla ni consulta a TARIC salvo que se pida más adelante. | docs/preguntas-abiertas.md:52 y :203; docs/matriz-reunion-2026-10-27.md M2-6 | alta |
+| Ángel | M2-J | En los precios por kilo, ¿le vale ver dos decimales como mínimo y hasta cuatro cuando el precio los tiene, o prefiere que esos precios se expresen «por 100 kg»? | Se queda así: mínimo dos decimales y hasta cuatro solo cuando el precio los tiene. Es lo que pidió Ángel («dos decimales siempre») sin perder exactitud en los precios reales por kilo, que tienen tres decimales. No se pasa a «por 100 kg». | docs/adr/009-meeting-2-pricing-and-file-rules.md:77 y :121; docs/preguntas-abiertas.md:98 (precios por kg reales con 3 decimales) | alta |
+| Ángel | M2-C | En una oferta de tarifas (precios por contenedor sin cantidades), ¿cuándo se abre el expediente: al aceptar el cliente la oferta o cuando hace la reserva con los contenedores? | Al aceptar la oferta, como ahora en Odoo 20: la aceptación exige los contenedores y abre el expediente. La petición de reserva del portal la revisa BOSS antes. Si Cristina prefiere el pre-expediente de Odoo 17, se cambia sin perder datos. | docs/adr/009-meeting-2-pricing-and-file-rules.md:64, :123 y :142; docs/matriz-reunion-2026-10-27.md M2-21 y P-6 | media |
+| Ángel | F0-A05 | Si un cliente supera su límite de crédito, ¿qué pasa al abrir su expediente? | Como en Odoo 17: no se abre el expediente si el cliente supera su límite, salvo que lo autorice un responsable de contabilidad (Ángel) con un motivo. En la oferta solo sale el aviso estándar. | Odoo 17: el expediente no se crea por encima del límite (texto de la pregunta); docs/matriz-reunion-2026-10-27.md punto 36 | media |
+| Ángel | F0-A06 | En los despachos de importación, ¿con qué garantía se pagan los impuestos a la aduana (la 031, la garantía de BOSS o la del cliente) y en qué casos se cobra caución (CAU) al cliente? | La forma de pago de los impuestos (garantía 031 o garantía de BOSS) se guarda en la ficha del cliente y se copia al expediente. La caución se cobra cuando BOSS paga los impuestos por cuenta del cliente con su garantía («se les facturan los impuestos»): 0,60 % sobre los impuestos con un mínimo de 10 €, según la cláusula de las ofertas de BOSS. Ese importe queda como precio pendiente de aprobación (P13). | .research/05_sharepoint_excel.md:117 y :276 (Nuevo Odoo.xlsx › OPS- exptes A24, A33:A34; cláusula CAU de COSTO_VENTA_MULTINIVEL.xlsx); BossOdoo19/docs/CRISTINA_REQUIREMENTS_MATRIX.md:115 (caución 0,60 %, mínimo 10 €) | media |
+| Ángel | F0-A07 | ¿Un expediente puede pasar a «Entregado» sin estar facturado al cliente? | Sí, con un aviso. «Entregado» es un hecho físico (también lo ve el cliente en el portal). La factura se exige en el cierre operativo, donde «toda la venta facturada» es una condición, como en Odoo 17, que no deja cerrar con venta sin facturar. | .research/03_cycle_requirements.md:72 (cierre en Odoo 17: sin líneas de venta sin facturar); docs/preguntas-abiertas.md:384 (F0-C60) | media |
+| Ángel | A01 | ¿Qué IVA de compra lleva cada tipo de factura de proveedor: naviera española, handler, agente de aduanas (honorarios y suplidos), agente extranjero y transportista? | El mismo criterio que Odoo 17, como impuesto por defecto en cada proveedor o servicio. Ejemplos: suplidos del agente de aduanas con «0% EXEMPT INC OP»; flete o servicios exentos de naviera española con «0% S INC» (u otro exento) y los servicios locales con «21% S INC»; servicios de agentes de la UE con inversión del sujeto pasivo; transporte terrestre de exportación con «21% S INC» (excepción de Ángel). Quien registra la factura lo corrige si el documento del proveedor dice otra cosa. El IVA intracomunitario a una naviera española no es correcto. | Odoo 17 account.tax (0% EXEMPT INC OP id 68, 0% S INC id 40, 21% S INC id 7, 21% RC id 119); BossOdoo19/docs/iva_rules.md (excepción TTE en compra = NR); docs/preguntas-abiertas.md:114 | media |
+| Ángel | P37-b | ¿Qué cuentas de gasto usa Odoo 20 para cada familia de servicio y para las comisiones? ¿Las mismas que hoy en Odoo 17 (una cuenta 607 por familia, con 607400 para el flete y 607401 para el profit share, y 623008 para comisiones)? | Las mismas que en Odoo 17: una cuenta del grupo 607 por familia de servicio (607400 flete, 607401 profit share…) y 623008 para comisiones, asignadas en las categorías de producto. Así se puede comparar con Odoo 17 y Ángel puede cambiar cualquiera en la categoría. | Odoo 17 (cuentas 607xxx y 623008, texto de la pregunta); docs/preguntas-abiertas.md:71 | alta |
+| Ángel | P30-b | Si una factura de proveedor tiene varios servicios y solo uno está sin facturar al cliente, ¿se retiene el pago de toda la factura o solo el de ese servicio? | Se retiene toda la factura (lo implementado). Es más simple y cumple el objetivo de Cristina; el pago parcial manual sigue siendo posible si contabilidad lo decide. | docs/preguntas-abiertas.md:225; docs/ciclo-operativo.md §P30 | media |
+| Ángel | P30-d | Si un proveedor envía un abono, ¿se puede aplicar a una factura suya que sigue retenida por esta regla? | Sí, el abono del proveedor se aplica siempre: reduce la deuda y no sale dinero, así que no va contra la regla de no pagar antes de facturar. | docs/ciclo-operativo.md §P30 (objetivo: no pagar sin haber facturado) | alta |
+| Ángel | P03-b | Cuando la factura de un proveedor en dólares llega con otro tipo de cambio que el previsto, ¿la diferencia se trata como diferencia de cambio, separada de la diferencia de precio? | Sí, la diferencia de cambio va aparte y no bloquea el cierre del expediente. Odoo la registra automáticamente en su diario de diferencias de cambio, y el expediente solo marca «a revisar» la diferencia de precio en la moneda del proveedor. | Odoo 17 res.company: diario «Exchange Difference» (id 11); norma de registro y valoración 11.ª del PGC (diferencias de cambio a resultados) | alta |
+| Ángel | F0-A08 | ¿Se impide contabilizar la factura de un proveedor que se paga por transferencia o remesa si no tiene cuenta bancaria registrada? | Bloquear, como hoy en Odoo 17: no se contabiliza la factura de un proveedor con forma de pago transferencia o remesa si no tiene cuenta bancaria. | Odoo 17 (bloqueo actual, texto de la pregunta) | alta |
+| Ángel | F0-A09 | ¿Cómo se tratan los pagos a un proveedor antes de recibir su factura (por ejemplo, proformas del DUA o del handling)? | Anticipo ligado al expediente (pago anticipado al proveedor con la analítica del expediente), sin esperar a facturar al cliente, como hoy en Odoo 17. Los impuestos del DUA y el handling hay que pagarlos para liberar la mercancía. Se compensa con la factura cuando llega. | Odoo 17 (proformas de DUA y handling pagadas desde el banco, texto de la pregunta); docs/ciclo-operativo.md §P30 (excepción de pago por adelantado) | media |
+| Ángel | F0-A10 | En Odoo 20, ¿quién revisa las facturas de proveedor que llegan sin expediente o que no cuadran con lo previsto? | Como hoy: contabilidad (Ángel) las detecta en una lista de control en Odoo (sin expediente, no cuadra con lo previsto, reclamada) y el operativo del expediente las resuelve. | Odoo 17: proyecto «Facturas de proveedores» de Ángel (texto de la pregunta) | alta |
+| Ángel | F0-A11 | ¿Quiere que Odoo 20 lea automáticamente las facturas de proveedor (OCR), sabiendo que cada PDF se envía a un servicio externo de Odoo? | Más adelante: queda desactivado en el arranque, porque los PDF saldrían a un servicio externo y hoy se teclean. Se puede reconsiderar después del arranque. | Odoo 17: sin lectura automática (texto de la pregunta); instrucciones de confidencialidad de la organización | alta |
+| Ángel | F0-A12 | ¿Quiere un buzón de correo para facturas de proveedor que cree la factura en borrador en Odoo al recibirla? | Más adelante: depende del dominio y del servidor de correo que decida Belal (F0-B22 y F0-B23). Hasta entonces, las facturas se suben a mano. | docs/preguntas-abiertas.md:420-421 (F0-B22, F0-B23) | alta |
+| Ángel | P37-a | ¿Qué cuentas de ingreso usa Odoo 20 para cada familia de servicio? ¿Las mismas que hoy en Odoo 17 (705001 flete terrestre, 705002 aduana, 705003 gastos locales, 705004 flete, 705005 profit share, 705006 locales extraordinarios, 705007 seguro y courier, 705008 almacén y 705009 consultoría)? | Las mismas que en Odoo 17 (705001 a 705009 por familia), asignadas en las categorías de producto. Así hay cuenta de resultados por familia comparable con Odoo 17, y Ángel puede cambiar cualquiera. | Odoo 17 (705001-705009, texto de la pregunta); docs/preguntas-abiertas.md:71 | alta |
+| Ángel | F0-A13 | ¿Qué mención legal debe imprimir la factura cuando un servicio lleva IVA 0 % a un cliente de fuera de la UE (exportación o transporte internacional)? | En Odoo 20, el impuesto «0% EX S» para servicios a clientes de fuera de la UE es «no sujeto por reglas de localización» (casilla 120), no exento. Mención propuesta: «Operación no sujeta al IVA español por aplicación de las reglas de localización (art. 69 de la Ley 37/1992)». Se carga como nota legal del impuesto y Ángel o el asesor pueden cambiar el texto. | odoo-20.0+e.20261020/odoo/addons/l10n_es/data/template/account.tax-es_common.csv (s_iva_e «0% EX S»: no_sujeto_loc, mod303[120], sin nota legal); Ley 37/1992 art. 69; RD 1619/2012 art. 6 | media |
+| Ángel | F0-A14 | ¿Qué mención legal debe imprimir la factura cuando el servicio no está sujeto al IVA español por ser para Canarias, Ceuta o Melilla? | El mismo tipo de mención que en F0-A13: «Operación no sujeta al IVA por reglas de localización (art. 69 de la Ley 37/1992; destinatario en Canarias, Ceuta o Melilla, fuera del territorio de aplicación del IVA)». Se carga como nota legal del impuesto «0% S NS». | odoo-20.0+e.20261020/odoo/addons/l10n_es/data/template/account.tax-es_common.csv (s_iva_ns: no_sujeto_loc, mod303[120]); Ley 37/1992 arts. 3 y 69 | media |
+| Ángel | F0-A15 | ¿Qué mención debe imprimir la factura en los suplidos (IVA y aranceles pagados en nombre del cliente)? | Los suplidos se muestran fuera de la base imponible, con la mención «Suplidos: importes pagados en nombre y por cuenta del cliente, no incluidos en la base imponible (art. 78.Tres.3º de la Ley 37/1992)» y el documento que los justifica (número de DUA). | Ley 37/1992 art. 78.Tres.3º; docs/cuentas-suplidos.md (suplidos en cuentas 419, impuesto «0% Exent NS») | alta |
+| Ángel | P31 | ¿Confirma que no se puede contabilizar la factura de un cliente de España (o sin país) que no tenga NIF u otra identificación, que a los clientes extranjeros se les factura sin exigir NIF y que una dirección incompleta solo avisa? | Sí, como aprobó Belal el 23/10 y como hace Odoo 17: no se contabiliza la factura de un cliente de España (o sin país) sin NIF u otra identificación, y la dirección incompleta solo avisa. Además se propone exigir el NIF-IVA a los clientes de la UE cuando se les aplica «0% UE S» (inversión del sujeto pasivo), porque es necesario para el modelo 349 y para justificar que el destinatario es empresario. | docs/ciclo-operativo.md §«Datos del cliente para contabilizar (P31)»; docs/preguntas-abiertas.md:31; l10n_es de Odoo 20 (s_iva0_sp_i: mod349[S]); Ley 37/1992 art. 69 | media |
+| Ángel | F0-A17 | ¿Qué cuenta bancaria de BOSS se imprime en las facturas a clientes: una sola, o una para euros y otra para dólares? | Una cuenta para euros y otra para dólares, según la moneda de la factura (Odoo elige la cuenta bancaria de la compañía de esa moneda). Odoo 17 tiene diarios bancarios en EUR y en USD. Ángel introduce los números en Odoo. | Odoo 17 account.journal (diarios bancarios en EUR y en USD de varios bancos, leídos el 28/10) | alta |
+| Ángel | F0-A18 | Desde el 1/1/2027, ¿qué numeración llevan en Odoo 20 las facturas, los abonos y las facturas de proveedor? | Los formatos de hoy con el año 27: «F27 MM-NNNN» (serie mensual), «FR27 NNNN» y «BILL/2027/MM/NNNN». No chocan con las series de 2026 de Odoo 17 y siguen la práctica actual. La serie se activa en el arranque. | Odoo 17 (formatos F26 MM-NNNN, FR26 NNNN, BILL/2026/MM/NNNN, texto de la pregunta); RD 1619/2012 art. 6.1.a (series correlativas) | alta |
+| Ángel | F0-A19 | ¿Factura BOSS algún servicio con IVA reducido (10 % o 4 %)? Si es así, ¿cuáles y en qué casos? | No: BOSS no factura con IVA reducido. En Odoo 17, los impuestos del 10 % y el 4 % solo aparecen en facturas de proveedor (gastos de tarjeta, restaurantes…), nunca en ventas. Para las compras, Odoo 20 trae esos impuestos estándar. | Odoo 17 account.move.line con tax_line_id «10% S»/«4% S» (más de 300 y 7 apuntes revisados el 28/10: todos son BILL/… «S INC», ninguna factura de cliente) | alta |
+| Ángel | P45-b | ¿Factura BOSS a alguna administración pública que exija factura electrónica (Facturae)? | No. En Odoo 17 está instalado el módulo de Facturae, pero no el de centros administrativos (DIR3), sin el que no se puede facturar por FACe a una administración. Tampoco hay ningún fichero Facturae emitido. No se instala Facturae en Odoo 20 salvo que aparezca un cliente público. | Odoo 17 ir.module.module: l10n_es_edi_facturae instalado, l10n_es_edi_facturae_adm_centers sin instalar; ir.attachment «facturae»: solo un PDF de un proveedor (28/10) | media |
+| Ángel | F0-A20 | ¿Qué fecha lleva la factura al cliente: el día en que se emite, o una fecha del envío (por ejemplo, la llegada en importación o la salida en exportación), como hace hoy Odoo 17? | Como hoy en Odoo 17: la fecha de la factura es la «fecha importante» del envío (llegada en importación, salida en exportación), que coincide con el devengo del servicio. Así el IVA cae en el periodo en que se devenga, y la factura se emite como muy tarde el día 16 del mes siguiente. Si se activa VERI*FACTU, se revisa con Ángel. | Odoo 17 (fecha de factura = fecha importante, texto de la pregunta); RD 1619/2012 art. 11 (plazo de expedición); Ley 37/1992 art. 75 (devengo) | media |
+| Ángel | F0-A21 | ¿Los suplidos se facturan en una factura aparte de los servicios, como hoy, o en la misma factura con una sección propia? | Factura aparte para los suplidos, como hoy en Odoo 17: solo suplidos con «0% Exent NS» y su propio vencimiento. | Odoo 17 (factura de tipo «impuestos» con suplidos, texto de la pregunta) | alta |
+| Ángel | F0-A23 | ¿Los suplidos tienen, para cada cliente, un vencimiento distinto del de los servicios? | Sí: cada cliente conserva el vencimiento propio de los suplidos que tiene en Odoo 17 (se copia al migrar). | Odoo 17 (condición de pago aparte para las facturas de impuestos, texto de la pregunta) | alta |
+| Ángel | F0-A24 | ¿Las facturas de suplidos cuentan en la declaración anual de operaciones con terceros (modelo 347)? | Se excluyen del 347. Según el criterio de la DGT, los suplidos no son operaciones del intermediario y el 347 se declara por la contraprestación según la base del IVA, que no incluye los suplidos. Hoy Odoo 17 las marca como operación normal: Ángel puede mantenerlo, pero la propuesta sigue el criterio de la DGT. | DGT consulta vinculante V2002-21 y recopilación de consultas sobre el 347 (https://www.fempa.es/wp-content/uploads/oldfiles/File/FISCAL/SELECCION%20CONSULTA%20MOD%20347_2012.pdf, https://www.ceinformatica.com/faqs08/); Ley 37/1992 art. 78.Tres.3º | media |
+| Ángel | P03-c | ¿Quiere fijar un tipo de cambio por expediente (por ejemplo, el de la naviera) que se use en todas sus facturas, como hoy en Odoo 17 en marítimo? | Sí, como hoy en Odoo 17: en marítimo, el expediente fija un tipo de cambio (el de la naviera o el del BCE de su fecha) antes de facturar en euros un flete en dólares. Coincide con el requisito escrito de Cristina: «oferta en USD facturada en EUR: aplicar el cambio de la naviera». | Odoo 17 (tipo por expediente obligatorio en marítimo, texto de la pregunta); .research/05_sharepoint_excel.md:95-98 (Nuevo Odoo.xlsx › OPS- exptes A48:A51) | media |
+| Ángel | P03-d | ¿A quién se factura en dólares? | Se factura en la moneda de la oferta. A los agentes extranjeros se les factura en USD cuando el flete está en USD (es lo normal con agentes), y a los clientes, en euros salvo que la oferta se haga en USD. | .research/05_sharepoint_excel.md:95-98 (Nuevo Odoo.xlsx: «USD ofertado y facturado en USD: normal con agentes»); Odoo 17 (facturas a agentes en USD) | media |
+| Ángel | P03-f | En una factura en euros de un flete en dólares, ¿debe verse también el importe original en dólares de cada línea? | Sí: en la factura en euros se muestra también, a título informativo, el importe original en USD de cada línea y el tipo aplicado. Así el cliente lo cuadra con su oferta en dólares. | Odoo 17 (cada línea guarda el importe original en USD, texto de la pregunta); P03-c | media |
+| Ángel | F0-A25 | ¿Se impide facturar a un cliente que no tiene condición de pago configurada? | Sí, como hoy en Odoo 17: no se factura a un cliente sin condición de pago configurada. Se aplica a todos, porque al migrar cada contacto lleva la suya (F0-A01). | Odoo 17 (bloqueo para clientes creados desde el 01/02/2025, texto de la pregunta) | alta |
+| Ángel | F0-A26 | ¿Se piden anticipos o proformas a los clientes (por ejemplo, para pagar aranceles e IVA antes del despacho)? | Para los aranceles y el IVA del despacho, se pide una provisión de fondos con una proforma sin valor fiscal: es dinero del cliente (suplido), no devenga IVA ni necesita factura. Si se cobra por adelantado un servicio propio de BOSS, se emite una factura de anticipo con IVA, porque el anticipo devenga IVA. Las dos se ligan al expediente. | Ley 37/1992 art. 75.Dos (devengo del IVA en los pagos anticipados) y art. 78.Tres.3º (suplidos); .research/05_sharepoint_excel.md:479 (proformas antes de la factura real) | media |
+| Ángel | F0-A28 | ¿Qué cuentas bancarias de BOSS (banco y moneda) se llevan en Odoo 20 desde el arranque? | Las cuentas bancarias de Odoo 17 que siguen activas, en EUR y en USD (un diario por cuenta y moneda). Ángel desactiva las que ya no use e introduce él mismo los números. | Odoo 17 account.journal: diarios bancarios en EUR y en USD de Santander, Caixabank, Bankinter y Popular, y WCA en USD (28/10) | alta |
+| Ángel | F0-A29 | ¿Cómo entran los movimientos del banco en Odoo 20: conexión automática con los bancos o importación de extractos en fichero? | Conexión automática con los mismos tres bancos que hoy en Odoo 17. Se activa en el arranque, nunca en pruebas, y la importación de ficheros queda como alternativa. No hay datos nuevos expuestos, porque Odoo 17 ya usa esa conexión. | Odoo 17 (conexión automática con tres bancos, texto de la pregunta); docs/preguntas-abiertas.md:424 (F0-B26) | alta |
+| Ángel | F0-A30 | ¿Qué apuntes automáticos quiere al conciliar el banco (comisiones bancarias en euros y en dólares, retenciones…)? | Los mismos que hoy en Odoo 17: comisiones bancarias en EUR y en USD y la retención fiscal del banco. | Odoo 17 (modelos de conciliación existentes, texto de la pregunta) | alta |
+| Ángel | F0-A32 | Con un agente que es a la vez cliente y proveedor, ¿se compensan sus facturas a cobrar y a pagar y se liquida solo la diferencia? | Solo con acuerdo del agente: se compensan en una liquidación (statement) que el agente acepta, conciliando en Odoo las facturas a cobrar y a pagar de la misma empresa. Sin acuerdo, cada factura se cobra y se paga por separado. | Código Civil arts. 1195-1196 (compensación); práctica de liquidación de cuentas con agentes (statement of account) | media |
+| Ángel | P01/P02-b | Si un expediente queda por debajo del margen mínimo, ¿qué pasa y quién lo desbloquea? | Como en Odoo 17: un expediente con margen por debajo del mínimo no se puede facturar ni cerrar hasta que un responsable de operaciones (Cristina) lo desbloquee con un motivo. El aviso le llega a ella. | Odoo 17 (aviso de margen que bloquea factura y cierre; desbloqueo con motivo y aviso a Cristina, texto de la pregunta); .research/05_sharepoint_excel.md:477 | media |
+| Ángel | F0-A33 | ¿Cómo y cuándo se bloquean los periodos contables en Odoo 20, y quién lo hace? | Con el mismo ritmo que Odoo 17. Ángel bloquea el periodo y el IVA de cada trimestre tras presentar el 303 (hoy está bloqueado hasta el 30/09/2026) y el ejercicio tras el cierre anual. Antes de bloquear, se emiten las facturas del mes a primeros del mes siguiente. | Odoo 17 res.company 1: period_lock_date y tax_lock_date 30/09/2026, fiscalyear_lock_date 31/12/2025 (leído el 28/10) | alta |
+| Ángel | F0-A34 | ¿El cierre financiero de un expediente exige que todo esté cobrado y pagado? | Solo facturado (cliente y proveedores) y lista «Pendiente» vacía, como la lista de ayuda «Cierre automático» de Odoo 17. Los cobros y pagos se siguen en contabilidad y no impiden el cierre, para que un impago no deje el expediente abierto indefinidamente. | Odoo 17 (lista de ayuda «Cierre automático»: entregado hace más de 14 días, todo facturado, beneficio positivo; texto de la pregunta) | media |
+| Ángel | F0-A35 | ¿Quién puede reabrir un expediente cerrado financieramente? | Solo los administradores de contabilidad, es decir, Ángel (lo implementado). | docs/preguntas-abiertas.md:262 (control del 28/10) | alta |
+| Ángel | F0-A36 | Al cierre de mes, ¿se periodifican los costes ya prestados sin factura del proveedor y la venta prestada sin facturar? | Solo costes. Los servicios prestados sin factura del proveedor se periodifican en la 607800 («compras pendientes de recibir factura»), que ya existe en Odoo 17, usando la periodificación estándar de Odoo de lo recibido y no facturado. La venta no se periodifica, porque se factura en el mes con la fecha importante (F0-A20). | Odoo 17 (cuenta 607800, texto de la pregunta); principio de devengo del PGC | media |
+| Ángel | F0-A37 | ¿Quiere un aviso a fin de mes a cada operativo con sus expedientes sin facturar o sin cerrar, con copia a Ángel? | Sí, mensual, como el correo «CIERRE MENSUAL» de Odoo 17: a cada responsable con sus expedientes sin facturar o sin cerrar, con copia a Ángel. Durante las pruebas es una actividad en Odoo, sin correo. | Odoo 17 (correo mensual «CIERRE MENSUAL», texto de la pregunta) | alta |
+| Ángel | F0-A39 | ¿Se mantiene la comisión al recomendador de clientes? Si es así, ¿con qué regla? | Sí, con la misma regla que Odoo 17 aplica hoy en producción: el 40 % del (beneficio − 95 €) de cada expediente cerrado de un cliente recomendado, registrado como factura del recomendador en la 623008. Ángel puede cambiar el porcentaje o el mínimo. | Odoo 17 (informe de comisión del recomendador, texto de la pregunta) | media |
+| Ángel | P45-c | ¿Qué declaraciones de impuestos se preparan desde Odoo 20 a partir de enero de 2027 (IVA 303, intracomunitarias 349, resumen anual 390, operaciones con terceros 347)? | Odoo 20 prepara los borradores del 303, 347, 349 y 390, como el módulo de informes fiscales de Odoo 17, y Ángel o la gestoría los presentan como hoy. Nada se presenta desde Odoo sin decisión. | Odoo 17 ir.module.module: informes fiscales españoles instalados; docs/preguntas-abiertas.md:269 | alta |
+| Ángel | F0-A43 | Si hay que enviar facturas a la AEAT desde el arranque, ¿quién aporta el certificado electrónico de la empresa y en qué fecha se pasa del modo de pruebas al envío real? | Depende de P45-a. Si hay envío obligatorio, Ángel carga el certificado electrónico de la empresa directamente en Odoo antes del arranque (nunca por correo ni chat) y el envío real empieza en la fecha legal publicada en el BOE (hoy, 1/1/2027 para sociedades). Si se publica el aplazamiento a 2028, sigue en modo de pruebas hasta esa fecha. | RDL 15/2025 (https://www.afilcoasesores.com/verifactu-retraso-2027-nuevos-plazos/); anuncio de 2028 sin BOE (https://www.avanpyme.com/verifactu-2028-retraso-nuevo-calendario/); P45-a | media |
+| Ángel | F0-A44 | ¿Cómo se cargan los saldos de apertura en Odoo 20 el 1/1/2027? | Asiento de apertura el 1/1/2027 con el balance de cierre de 2026 de Odoo 17: provisional en el arranque y ajustado al cerrar 2026. Los saldos de clientes y proveedores se cargan por factura pendiente (F0-A45). Odoo 17 tiene el diario «Opening Seat». | Odoo 17 account.journal «Opening Seat» (id 17); procedimiento estándar de saldos de apertura de Odoo | alta |
+| Ángel | F0-A45 | Las facturas de 2026 pendientes de cobro o de pago el 1/1/2027, ¿se cobran y se pagan en Odoo 20 o en Odoo 17? | Se migran una a una a Odoo 20 como partidas abiertas del asiento de apertura, con su número, fecha y vencimiento originales. Así los cobros, los pagos y la conciliación bancaria se hacen en un solo sistema desde el 1/1/2027 (coherente con F0-A42). | F0-A42 (Odoo 20 único sistema, hito de Belal del 26/10); práctica estándar de migración contable en Odoo (saldos abiertos por documento) | media |
+| Ángel | F0-A46 | Las facturas de clientes y de proveedores con fecha de diciembre de 2026 que se emitan o se reciban en enero de 2027, ¿se registran en Odoo 17 o en Odoo 20? | En Odoo 17 hasta cerrar diciembre: las facturas con fecha de diciembre de 2026 (de clientes y de proveedores) se registran en Odoo 17, como hoy se emiten a primeros del mes siguiente antes de bloquear. Odoo 20 solo recibe documentos con fecha desde el 1/1/2027, así que no hay números duplicados. | Odoo 17 (facturas de un mes emitidas a primeros del siguiente; bloqueo trimestral, res.company 1); F0-A18 | media |
+| Cristina | F0-C01 | ¿Qué personas de BOSS necesitan usuario en Odoo 20 para las pruebas y el arranque, y qué papel tiene cada una (comercial, operativo, compras o aprobador de tarifas)? Los usuarios de contabilidad los indica Ángel. | Crear los usuarios a partir de los usuarios internos activos de Odoo 17, conservando su grupo de Ventas. Los que hoy tienen «Sales / User: Own Documents Only» pasan como comercial u operativo con sus propios documentos. Los que tienen «All Documents» pasan como gestor. Cristina es la aprobadora de tarifas y Belal la sustituye por delegación. Los usuarios de contabilidad los indica Ángel. Cristina solo corrige los papeles de la lista que Belal prepare. | Odoo 17 res.groups 21 (15 usuarios) y 22 (6 usuarios); BossOdoo19/docs/BOSS_DECISION_LOG.md B29.2 (Cristina con permiso de gestor de tarifas); BossOdoo19/docs/agents/DECISIONS.md, regla del 09/10 (aprueban solo Belal o Cristina); docs/preguntas-abiertas.md fila P19 | media |
+| Cristina | F0-C02 | Al traer los contactos de Odoo 17, ¿qué papel tiene en Odoo 20 cada tipo de contacto (Cliente, Agente, Proveedor, Cliente + Proveedor, expedidor o destinatario español o extranjero, Acreedor) y cada marca (agente, naviera, agente de aduanas, transportista terrestre, aerolínea)? | Correspondencia uno a uno con Odoo 17. Cliente y Cliente + Proveedor pueden ser ordenante de un negocio BOSS. Agente puede ser ordenante de un negocio de agente y agente en origen o destino. Proveedor y Acreedor quedan solo como proveedores. Expedidor o destinatario, español o extranjero, quedan como partes del envío y no se facturan. Las marcas de papel pasan a etiquetas o campos de Odoo 20: naviera y aerolínea como transportista, con «Pertenece al transportista»; agente de aduanas; transportista terrestre como proveedor de TTE. Los contactos de tipo «Pendiente» y los que en realidad son lugares no se migran como partes. Belal prepara la tabla y Cristina solo revisa las excepciones. | docs/decisiones-f0.md (R-A4: 8 tipos y casillas de rol de Odoo 17); docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 5 (familia de transportista); docs/reunion-angel-2026-10-27-parte2.md §2 (ordenante = destinatario o expedidor) | media |
+| Cristina | R-A3 | En un expediente de agente, ¿el ordenante tiene que ser un contacto de tipo Agente (y en uno de cliente de BOSS, de tipo Cliente), como comprueba Odoo 17? | Comprobar como Odoo 17: en un negocio de agente el ordenante debe ser de tipo Agente, y en un negocio BOSS de tipo Cliente o Cliente + Proveedor. Mientras queden contactos migrados con tipo «Pendiente», la comprobación solo avisa, sin bloquear. Pasa a bloquear cuando los tipos estén migrados. Es un ajuste reversible. | La pregunta (Odoo 17 lo comprueba hoy); BossOdoo19/docs/BOSS_DECISION_LOG.md B17 (ordenante = quien se factura); docs/matriz-reunion-2026-10-27.md fila 22 | media |
+| Cristina | P20 | ¿El operativo debe ver los precios de venta? ¿Y el comercial debe ver el coste de proveedor y el margen? | Como ahora: los usuarios de ventas ven la venta, el coste y el margen de la oferta, porque el comercial cotiza calculando sobre el coste, como en su Excel de venta. El operativo ve la venta del expediente. Compras ve el lado del proveedor. Si más adelante se quiere ocultar el coste a algún papel, basta con cambiar un grupo. | NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx (cada hoja pone venta y coste lado a lado); docs/preguntas-abiertas.md fila P35 (visibilidad estándar por rol, aprobada por Belal el 23/10); docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 11 (resumen para gestores y contabilidad) | media |
+| Cristina | F0-C04 | ¿Es correcta la lista de qué handler atiende a cada aerolínea en cada aeropuerto? Viene de Odoo 17 y tiene 47 combinaciones: Madrid 30, Barcelona 13, Málaga 2, Valencia 1 y Bilbao 1. | Cargar tal cual la tabla de handling de Odoo 17: las 47 combinaciones activas, sin la archivada. Es la configuración que se usa hoy, y el operativo puede cambiar el handler en cada caso. Cristina confirmó la regla: el handler depende de la aerolínea y del aeropuerto, no del sentido. | BossOdoo19/docs/agents/DECISIONS.md, filas Cristina 25/09 y 29/09 y fila «Handler map (decision 3A)» (las filas coinciden con x_handlingconfig de Odoo 17) | alta |
+| Cristina | F0-C05 | Belal preparará la correspondencia entre los conceptos de Odoo 17 y los 77 servicios de Odoo 20. ¿La revisa y valida usted, o la persona que designe? | Belal prepara la correspondencia. Casi todos los códigos de Odoo 17 y Odoo 20 son iguales: matriz-servicios cita «Odoo 17 X» como origen de la mayoría. Cristina revisa solo las excepciones: códigos retirados (TCC, TRE, TRI, TTC → TTE; FTT), divididos (TTE-FCL/TTE-CON, GLO-*, T3-PAD) y los de P16. | docs/matriz-servicios.md; docs/respuestas-cristina.md fila 14 (servicios retirados, Cristina 28/09); BossOdoo19/docs/agents/DECISIONS.md fila 2026-10-02 (TTE-FCL y TTE-CON) | alta |
+| Cristina | F0-C06 | ¿Quién reúne los documentos de tarifa que faltan, y para qué fecha? Faltan: segundo handler aéreo, Iberia, demoras de ONE, Maersk, ZIM y OOCL, gastos locales de Hapag-Lloyd, CFS de grupaje, despacho de exportación y despacho aéreo, acuerdos de profit share, inspecciones, CES, transporte de contenedor y recargo de combustible. | Los coordina Cristina con operaciones, dentro de su plan semanal de previsiones (fila «Alimentación del sistema»: terminar el miércoles y probar el jueves). Fecha propuesta: antes de las pruebas de la fase F3. Mientras falten documentos se usa «Sin precio de proveedor» o el coste tecleado con motivo. No cambia ninguna regla. | NEW ODOO/Plan detallado previsiones.xlsx, Hoja1 (fila «Alimentación del sistema») y correo de Cristina del 28/09 en la hoja «Explicaciones previsiones» (ella misma carga los costes de los handlers); BossOdoo19/docs/agents/DECISIONS.md fila 2026-10-03 (plan semanal) | media |
+| Cristina | F0-C07 | De esos servicios, ¿cuáles no tendrán nunca tarifa fija y se cotizarán siempre caso por caso con el proveedor (por ejemplo, el camión o el arrastre)? | Se marcan como «coste a petición» (caso por caso): el transporte terrestre y el arrastre de transportistas sin tarifa, salvo los que tienen documento (IRENEO); el flete de coloaders LCL; los gastos del agente en origen (EXW y OAL); DES, IMO e inspecciones extraordinarias. Los fletes marítimos y aéreos siguen con el precio semanal desde la oferta. La lista se puede ampliar o reducir en cada servicio. | docs/adr/009-meeting-2-pricing-and-file-rules.md, contexto 6 (camión caso por caso); NEW ODOO/Nuevo Odoo.xlsx, hoja previsiones A10–A11 (coloaders «cotizan diferente cada vez»); correo de Cristina del 28/09 (TRI por envío, kg o km según el proveedor) | media |
+| Cristina | P16 | De los servicios sin definir (VET, GT3, DES, VAC, POS, IMO, DVD, GAV y DUM), ¿cuáles se usan de verdad, con su unidad de cobro, proveedor y documento, y cuáles se retiran? | Según su uso real en Odoo 17. Se mantienen: VET (certificado veterinario, se factura 1 por expediente o documento, como SAN), POS (posicionado en el PIF o escáner, por contenedor, muy usado en 2026), DVD (despacho DVD/T1, por despacho, muy usado en 2026), IMO (recargo de mercancía peligrosa, importe manual) y DES (destrucción, importe manual, ocasional). Se archivan: VAC (sin ninguna factura), GT3 (último uso 08/2025; hoy va dentro de T3 como «T3 management fee») y GAV (último uso 06/2025; sustituido por DVD). DUM se queda como suplido (cuenta P18, de Ángel). Archivar es reversible. | Odoo 17 account.move.line por producto: «VET -» (26 líneas de 2025–2026), «POS -» (más de 30 en 2026), «DVD -» (más de 30 en 2026), «IMO -» (11), «DES -» (6), «GT3 -» (hasta 08/2025), «GAV -» (hasta 06/2025), «VAC -» y «DUM -» (0); correo de Cristina del 28/09 (T3 management fee) | media |
+| Cristina | M2-A | En sus Excel de venta, ¿qué servicios tienen un precio de venta fijo (el mismo aunque cambie la naviera) y cuáles varían con el coste? ¿Puede enviar esos Excel para cargarlos? | Precio de venta fijo, igual cambie la naviera: THC + gastos de puerto, BL/AWB, T3, consignación (CSM/CSA), despacho (FAD/DEX), handling, ETX, VGM e inspecciones. Variable según el coste: fletes (FMI, FME, FAI, FAE), transporte terrestre (TTE) y los suplidos. Las cifras fijas se cargan en la lista general desde su Excel de venta, que ya está en SharePoint, y Cristina corrige después. El precio tecleado y la lista del cliente siguen teniendo prioridad. | docs/adr/009-meeting-2-pricing-and-file-rules.md, contexto 4–5 (Ángel: venta fija salvo los conceptos volátiles; el Excel de Cristina tiene las tarifas de venta); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx, hojas IAB FOB, FCL_IMB_FOB, LCL IMB FOB y FCL_DAP (mismo THC + gastos de puerto, BL y T3 en varias ofertas) | media |
+| Cristina | P01 | ¿Qué clientes tienen precios pactados propios? Sus listas se cargarían antes de las pruebas con clientes reales. | Al arrancar ningún cliente tiene lista propia: Odoo 17 tampoco tiene listas por cliente, solo las generales en EUR y USD. Las listas de cliente se crean cuando el comercial cierre un acuerdo (por ejemplo, una licitación). Mientras tanto se usa la venta general o la tecleada. | Odoo 17 product.pricelist (solo «Default EUR» y «Default USD»); docs/preguntas-abiertas.md línea 38 (mecanismo listo) | alta |
+| Cristina | R-S1 | ¿Son correctas las listas de servicios «siempre» y «a veces» propuestas para las tres plantillas actuales: importación aérea FOB, importación marítima FCL FOB y exportación aérea? | Las tres plantillas propuestas son correctas porque coinciden con sus ofertas reales. IAB FOB: siempre FAI, CSA, HAN, AWB, ETX, FAD y TTE; a veces SEG, QBR, CAU, inspecciones y ALM. IMB FCL FOB: siempre FMI, THC + gastos de puerto (con GLO), BL, T3/T3-PAD, CSM, TTE-FCL y FAD; a veces DEM, OCU, CES, SEG, QBR, CAU e inspecciones. EAB: siempre TTE-CON (recogida), HAN, AWB, DEX, CSA, FAE y X-R; a veces ALM, SEG y QBR. Lo que la oferta pone como «condiciones» va en «a veces». | NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx, hojas IAB FOB y FCL_IMB_FOB; docs/respuestas-cristina.md §2 (regla de Odoo 19 y oferta Cofitel) | media |
+| Cristina | F0-C08 | ¿Los servicios de una plantilla cambian según el Incoterm (por ejemplo, EXW añade la recogida y los gastos en origen, y DAP o DDP quitan la entrega), o los ajusta el operativo a mano? | Una plantilla por caso e Incoterm (como hoy «IAB FOB»), y el operativo ajusta. Cuando un Incoterm se repita con otros servicios se añade otra plantilla como dato, sin regla automática. Por ejemplo, «IMB EXW» con la recogida y los gastos en origen; en exportación DAP o DDP, con los gastos en destino. El Incoterm decide a quién se factura por defecto (punto de separación). | docs/respuestas-cristina.md fila 3 (en Odoo 19 el Incoterm casi no filtra servicios; punto de separación de PrevAdder); NEW ODOO/Nuevo Odoo.xlsx, hoja procesos A4–A13 y hoja product cathegories P17 | media |
+| Cristina | F0-C09 | ¿Qué servicios lleva «siempre» y cuáles «a veces» una oferta de exportación marítima FCL, de grupaje (LCL) de importación y de exportación, y de transporte terrestre? | Exportación FCL: tal como la propuesta, porque coincide con su oferta FCL de exportación. Siempre: THC + gastos locales (con GLO), BL, VGM, CSM, T3, DEX y FME, más la recogida TTE-FCL si la hace BOSS. A veces: CES, DEM/OCU, AMS/ENS, EUR1, FUM, SEG, QBR y gastos en destino si es DAP. Grupaje importación: siempre FMI-LCL, THC-LCL, T3, CSM, BL, FAD y TTE de entrega; a veces paletizado, ALM, SEG, QBR, CAU e inspecciones. Grupaje exportación: lo mismo en sentido inverso, con DEX en lugar de FAD. Terrestre: TTE, CST y FAD/DEX si BOSS despacha. | NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx, hojas FCL_DAP_VLC_SAN ANTONIO y LCL IMB FOB; docs/respuestas-cristina.md §2 (fila EMB) | media |
+| Cristina | P24 | ¿Es correcta esta lista de países de «Lejano Oriente» para el recargo FuelEU de MSC: China, Hong Kong, Taiwán, Japón, Corea del Sur, Vietnam, Tailandia, Malasia, Singapur, Indonesia, Filipinas y Camboya? | Usar la lista propuesta: China, Hong Kong, Taiwán, Japón, Corea del Sur, Vietnam, Tailandia, Malasia, Singapur, Indonesia, Filipinas y Camboya. Es lo que las navieras llaman «Far East» en el tráfico Asia–Europa. Afecta solo al coste previsto: la factura de MSC lo corrige y el operativo puede quitarlo. Si una factura de MSC lo contradice, se ajusta la lista. | docs/respuestas-cristina.md fila 9; .research/06_sea_supplier_docs.md línea 205 (el documento de MSC no da la lista); Odoo 17: 17 facturas de proveedor «FUEL EU SURCHARGE / … DESDE FAR EAST» en 2025–2026 | media |
+| Cristina | P28 | En 2026, ¿el handling de IRENEO (manipulación y rayos X en aéreo) sigue con los precios de 2025? Para el transporte ya está la carta de IRENEO con la subida desde el 15/07/2026. | Sí, el handling de IRENEO (manipulación y rayos X) sigue con los precios de 2025. La única comunicación de IRENEO para 2026 (carta del 14/07) sube solo el transporte. Es solo coste y se comprueba con la primera factura de IRENEO de 2026; si no cuadra, se crea una nueva versión. | docs/respuestas-cristina.md fila 13 (carta de IRENEO del 14/07/2026, solo transporte); docs/preguntas-abiertas.md línea 37 | media |
+| Cristina | P40 | Almacenaje de WFS «por 24 horas»: ¿se cuentan periodos de 24 h desde la llegada, o días naturales? | Periodos de 24 h desde la llegada (NOA), como dice el texto de WFS («por 24 horas»). Belal lo aprobó el 23/10. Las fuentes se contradicen, pero solo afecta al coste previsto: se contrasta con la primera factura real de WFS con almacenaje y, si no cuadra, se cambia el precio. | docs/preguntas-abiertas.md líneas 27 y 165; WFS 2026 p.5 punto 1 (.research/TARIFAS-DE-CARGA-WFS-ESPANA…pdf) | media |
+| Cristina | P13 | Para la caución (CAU) y el seguro (SEG), ¿qué porcentajes, tasas por país y mínimos se aplican, y de qué documento salen? | Usar los valores de hoy. Venta: las condiciones que imprimen sus ofertas, es decir, seguro opcional al 0,35 % del valor de la mercancía (en LCL sobre el 110 %) con mínimo, y caución al 0,60 % de los impuestos del DUA con mínimo. Coste: los parámetros de PrevAdder que Odoo 19 conservó (seguro por país del puerto de origen; caución por agente de aduanas con su mínimo). El IVA de CAU es de Ángel (P17-NS). Son valores editables en cada línea. | NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx (condiciones de las hojas IAB FOB, LCL y FCL); BossOdoo19/docs/agents/DECISIONS.md línea 666 (8 parámetros derivados); .research/05_sharepoint_excel.md líneas 272–276; .research/01_services_inventory.md líneas 105 y 136 (conflicto: mediana de Odoo 17 al 0,5 %) | media |
+| Cristina | F0-C11 | El documento de ocupación de MSC no tiene columna para el 40' HC. ¿Se usa la del 40' DV? | Sí, el 40' HC usa la columna del 40' DV. Las tarifas de demoras y ocupación de MSC en otros países tratan igual el 40' DV y el 40' HC (o los ponen en una sola columna «40' HC & DV»). Solo afecta al coste previsto y la factura de MSC lo confirma. | https://www.msc.com/-/media/files/msc-cargo/local-information/middle-east/united-arab-emirates/import-demurrage-tariff.pdf ; https://www.msc.com/-/media/files/msc-cargo/local-information/asia-pacific/india/import-detention.pdf ; docs/preguntas-abiertas.md línea 108 | media |
+| Cristina | F0-C12 | En las entregas en la provincia de Madrid, IRENEO cobra por zona MAD o MAD-EXT (según el código postal y un radio de 30 km). ¿Puede conseguir de IRENEO, o confirmar usted, la zona de cada población? | Mientras IRENEO no envíe su lista, clasificar cada población por la regla de su propio documento: MAD si está a 30 km o menos del almacén de IRENEO en Madrid (calculado por código postal) y MAD-EXT si está más lejos. El precio se marca como estimado y se contrasta con las primeras facturas. Operaciones puede pedir la lista a IRENEO cuando le escriba. | docs/preguntas-abiertas.md línea 109 (zonas por código postal y radio de 30 km, «Tarifas MAD 2025» p.2) | media |
+| Cristina | F0-C13 | En el almacén G-5 de IRENEO, ¿los 5 días libres se descuentan siempre, o al superarlos se cobra desde el día 1? | Los 5 días libres se descuentan, como está cargado. Es la lectura habitual de una franquicia cuando el documento no dice «superados, desde el día 1»; WFS sí lo escribe cuando es un umbral. Solo afecta al coste previsto y se comprueba con la primera factura de una estancia larga. | docs/preguntas-abiertas.md línea 110; BossOdoo19/docs/BOSS_DECISION_LOG.md B20 (WFS escribe el umbral de forma explícita) | media |
+| Cristina | F0-C14 | Las facturas reales de MSC de septiembre y octubre cobran menos THC de importación por contenedor que su tarifa vigente. ¿Hay un acuerdo o una edición distinta con MSC? | Vale la tarifa publicada. El coste previsto queda algo por encima de lo facturado, lo que es prudente para el margen, y la factura real fija el coste definitivo. Operaciones pregunta a MSC por el acuerdo en su próximo contacto; si existe, se carga como nueva versión. | docs/preguntas-abiertas.md línea 105 | alta |
+| Cristina | F0-C15 | Las condiciones de demoras y ocupaciones de la licitación de Leroy Merlin terminaron el 31/05/2026. ¿Hay condiciones para 2026-27? | Desde el 01/06/2026, las tarifas públicas de cada naviera hasta que llegue un documento 2026-27. Solo afecta al coste previsto de ese cliente. | docs/preguntas-abiertas.md línea 107 | alta |
+| Cristina | F0-C16 | El recargo FuelEU de la naviera, ¿se repercute al cliente o lo asume BOSS? | No va como línea aparte. Entra en el «THC + gastos portuarios» todo incluido que BOSS vende a precio fijo, y su coste cuenta en el margen. En Odoo 17 hay 17 facturas de proveedor de FuelEU (2025–2026) y ninguna línea de factura a cliente con ese nombre. Un acuerdo con un cliente puede cambiarlo. | Odoo 17 account.move.line, búsqueda «FUEL EU» (solo facturas de proveedor); correo de Cristina del 28/09 en Plan detallado previsiones.xlsx › Explicaciones (todo cargo de naviera se vende unificado como «THC + port charges»); docs/preguntas-abiertas.md línea 115 | media |
+| Cristina | M2-B | Para aprobar una tarifa, ¿es obligatorio adjuntar el documento del proveedor? | Sí, obligatorio siempre, como ahora (ADR-002). Cada precio aprobado debe poder rastrearse hasta su documento. Los fletes semanales tecleados desde la oferta ya tienen su propio camino sin documento (ADR-009 §3). Es un ajuste que se apaga sin código. | docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 4; docs/adr/002-pricing-model.md; BossOdoo19/docs/BOSS_DECISION_LOG.md B29 (tarifas con documento de origen) | alta |
+| Cristina | R2-A6 | ¿Se usa el transporte terrestre convencional, el que se cobra por peso tasable, en envíos de contenedor completo (FCL)? Si se usa, el volumen tendría que verse también en las ofertas FCL. | No. En FCL se usa siempre el transporte de contenedor (TTE-FCL); el volumen sigue oculto en FCL. Cristina separó TTE-FCL y TTE-CON el 02/10, y todas sus ofertas FCL cotizan el transporte «por contenedor». | BossOdoo19/docs/agents/DECISIONS.md fila 2026-10-02 (TTE-FCL y TTE-CON); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx, hojas FCL_IMB_FOB («Transporte desde puerto… por contenedor») | alta |
+| Cristina | R2-A1 | Cuando se teclea el coste de un flete para una oferta, ¿debe guardarse también como precio reutilizable para esa ruta y semana? | Solo cuando el comercial lo elige, como ahora. Puede teclear un coste que se queda en la línea o crear desde la oferta un precio semanal con ruta y validez, que se guarda como versión de la tarifa. Así se evita guardar como tarifa costes puntuales que no se repiten. | docs/adr/007-supplier-cost-from-the-quotation.md; docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 2; docs/reunion-angel-2026-10-27-parte2.md §2 (asistente semanal pedido por Cristina y Ángel) | alta |
+| Cristina | M2-E | ¿Hay que limitar qué proveedores pueden prestar cada servicio (por ejemplo, qué camioneros, o una naviera que también hace el transporte), o vale cualquier proveedor con un aviso si no tiene tarifa? | Cualquier proveedor, con un aviso si no tiene tarifa del servicio, como ahora. Una lista cerrada por servicio necesita mantenimiento. Lo que Cristina pidió es poder buscar proveedores por tipo de servicio y zona, no restringirlos. | docs/adr/009-meeting-2-pricing-and-file-rules.md, «Open»; NEW ODOO/Nuevo Odoo.xlsx, hojas Contactos A20 y «Facturacion y costes» A3–A4 | alta |
+| Cristina | F0-C18 | Al recotizar una oferta ya aceptada, ¿la «venta aceptada» y el «margen en la aceptación» del expediente deben conservar los valores originales, o mostrar los recotizados? | Conservar los originales y mostrar los nuevos aparte. «En la aceptación» debe ser una instantánea fija, como la que ya guarda la aceptación según ADR-003. La venta y el margen recotizados se muestran como cifras actuales. Solo cambia lo que se muestra. | docs/adr/003-quotation-cycle-and-acceptance.md (instantánea de aceptación); docs/preguntas-abiertas.md línea 117 | alta |
+| Cristina | F0-C19 | En «Recotizar», ¿la casilla «Recalcular el coste» debe venir marcada en todas las líneas, o desmarcada? | Desmarcada: solo se recalcula el coste de las líneas que la persona marca, para que recotizar un precio no cambie costes por sorpresa. Es un valor por defecto que se cambia sin código. | docs/preguntas-abiertas.md línea 117 | media |
+| Cristina | F0-C20 | ¿Necesita en Odoo 20 la oferta en formato corto que usan hoy, o bastan la oferta normal y la oferta de tarifas por unidad (sin totales)? | Bastan la oferta normal y la oferta de tarifas por unidad de Odoo 20. El formato corto queda fuera del plan y se puede añadir después del arranque si se pide. | docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 6; docs/adr/011-documents.md | alta |
+| Cristina | P34 | ¿Hace falta para el arranque el precio cerrado para varios envíos (tipo licitación de Leroy)? Si hace falta, ¿para qué clientes, con qué duración y con qué cantidades máximas? | Después del arranque. El único acuerdo conocido, la licitación de Leroy, terminó el 31/05/2026. Mientras tanto, una oferta aceptada se puede repartir entre varios expedientes. | docs/respuestas-cristina.md fila 16; docs/preguntas-abiertas.md líneas 107 y 182 | alta |
+| Cristina | P21 | Además de la oferta por envío y de la oferta de tarifas por unidad, ¿hacen falta ofertas de tarifa por ruta válidas para varios envíos (por ejemplo, un FCL mensual Shanghái–Valencia)? | No hacen falta; bastan las actuales. La oferta de tarifas por unidad, sin total y con su validez, cubre el caso de un FCL periódico. Se revisa si aparece un cliente que lo pida. | docs/adr/009-meeting-2-pricing-and-file-rules.md decisión 6 | media |
+| Cristina | P22 | Para ofrecer alternativas (por ejemplo, dos navieras), ¿se hacen varias ofertas dentro de la misma oportunidad, o una sola oferta con secciones opcionales? | Varias ofertas en la misma oportunidad, como ahora (estándar de Odoo). Cada alternativa conserva su propio coste, margen y aceptación. | Estándar de Odoo 20 (sale_crm); docs/preguntas-abiertas.md línea 164 | alta |
+| Cristina | P23 | ¿Qué validez lleva una oferta por defecto? ¿Y se puede aceptar una oferta ya caducada? | 15 días por defecto, editable en cada oferta, y más corto cuando el flete tenga menos validez. Sus ofertas aéreas dicen 7 días y las marítimas unas dos semanas. Una oferta caducada no se acepta sin ampliar la validez o recotizar. Es lo que hace hoy Odoo 17: la spot vencida pasa a perdida y solo vuelve a «enviada» si se amplía la validez. | Odoo 17 base.automation 197 «Allow for Validity extension» (acción 1783); Odoo 17 res.company quotation_validity_days = 30; NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx (validez en las condiciones de cada oferta) | media |
+| Cristina | P26 | ¿Se fusionan los códigos que se propuso juntar (CSM, CSA y CST; AMS y ENS; inspecciones), o se mantienen separados? | Se mantienen separados, como ahora y como en Odoo 17. Así la correspondencia de la migración es uno a uno; si se quieren juntar, se archivan códigos más adelante. | docs/matriz-servicios.md (CSM, CSA, CST, AMS y ENS como códigos de Odoo 17) | alta |
+| Cristina | P43-D3 | En la venta de almacenaje, ¿un «día» es un periodo de 24 h desde la llegada, o un día natural? | Periodos de 24 h desde la llegada, igual que la compra a WFS (P40). Así venta y coste se cuentan igual y la franquicia «48 h» en horas es coherente. | docs/preguntas-abiertas.md líneas 136 (P15: umbral en horas reales) y 165 (P40) | media |
+| Cristina | P43-D4 | ¿El mínimo de venta de ALM es por estancia o por día? ¿Se cobra aunque la mercancía salga dentro de las horas libres? | Por estancia, y no se cobra si la mercancía sale dentro de las horas libres. Así lo aplican hoy las ofertas: días libres y, en adelante, por día con mínimo. | NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx IAB FOB (condición de almacenajes); .research/05_sharepoint_excel.md línea 519 | media |
+| Cristina | P43-D5 | Para el umbral de «8 días o más», ¿el día de llegada cuenta como día 1? Si se cuentan periodos de 24 h, ¿son 8 periodos? | Sí: el día de llegada es el día 1, es decir, las primeras 24 h desde el NOA. El umbral de larga estancia se alcanza al entrar en el 8.º periodo. Encaja con la regla de Cristina de cobrar desde el NOA incluido una vez superada la franquicia. | BossOdoo19/docs/BOSS_DECISION_LOG.md B20 (Cristina 08/09: superado el periodo libre, se cobra desde el día 1); docs/preguntas-abiertas.md línea 136 (P15) | media |
+| Cristina | P43-D7 | ¿La regla de venta de ALM se aplica solo al aéreo o también al grupaje marítimo (LCL)? ¿En todos los aeropuertos o solo en Madrid y Barcelona? | La venta única se aplica solo al aéreo, en todos los aeropuertos. El grupaje marítimo (LCL) conserva su condición propia: sus ofertas LCL dan 6 días libres. ALM cubre aéreo y LCL como servicio (Cristina 28/09), pero el precio único que ella describió el 08/10 es el del almacenaje de aeropuerto. | Correo de Cristina del 28/09 (Plan detallado previsiones.xlsx › Explicaciones: «ALM (storage for air and LCL sea)»); BossOdoo19/docs/agents/DECISIONS.md fila «Storage types» (08/10); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx LCL IMB FOB | media |
+| Cristina | P43-D8 | El mínimo de venta de ALM del 25/09 es menor que el mínimo que cobra WFS. ¿Se acepta vender por debajo del coste en estancias pequeñas, o la venta no puede bajar nunca del coste? | Propuesta: aplicar la regla de venta de ALM tal como la dé Cristina (también el mínimo), sin subirla al coste. Si en una estancia pequeña la venta queda por debajo del coste del handler, sale solo un aviso interno de margen. El comercial puede teclear otro importe con motivo. Se puede cambiar a «la venta nunca baja del coste» cuando Ángel fije el margen mínimo (P01/P02). | docs/especificacion-alm-venta.md D8 y D10; docs/preguntas-abiertas.md l.38 y l.73 (P01/P02, margen mínimo pendiente de Ángel); BossOdoo19/docs/BOSS_DECISION_LOG.md B18 (suelo de coste con excepción documentada); Odoo 17 summary_utils (margen solo como aviso, docs/respuestas-cristina.md fila 17) | media |
+| Cristina | P43-D12 | Si la estancia real dura más que la cotizada, ¿la venta queda fija y el exceso se refactura aparte con motivo, o se recalcula la venta? | Venta fija al aceptar, y el exceso de estancia real se refactura aparte como coste adicional con motivo («Refacturar un coste adicional»). Los días de almacenaje de la oferta son una estimación (Cristina 25/09) y el almacenaje se cobra por la estancia real, sin reescribir lo aceptado. Es el diseño de Odoo 20 y el de Odoo 19 (B22). | docs/especificacion-alm-venta.md D12; BossOdoo19/docs/agents/DECISIONS.md l.141 (Cristina 25/09: días de almacenaje de la oferta = estimación); BossOdoo19/docs/BOSS_DECISION_LOG.md B22 («Venta almacenaje real» propone la venta adicional sin reescribir la base aceptada); docs/ciclo-operativo.md l.46 y l.51 (coste adicional refacturado con motivo) | media |
+| Cristina | P43-D13 | La carga especial (frío, peligrosa, valiosa), ¿tiene su propia venta de ALM o sigue la misma regla? | Siempre tecleada: la carga especial (frío, peligrosa, valiosa, animales vivos) no usa la venta única de ALM. Su coste del handler también es especial y se teclea hasta tener sus tarifas (P44). Se cambia a «venta propia» cuando Cristina dé esos importes. | docs/preguntas-abiertas.md l.35 y l.168 (P44: la tarifa ALM de WFS es de carga general; en carga especial el coste se teclea); docs/especificacion-alm-venta.md D13 | media |
+| Cristina | P43-D14 | ¿Desde qué fecha vale la regla de venta de ALM, hasta cuándo y en qué moneda? | Desde el 25/09/2026, sin fecha de fin y en EUR, como se cargó en Odoo 19. Se aplica a las ofertas nuevas desde que Cristina ratifique los valores (D1). Una versión nueva de la tarifa de venta sustituye a la anterior sin tocar las ofertas aceptadas. | docs/especificacion-alm-venta.md D14 y «Diseño propuesto» punto 1 (tarifa de venta con validez y versiones); docs/respuestas-cristina.md fila 7 (propuesta: la regla del 25/09 para ofertas nuevas); la compañía factura en EUR (docs/preguntas-abiertas.md l.138, P27) | media |
+| Cristina | F0-C22 | Además de Abierto, En tránsito, Entregado y Operaciones cerradas, ¿quiere los estados «Llegado» y «Pendiente de cierre», como en Odoo 17? | Añadir «Llegado» y «Pendiente de cierre», como en Odoo 17: Abierto/Pendiente de salida → En tránsito → Llegado → Entregado → Pendiente de cierre → Operaciones cerradas (+ Cancelado). Son las etapas con las que trabaja hoy el equipo, y facilitan migrar los expedientes abiertos etapa por etapa. | Odoo 17 x_dashboard_stage 1-5 (docs/decisiones-f0.md l.1151); docs/plan-expediente-completo.md l.110; BossOdoo19/docs/BOSS_DECISION_LOG.md B32 (hitos Reserva·Salida·Llegada·Aduana·Entrega) | media |
+| Cristina | F0-C23 | ¿Cómo se asigna el operativo responsable de un expediente: a mano al abrirlo, o automáticamente por cliente y tráfico, como en Odoo 17? | Automático por cliente y tráfico, con la tabla que ya existe en Odoo 17 (se migra y la mantiene operaciones). Se puede cambiar a mano al abrir el expediente. El expediente guarda por separado el operativo y el comercial (KAM), como en Odoo 17. Si un cliente o tráfico no está en la tabla, el expediente queda «sin operativo» y aparece en la lista para asignarlo. | docs/decisiones-f0.md l.1159 (tabla de asignación de Odoo 17 por cliente y tráfico; operativo y KAM separados); .research/03_cycle_requirements.md l.69 (Odoo 17 exige operativo al crear el E); BossOdoo19/docs/BOSS_DECISION_LOG.md B31.1 (operator_user_id, «Sin asignar») | media |
+| Cristina | F0-C24 | Para la importación marítima FCL, que es la primera que se va a construir, ¿valida esta lista de hitos, o la acorta? Antes de la salida: envío confirmado, instrucciones recibidas, booking emitido y confirmado, mercancía lista, recogida hecha, mercancía en puerto, documentos de aduana y poder recibidos, aduana presentada y despachada, instrucciones de embarque (SI) presentadas y buque salido. En tránsito: pre-alerta recibida y enviada, documentos de aduana recibidos, revisados y enviados, aduana autorizada y llegada a puerto. En destino: aduana presentada, levante, facturado, entrega gestionada y entregado. Después: facturas de proveedor recibidas y revisadas, y cobros y pagos hechos. | Validar la lista propuesta como lista de ayuda (actividades del operativo), sin que bloquee nada. Es la misma estructura que las cuatro listas de Odoo 17 (antes de la salida, en tránsito, destino y después). Cristina puede tachar hitos más adelante: cambiarlo es configuración. | docs/decisiones-f0.md l.1167 (listas de 13, 9, 5 y 5 pasos de Odoo 17, vacías en un expediente reciente de 2026); NEW ODOO/Nuevo Odoo.xlsx › Hoja1 («Register the submilestones according to the direction and incoterm») y › OPS- exptes (prealert, instrucciones al agente, envío de documentos al agente de aduanas) | media |
+| Cristina | F0-C25 | ¿Qué hitos son obligatorios, es decir, impiden pasar al estado siguiente si no están hechos? | Ninguno: los hitos solo sirven de guía. Los controles de verdad son las condiciones de cada estado (F0-C31, C49, C51) y los documentos obligatorios (F0-C38). Así no se frena al operativo, y en Odoo 17 las listas de hitos casi no se usan. | docs/decisiones-f0.md l.1167 y l.1173-1175; NEW ODOO/Nuevo Odoo.xlsx › uso de odoo (guardar al clicar en la subfase, como nota y no como freno) | media |
+| Cristina | F0-C26 | ¿Todos los hitos los hace el operativo del expediente, o algunos los hace otra persona (comercial, compras, administración)? | Todos los hace el operativo del expediente, salvo los administrativos, como en Odoo 17: la factura al cliente la prepara el operativo y la revisa administración; administración registra las facturas de proveedor y hace cobros y pagos. | docs/decisiones-f0.md l.1183 (práctica de Odoo 17); .research/03_cycle_requirements.md l.66-70 | media |
+| Cristina | F0-C28 | ¿Qué hitos llevan la importación aérea y la exportación aérea (por ejemplo: NOA, recogida en el handler, entrega al handler, salida del vuelo)? | Belal prepara la lista y Cristina la revisa, a partir de los hitos estándar IATA/Cargo iQ. Importación aérea: pre-alerta, salida del vuelo (DEP), llegada (ARR), NOA/NFD, documentos al agente de aduanas, despacho y levante, recogida en el handler y entrega (DLV). Exportación aérea: booking, recogida, entrega al handler (FOH/RCS), despacho de exportación (DAE), salida del vuelo (DEP) y pre-alerta al agente. NOA y FOH ya se usan como inicio del almacenaje (Cristina 25/09). | https://www.cargoiq.org/blank-2/new-cargo-iq-performance-scorecard-aims-to-drive-quality-industry-wide (hitos RCS, DEP, ARR, RCF, NFD); BossOdoo19/docs/agents/DECISIONS.md l.142 (Cristina 25/09: eventos NOA → recogida y entrega → ETD); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («en aéreo poner un espacio para el NOA») | media |
+| Cristina | F0-C29 | ¿Qué hitos llevan la exportación marítima FCL, el grupaje (LCL) y el transporte terrestre? | La de importación marítima adaptada al sentido (Belal la prepara y Cristina la revisa), que es lo que se hace hoy en Odoo 17. En exportación FCL se añaden los cortes (documentos, SI, VGM, port cut-off) y la liberación del BL. En LCL, el consolidador y el vaciado o llenado en CFS. En terrestre: recogida, CMR y entrega. | docs/decisiones-f0.md l.1215 (Odoo 17 adapta las listas de importación según el sentido); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («AÑADIR PORT CUT OFF», estado SWB/TELEX/OBL) y › Hoja1 (subhitos por sentido e incoterm; distintos en air, sea FCL, sea LCL y land); https://dcsa.org/standards/track-and-trace | media |
+| Cristina | F0-C30 | En una consolidación, ¿con qué base se reparten los costes del máster entre las houses: peso tasable, volumen, peso bruto o a partes iguales? | Por peso tasable de cada house: en aéreo, el mayor del bruto y el volumen × 167; en LCL marítimo, por W/M (la tonelada o el m³ que dé más). Los costes que el proveedor cobra por partida, como el FAD, van a su partida. El operativo puede repartir a mano con motivo en casos especiales. | https://www.quickmovetech.com/calculate-true-profit-per-shipment-guide/ (bases de reparto del máster a las houses); https://cxtms.com/docs/knowledge-base/freight-forwarding/consolidation (W/M en LCL); docs/preguntas-abiertas.md l.129 (Ángel 27/10: tasable = el mayor; 167/1000); Plan detallado previsiones.xlsx › Explicaciones previsiones A120 (FAD por partida) | media |
+| Cristina | F0-C31 | ¿Qué tiene que cumplirse para pasar un expediente a «En tránsito»? | Como en Odoo 17: ETD o ATD informada y ya pasada, sin números de contenedor provisionales, que no sea un preexpediente, el seguro confirmado o emitido (o «sin seguro» marcado) y el expedidor y el destinatario reales. Si una condición estorba, se puede quitar en cada tráfico. | docs/decisiones-f0.md l.1232 (condiciones de Odoo 17, acciones 1048/1062/1109 citadas en docs/plan-expediente-completo.md l.110) | media |
+| Cristina | F0-C32 | ¿Es obligatorio tener la confirmación del proveedor (su referencia o su acuse en el pedido) antes de pasar a «En tránsito»? | Solo en el transporte principal (naviera o aerolínea): para pasar a «En tránsito» hace falta la referencia o confirmación del booking del transportista en su pedido. En los demás pedidos la referencia del proveedor se anota sin exigirla. Es práctica estándar: no hay salida sin booking confirmado del transportista. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («Fecha envio booking de BOSS al agente o naviera»); hito «booking emitido y confirmado» de la lista de F0-C24; docs/ciclo-operativo.md l.45 (pedidos con confirmación humana) | media |
+| Cristina | F0-C33 | ¿Valida un catálogo fijo de tipos de evento del envío? Propuesta: booking enviado y confirmado, pre-alerta recibida y enviada, borradores aprobados, documentos de aduana enviados, despacho, levante, entrega programada, entrega hecha, vacío devuelto, retraso, incidencia, aviso de llegada, y entrada y salida de almacén. | Validar la lista propuesta como catálogo fijo, añadiendo «cambio de ETD/ETA» y «salida» y «llegada» ligados a ATD y ATA. Sigue la lógica del estándar DCSA (eventos de envío, transporte y equipo, estimado o real) y de IATA para aéreo. Es configuración: Cristina puede añadir tipos después. | https://dcsa.org/standards/track-and-trace; https://dcsa.org/wp-content/uploads/2021/07/202108_DCSA_P1_Information-Model-v3.2_Final.pdf; docs/portal-seguimiento-integraciones.md (eventos con fuente, preparados para integración) | media |
+| Cristina | F0-C34 | ¿Qué tipos de evento se publican por defecto al cliente en el portal? El operativo podrá cambiarlo en cada caso. | Salida, llegada, levante y entrega, con el texto para el cliente propuesto, más los cambios de ETD/ETA. El operativo puede despublicar cualquiera. Nunca se publica una nota interna ni un evento sin texto para el cliente (ADR-010). | NEW ODOO/Nuevo Odoo.xlsx › ops notificaciones cliente («Cada vez que cambie la etd o eta, email automático al cliente»); docs/adr/010-customer-portal.md decisión 8; docs/decisiones-f0.md l.1250-1254 | media |
+| Cristina | F0-C38 | ¿Qué documentos son obligatorios en cada etapa (por ejemplo, el levante antes de «Entregado», o el BL antes de «En tránsito»)? | Pocos y claros: el MBL/MAWB (o el HBL/HAWB) antes de «En tránsito»; el levante antes de «Entregado» cuando la aduana la lleva BOSS; el HBL liberado o SWB confirmado antes de emitir la OT o entregar (requisito escrito de Cristina). Ninguno más hasta que ella lo pida. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («OT: Antes de entregar siempre el operador must confirm that HBL is released or SWB») y › Incidencias (tipo de BL obligatorio); Odoo 17: levante exigido para Entregado si la aduana la lleva BOSS (docs/decisiones-f0.md l.1387) | media |
+| Cristina | F0-C39 | ¿Qué documentos ve el cliente en el portal: solo los que el operativo publica uno a uno (como ahora), o algunos tipos que se publican siempre (por ejemplo HBL, aviso de llegada, DUA y levante, y su factura)? | Solo los que publica el operativo, como ahora (ADR-010), con una sugerencia ya marcada para los tipos que son del cliente: HBL/HAWB, certificado de seguro, aviso de llegada, DUA y levante. Su factura ya la ve en el portal. Nunca se publican por defecto documentos del máster. Cristina limita la pre-alerta al cliente al HBL y al seguro. | docs/adr/010-customer-portal.md decisión 8 (máster publicado solo si es de ese cliente); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («Envio de prealert al cliente: debe llevar solo el HBL y doc del seguro») | media |
+| Cristina | F0-C40 | ¿Quiere pedir desde el expediente documentos al cliente o al agente (factura comercial, packing list, certificados), con un enlace de subida y una fecha límite? Si es así, ¿qué documentos y en qué momento? | No para el arranque: se siguen pidiendo fuera de Odoo, pero el expediente muestra qué documento falta (lista de tipos de F0-C37). La petición con enlace de subida y fecha límite queda para después del 1/1, cuando el correo esté activo (F0-B22/B25). | docs/plan-expediente-completo.md l.78-87 (el plan no cabe antes del 1/1); docs/decisiones-f0.md l.1298 (el correo se activaría en el arranque); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes (instrucciones al agente desde el expediente: deseable, sin fecha) | media |
+| Cristina | F0-C42 | Además de la orden de transporte, ¿cuáles de estos documentos debe emitir Odoo 20 para el arranque, y en qué orden: confirmación de booking, instrucciones de embarque (SI), pre-alerta, delivery order, carátula del expediente y listado de mercancía? | Para el arranque, solo lo que hoy sale de Odoo 17, en este orden: 1) orden de transporte, 2) HBL, 3) AWB máster y house con su etiqueta, 4) listado de mercancía, 5) manifiesto de carga (2-5 según los tráficos que entren el 1/1, F0-C69). La confirmación de booking, las instrucciones de embarque (SI), la pre-alerta, la delivery order y la carátula se siguen haciendo fuera hasta después del arranque. | BossOdoo19/docs/boss_reports_brief.md §1-2 (inventario del Documental Manager de Odoo 17: HBL, MAWB/HAWB, etiqueta, listado de mercancía, manifiesto, OT); docs/decisiones-f0.md l.1307; docs/plan-expediente-completo.md l.78-87 | media |
+| Cristina | P10-A | En el portal, ¿una empresa de un grupo puede ver los envíos de otra entidad legal del mismo grupo (por ejemplo, de su filial)? | No, como ahora: cada contacto ve solo los envíos de su propia empresa. Si un grupo lo pide, BOSS lo concede a mano para ese grupo, con autorización escrita del cliente. Así no se exponen datos de una entidad a otra. | docs/adr/010-customer-portal.md decisión 2 («a group company or a third party is a decision, not a default»); docs/preguntas-abiertas.md l.58 | alta |
+| Cristina | P10-B | En el portal, ¿qué puede ver el expedidor o el destinatario que no es el ordenante del envío? | Nada con cuenta propia. Si hace falta, el operativo da al expedidor o al destinatario el enlace de seguimiento de ese envío (sin login, revocable, solo fechas y eventos publicados, sin partes ni documentos), que ya existe. | docs/adr/010-customer-portal.md decisiones 2 y 9 y tabla de roles (enlace de seguimiento); docs/matriz-reunion-2026-10-27.md P-8 | media |
+| Cristina | F0-C43 | ¿Hace falta para el arranque el seguimiento automático con navieras y aerolíneas, o basta con registrar los eventos a mano y a partir de las fechas? | Basta a mano para el arranque: los eventos se registran a mano y a partir de las fechas. El seguimiento automático (DCSA o el de cada naviera, agregadores, AWB) queda para después del 1/1. Cristina lo pidió como deseo (ejemplo de OOCL), pero no existe hoy en Odoo 17. | docs/portal-seguimiento-integraciones.md; docs/matriz-reunion-2026-10-27.md P-9; NEW ODOO/Nuevo Odoo.xlsx › tracking (OOCL); https://dcsa.org/standards/track-and-trace | alta |
+| Cristina | F0-C44 | ¿BOSS seguirá emitiendo desde Odoo 20 las AWB (house y máster) y sus etiquetas? Si es así, ¿con qué datos de los bultos (piezas, medidas, peso, clase de tarifa, mercancía peligrosa, valor declarado)? | Sí, con esos datos: piezas, medidas, peso bruto y tasable, clase de tarifa, mercancía peligrosa, valor declarado y descripción de la carga. Son los datos estándar de la AWB IATA, y Odoo 17 emite unas 200 AWB house y máster con etiqueta. Si no entra antes del 1/1 (F0-C69), se siguen haciendo como hoy hasta construirlas. | docs/decisiones-f0.md l.1337 (Odoo 17: unas 200 AWB y etiquetas); BossOdoo19/docs/boss_reports_brief.md §2 (x_air_waybill, x_label_awb); BossOdoo19/docs/BOSS_REPORTS_DECISIONS.md D3 | media |
+| Cristina | F0-C45 | ¿BOSS emite sus propios HBL como NVOCC y el manifiesto de carga? ¿Deben salir de Odoo 20 desde el 1/1? | Sí: BOSS emite sus HBL como NVOCC (unos 280 en Odoo 17) y el manifiesto de carga. Desde Odoo 20 salen cuando entren la exportación marítima y la consolidación (F0-C69). Hasta entonces se emiten como hoy. | docs/decisiones-f0.md l.1345 (Odoo 17: unos 280 HBL y manifiestos); BossOdoo19/docs/boss_reports_brief.md §2.3 (acciones 1419 HBL y 1543 Cargo Manifest) | media |
+| Cristina | F0-C48 | ¿Qué estados de aduana quiere seguir: pendiente, documentos enviados, presentado y levante, u otros? | Pendiente, documentos enviados, presentado y levante: los tres de Odoo 17, con «Gestionado» dividido en presentado y levante. El levante es el dato que necesitan la condición de entrega y el aviso al agente. | docs/decisiones-f0.md l.1358-1363 (Odoo 17: Pendiente / Documentos enviados / Gestionado); l.1352 (sin levante no hay condición de entrega) | media |
+| Cristina | F0-C49 | Si existe el estado «Llegado», ¿qué tiene que cumplirse para pasar a él: que haya pasado la ATA, como en Odoo 17, u otra cosa? | ATA informada y ya pasada, como en Odoo 17. En aéreo vale el NOA/ATA. Si falta la ATA, se propone la ETA para que el operativo la confirme. | docs/decisiones-f0.md l.1370 (regla de Odoo 17); NEW ODOO/Nuevo Odoo.xlsx › ALMACENAJES («REGISTRAR FECHA ATA O RECEPCION NOTA DE LLEGADA») | media |
+| Cristina | F0-C50 | ¿Debe Odoo 20 emitir el aviso de llegada al cliente? Si es así, ¿con qué datos? | No para el arranque: hoy tampoco lo emite Odoo 17 (se guarda como documento recibido). Se puede añadir después como informe del expediente. | docs/decisiones-f0.md l.1378; docs/plan-expediente-completo.md l.78-87 (capacidad) | alta |
+| Cristina | F0-C54 | ¿La orden de transporte se emite desde el pedido de compra al transportista, o desde el expediente? | Desde el pedido de compra al transportista, que es el estándar de Odoo para ordenar un servicio a un proveedor. Se abre y se imprime con un botón desde el expediente, y queda archivada en ambos. Para el operativo no cambia nada: la busca en el expediente, como hoy en Odoo 17. | CLAUDE.md del proyecto («Standard Odoo first»); docs/ciclo-operativo.md l.45 (pedidos de compra por proveedor desde el expediente); docs/decisiones-f0.md l.1403 (Odoo 17: OT ligada al expediente) | media |
+| Cristina | F0-C55 | ¿Con cuántos días de antelación al último día libre de un contenedor hay que avisar al operativo para que lo devuelva? ¿Y a quién más? | Aviso al operativo 3 días laborables antes del último día libre de cada contenedor, y otro el mismo día si sigue sin devolverse, con copia al comercial (KAM) solo cuando ya hay coste de demora. Es una actividad en Odoo, sin correo durante las pruebas. Los días se cambian en un ajuste. | docs/decisiones-f0.md l.1407-1411; docs/mapeo-hoja1.md H1-15/H1-16 (periodos de demora y ocupación por contenedor ya calculados); NEW ODOO/Nuevo Odoo.xlsx › Incidencias (demoras de más de 3.000 € por avisar tarde); https://www.logitrack-ai.com/glossary (demurrage y detention) | baja |
+| Cristina | F0-C56 | Cuando un expediente se factura a varias partes (por ejemplo, el flete al agente y los gastos locales al destinatario), ¿cómo prefiere hacerlo: con un segundo pedido de venta dentro del mismo expediente, o indicando en cada línea a quién se factura? | Un segundo pedido de venta dentro del mismo expediente, uno por pagador. Es el mecanismo estándar de Odoo (el cliente de la factura va en el pedido) y da el mismo resultado que Odoo 17: una factura por pagador. Por defecto, el pagador del flete y de los gastos se propone según el Incoterm (punto de separación de PrevAdder). | docs/decisiones-f0.md l.1428 (Odoo 17: entidad por línea y una factura por entidad); docs/respuestas-cristina.md fila 3 (punto de separación por Incoterm, billing_entity_default); CLAUDE.md del proyecto («Standard Odoo first») | media |
+| Cristina | F0-C57 | ¿El expediente debe registrar si el flete es prepaid o collect? ¿Y eso decide a quién se factura el flete? | Sí, y decide a quién se factura el flete: prepaid se factura al ordenante en origen; collect, al pagador en destino (destinatario o agente). Se puede cambiar línea a línea. Es lo que hace Odoo 17 y la práctica estándar de los conocimientos de embarque (freight prepaid/collect). | docs/decisiones-f0.md l.1436 (Odoo 17 guarda prepaid/collect y a quién se factura); docs/respuestas-cristina.md fila 3 (pagador por Incoterm) | media |
+| Cristina | F0-C58 | ¿Cómo se liquida el profit share con el agente: se le vende, va como línea negativa en la factura al agente ordenante, el abono del agente se registra como ingreso, o depende del caso? | Según el caso, como en Odoo 17 (los cuatro casos): factura del agente de origen con su profit share (coste PFT), abono del agente, factura de BOSS al agente con el profit share como ingreso, y línea negativa en la factura al agente ordenante. El operativo elige el caso en cada expediente. El IVA es de Ángel (F0-A27) y la fecha la decide Belal (F0-B17). | docs/decisiones-f0.md l.1444 y l.1729 (práctica de Odoo 17 en USD); .research/01_services_inventory.md l.393 (Odoo 17 tiene líneas de venta de profit share); Odoo 17 cuenta 705005 profit share (docs/preguntas-abiertas.md l.234) | media |
+| Cristina | F0-C59 | ¿Hace falta una factura que agrupe varios expedientes (por ejemplo, la facturación periódica a un cliente)? | Una factura por expediente por defecto. Para los clientes que hoy reciben factura mensual agrupada en Odoo 17 (por ejemplo, Leroy Merlin), se agrupan varios expedientes en una factura con la facturación estándar de Odoo (varios pedidos del mismo cliente). La lista de esos clientes sale de Odoo 17 al migrar. | .research/03_cycle_requirements.md l.69 (Odoo 17: «Generate Mass Invoice», facturas mensuales consolidadas para algunos clientes, p. ej. Leroy); docs/decisiones-f0.md l.1452 | media |
+| Cristina | F0-C61 | ¿Quién puede hacer el cierre operativo, y quién puede reabrir o cambiar datos de un expediente cerrado? | Cierra el operativo del expediente (o el gestor de operaciones). Solo el gestor de operaciones (Cristina) puede reabrir, con motivo. Un expediente cerrado queda bloqueado. Cristina recibe un aviso en cada cierre para revisarlo, como pidió por escrito. Odoo 17 es más estricto (solo informática modifica). | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («cuando un expte quede cerrado que me llegue una notificacion a mi para que yo lo revise»; costes metidos después de comisionar); docs/decisiones-f0.md l.1478 (Odoo 17) | media |
+| Cristina | F0-C64 | ¿Qué avisos de supervisión quiere, y con qué umbrales? Por ejemplo: ETA pasada sin ATA, expediente sin revisar durante N días, cortes, mercancía lista, ETD o seguro sin informar, y venta pendiente de facturar a final de mes. | Los de Odoo 17 con sus umbrales, como actividades para el operativo y sin correo: cortes, mercancía lista, ETD y seguro sin informar (lunes, miércoles y viernes); expediente sin revisar más de 2 días laborables (7 para el comercial); entregado sin cerrar (7 días según F0-C63); ETA pasada sin ATA; pendientes de facturar o cerrar a fin de mes; resumen semanal de cierres; y tipo de BL sin informar 10 días antes de la llegada (Cristina). | docs/decisiones-f0.md l.1502 (crons 76/90/92/93 de Odoo 17); NEW ODOO/Nuevo Odoo.xlsx › Incidencias (aviso de 10 días); docs/plan-expediente-completo.md l.110 | media |
+| Cristina | F0-C65 | ¿Quién recibe cada aviso: el operativo, el comercial (KAM), usted en copia? | Como en Odoo 17: cada aviso al operativo del expediente; el de fin de mes con copia a Ángel; el resumen semanal de cierres al comercial (KAM) con copia a Cristina; y a Cristina el aviso de cada expediente cerrado (lo pidió por escrito). | docs/decisiones-f0.md l.1510 (destinatarios en Odoo 17); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes (notificación a Cristina al cerrar) | media |
+| Cristina | F0-C66 | ¿Hay que valorar a clientes y proveedores al cerrar el expediente, como en Odoo 17? | Sí, como en Odoo 17 (obligatorio para cerrar desde el 01/03/2025), con una valoración sencilla del cliente y de los proveedores del expediente. Cristina quiere elegir proveedores también por puntuación. Si frena el cierre en el arranque, se pasa a opcional con un ajuste. | docs/decisiones-f0.md l.1518 (Odoo 17 exige valoraciones desde 01/03/2025); NEW ODOO/Nuevo Odoo.xlsx › Contactos («elegir según puntuacion tb») | media |
+| Cristina | F0-C68 | ¿Con qué criterios quiere ver la rentabilidad de varios expedientes juntos: por mes, cliente, comercial, operativo o tráfico? | Por todos esos criterios (mes de la fecha importante, cliente, comercial, operativo y tráfico), en una sola vista de análisis estándar (pivote y gráfico) sobre los expedientes. Añadir un criterio no cuesta más que elegirlo en el pivote. | BossOdoo19/docs/CRISTINA_REQUIREMENTS_MATRIX.md CR-O10/CR-O11/CR-N7 (agrupaciones por operador, tráfico, cliente y comercial, periodo por fecha importante); NEW ODOO/Nuevo Odoo.xlsx › DATA | alta |
+| Cristina | F0-C71 | ¿Quién de operaciones repite cada prueba con envíos reales: importación marítima FCL, importación y exportación aéreas, exportación marítima y terrestre, y la prueba comercial? | Por papel: cada prueba la repite el operativo que más expedientes de ese tráfico ha llevado en 2026 según Odoo 17 (tabla de asignación por cliente y tráfico), y la prueba comercial el comercial (KAM) con más ofertas del tráfico. Belal prepara la lista desde Odoo 17 y Cristina solo la corrige si quiere. | docs/decisiones-f0.md l.1159 (tabla de asignación operativo por cliente y tráfico en Odoo 17) y l.1554-1559; docs/plan-expediente-completo.md l.50 (criterio c de aceptación) | media |
+| Cristina | F0-C72 | ¿Qué cuenta como «envío real representativo» para dar por buena una prueba (por ejemplo, un cliente migrado, una naviera con tarifa aprobada y un caso de los últimos meses)? | Lo del ejemplo: un cliente migrado de Odoo 17, un proveedor con tarifa aprobada y un caso real de los últimos 3 meses repetido en Odoo 20, comparando importes y fechas con lo que salió en Odoo 17. | docs/decisiones-f0.md l.1561-1566; docs/plan-expediente-completo.md l.47-50 (criterio de «hecho» por tráfico) | alta |
+| Cristina | F0-C73 | ¿Qué expediente de Odoo 17 cuenta como «abierto» el 1/1 y pasa a Odoo 20: todos los no cerrados, o solo los que aún no han llegado (pendientes de salida y en tránsito)? | Todos los no cerrados operativamente con actividad en 2026 (pendientes de salida con booking o fecha prevista, en tránsito, llegados, entregados y pendientes de cierre). Así, desde el 1/1 la compra, la facturación y el cierre se hacen en un solo sistema, como pide F0-A42. Los preexpedientes sin actividad y los antiguos sin cerrar se revisan en una lista aparte antes del corte, en lugar de migrarlos. Si Belal decide terminarlos en Odoo 17 (F0-B19), esto no se aplica. | docs/decisiones-f0.md l.1568-1574 (volúmenes por etapa en Odoo 17) y l.1733-1738 (F0-B19); docs/preguntas-abiertas.md l.272 (F0-A42) y l.275-276 (F0-A45/A46) | baja |
+| Cristina | F0-C74 | De cada expediente abierto que pase a Odoo 20, ¿qué datos deben llegar: etapa, partes, contenedores, referencias, fechas y servicios pendientes de comprar o de facturar? ¿Falta o sobra algo? | Todo lo de la lista: etapa (con correspondencia uno a uno si se añaden «Llegado» y «Pendiente de cierre», F0-C22), partes, contenedores con precinto, referencias (MBL/HBL/AWB, booking), fechas (ETD/ETA/ATD/ATA, cortes, entrega) y servicios pendientes de comprar o de facturar. Se añade el número de expediente de Odoo 17 como referencia. Los documentos se quedan en Odoo 17 (propuesta F0-B09). Se comprueba contando y sumando importes pendientes contra Odoo 17. | docs/decisiones-f0.md l.1576-1581 y l.1665-1671 (F0-B09); BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md | media |
+| Belal | R-A4 | ¿Qué contactos de Odoo 17 se pasan a Odoo 20 para el arranque (qué tipos de contacto) y van con sus direcciones de entrega y recogida (almacenes)? | Migrar todos los tipos de contacto con actividad dentro del corte de F0-B01: clientes, proveedores, agentes, cliente + proveedor, expedidores y destinatarios españoles y extranjeros, y acreedores. Cada contacto va con sus direcciones de entrega y recogida como contactos hijos estándar (tipo entrega u otra). Los expedidores y destinatarios hay que traerlos porque las ofertas y los expedientes abiertos los citan. Si no vienen, el operativo tendría que crearlos a mano y saldrían duplicados. Se deduplica por NIF y por nombre normalizado, y las coincidencias aproximadas van a una lista de revisión, nunca se fusionan solas. El id de Odoo 17 se guarda en «Referencia». Quedan fuera los contactos que en realidad son lugares (F0-B02). El papel de cada tipo en Odoo 20 no lo decide la migración: es la pregunta F0-C02 de Cristina y hasta su respuesta queda «pendiente de decisión». La carga es idempotente: se puede ampliar o repetir sin duplicar. | docs/preguntas-abiertas.md:44 (R-A4, Belal: «I will migrate all the users»); docs/plan-expediente-completo.md:171-194 (F2: mapeo de x_studio_type, banderas de rol, deduplicación, ref); BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md:26-44 (fuentes: ordenante, agente, naviera, expedidor, destinatario, agente de aduanas y camionero citados en los expedientes; reglas de deduplicación); https://clonepartner.com/blog/what-data-should-you-actually-migrate-to-your-new-erp | media |
+| Belal | F0-B01 | ¿Desde qué antigüedad de actividad se migra un contacto? Los demás se consultarían solo en Odoo 17. | Migrar los contactos citados en algún expediente, oferta, factura o factura de proveedor desde el 1/1/2024. A eso se suman, sea cual sea la fecha, los que tengan un expediente abierto o un saldo pendiente el día del corte, y sus direcciones hijas. El resto se consulta en Odoo 17, que queda en solo lectura. El 1/1/2024 cubre las series E24 a E26, coincide con el inicio de la carpeta «Expedientes» de Odoo 17 y se ajusta a la práctica habitual de 24 meses de actividad. Es reversible: el script es idempotente y un contacto antiguo se puede cargar más tarde por su id de Odoo 17. Antes de cargar hay que medir el recuento en Odoo 17, en solo lectura. | docs/plan-expediente-completo.md:860 (≈21.600 contactos activos, duplicados) y :874 (el histórico se queda en Odoo 17); BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md:24 (expedientes cerrados no se migran, Odoo 17 en solo lectura); https://clonepartner.com/blog/what-data-should-you-actually-migrate-to-your-new-erp (24 meses sin actividad → archivo); https://find-your-erp.de/en/blog/erp-data-migration-best-practices/ | media |
+| Belal | F0-B02 | Los contactos de Odoo 17 que en realidad son lugares (ciudades o códigos postales con el tipo «Pendiente»), ¿se dejan fuera de la migración? | Sí, se excluyen todos los contactos tipo lugar (ciudades o códigos postales con el tipo «Pendiente», sin NIF y sin uso como empresa). En Odoo 20 los lugares son datos de la ruta del envío o direcciones del expedidor y del destinatario, no empresas. Se genera una lista para revisar solo los que algún expediente abierto use como lugar de recogida o entrega, y esos se cargan como dirección del contacto que corresponda. | docs/plan-expediente-completo.md:179 (F2: exclusión de los contactos tipo lugar, p. ej. 57786 y 54130); BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md:46-62 (los lugares van a un maestro tipado y los lugares en texto libre quedan como campos de dirección); docs/adr/006-shipment-route-and-case.md | alta |
+| Belal | F0-B06 | Un expediente marítimo con forma de carga «terrestre» (caso E260010), ¿es un caso válido o el sistema debe impedirlo? | Impedirlo en los registros nuevos: la forma de carga tiene que corresponder al modo (marítimo: FCL, LCL u otras marítimas; aéreo: aérea; terrestre: completa o grupaje por carretera). Los tramos por carretera de un envío marítimo se llevan como servicios de recogida o entrega, no como forma de carga. E260010 es un expediente de prueba de la ronda del 23/10 («una oferta, varios expedientes»), no un caso real, así que se corrige o se anula como registro de prueba. Si Cristina describe un caso real, la restricción pasa a ser un aviso. | docs/ciclo-operativo.md:52 (E260009/E260010 creados como prueba de «una oferta, varios expedientes»); docs/plan-expediente-completo.md:581 (F12: coherencia entre modo y tipo de carga); BossOdoo19/docs/BOSS_PHASE_PLAN.md:150-200 (el motor ya separaba las tarifas por tipo de carga FCL/LCL/RO-RO/BB/aéreo) | media |
+| Belal | F0-B07 | La carpeta de documentos de cada expediente, ¿se construye como un módulo aparte o dentro del módulo que hoy imprime los documentos? | Módulo aparte: un módulo puente boss_expediente_documents que depende de boss_expediente, documents y documents_account. ADR-011 define boss_documents como impresión solamente (diseño, bloque del envío, PDF), sin dependencia de la app Documents. Mezclar el archivo con la impresión obligaría a instalar Documents allí donde solo se imprime. El patrón es el estándar de documents_project (carpeta por registro). Es una decisión técnica reversible y se registra en el ADR de F6. | docs/adr/011-documents.md (boss_documents solo para diseño e impresión); docs/plan-expediente-completo.md:330-343 (F6: módulo puente y patrón de documents_project/models/project_project.py); CLAUDE.md:15-24 (un módulo por responsabilidad, estándar de Odoo primero) | alta |
+| Belal | F0-B08 | ¿Cómo deben llegar al expediente los correos y documentos de navieras, agentes y clientes? | Para el arranque, el mecanismo estándar de Odoo más la subida manual. Los correos que se envían desde el chatter del expediente llevan su respuesta de vuelta al expediente, sin una dirección por expediente: basta con el dominio de entrada de F0-B23. Lo que llega fuera de ese hilo se arrastra o se sube a la carpeta del expediente, como hoy se sube el correo desde Outlook. La dirección por expediente (mail.alias.mixin) o por carpeta se diseña ahora y se activa después del arranque si operaciones la pide. Cristina tiene que validar el cambio de forma de trabajo, porque las ofertas dejarían de salir desde Outlook. | docs/plan-expediente-completo.md:339 (F6: entrada de correo solo como diseño, se activa en F15); odoo-20.0+e.20261020/odoo/addons/mail/models/mail_alias_mixin.py:10-13; odoo/addons/mail_plugin (complemento de Outlook estándar); docs/decisiones-f0.md (F0-B08, Hoy en Odoo 17) | media |
+| Belal | F0-B09 | ¿Se migran a Odoo 20 los documentos históricos de los expedientes de Odoo 17 (unos 49.700)? | No se migran los ≈49.700 documentos históricos: se consultan en Odoo 17 en solo lectura. Solo se migran los adjuntos de los expedientes que pasen abiertos a Odoo 20 (F0-B19). Es la propuesta del plan y lo que ya preveía el mapeo de Odoo 19 (expedientes cerrados no migrados, adjuntos de los abiertos sí). Es reversible: un documento antiguo se puede traer después, bajo demanda, por el id del expediente. | docs/plan-expediente-completo.md:874 (fuera de alcance salvo decisión de Belal); BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md:24 (expedientes históricos cerrados no migrados, Odoo 17 en solo lectura); BossOdoo19/docs/BOSS_PHASE_PLAN.md:476-480 (Fase G: adjuntos de los expedientes abiertos); https://erpdetail.com/erp-data-migration/ | alta |
+| Belal | F0-B10 | ¿Se activa ya en boss20 la descarga diaria automática de los tipos de cambio del Banco Central Europeo? | Sí, activarla ya en boss20: el cron diario estándar de currency_rate_live con el proveedor BCE. Es una descarga de tipos públicos que no envía ningún dato de BOSS, así que no es uno de los efectos externos que prohíbe la política del 27/10 (correo, banco, AEAT, mensajes a clientes o proveedores). Es lo que hace hoy Odoo 17 y evita desviaciones falsas en USD. Se desactiva con un clic si hiciera falta. | CLAUDE.md:36-46 (efectos externos que deben seguir apagados); docs/plan-expediente-completo.md:425 y :857 (tipo de cambio parado en el último cargado y desviaciones falsas en USD); odoo-20.0+e.20261020/odoo/addons/currency_rate_live/models/res_config_settings.py:146, 216 (proveedor 'ecb'); docs/decisiones-f0.md (F0-B10, Hoy en Odoo 17: tipos diarios del BCE) | media |
+| Belal | F0-B22 | ¿Por qué servidor y con qué dominio enviará Odoo 20 los correos de BOSS (ofertas, facturas, avisos, portal)? | Usar el proveedor de correo actual de BOSS, en el que ya trabajan con Outlook, con el dominio bosscontinental.com. La conexión es el servidor saliente estándar de Odoo 20 con OAuth de Microsoft (microsoft_outlook), con SPF y DKIM del dominio revisados antes de activar. Así los correos salen desde las direcciones reales de BOSS y quedan en su buzón, sin contratar otro servicio. Es reversible: un servicio de envío aparte se puede añadir después si el volumen lo pide. Se diseña ahora (U01) y se activa según F0-B25. | odoo-20.0+e.20261020/odoo/addons/microsoft_outlook; dev/boss_tasks/seed_launch.py:827-835 (U01: servidor saliente de BOSS probado a una cuenta interna); docs/adr/011-documents.md (pie de página boss@bosscontinental.com); docs/decisiones-f0.md (F0-B22, Hoy en Odoo 17: ofertas desde Outlook) | media |
+| Belal | F0-B23 | ¿Qué dominio usarán las direcciones de entrada de Odoo 20 (por ejemplo, para recibir facturas de proveedor o documentos de un expediente)? | Usar el dominio principal de BOSS con un buzón catchall que Odoo lee (servidor entrante estándar con OAuth de Microsoft). Las direcciones concretas (purchases@ si Ángel aprueba la entrada de facturas, la de expedientes) se crean como alias de ese buzón. Así las respuestas a correos enviados desde Odoo vuelven al registro sin cambiar el MX ni montar un servidor de correo propio. Se diseña ahora y se activa en el arranque; hasta entonces no hay entrada de correo. | odoo-20.0+e.20261020/odoo/addons/microsoft_outlook; odoo/addons/mail/models/mail_alias_mixin.py; docs/plan-expediente-completo.md:678 (F15: dominio de alias, buzón purchases@, alias de carpetas) | media |
+| Belal | F0-B25 | ¿En qué fecha se activa el envío real de correo desde Odoo 20? | El 1/1/2027, con el arranque, como un punto más de la lista de control de F15. Antes de esa fecha solo se prueba el envío a una cuenta interna de BOSS (aceptación de U01) y no sale nada a clientes ni a proveedores, tampoco durante la operación en pruebas con datos reales. | CLAUDE.md:36-46 (sin mensajes a clientes ni proveedores durante las pruebas); dev/boss_tasks/seed_launch.py:827-835 (U01: correo de prueba a una cuenta interna); docs/plan-expediente-completo.md:678 y :701 (activación en F15 con lista de control, ir_mail_server = 0 hasta entonces); docs/ciclo-operativo.md:66 | alta |
+| Belal | F0-B26 | En el arranque, ¿cómo se activan las tareas automáticas que hoy están apagadas (18 tareas programadas, sincronización bancaria, reclamación de cobros y, si no se ha activado antes, la de tipos de cambio)? | Activación escalonada durante la primera semana, cada tarea marcada en la lista de control. El 1/1 se activan las tareas internas (secuencias, actividades y avisos a operativos, informes de IVA). Del 2 al 8/1, una a una y después de comprobar los datos, las que mandan algo fuera: reclamación de cobros (cron 35), sincronización bancaria y OCR si se aprueba. El tipo de cambio ya estará activo (F0-B10). Belal y Ángel firman la lista. | docs/plan-expediente-completo.md:679 y :863 (solo en F15, con lista de control firmada y aprobación expresa de Belal y Ángel); dev/boss_tasks/seed_launch.py:105-108 (S53 y S01/2027: semana de soporte del 4 al 8/1) | media |
 
-- Por qué: Durante las pruebas no debe salir nada a clientes ni a proveedores, y la activación tiene que estar en la lista de control del arranque (F15).
-- Opciones: El 1/1/2027, con el arranque / Al empezar la operación en pruebas, solo a direcciones internas de BOSS / Otra fecha (indicar)
-- Mientras tanto: El correo sigue apagado y no sale ningún correo de boss20.
-- Bloquea: F15
+## 3. Ya respondidas
+| Persona | Id | Pregunta | Respuesta | Fuente |
+|---|---|---|---|---|
+| Ángel | F0-A00 | Los suplidos (aranceles ARA, IVA de importación, etc.), ¿se facturan al cliente por el importe exacto pagado, sin el margen por defecto? Y si BOSS cobra algo por adelantar ese dinero, ¿se factura aparte como honorario propio (no como suplido)? | Sí. Los suplidos (ARA, IVA de importación, DUM, PLA) se facturan por el importe exacto pagado, sin margen y justificados con el documento (DUA). Si se les aplica la regla «coste + 20 %», dejan de ser suplidos y pasan a la base del IVA. Si BOSS cobra algo por adelantar los fondos, se factura aparte como servicio propio (caución CAU u honorario), con su propio IVA. Por tanto, la regla «coste + 20 %» no debe aplicarse a ARA, IVA, DUM ni PLA. | Ley 37/1992 art. 78.Tres.3º (suplidos fuera de la base imponible); docs/preguntas-abiertas.md:154 (P18: «Venta = coste del DUA (práctica Odoo 17)»); Odoo 17: suplidos con «0% EXEMPT NS» (texto de la pregunta); .research/05_sharepoint_excel.md:276 (CAU cobrado aparte, 0,60 % sobre impuestos) |
+| Ángel | P17 | ¿Confirma que, para un cliente español, los servicios exentos (fletes, gastos de terminal, transporte internacional…) se facturan como «exento por el artículo 22», y que a los clientes de Canarias, Ceuta y Melilla se les factura como «no sujeto por localización»? | Sí, las dos reglas: exento para el cliente español (casilla 60 del 303) y «0% S NS» no sujeto por localización (casilla 120) para Canarias, Ceuta y Melilla. Es la propuesta aprobada por Belal el 23/10, pendiente de ratificación, y es coherente con la clase EX que fijó Ángel el 31/08. Matiz que conviene que vea Ángel o el asesor: la exención de los servicios ligados a importaciones está en el art. 64 de la LIVA y la de los ligados a exportaciones en el art. 21.5º, no en el art. 22. La casilla 60 no cambia, pero sí la mención legal que imprime el impuesto de Odoo «0% Exent Art.22» y la causa de exención (E3). | docs/preguntas-abiertas.md:22 (P17, Belal 23/10); BossOdoo19/docs/iva_rules.md (Ángel, 31/08: EX = exento); odoo-20.0+e.20261020/odoo/addons/l10n_es/data/template/account.tax-es_common.csv (s_iva0_art22: mod303[60], nota legal art. 22; s_iva_ns: mod303[120]); Ley 37/1992 arts. 21.5º y 64 (https://boe.es/buscar/pdf/1992/BOE-A-1992-28740-consolidado.pdf) |
+| Ángel | P11 | ¿Confirma que los gastos de terminal (THC) llevan todos el mismo IVA de servicio exento, sin separar ninguna parte al 21 %? | Sí: el THC lleva todo el mismo IVA de servicio exento (EX), sin separar ninguna parte al 21 %. Así lo dice la clase EX de THC en la tabla de conceptos e IVA basada en las reglas de Ángel del 31/08 (guardada por Cristina el 09/10), lo confirma la decisión de Belal del 23/10 y lo muestra la línea de THC «EX» en Odoo 17 (E260587). | .research/05_sharepoint_excel.md:170 (CIVA › Conceptos › F71; captura de E260587 en Odoo 17); docs/preguntas-abiertas.md:31 (P11, Belal 23/10) |
+| Ángel | M2-G | Cuando todavía no se conoce la fecha de salida, ¿confirma que el flete se cotiza con el precio vigente el día de la oferta? | Sí: sin fecha de salida, el flete se cotiza con el precio vigente el día de la oferta. Ángel dijo en la segunda reunión que se usa «el último disponible», y en cuanto se conoce la ETD manda la ETD. | docs/adr/009-meeting-2-pricing-and-file-rules.md:112 (Ángel, segmento 3: «the last one available we have»); docs/matriz-reunion-2026-10-27.md M2-15 |
+| Ángel | P03-a | Para un coste en dólares, ¿confirma que se convierte a euros con el tipo de cambio del día de la oferta y que ese tipo queda fijo al aceptarla? | Sí: el coste en USD se convierte con el tipo de Odoo (BCE) del día de la oferta y ese tipo queda fijo al aceptarla. Es la decisión de Belal del 23/10, pendiente de ratificación, y coincide con lo que se probó con la tarifa en USD de Ángel. Cómo se factura en euros es otra pregunta (P03-c). | docs/preguntas-abiertas.md:23 (P03, Belal 23/10); docs/matriz-reunion-2026-10-27.md M2-10 (tarifa 98 de Ángel en USD) |
+| Ángel | P43-D11 | El precio único de venta del almacenaje aéreo (ALM), ¿lleva el mismo IVA que hoy tiene el almacenaje en la tabla de IVA de BOSS (21 %), sin ninguna regla especial? | Sí: ALM es NR en la tabla de Ángel y sigue sus reglas generales sin ninguna excepción. Para un cliente español en importación (origen fuera de la UE y destino en la península) lleva el 21 %. El precio único de venta no cambia el IVA. | BossOdoo19/docs/iva_rules.md (Ángel 31/08, sin excepción de venta salvo TTE en compra); .research/05_sharepoint_excel.md:251 y :329 (ALM NR; única excepción, TTE en compra) |
+| Ángel | P18 | ¿Confirma estas cuentas para los suplidos: IVA de importación 419001 al facturar al cliente y 419003 en la factura del agente; aranceles 419002 y 419004; antidumping 419005 en los dos sentidos; impuesto del plástico 419006 y 419007? | Sí, este mapa: IVA de importación 419001 al cliente y 419003 con el agente; aranceles 419002 y 419004; antidumping 419005 en los dos sentidos; plástico 419006 y 419007. Es la cuenta de pasivo corriente no conciliable de Odoo 17, aplicada en boss20 el 26/10 por mandato de Belal (pendiente de ratificación), y copia las subcuentas que usa hoy Odoo 17. | docs/cuentas-suplidos.md (mapa y lectura de Odoo 17 del 26/10); docs/preguntas-abiertas.md:83 (D-2 aplicado el 26/10) |
+| Ángel | P33 | ¿Confirma que los servicios de proveedores se compran con pedido de compra y que los suplidos (IVA y aranceles del DUA) se registran directamente con la factura del agente de aduanas, sin pedido? | Sí: los servicios de proveedor se compran con pedido de compra y los suplidos del DUA (IVA y aranceles) se registran directamente con la factura del agente, sin pedido, como en Odoo 17 y 19. Es la decisión de Belal del 23/10, pendiente de ratificación. | docs/preguntas-abiertas.md:32 y :181; docs/ciclo-operativo.md (P33) |
+| Ángel | P30-a | ¿Confirma que la factura de un proveedor se puede contabilizar al llegar, pero no se puede pagar hasta que ese servicio esté facturado al cliente (salvo costes que asume BOSS y fletes pagados por adelantado)? | Sí: la factura del proveedor se contabiliza al llegar y su pago espera hasta que el servicio esté facturado al cliente, salvo los costes que asume BOSS y los fletes pagados por adelantado. Es la decisión de Belal del 23/10, pendiente de ratificación. Recoge el objetivo del requisito escrito de Cristina («evitar que se paguen facturas sin haber facturado») sin retrasar el registro de la factura, que tiene plazo contable y fiscal. | docs/preguntas-abiertas.md:24; docs/ciclo-operativo.md §P30 (Nuevo Odoo.xlsx › Facturacion A3 y Facturacion y costes A11) |
+| Ángel | P32 | ¿Confirma que las facturas de proveedor de servicios se controlan por lo realmente prestado (lo que el operativo marca como hecho) y no por lo pedido? | Sí, por lo realmente prestado (lo que el operativo marca como hecho). Es la decisión de Belal del 23/10, pendiente de ratificación, y es coherente con Odoo 17, que casaba la factura con las previsiones del servicio hecho. | docs/preguntas-abiertas.md:25 y :180; docs/ciclo-operativo.md (FactReader de Odoo 17) |
+| Ángel | P39 | ¿Se registran en Odoo 20 los gastos pequeños de empleados o con tarjeta de empresa (taxis, mensajería, tasas pagadas con tarjeta) imputándolos al expediente? | Sin la app de Gastos (decisión de Belal del 23/10, pendiente de ratificación). Hoy en Odoo 17 los gastos con tarjeta de empresa se registran como facturas de proveedor (referencias «VISAAS»/«visacaixa»). Se sigue igual en Odoo 20 y, cuando el gasto es de un envío, se pone la analítica del expediente. | docs/preguntas-abiertas.md:31 y :187; Odoo 17 account.move.line (facturas BILL/… con referencia VISAAS/visacaixa, 2024-2026) |
+| Ángel | F0-A16 | ¿Qué debe ir al pie de la factura: los datos de inscripción en el Registro Mercantil y algún texto de condiciones de pago o condiciones generales? | La inscripción en el Registro Mercantil (registro, tomo, folio, hoja e inscripción) es obligatoria en las facturas de una sociedad, así que va al pie. Se añade la cuenta bancaria de cobro (F0-A17). No se imprimen condiciones generales, porque Odoo 17 no las tiene configuradas, salvo que Ángel dé un texto. | Reglamento del Registro Mercantil (RD 1784/1996) art. 24.1; Odoo 17 res.company 1: report_footer solo con teléfono, correo y web, invoice_terms vacío (leído el 28/10) |
+| Ángel | F0-A22 | Si los suplidos van en factura aparte, ¿usan la misma serie de numeración que las facturas de servicios o una propia? | La misma serie, como hoy: Odoo 17 tiene un solo diario de facturas de cliente y las facturas de suplidos usan la misma serie mensual. | Odoo 17 account.journal: un solo diario «Customer Invoices» (id 8) (28/10); texto de la pregunta |
+| Ángel | P03-e | Cuando una oferta en dólares se factura en euros, ¿se añade una línea de quebranto bancario (QBR)? Si es así, ¿con qué porcentaje y sobre qué importe? | Sí: quebranto (QBR) del 1 % sobre los conceptos en moneda extranjera (flete y gastos en el extranjero) solo cuando una oferta en USD se factura en euros. No hay quebranto si se factura en USD ni si la oferta en euros se factura en USD. Es la regla escrita de Cristina y la cláusula de las ofertas de BOSS, y coincide con Odoo 17 (alrededor del 1 %). | .research/05_sharepoint_excel.md:95-98 y :274 (Nuevo Odoo.xlsx › OPS- exptes A48:A51; cláusula «1 % sobre conceptos en moneda extranjera… si no se facturan en la moneda ofertada»); BossOdoo19/docs/BOSS_DECISION_LOG.md B14; docs/preguntas-abiertas.md:23 |
+| Ángel | F0-A27 | Cuando BOSS factura un reparto de beneficio (profit share) a un agente extranjero, ¿qué IVA lleva? | Las reglas de Ángel: PFT es NR y, con un agente de la UE o de fuera, pasa a EX por la capa de la contraparte. Agente de la UE: «0% UE S» (inversión del sujeto pasivo). Agente de fuera de la UE: «0% EX S», como hoy en Odoo 17. La cuenta es la 705005. | BossOdoo19/docs/iva_rules.md (Ángel 31/08, capa contraparte); docs/preguntas-abiertas.md:139 (tabla de IVA BOSS: EX UE → 0% UE S, EX tercer país → 0% EX S); Odoo 17 (profit share «0% EX S», 705005) |
+| Ángel | F0-A31 | ¿Los pagos a proveedores se harán con remesas generadas en Odoo 20 (fichero SEPA que se sube al banco) o desde la banca, conciliando después en Odoo? | Desde la banca, y en Odoo solo se concilia, como hoy. Odoo 17 no tiene instalados ni las transferencias SEPA ni los pagos por lotes, así que la «remesa» se prepara en la banca. | Odoo 17 ir.module.module: account_sepa y account_batch_payment sin instalar (28/10) |
+| Ángel | F0-A38 | Si llega la factura de un proveedor con fecha de un mes ya bloqueado, ¿con qué fecha contable se registra? | En el primer día abierto, conservando la fecha de la factura: es el comportamiento estándar de Odoo con fechas de bloqueo. Fiscalmente es correcto, porque el IVA soportado se deduce en el periodo en que se recibe la factura. | Comportamiento estándar de Odoo 20 (fecha contable movida tras la fecha de bloqueo); Ley 37/1992 arts. 98-99 (deducción en el periodo de recepción) |
+| Ángel | P38 | ¿El margen del expediente debe descontar un coste interno por los servicios propios de BOSS (despacho, gestión, operativa)? Si es así, ¿con qué importe? | No: el margen es «tras costes externos», sin coste interno, como ahora y como en Odoo 17. Es la decisión de Belal del 23/10, pendiente de ratificación. | docs/preguntas-abiertas.md:31 y :186 |
+| Ángel | F0-A41 | Hasta el arranque, ¿se pueden contabilizar en la base actual de Odoo 20 facturas, abonos y pagos de prueba? | Sí. La política de Belal del 27/10 permite en boss20 contabilizar facturas, abonos y pagos de prueba claramente marcados; pueden gastar números y quedarse en boss20, y se anulan solo por las vías de Odoo. Esta política sustituye a la prohibición de la hoja de pruebas del 26/10. Es la misma pregunta que F0-B15. | CLAUDE.md del proyecto (política de Belal del 27/10/2026); docs/pruebas-angel.md:15 (instrucción anterior del 26/10); docs/preguntas-abiertas.md:415 (F0-B15) |
+| Ángel | F0-A42 | Desde el 1/1/2027, ¿toda la contabilidad nueva (facturas, cobros, pagos y bancos) se lleva solo en Odoo 20? | Sí: desde el 1/1/2027 toda la contabilidad nueva se lleva solo en Odoo 20, y 2026 y años anteriores quedan en Odoo 17 en solo lectura. Es el hito aprobado por Belal el 26/10, posterior al criterio heredado de Odoo 19, que sustituye. Ángel solo tendría que objetar si no está de acuerdo. | docs/ciclo-operativo.md:66 (hitos de Belal del 26/10: «Odoo 20 único sistema el 1/1/2027»); docs/decisiones-f0.md:620-624 |
+| Cristina | P35 | Dentro del expediente, ¿quién puede ver las facturas de proveedor y el coste real? | Las facturas de proveedor y el coste real del expediente solo los ven compras, contabilidad y el gestor comercial (visibilidad estándar por rol). Es una propuesta aprobada por Belal el 23/10, pendiente de que Cristina la ratifique. Coincide con lo que ya está implantado. | docs/preguntas-abiertas.md, línea 32 (P33·P35… «visibilidad estándar por rol», aprobada 23/10) y línea 183 |
+| Cristina | P35-B | ¿Cada comercial debe ver solo sus propios clientes, ofertas y expedientes, o los de todo BOSS? | Solo los suyos. Cada comercial ve sus clientes, ofertas y expedientes. Como excepción, ve los expedientes en los que participa uno de sus clientes aunque el ordenante sea otro (por ejemplo, un agente), pero no la ficha de ese otro. Es el requisito escrito por Cristina, y Odoo 17 ya trabaja así: la mayoría de usuarios de ventas tienen «Own Documents Only». | NEW ODOO/Nuevo Odoo.xlsx, hoja CRM, celda A19; Odoo 17 res.groups 21 frente a 22 (9 de 15 usuarios de ventas limitados a sus propios documentos) |
+| Cristina | P19 | Hay 22 tarifas de proveedor aprobadas solo para pruebas (21 por delegación de Belal y 1 por Ángel), y las de WFS y el recargo FuelEU de MSC esperan aprobación. ¿Las revisa y aprueba usted con su usuario, o designa a otra persona? | Cristina revisa cada tarifa con su PDF y la aprueba con su usuario. Belal puede aprobar por delegación. Las tarifas solo se aprueban con un clic humano de Belal o de Cristina. No es una decisión pendiente, sino una tarea de Cristina. | docs/preguntas-abiertas.md línea 36 (P19, aprobada por Belal 23/10); BossOdoo19/docs/agents/DECISIONS.md, fila 2026-10-09 «Rule: tariffs are approved only by a human click»; BOSS_DECISION_LOG.md B29.2 |
+| Cristina | R2-A3 | En los servicios cuya venta varía con el coste, ¿vale «coste + 20 %» como venta propuesta por defecto (siempre editable), o qué porcentaje prefiere? | Coste + 20 %, siempre editable y desactivable poniendo 0. Solo se aplica a los servicios sin precio fijo ni lista del cliente. Lo decidió Belal el 27/10 tras hablar con Ángel y está pendiente de que Cristina lo ratifique. | docs/preguntas-abiertas.md línea 126 (R2-A3, cerrada por Belal el 27/10); docs/adr/008-default-sale-price-cost-plus-percentage.md |
+| Cristina | P10 | Usted indicó que la tasa energética (ETX) solo se aplica en importación, que se compra al handler por AWB máster y que se vende una vez por expediente. Para dejarla lista falta confirmar: ¿es solo de importación aérea, el «Recargo de mantenimiento del servicio» de WFS (punto 49 de su tarifa) es ese coste, y la cobran solo WFS, Iberia y Swissport? | Sí a las tres cosas, con un matiz. ETX es solo de importación aérea (Cristina 07/10): se compra por AWB máster y se vende por expediente (Cristina 08/10). En Odoo 17, el punto 49 de WFS («Recargo de mantenimiento del servicio») ya se contabiliza como ETX. Además de WFS, Iberia y Swissport, Odoo 17 también registra como ETX el «Uso instalaciones aeropuerto» de Groundforce en Bilbao, así que ese handler también la cobra. | Odoo 17 account.move.line 164283 (WFS, factura BIH260041, «Recargo de mantenimiento del servicio», producto ETX), 168096 (Iberia, «Uso de recinto Madrid», ETX) y 168893 (Groundforce, «Uso instalac. aeropuerto BIO», ETX); docs/respuestas-cristina.md fila 6; BossOdoo19/docs/agents/DECISIONS.md fila 2026-10-08 «ETX unit, application and sale» |
+| Cristina | P09 | Sobre la detención (DET): ¿lleva código propio cuando la naviera la factura aparte (como MSC), y va dentro de la demora (DEM) cuando la naviera cobra las dos juntas (como Hapag-Lloyd)? | Sí, así: DET con código propio cuando la naviera la factura aparte (MSC) y dentro de DEM cuando la naviera cobra las dos juntas (Hapag-Lloyd). Lo aprobó Belal el 23/10 (P10·P09), pendiente de que Cristina lo ratifique. Encaja con las fuentes: Odoo 17 no tiene DET y las navieras facturan de las dos formas. | docs/preguntas-abiertas.md línea 34; docs/respuestas-cristina.md fila 12; .research/06_sea_supplier_docs.md |
+| Cristina | P24-B | ¿Qué tráficos se consideran «short sea», con un THC distinto del general? | Lo define el propio documento de MSC. «Short sea» son los tráficos Mediterráneo, Mar Negro, Norte de África (NAF), Noroeste de Europa (NWC), Escandinavia y Báltico, y Rusia. Para ellos MSC publica un THC y un BL distintos. No es una decisión de BOSS, sino un dato de cada documento (igual que P08). | .research/06_sea_supplier_docs.md líneas 94, 195 y 360 (nota de la tarifa MSC 09/2026); docs/preguntas-abiertas.md P08 |
+| Cristina | P41 | Almacenaje de WFS «por 100 kg»: ¿se cobra por cada 100 kg o fracción, o en proporción al peso? | Por cada 100 kg o fracción. Lo dijo Cristina el 08/09 («fracción de 100 kg»), lo decía la edición de WFS de 2025 y lo aprobó Belal el 23/10. | docs/preguntas-abiertas.md líneas 28 y 166; BossOdoo19/docs/BOSS_DECISION_LOG.md B20/B28 (motor: 401 kg = 5 unidades) |
+| Cristina | P29 | Tramos de WFS «hasta 7 días / más de 7»: si la estancia pasa de 7 días, ¿el precio alto se aplica solo a los días siguientes o a toda la estancia? | El precio alto solo en los días siguientes al 7.º (tramos por número de día). Lo aprobó Belal el 23/10, pendiente de ratificar. Ninguna fuente de compra dice lo contrario: la regla de toda la estancia es de la venta de ALM del 25/09, no del coste de WFS. | docs/preguntas-abiertas.md líneas 29 y 159 |
+| Cristina | P42 | El mínimo de almacenaje de WFS (puntos 1 a 3 del documento), ¿se aplica por estancia de la AWB o por día? | El mínimo se aplica por estancia de la AWB. Cuando WFS quiere un mínimo por día lo escribe («AWB/día» en los puntos 4–5). Lo aprobó Belal el 23/10, pendiente de ratificar. | docs/preguntas-abiertas.md líneas 30 y 167 |
+| Cristina | M2-H | Si se elige un proveedor que no tiene precio para ese servicio (por ejemplo, el camión caso por caso), ¿la oferta se puede aceptar como «coste a petición» sin autorización de un responsable, mientras los demás costes desconocidos sí la necesitan? | Sí, como ahora. Si el proveedor nombrado no tiene precio para el servicio (camión caso por caso), la oferta se acepta como «coste a petición» sin autorización. El resto de costes desconocidos sigue necesitando el motivo de un responsable. Lo pidió Ángel en la reunión del 27/10 con Cristina presente («mantener el servicio, aceptar y teclear el coste en el expediente») y Belal acotó el alcance el 28/10. | docs/adr/009-meeting-2-pricing-and-file-rules.md, contexto 6, decisión 7 y revisión 2 §1; docs/matriz-reunion-2026-10-27.md M2-19 |
+| Cristina | R2-A2 | El flete semanal que se teclea desde una oferta, ¿queda aprobado al introducirlo, o tiene que esperar a que lo apruebe un aprobador de tarifas? | Queda aprobado al introducirlo, con el autor registrado, y solo para fletes tecleados desde una oferta; las tarifas con documento siguen esperando aprobación. Lo pidió Ángel en la segunda reunión del 27/10 («it shouldn't be waiting for approval») y se aceptó la aprobación automática. | docs/adr/009-meeting-2-pricing-and-file-rules.md, contexto 2, decisión 3 y tabla de fuentes («supersedes R2-A2»); docs/matriz-reunion-2026-10-27.md M2-13 |
+| Cristina | F0-C17 | En el despacho de importación hay dos agentes de aduanas con precio. ¿La oferta propone uno por defecto, o el operativo elige siempre? | El operativo elige siempre. Cristina, 28/09: «For now is enough with the operator selects on the E the broker name». Añadió que normalmente se usa Ramos Vila con un contenedor y Aducex con dos o más, pero que intervienen otras reglas (puerto o aeropuerto). | NEW ODOO/Plan detallado previsiones.xlsx, hoja «Explicaciones previsiones» (respuesta 3 de Cristina del 28/09); BossOdoo19/docs/agents/DECISIONS.md fila 2026-09-28 «FAD broker is chosen by the operator» |
+| Cristina | P43-D2 | Para la venta de ALM, ¿qué peso se usa: el bruto, el tasable que figura en la AWB, o el tasable calculado (1 m³ = 167 kg)? | El peso tasable: el de la AWB y, si no lo hay, el calculado con 1 m³ = 167 kg. Ángel lo confirmó el 27/10: los proveedores cobran a BOSS y BOSS cobra al cliente por peso tasable. PrevAdder ya cobra el ALM por 100 kg o fracción del peso tasable. | docs/preguntas-abiertas.md línea 129 (R-A1, Ángel, Teams 27/10); docs/respuestas-cristina.md fila 7 (PrevAdder Utils.cs 1673–1699) |
+| Cristina | P43-D6 | ¿Cuándo empieza y cuándo termina la estancia? En importación, ¿de la llegada (NOA) a la recogida? En exportación, ¿de la entrega al handler a la salida del vuelo? | Sí, así. En importación aérea, de la llegada (NOA) a la recogida; en exportación aérea, de la entrega al handler a la salida del vuelo (ETD). En grupaje de importación, del vaciado a la recogida. Lo indicó Cristina en su correo del 25/09. | BossOdoo19/docs/agents/DECISIONS.md, fila 2026-09-25 «ALM events…» (Cristina, correo del 25/09) |
+| Cristina | P44 | ¿Se cargan las tarifas de almacenaje especial del handler (frío, mercancía peligrosa, mercancía valiosa, animales vivos) para que la oferta las aplique según el tipo de carga? | Sí: se cargan las tarifas de almacenaje especial del handler (frío, mercancía peligrosa, valiosa y animales vivos, puntos 2–6 de WFS) con una condición por tipo de carga. Lo aprobó Belal el 23/10, pendiente de ratificar. Son datos de coste del documento del proveedor. | docs/preguntas-abiertas.md líneas 35 y 168 |
+| Cristina | P44-B | ¿Se crea un código propio para el almacén fuera del aeropuerto? Si se crea, ¿con qué unidades de cobro (palé, m³, entradas y salidas)? | Sí, se crea un código propio. Cristina dijo el 08/10 que el almacén normal, incluidos los clientes que solo almacenan, lleva un código distinto de ALM. Unidades propuestas, a partir de las bases que ella misma enumeró: palé y m³, por día, semana o mes, más entradas y salidas por palé. El IVA lo fija Ángel (P44-IVA). | BossOdoo19/docs/agents/DECISIONS.md fila «Storage types» (08/10) y línea 656; BossOdoo19/docs/BOSS_DECISION_LOG.md B25 (bases de Cristina: palés, cbm × hora, día, semana, mes) |
+| Cristina | P05 | ¿Se puede enviar al cliente una oferta con algún coste todavía pendiente, solo con un aviso (como ahora)? | Sí, solo con aviso. Solo bloquean el IVA pendiente y la venta sin indicar. Lo aprobó Belal el 23/10, pendiente de ratificar, y coincide con la práctica de Odoo 17, que no bloquea. | docs/preguntas-abiertas.md líneas 32 y 161 |
+| Cristina | P06 | Si la tarifa de un proveedor cambia mientras una oferta sigue dentro de su validez, ¿se mantiene el precio ofertado al cliente, o se recotiza la oferta? | Se mantiene el precio ofertado; solo se recotiza con motivo. Una tarifa nueva no cambia las ofertas aceptadas. Lo aprobó Belal el 23/10. Ángel y Cristina pidieron el 27/10 que los históricos no cambien. Sus ofertas ya avisan de que el flete se aplica según la fecha de la naviera. | docs/preguntas-abiertas.md líneas 32 y 162; docs/reunion-angel-2026-10-27-parte2.md §2 («Se quedan en el sistema, los históricos»); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx (condiciones FCL) |
+| Cristina | P07 | ¿Solo el gestor comercial puede recotizar una oferta aceptada, y siempre con motivo (como ahora)? | Sí: solo el gestor comercial recotiza una oferta aceptada, y siempre con motivo. Lo aprobó Belal el 23/10, a partir de la propuesta del propietario del 26/08 (cambios con motivo). | docs/preguntas-abiertas.md líneas 32 y 162 |
+| Cristina | P11 | Los gastos portuarios (PAD), ¿se cotizan dentro de T3 (como ahora) o dentro de los gastos de naviera (GLO)? ¿Y se presentan al cliente aparte o junto al THC, como «THC + gastos portuarios»? | Los gastos portuarios (PAD) se cotizan dentro de T3, porque MSC los factura «T-3 incluido»; lo aprobó Belal el 23/10. Al cliente, THC y gastos de naviera (GLO) se presentan juntos como «THC + gastos portuarios», todo incluido, y la T3 va en línea aparte. Cristina lo dijo el 28/09 y así figura en sus ofertas. | Correo de Cristina del 28/09 (Plan detallado previsiones.xlsx › Explicaciones, punto 3); NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx (líneas «THC + Gastos de puerto» y «Tasa T-3»); docs/matriz-servicios.md T3-PAD; docs/preguntas-abiertas.md línea 32 |
+| Cristina | P12 | Las demoras, ocupaciones, VGM y gastos de naviera (GLO), ¿se venden con un precio tecleado o pactado? ¿Y el profit share no se vende nunca, como dijo el 29/09? | Sí, como ahora: DEM, OCU, VGM y GLO se venden con precio tecleado o pactado (GLO se vende agrupado con THC como «THC + gastos portuarios»); el profit share (PFT) que cobra el agente de origen es solo coste y nunca se vende como línea. Es propuesta aprobada por Belal el 23/10, pendiente de ratificar, y coincide con lo que dijo Cristina el 28 y el 29/09. El profit share que BOSS factura al agente es otra cosa (ingreso) y va en F0-C58. | docs/preguntas-abiertas.md l.32 (aprobadas 23/10: «DEM/OCU/VGM/GLO vendibles y PFT nunca») y l.160; docs/matriz-servicios.md l.66-68 (PFT «nunca se vende», Cristina 28-29/09); NEW ODOO/Plan detallado previsiones.xlsx › Explicaciones previsiones A24-A25 (GLO se vende unificado con THC) y A141 (PFT es coste del agente); BossOdoo19/docs/agents/DECISIONS.md l.146 y l.149 |
+| Cristina | F0-C27 | ¿Qué datos operativos debe tener todo expediente? Marque los que procedan: fecha de mercancía lista, fecha de booking, seguro (pedido, emitido o sin seguro), quién lleva el transporte, quién contrata el flete, fecha de entrega planificada y fecha de la última revisión. | Todos los de la lista. Cristina los pidió por escrito: fecha de recepción del booking del cliente y fecha de envío del booking de BOSS al agente o naviera; «freight contractor» (a quién pagamos el flete) y quién factura el flete; lugar de recogida y entrega, y si los hace BOSS. Odoo 17 ya tiene además la fecha de mercancía lista, el seguro, la fecha de entrega planificada y la de última revisión. Se mantiene el historial de ETD/ETA. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes (filas «Fecha de recepcion de booking del cliente…», «Fecha envio booking de BOSS al agente o naviera», «AÑADIR FREIGHT CONTRACTOR», «indicar quien nos factura el flete», «lugar de recogida y de entrega… si recogemos»); docs/decisiones-f0.md l.1191 (Odoo 17 tiene todos) |
+| Cristina | M2-I | Para grupajes y consolidaciones (un BL o AWB máster con varias houses y costes compartidos), ¿qué forma prefiere: un expediente máster con expedientes hijos, o un expediente con varias partidas dentro, como en Odoo 17? | Partidas dentro del expediente, como en Odoo 17: el máster (MBL/MAWB) es el expediente y cada house (HBL/HAWB) es una partida. Así lo escribió Cristina el 28/09: «one E but various P… 3 HBLs and 3 partidas», un FAD por partida y el BL/AWB máster por expediente. Odoo 19 también definió la partida como la house. Cuándo se construye (antes o después del 1/1) depende de F0-C69/F0-B13; mientras tanto, un expediente por house con las referencias del máster. | NEW ODOO/Plan detallado previsiones.xlsx › Explicaciones previsiones A92-A93 y A120 (correo de Cristina del 28/09/2026); BossOdoo19/docs/BOSS_REPORTS_DECISIONS.md D3 (partida = house consignment; MAWB del expediente, HAWB de la partida); Odoo 17 x_partidas (docs/decisiones-f0.md l.1199) |
+| Cristina | F0-C35 | ¿En qué hitos se prepara un aviso al cliente o al agente (por ejemplo: levante, entrega programada, entrega hecha, cambio de ETD o ETA), y a quién va dirigido? | Como en Odoo 17: en los tráficos de agente se prepara un aviso al agente en el levante, la entrega programada y la entrega hecha. Además, Cristina pidió por escrito avisar al cliente en cada cambio de ETD o ETA. Durante las pruebas y hasta que se active el correo (F0-B25), cada aviso queda como tarea con el correo preparado para revisar, que es lo propuesto en Odoo 19 (B11). | NEW ODOO/Nuevo Odoo.xlsx › ops notificaciones cliente; docs/decisiones-f0.md l.1261 (avisos al agente en Odoo 17); BossOdoo19/docs/BOSS_DECISION_LOG.md B11 (borrador para revisar) |
+| Cristina | F0-C36 | En exportación, ¿qué datos necesita el expediente? Marque los que procedan: fechas de corte (documentos, instrucciones de embarque (SI), VGM, entrega del contenedor lleno y grupaje), tipo de BL y forma de liberación (original, SWB, télex) y BL máster verificado. | Todos los de la lista. Cristina pidió por escrito el port cut-off (además del booking cut-off), el estado del MBL y del HBL (SWB, télex, original) con sus frenos, y que el tipo de BL sea obligatorio y se suba al sistema, con aviso al menos 10 días antes de la llegada (incidencia de 3.000 € en demoras). Odoo 17 ya tiene los cortes, el BL máster verificado y el aviso de cortes. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («AÑADIR PORT CUT OFF», «STATUS MBL Y HBL: SWB/ TELEX RELEASED / OBL y los frenos correspondientes») y › Incidencias («Obligatorio poner el tipo de BL… avise al menos 10 dias antes de la llegada»); docs/decisiones-f0.md l.1269 |
+| Cristina | F0-C37 | ¿Valida esta lista de tipos de documento del expediente? Booking, CR, factura comercial, packing list, certificados, orden de aduana, despacho, MBL, HBL, MAWB, HAWB, aviso de llegada, pre-DUA, DUA, factura, factura de proveedor, Entréguese, Admítase, levante, DAE, oferta al cliente, oferta de proveedor, H1 y orden de transporte. | Validar la lista de Odoo 17 completada con la hoja de tipos de documento de Cristina: CMR, certificado de seguro, EUR1, escritos (no mercurio, no procede, no CITES, no gases fluorados, no FARMIN), carta de uso y destino, test report, declaración de conformidad, declaración de plásticos, MTC, cesión de documentos BL de naviera y albarán/POD. Cristina pidió que el tipo de documento sea siempre el mismo y no lo decida cada persona. | NEW ODOO/Nuevo Odoo.xlsx › tipos de documentos y › OPS- exptes («No queda claro qué documentos se adjuntan al E y cuáles a la P… no lo decida la persona»); docs/decisiones-f0.md l.1278 (23 tipos + OT en Odoo 17, faceta 12) |
+| Cristina | F0-C47 | ¿Qué datos de aduana debe registrar el expediente? Marque los que procedan: número de DUA, canal (verde, naranja, rojo), fecha de admisión, fecha de levante, fecha de envío de documentos al agente de aduanas, tipo de garantía y si la aduana la lleva BOSS. | Todos los de la lista: número de DUA y su fichero, canal, fecha de admisión, fecha de levante, fecha de recepción de documentos completos del cliente, fecha de envío de documentos al agente de aduanas, tipo de garantía (031 o aval de BOSS) y si la aduana la lleva BOSS. Cristina pidió por escrito las dos fechas de documentos y la modalidad de pago de impuestos (031 o aval), y Odoo 17 tiene el resto en la partida. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes, «PARTE ADUANAS» («modalidad de pago de impuestos (031 o aval de BOSS)», «fecha recepcion documentos… del cliente», «fecha de envío docs de nosotros al agente de aduanas») y › Contactos (modalidad de despacho por cliente); docs/decisiones-f0.md l.1354 |
+| Cristina | F0-C51 | ¿Qué tiene que cumplirse para pasar a «Entregado»? Por ejemplo: levante cuando BOSS lleva la aduana, fecha de descarga en importación, y fecha y hora de entrega informadas y ya pasadas cuando BOSS hace el transporte. | Todo lo anterior, como en Odoo 17 pero sin contar la factura (eso es F0-A07, de Ángel y Cristina): levante cuando la aduana la lleva BOSS; fecha de descarga en importación (en aéreo la ETA/ATA); y fecha y hora de entrega informadas y ya pasadas cuando BOSS hace el transporte. Cristina pidió por escrito que la fecha y hora de entrega sean obligatorias cuando BOSS hace el transporte, y que el HBL esté liberado o SWB antes de entregar. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes, «PARTE TRANSPORTE RECOGIDA O ENTREGA» («Fecha y hora debe ser obligatorio… Que odoo no permita facturar si no está rellenada…») y fila OT (HBL liberado o SWB); docs/decisiones-f0.md l.1387 (condiciones de Odoo 17) |
+| Cristina | F0-C53 | ¿Qué debe llevar la orden de transporte al camionero? Marque lo que proceda: direcciones completas de recogida y entrega, persona de contacto, franja horaria, contenedores con precinto, terminal o depósito (Entréguese/Admítase), notas de entrega, peso y bultos, y referencias. | Todo lo de la lista: direcciones completas de recogida y entrega, persona de contacto, franja horaria, contenedores con precinto, terminal o depósito (Entréguese/Admítase), notas de entrega, peso y bultos, y referencias. Se añaden el horario del almacén y los requisitos del vehículo del contacto de entrega (pedido por Cristina para el albarán), expedidor y destinatario, y días de retraso, como en la OT de Odoo 17. | docs/decisiones-f0.md l.1395 (contenido de la OT de Odoo 17, más de 1.700 emitidas); NEW ODOO/Nuevo Odoo.xlsx › Contactos («Indicar el horario de apertura de almacén y requisitos de vehiculo… Eso debe aparecer en el albaran») y › tipos de documentos (OT, albarán/POD) |
+| Cristina | P33 | ¿Qué costes se piden al proveedor con pedido de compra, y cuáles se registran sin pedido (como los derechos e IVA del DUA)? | Como ahora: pedido de compra para los servicios de proveedor; los suplidos (derechos e IVA del DUA) se registran sin pedido, con la factura del agente de aduanas. Es propuesta aprobada por Belal el 23/10, pendiente de ratificar por Cristina y Ángel. Coincide con la práctica de Odoo 17 y 19 (los suplidos nunca fueron compromiso de compra). | docs/preguntas-abiertas.md l.32, l.181 y l.218; docs/ciclo-operativo.md l.53 (suplidos sin pedido de compra); BossOdoo19/docs/BOSS_DECISION_LOG.md B10 |
+| Cristina | P30 | Su requisito escrito dice que no se pague ni se contabilice una factura de proveedor si el servicio no está facturado al cliente. ¿Qué quería evitar: el pago, la contabilización o las dos cosas? ¿Y siguen valiendo las excepciones del coste que asume BOSS y del flete pagado por adelantado a un agente? | Solo el pago (como ahora), con las dos excepciones (coste que asume BOSS o cubierto, y flete pagado por adelantado a un agente). Es propuesta aprobada por Belal el 23/10, pendiente de ratificar. El texto de Cristina dice «pagar o contabilizar», pero también pide poder registrar después las facturas que cuadren sin reabrir, lo que encaja con contabilizar y retener el pago. El ajuste admite «Bloquear contabilización y pago» si Ángel lo prefiere. El alcance contable lo ratifica Ángel (P30-a). | docs/preguntas-abiertas.md l.24 y l.178; docs/ciclo-operativo.md l.108-133 (texto de Cristina, Facturacion A3 y Facturacion y costes A11; ajuste de compañía); NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes («Deben poder cerrarse contra previsiones… cuando lleguen las fras pendientes puedan soportarse sin reabrirlo») |
+| Cristina | F0-C60 | ¿Qué tiene que cumplirse para el cierre operativo? Por ejemplo: estar «Entregado», hitos y documentos obligatorios hechos, toda la venta facturada, ningún aviso de margen pendiente y valoraciones hechas. | Como en Odoo 17: estar «Entregado» o «Pendiente de cierre», toda la venta facturada (incluidos los almacenajes, que Cristina pide no olvidar), ningún aviso de margen sin desbloquear y las valoraciones hechas (según F0-C66). No exige tener todas las facturas de proveedor: Cristina pidió cerrar contra previsiones y registrar después las que cuadren sin reabrir. Los documentos obligatorios son los de F0-C38. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes, «CIERRE EXPTES» («cerrarse contra previsiones…») y › Facturacion («No permite facturar si se está olvidando por ej los almacenajes»); docs/decisiones-f0.md l.1470 (condiciones de Odoo 17) |
+| Cristina | F0-C62 | ¿Quiere un cierre comercial, aparte del operativo, que haga el comercial? | Sí, como en Odoo 17. Cristina describe por escrito un cierre comercial aparte: verificar el expediente y marcarlo «comprobado» para cargar después la comisión del comercial, y dejarlo «cerrado pendiente de cobro» o «cerrado cobrado». La regla de comisión es de Ángel (F0-A39); el cierre comercial solo deja la marca de verificación. | NEW ODOO/Nuevo Odoo.xlsx › Cierre com y ops («poder dejar el cierre de Cristina tras la verificación hecho… se marque como comprobado») y › OPS- exptes («cierre operativo y comercial… cerrado pendiente de cobro o cerrado cobrado»); BossOdoo19/docs/CRISTINA_REQUIREMENTS_MATRIX.md corpus ítem 8; docs/decisiones-f0.md l.1486 |
+| Cristina | F0-C63 | ¿En qué plazo debe cerrarse operativamente un expediente entregado: una semana después de la entrega, a final del mes de la fecha importante, u otro? | Una semana después de la entrega (cerrando contra previsiones) y, como tope, a final del mes de la fecha importante. Las dos frases están en su documento de requisitos y son compatibles. Los avisos: entregado sin cerrar a los 7 días (Odoo 17 usa 14) y aviso de fin de mes. | NEW ODOO/Nuevo Odoo.xlsx › OPS- exptes, «CIERRE EXPTES» («cierre operativo y comercial debe hacerse a final del mismo mes en que la important date»; «Poner reglas para que todos los exptes que se entregan queden cerrados en no más de una semana»); docs/decisiones-f0.md l.1494 |
+| Cristina | F0-C67 | ¿Las incidencias del envío deben registrar coste, horas, causa, acción correctora y estado, para poder restarlas del margen? | Sí: la incidencia registra departamento, tipo, coste, horas, causa, acción correctora (medida para que no vuelva a pasar) y estado, como en Odoo 17. Su coste resta del margen del expediente. Cristina pidió clasificarlas por departamento y tipo, con la medida en Odoo para evitarlas. | NEW ODOO/Nuevo Odoo.xlsx › Incidencias («Clasificar por departamentos y tipos / MEDIDA ODOO PARA EVITAR QUE VUELVA A OCURRIR»); docs/decisiones-f0.md l.1526 (campos de Odoo 17) |
+| Cristina | P36 | A partir del 1/1/2027, ¿los expedientes nuevos se numeran desde E270001, o se continúa la numeración de Odoo 17? En ningún caso se puede repetir un número de Odoo 17. | E27 desde el 0001. Es lo mismo que haría Odoo 17: su secuencia «Expedientes» tiene prefijo E%(range_y)s, 4 cifras y numeración por año (use_date_range = sí), así que en 2027 empezaría en E270001. Para que no se repita ningún número, Odoo 17 no debe abrir expedientes de 2027 después del corte (F0-B27). Los E26 de prueba de boss20 no deben llegar a producción (F0-B16). Los expedientes migrados conservan su número de Odoo 17. | Odoo 17 producción ir.sequence id 23 «Expedientes» (prefix E%(range_y)s, padding 4, use_date_range true; leído 28/10/2026); docs/respuestas-cristina.md fila 15; docs/preguntas-abiertas.md l.184; docs/decisiones-f0.md l.1718-1723 y l.1786-1791 |
+| Belal | F0-B05 | Al migrar, ¿se agrupan en una misma familia las distintas empresas de un mismo transportista (por ejemplo, las cinco de MSC) para que compartan sus tarifas? | Ya está decidido e implementado. Cada entidad legal apunta a su transportista comercial con «Pertenece al transportista» (boss_carrier_group_id). Las tarifas casan por familia, la línea, la compra y la factura conservan la entidad legal, y ningún contacto se fusiona. Al migrar, las cinco entidades de MSC (23762, 23022, 23493, 23733 y 54705) se marcan como parte de MSC. Para las demás navieras y aerolíneas con varias entidades, el valor por defecto es el mismo criterio: lista de variantes de sucursal con su familia propuesta, que se revisa antes de cargar. | docs/adr/009-meeting-2-pricing-and-file-rules.md:55-59 (decisión 5, familia de transportista); docs/matriz-reunion-2026-10-27.md:67 (M2-3 implementado; al migrar, MSC Suiza y EE. UU. se marcan como parte de MSC); docs/plan-expediente-completo.md:182; BossOdoo19/docs/BOSS_MIGRATION_MAPPING.md:42-44 (lista de revisión de variantes de sucursal) |
+| Belal | M2-F | ¿Se ponen todos los usuarios de BOSS en español, para que los números y las fechas salgan a la española (2.500,00)? | Sí: los usuarios de BOSS (Cristina, Ángel, operaciones, compras y contabilidad) se ponen en español (es_ES), y con eso los números y las fechas salen a la española (2.500,00). Quien prefiera inglés lo cambia en sus Preferencias, que es estándar de Odoo. Los usuarios técnicos o de desarrollo pueden seguir en inglés. El cambio se hace al crear los usuarios por rol (W08), avisando a Ángel y Cristina y sin tocar su sesión mientras trabajan. | CLAUDE.md:32 (español como idioma principal para el equipo de BOSS, inglés como segundo idioma de la interfaz); docs/plan-expediente-completo.md:185 (F2: usuarios por rol con idioma es_ES, M2-11/M2-F); docs/adr/009-meeting-2-pricing-and-file-rules.md:122 (petición de Ángel) |
+| Belal | F0-B15 | Hasta que se decida la base de producción, ¿las pruebas pueden seguir contabilizando en boss20 facturas, abonos y pagos marcados como prueba? | Sí. La política del 27/10 permite en boss20 contabilizar facturas y abonos, registrar pagos y conciliar con registros [PRUEBA] claramente nombrados, aunque gasten numeración. Se anulan solo por las vías que admite Odoo. La tarea del escenario contable de Ángel que dice «nunca en los libros reales» es anterior y quedó sustituida por esa política. Si en F0-B16 se elige boss20 como producción, las pruebas se anulan antes del arranque; con base nueva, no afectan. | CLAUDE.md:36-46 (política de Belal del 27/10/2026); memory/no-local-testing.md (actualización del 27/10); memory/mandate-2026-10-26.md (SUPERSEDED on 27/10); dev/boss_tasks/seed_launch.py:488-492 (entorno boss20 según la política del 27/10) |
+| Belal | F0-B14 | ¿Aceptas que la red de seguridad del proyecto sean las comprobaciones que se ejecutan en boss20, y que las pruebas internas de los módulos (sin ejecutar desde el 27/10) queden solo como referencia? | Sí. La red de seguridad son las comprobaciones con evidencia que se ejecutan en boss20 (dev/uat_run.sh, dev/check_*.py en rollback, dev/check_file_e2e.py). Las pruebas internas de los módulos quedan solo como referencia, porque la política del 27/10 prohíbe cualquier prueba local y cualquier base de prueba o copia. Las pruebas se limitan al mínimo estricto que protege el trabajo. | CLAUDE.md:36-46 y Commands (dev/uat_run.sh; server_test.sh y test.sh no se usan); C:/Users/BelalAlswerki/.claude/CLAUDE.md (regla del 25/09: pruebas al mínimo estricto); memory/no-local-testing.md |
+| Belal | F0-B19 | Los expedientes que sigan abiertos el 1/1, ¿se pasan a Odoo 20 o se terminan en Odoo 17? | Se pasan a Odoo 20 todos los que sigan abiertos el 1/1, con su etapa, partes, contenedores, referencias, fechas y lo pendiente de comprar y de facturar. El hito aprobado es «Odoo 20 único sistema el 1/1/2027, Odoo 17 en solo lectura», y el objetivo de F15 es arrancar con los envíos en curso migrados. La única excepción es que en F0-B11 se elija el arranque por tráficos: entonces los tráficos que se queden en Odoo 17 terminan allí. Qué cuenta como «abierto» lo decide Cristina (N04). | docs/ciclo-operativo.md:66 (hitos aprobados por Belal el 26/10/2026); docs/plan-expediente-completo.md:662-672 (F15); memory/mandate-2026-10-26.md (cambio del 1/1/2027, Odoo 17 en solo lectura); dev/boss_tasks/seed_launch.py:105 (S53) |
+| Belal | F0-B21 | ¿Dónde se ensaya la migración de los expedientes abiertos: en boss20 deshaciendo todo al terminar, o en una copia temporal en el servidor como excepción a la política del 27/10? | En boss20, en rollback: el script deshace todo al terminar y no se hace ninguna copia. La política del 27/10 prohíbe copias locales y bases temporales en el servidor (boss20_test_*, boss20_uat), y la regla global prohíbe crear bases de borrador o copias. La tarea N04, que dice «copia local», está desfasada y se corrige en la plataforma. Para medir los tiempos reales del cambio se cronometra la ejecución en rollback, que hace el mismo trabajo antes de deshacerlo. | CLAUDE.md:36-46; C:/Users/BelalAlswerki/.claude/CLAUDE.md (regla de Belal del 25/09: nunca bases de borrador ni copias); docs/plan-expediente-completo.md:674 (el ensayo se hace en rollback sobre boss20) |
+| Belal | F0-B27 | ¿Cuándo se deja de registrar operaciones nuevas en Odoo 17? | El 31/12/2026: el corte de Odoo 17 está en el plan aprobado (S53, «corte de Odoo 17 el 31/12, copia final, carga de diferencias»), con Odoo 20 como único sistema el 1/1/2027. Se propone a las 18:00, tras la última operación del día, y Odoo 17 pasa a solo lectura en ese momento. La hora exacta queda en la lista de control del cambio, que aprueban Cristina y Ángel. | docs/ciclo-operativo.md:66 (hitos aprobados por Belal el 26/10/2026); dev/boss_tasks/seed_launch.py:105-107 (S53); memory/mandate-2026-10-26.md (cambio del 1/1/2027, Odoo 17 en solo lectura después) |
 
-**F0-B26 · media · antes del 20/11/2026** — En el arranque, ¿cómo se activan las tareas automáticas que hoy están apagadas (18 tareas programadas, sincronización bancaria, reclamación de cobros y, si no se ha activado antes, la de tipos de cambio)?
-
-- Por qué: Al activarlas empiezan los envíos automáticos, y algunas mandan datos a servicios externos (banco, reclamaciones). Hoy están apagadas para que nada salga durante las pruebas (F15). La de tipos de cambio se decide antes en F0-B10.
-- Opciones: Todas el 1/1, con una lista de control firmada por Belal y Ángel / Escalonadas durante la primera semana, una a una con la lista de control / Otra opción (indicar)
-- Hoy en Odoo 17: Hoy en Odoo 17 hay tareas programadas que envían avisos por correo a los operativos (expedientes sin revisar, entregados y sin cerrar, pendientes de facturar o de cerrar a fin de mes).
-- Mientras tanto: Todas siguen apagadas en boss20.
-- Bloquea: F15 · con Ángel
-
-**F0-B27 · media · antes del 20/11/2026** — ¿Cuándo se deja de registrar operaciones nuevas en Odoo 17?
-
-- Por qué: Desde ese momento todo se registra en Odoo 20. La carga final de diferencias y la conciliación del arranque dependen de esa hora (F15). La lista de control del cambio la aprueban también Cristina (operaciones) y Ángel (contabilidad).
-- Opciones: El 31/12/2026 a las 18:00 (propuesta del calendario) / Otra fecha y hora (indicar)
-- Mientras tanto: La hora del calendario es solo una propuesta y figura como «pendiente de decisión».
-- Bloquea: F15 · con Cristina
-
+Duplicadas (se responden con otra pregunta): F0-A02 → F0-B04, P30-c → F0-A81, F0-A40 → F0-B16, F0-C70 → F0-C69, F0-B04 → F0-A02 (Ángel), F0-B12 → F0-B11, F0-B13 → F0-B11, F0-B17 → F0-B11
