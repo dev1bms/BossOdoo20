@@ -21,6 +21,8 @@ import/export; customs). First goal: pricing (supplier cost + sale price on quot
 - `boss_web`: web client only (chatter below the form on every screen size); no models.
 - `boss_portal`: customer portal on the standard Odoo portal (roles granted by BOSS, scope per legal entity, rate
   quotations without totals, booking requests, My Shipments, tracking link); BOSS costs never reach it (ADR-010).
+- `boss_documents`: customer and supplier documents (invoice, quotation, purchase order): BOSS layout on the standard
+  template, one shipment block built by `_boss_document_block()` on each model, charge bases always printed (ADR-011).
 
 ## Rules
 - Standard Odoo first; every customisation is justified in an ADR (docs/adr).
