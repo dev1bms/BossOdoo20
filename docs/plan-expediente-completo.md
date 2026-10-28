@@ -86,6 +86,13 @@ Belal debe elegir en F0 una (o una mezcla) de estas salidas:
 3. Mover la fecha de arranque.
 Sin esa decisión, cada fase siguiente se planifica sobre una fecha que no se puede cumplir.
 
+## Estado de las fases
+| Fase | Estado |
+|---|---|
+| F0 | En curso: paquetes de preguntas para Ángel, Cristina y Belal (28/10) |
+| F1 | **Hecha el 28/10/2026**: arnés `dev/check_file_e2e.py` (S1 35/0, 20 huecos con su fase) y correcciones desplegadas; además se encontró y corrigió que el formulario del expediente no abría (`docs/evidencias/20261028_f1_arnes_e2e.md`) |
+| F2-F17 | Pendientes |
+
 ## Orden recomendado para empezar
 1. **F0 esta semana**: paquetes de preguntas para Ángel y Cristina agrupados por etapa del expediente, con fecha límite;
    decisión de Belal sobre capacidad y sobre la base de producción.

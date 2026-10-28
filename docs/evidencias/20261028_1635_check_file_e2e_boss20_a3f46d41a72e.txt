@@ -1,0 +1,84 @@
+# Evidence: dev/check_file_e2e.py on boss20
+# Date: 2026-10-28 16:35    
+# Commit tested: a3f46d41a72e (fix(portal,pricing): the file form failed to open for everybody since boss_portal 1.0.0 (ir.config_p)
+# Installed on boss20: boss_documents 20.0.1.0.3 boss_expediente 20.0.1.14.0 boss_portal 20.0.1.0.4 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.15.0 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-28 15:36:07,770 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-28 15:36:07,831 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-28 15:36:08,660 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0b every BOSS form opens (form view and every field of the latest records): expected [] got []
+CHECK PASS 0b the guide button of the pricing workspace opens its link: expected True got True
+MODE rollback | files before 19 | bank journal BNK1 | setting P30 block_payment
+CHECK PASS 0 four approved [PRUEBA] supplier prices (local EUR, freight USD, customs, trucking): expected ['approved', 'approved', 'approved', 'approved'] got ['approved', 'approved', 'approved', 'approved']
+GAP S1 duties paid on behalf re-invoiced at the exact amount paid (no default margin) → F9 / decision Ángel (today: default sale 600.00 for 500.00 paid (cost + default %))
+      ARA VAT trace: base NS · 0% EXEMPT NS (Ángel: NS = no sujeto por naturaleza · Odoo 17: suplidos (conceptos TAX: ARA, IVA, PLA, DUM) en factura de impuestos con «0% EXEMPT NS», sin casilla 303)
+      FMI      ok               cost   1000.00 USD sale   1072.57 vat ok
+      THC      ok               cost    200.00 EUR sale    240.00 vat ok
+      BL       ok               cost     50.00 EUR sale     60.00 vat ok
+      GLO-CCC  ok               cost     30.00 EUR sale     36.00 vat ok
+      T3-PAD   ok               cost     40.00 EUR sale     48.00 vat ok
+      FAD      ok               cost    100.00 EUR sale    120.00 vat ok
+      CSM      ok               cost      0.00 EUR sale     60.00 vat ok
+      TTE-FCL  ok               cost    300.00 EUR sale    360.00 vat ok
+      ARA      manual           cost      0.00 EUR sale    500.00 vat ok
+CHECK PASS 1 template services + duties on the quotation: expected ['ARA', 'BL', 'CSM', 'FAD', 'FMI', 'GLO-CCC', 'T3-PAD', 'THC', 'TTE-FCL'] got ['ARA', 'BL', 'CSM', 'FAD', 'FMI', 'GLO-CCC', 'T3-PAD', 'THC', 'TTE-FCL']
+CHECK PASS 1 every supplier service priced (tariff, or manual cost with its note): expected [] got []
+CHECK PASS 1 freight from the USD rate of the departure week: expected ('ok', 'USD') got ('ok', 'USD')
+CHECK PASS 1 nothing blocks acceptance (VAT decided, every sale price set): expected [] got []
+CHECK PASS 2 accepted, one file with its analytic account: expected ('sale', 1, True) got ('sale', 1, True)
+CHECK PASS 2 one purchase need per bought service: expected 8 got 8
+GAP S1 operator of the file and milestone plan of its traffic → F5 (today: the salesman is the responsible, no activities)
+GAP S1 documents folder of the file → F6 (today: attachments in the chatter only)
+CHECK PASS 3 RFQs: carrier EUR + carrier USD + customs broker + haulier (duties need no order): expected [('[PRUEBA] E2E Agente de aduanas', 'EUR'), ('[PRUEBA] E2E Naviera', 'EUR'), ('[PRUEBA] E2E Naviera', 'USD'), ('[PRUEBA] E2E Transportista', 'EUR')] got [('[PRUEBA] E2E Agente de aduanas', 'EUR'), ('[PRUEBA] E2E Naviera', 'EUR'), ('[PRUEBA] E2E Naviera', 'USD'), ('[PRUEBA] E2E Transportista', 'EUR')]
+CHECK PASS 3 duties (ARA) wait for the broker's bill without order: expected 'awaiting_bill' got 'awaiting_bill'
+CHECK PASS 3 every order confirmed with the supplier's reference: expected [('purchase', True), ('purchase', True), ('purchase', True), ('purchase', True)] got [('purchase', True), ('purchase', True), ('purchase', True), ('purchase', True)]
+GAP S1 «In transit» without departure date, booking or container number → F5 (today: accepted)
+CHECK PASS 4 ATD and actual pickup shown on every file (import ATD, export pickup): expected (True, True) got (True, True)
+CHECK PASS 4 file in transit: expected 'in_transit' got 'in_transit'
+GAP S1 «Delivered» without arrival, customs release or delivery date → F7 (today: accepted)
+GAP S1 customs status, channel and release (levante) of the DUA → F7 (today: only the DUA number)
+GAP S1 transport order (OT) to the haulier from Odoo → F7
+CHECK PASS 5 file delivered: expected 'delivered' got 'delivered'
+CHECK PASS 6 every ordered service performed: expected ['performed', 'performed', 'performed', 'performed', 'performed', 'performed', 'performed'] got ['performed', 'performed', 'performed', 'performed', 'performed', 'performed', 'performed']
+CHECK PASS 6 the lines of a bill from the file's order carry the file: expected True got True
+CHECK PASS 6 THC billed 220 for 200 ordered: variance to review: expected (True, 20.0) got (True, 20.0)
+CHECK PASS 6 freight bill in USD posted, at the order price: expected ('USD', 1000.0) got ('USD', 1000.0)
+GAP S1 USD variance split into price and exchange rate → F8 (today: one variance figure)
+CHECK PASS 6 duties bill without order: carries the file, the duties need is billed: expected (boss.expediente(124,), 'billed') got (boss.expediente(124,), 'billed')
+CHECK PASS 6 actual cost = posted bills - supplier credit note (USD at the bill rate), duties counted once: expected 2123.81 got 2123.81
+CHECK PASS 7 the carrier's bill cannot be paid before the customer is invoiced (P30, payment wizard): expected 'refused' got 'refused'
+      «FACTURA/2026/12/0001 ([PRUEBA] NAV-1) cannot be paid yet: - E260124 · [THC] Terminal handling (FCL, per container): not invoiced to the customer yet - E260124 · [BL] Master bill of»
+GAP S1 P30 also on the bank reconciliation of the bill → F8 (today: accepted)
+CHECK PASS 8 everything invoiced (partial THC, then the rest): expected (2496.57, 0.0) got (2496.57, 0.0)
+CHECK PASS 8 the customer invoice lines carry the file: expected True got True
+GAP S1 duties invoiced apart from the services (separate invoice / section) and their VAT → F9 (today: duties are one more line of the invoice)
+GAP S1 legal mention of every 0 % tax, company IBAN and agreed series on the invoice → F4 (today: no bank account on the company; legal notes on some 0 % taxes only)
+CHECK PASS 9 every invoice and bill paid and matched with a bank line: expected [] got []
+CHECK PASS 9 collected = the customer invoices: expected 2630.13 got 2630.13
+GAP S1 supplier payments by SEPA batch (XML generated, never sent) → F8
+CHECK PASS 9 an invoice shared 50/50 with another file adds 50 % of its collection: expected 605.0 got 605.0
+CHECK PASS 10 operations closed: expected 'closed' got 'closed'
+GAP S1 conditions of the operational close and freeze of the shipment data → F10 (today: a click, nothing frozen)
+CHECK PASS 10 the financial close waits for the cost variances to be reviewed: expected 'refused' got 'refused'
+      «E260124 cannot be closed financially: 2 cost variances to review»
+CHECK PASS 10 variances to review: THC billed above the order, BL lowered by the supplier credit note: expected ['BL', 'THC'] got ['BL', 'THC']
+CHECK PASS 10 nothing left in «To do»: expected False got False
+CHECK PASS 10 a sales user cannot close financially (checked on the server): expected 'refused' got 'refused'
+      «Only Accounting / Invoicing can do this on a file.»
+CHECK PASS 10 file closed financially: expected True got True
+CHECK PASS 10 an invoicing user who is not accounting manager cannot reopen it: expected 'refused' got 'refused'
+      «Only Accounting / Administrator can do this on a file.»
+GAP S1 nothing can be posted on a financially closed file → F10 (today: accepted)
+      E260124: sale 2496.57 invoiced 2496.57 actual cost 2123.81 final margin 372.76 collected 2630.13 paid 2123.81
+CHECK PASS 10 final margin = invoiced - actual cost: expected 372.76 got 372.76
+GAP S2 air export (EAB) quotation to financial close → F11
+GAP S3 air import (IAB) with NOA, handler and storage period → F11
+GAP S4 sea export FCL (EMB) with cut-offs and detention → F12
+GAP S5 LCL import and export → F12
+GAP S6 road / national → F12
+GAP S7 agent's business in USD with profit share → F13
+RESULT 35 passed, 0 failed, 20 gaps | file E260124 | order S00707
+# Exit status: 0
