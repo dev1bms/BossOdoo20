@@ -25,6 +25,14 @@ class PurchaseOrderLine(models.Model):
     boss_cost_id = fields.Many2one("boss.expediente.cost", "Service of the file", index="btree_not_null", copy=False,
                                    readonly=True)
 
+    def _prepare_account_move_line(self, move=False):
+        """The bill line of a file's purchase carries the file, like the customer invoice lines of the file."""
+        vals = super()._prepare_account_move_line(move)
+        file = self.boss_cost_id.expediente_id or self.order_id.boss_expediente_id
+        if file:
+            vals["boss_expediente_id"] = file.id
+        return vals
+
     def _compute_price_unit_and_date_planned_and_name(self):
         """The price of a file's service comes from the BOSS supplier price (or the person who edits it), never from
         product supplier info or the product cost: keep it when quantity, unit or supplier change."""

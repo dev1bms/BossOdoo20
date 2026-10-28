@@ -147,6 +147,16 @@ class AccountMoveLine(models.Model):
                                          help="File this invoice line belongs to (one sale line may be in several "
                                          "files).")
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        """A bill entered from a file («Cost without purchase order») carries the file on its product lines."""
+        file_id = self.env.context.get("boss_default_file")
+        if file_id:
+            for vals in vals_list:
+                if vals.get("display_type", "product") == "product" and not vals.get("boss_expediente_id"):
+                    vals["boss_expediente_id"] = file_id
+        return super().create(vals_list)
+
     def _related_analytic_distribution(self):
         """A bill entered from a file (cost without purchase order) is charged to the file's analytic account."""
         values = super()._related_analytic_distribution()

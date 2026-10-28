@@ -311,13 +311,13 @@
                                     <field name="customs_ref"/>
                                 </group>
                                 <group string="Dates">
-                                    <field name="atd" invisible="direction != 'export'"/>
+                                    <field name="atd"/>
                                     <field name="foh" invisible="direction != 'export'"/>
                                     <field name="ata" invisible="direction == 'export'"/>
                                     <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"/>
                                     <field name="emptying_date" invisible="direction == 'export' or load_type != 'lcl'"/>
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
-                                    <field name="pickup_date" invisible="direction == 'export'"/>
+                                    <field name="pickup_date"/>
                                     <field name="delivery_date"/>
                                 </group>
                                 <group string="Other parties">

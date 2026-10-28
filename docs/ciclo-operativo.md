@@ -126,7 +126,7 @@ Qué se distingue en Odoo 20:
 | Aspecto | Comportamiento |
 |---|---|
 | Orden de trabajo (facturar al cliente antes de soportar la del proveedor) | Aviso en la factura de proveedor («Antes de contabilizar o pagar») y en «Pendiente» del expediente |
-| Bloqueo de contabilización y de pago | Solo si la compañía elige «Bloquear» (Ajustes › Ventas); por defecto «Solo avisar» mientras P30 siga abierta |
+| Bloqueo de contabilización y de pago | Ajuste de la compañía (Ajustes › Ventas): por defecto «Bloquear el pago» (se contabiliza, no se paga), también en boss20 (comprobado el 28/10/2026); «Bloquear» impide también contabilizar; «Solo avisar» quita el bloqueo. Ratificación de P30 pendiente de Ángel y Cristina |
 | «Facturado» | Factura de cliente **contabilizada** de esa línea (un borrador no cuenta); una factura parcial basta (concepto facturado) |
 | Coste que asume BOSS o cubierto por el precio | Sin aviso: no se espera factura al cliente |
 | Flete pagado por adelantado a un agente | Marcar «Pagado por adelantado» en el servicio: basta con la línea de venta (excepción de A3) |

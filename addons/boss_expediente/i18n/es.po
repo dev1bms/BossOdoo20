@@ -3590,3 +3590,9 @@ msgstr "Total"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Company currency, without taxes. Actual cost = posted vendor bills and credit notes; cost still expected = services not billed yet (forecast); invoiced = posted customer invoices less credit notes. Services without a group: «Other»."
 msgstr "Moneda de la compañía, sin impuestos. Coste real = facturas y abonos de proveedor contabilizados; coste pendiente = servicios aún no facturados (previsión); facturado = facturas de cliente contabilizadas menos abonos. Servicios sin grupo: «Otros»."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Only %s can do this on a file."
+msgstr "Solo %s puede hacer esto en un expediente."
