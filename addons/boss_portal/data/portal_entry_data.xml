@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="portal_my_shipments" model="portal.entry">
+    <record id="portal_entry_my_shipments" model="portal.entry">
         <field name="name">My Shipments</field>
         <field name="description">Follow your shipments: route, dates, containers, events and documents published by BOSS</field>
         <field name="url">/my/shipments</field>
