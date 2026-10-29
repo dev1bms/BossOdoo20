@@ -9,6 +9,16 @@ No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MC
 
 **Límite de la herramienta:** `search_records` solo admite un filtro de texto parcial sobre un campo. No acepta dominios, `search_count` ni agrupaciones, y `list_contacts` y `list_invoices` dan error. Los totales los he sacado de `ir.model.count` y el resto paginando hasta el último registro. No se pueden cruzar condiciones (tipo y NIF, actividad y año), así que esos cruces quedan abiertos.
 
+## Estado (29/10/2026)
+
+- **Ensayo del alcance actual (3.699 registros):** rollback en boss20, 17 de 17 comprobaciones. Resultado: 3.664 nuevos,
+  34 enlazados sin cambios de nombre, 1 registro de BOSS protegido, 1 hijo bajo BOSS diferido para decisión.
+- **Ampliación en curso:** jefes de expediente, agentes, navieras, destinatarios, líneas y ofertas, saldos abiertos y
+  expedientes antiguos sin cerrar. **No completada:** falta un acceso XML-RPC de solo lectura autorizado para Odoo 17;
+  la herramienta de consulta no lee las relaciones de partner en los expedientes.
+- **Cifras de las secciones 1 a 5 abajo:** son las medidas previas al ensayo, no las finales.
+- **Carga permanente:** no aprobada.
+
 ## 1. Números
 
 | Medida (Odoo 17, solo activos) | Valor | Cómo se midió |
