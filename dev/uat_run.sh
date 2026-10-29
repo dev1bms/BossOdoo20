@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run a UAT check script on the server and keep its output as evidence tied to the tested commit.
-#   dev/uat_run.sh <script.py> [boss20_uat|boss20]
+#   dev/uat_run.sh <script.py> [boss20_uat|boss20] [data files…]  (data files are passed to dev/server_shell.sh, never stored)
 # The script prints «CHECK PASS|FAIL <name>: expected … got …» lines and a final «RESULT n passed, m failed».
 # Evidence: docs/evidencias/<date>_<script>_<db>_<commit>.txt with the commit tested (HEAD, must be pushed and deployed),
 # the module versions installed in that database and the full output. Exit status = the script's (failures -> 1).
@@ -23,7 +23,7 @@ VERSIONS=$(ssh -o BatchMode=yes boss@100.87.98.15 "docker exec bossodoo20-db-1 p
   echo
 } > "$OUT"
 set +e
-BOSS_DB="$DB" bash dev/server_shell.sh "$SCRIPT" 2>&1 | grep -vE "^WARNING|Container .* (Creating|Created|Starting|Started)|^$" >> "$OUT"
+BOSS_DB="$DB" bash dev/server_shell.sh "$SCRIPT" "${@:3}" 2>&1 | grep -vE "^WARNING|Container .* (Creating|Created|Starting|Started)|^$" >> "$OUT"
 RC=${PIPESTATUS[0]}
 set -e
 echo "# Exit status: $RC" >> "$OUT"
