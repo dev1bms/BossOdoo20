@@ -1,0 +1,39 @@
+# Evidence: dev/check_migration_sample.py on boss20
+# Date: 2026-10-29 09:21    
+# Commit tested: febb56be3a72 (chore(dev): evidence runner forwards data files to the server shell)
+# Installed on boss20: boss_documents 20.0.1.0.4 boss_expediente 20.0.1.16.0 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.16.1 boss_services 20.0.1.4.0 boss_web 20.0.1.0.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-10-29 08:21:54,193 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-29 08:21:54,254 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-10-29 08:21:55,082 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+SAMPLE 14 Odoo 17 records: ids [23022, 23212, 23336, 23493, 23642, 23733, 23762, 24018, 45932, 45933, 47666, 47667, 52317, 54705]
+RUN1 {'created': 12, 'linked_existing': 2, 'already_linked': 0, 'filled': 2, 'differs': 2, 'discarded': 2, 'source_vat_duplicates': 1, 'unmatched_payment_terms': 1, 'unmatched_country_state': 0, 'pending_decisions': 1}
+   linked: 23336 -> 9
+   linked: 23762 -> 6
+   differs: (23336, 9, 'street', 'Centro de Carga Aérea. Aeropuerto El Prat', 'CENTRO DE CARGA AEREA. AEROPUERTO EL PRAT')
+   differs: (23336, 9, 'city', 'Barcelona', 'BARCELONA')
+   discarded: (23336, 'x_studio_code', '347', 'target ref kept: O17:23336')
+   discarded: (23762, 'x_studio_code', '791', 'target ref kept: O17:23762')
+   unmatched payment terms: ['60 Days']
+   unmatched country/state: []
+CHECK PASS 1 every sample record is linked to exactly one boss20 contact: expected 14 got 14
+CHECK PASS 2 company 23212: its 4 child addresses land under the same boss20 contact: expected 4 got 4
+CHECK PASS 2 the company's VAT is normalised and kept: expected True got True
+CHECK PASS 3 contact 23642 customer and supplier: both ranks on the target: expected (True, True) got (True, True)
+CHECK PASS 4 the 5 MSC entities point to one family head: expected (1, True) got (1, True)
+CHECK PASS 4 the MSC entity already on boss20 is linked (not duplicated) and in the family: expected (True, True) got (True, True)
+CHECK PASS 4 family members from any entity: expected True got True
+CHECK PASS 4b supplier already on boss20 (ref O17:23336) is linked, not duplicated: expected res.partner(9,) got res.partner(9,)
+CHECK PASS 4c no second contact with the MSC Spain name: expected 1 got 1
+CHECK PASS 5 source VAT duplicates [24018, 52317]: two different targets, listed for review: expected (True, 2) got (True, 2)
+CHECK PASS 6 archived source 23642 stays archived on boss20: expected False got False
+CHECK PASS 7 boss20 contacts not linked by the sample are untouched: expected set() got set()
+CHECK PASS 7 linked contacts: no value overwritten (only empty fields filled): expected [] got []
+CHECK PASS 8 second run creates nothing and links nothing new: expected (0, 0) got (0, 0)
+CHECK PASS 8 second run changes no contact: expected {} got {}
+CHECK PASS 8 contact count after two runs = before + created once (+ family head): expected 153 got 153
+RESULT 16 passed, 0 failed
+# Exit status: 0
