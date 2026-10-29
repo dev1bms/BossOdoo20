@@ -21,6 +21,7 @@ import re
 import unicodedata
 
 from odoo import Command
+from odoo.exceptions import ValidationError
 
 MODULE = "o17_partner"
 DATA_FILE = os.environ.get("BOSS_FILES", "").split("|")[0] or "o17_partners.json"
@@ -28,6 +29,8 @@ TYPE_MAP = {  # x_studio_type → (customer_rank, supplier_rank, roles); roles d
     "Cliente": (1, 0, []), "Cliente + Proveedor": (1, 1, []), "Proveedor": (0, 1, []), "Acreedor": (0, 1, []),
     "Agente": (0, 0, ["agent"]), "Expedidor/destinatario extranjero": (0, 0, ["shipper", "consignee"]),
     "Expedidor/destinatario español": (0, 0, ["shipper", "consignee"]), "PENDIENTE": (0, 0, []),
+    "Shipper/Consignee Extranjero": (0, 0, ["shipper", "consignee"]),  # labels as stored in Odoo 17
+    "Shipper/Consignee Español": (0, 0, ["shipper", "consignee"]),
 }
 FLAG_ROLES = {"x_studio_is_carrier": ["carrier"], "x_studio_is_airline": ["carrier"],
               "x_studio_is_customs_agent": ["customs_broker"], "x_studio_is_trucker": ["haulier"],
@@ -44,6 +47,22 @@ def norm(text):
 
 def norm_vat(vat):
     return re.sub(r"[^A-Z0-9]", "", (vat or "").upper()) or False
+
+
+def vat_keys(vat, country_code=False):
+    """Comparable forms of a VAT: with and without its country prefix (boss20 stores «ESB…», Odoo 17 «B…»)."""
+    v = norm_vat(vat)
+    if not v:
+        return set()
+    keys = {v}
+    if country_code and not v.startswith(country_code):
+        keys.add(country_code + v)
+    if len(v) > 2 and v[:2].isalpha() and v[:2] in COUNTRY_CODES:
+        keys.add(v[2:])
+    return keys
+
+
+COUNTRY_CODES = set()  # filled from res.country when the loader starts
 
 
 def m2o_name(value):
@@ -64,6 +83,7 @@ class Loader:
                     "discarded": [], "source_vat_duplicates": {}, "unmatched_payment_terms": set(),
                     "unmatched_country_state": [], "pending_decisions": set()}
         self.roles = {r.code: r.id for r in env["boss.partner.role"].search([])}
+        COUNTRY_CODES.update(c for c in env["res.country"].search([]).mapped("code") if c)
         self.terms = {norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="es_ES").search([])}
         self.terms.update({norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="en_US").search([])})
 
@@ -137,6 +157,8 @@ class Loader:
             self.log["discarded"].append((rec["id"], "lang", rec["lang"], "language not installed in boss20"))
             vals["lang"] = False
         # roles and ranks: proposal (F0-C02, not approved) — applied in the dry run and flagged
+        if rec.get("x_studio_type") and rec["x_studio_type"] not in TYPE_MAP:
+            self.log["pending_decisions"].add(f"unknown x_studio_type {rec['x_studio_type']!r}: no rank or role given")
         cust, supp, roles = TYPE_MAP.get(rec.get("x_studio_type") or "", (0, 0, []))
         roles = list(roles)
         for flag, codes in FLAG_ROLES.items():
@@ -154,15 +176,22 @@ class Loader:
     # ---- apply --------------------------------------------------------------------------------------------------------
     def match_existing(self, rec, vals, parent):
         taken = self.linked_targets()
+        # 1. a link made earlier by hand in boss20: ref «O17:<id>» (the commercial code itself is never used to match)
+        cands = self.Partner.with_context(active_test=False).search([("ref", "=", f"O17:{rec['id']}")])
+        cands = cands.filtered(lambda p: p.id not in taken)
+        if cands:
+            return cands[:1]
         if parent:
             cands = self.Partner.with_context(active_test=False).search(
                 [("parent_id", "=", parent.id), ("type", "=", vals["type"])])
             cands = cands.filtered(lambda p: p.id not in taken and norm(p.name) == norm(vals["name"]))
             return cands[:1]
         if vals["vat"]:
+            country = self.env["res.country"].browse(vals["country_id"]).code if vals["country_id"] else False
+            keys = vat_keys(vals["vat"], country)
             cands = self.Partner.with_context(active_test=False).search(
                 [("is_company", "=", True), ("parent_id", "=", False), ("vat", "!=", False)])
-            cands = cands.filtered(lambda p: p.id not in taken and norm_vat(p.vat) == vals["vat"])
+            cands = cands.filtered(lambda p: p.id not in taken and vat_keys(p.vat, p.country_id.code) & keys)
             if cands:
                 return cands[:1]
         cands = self.Partner.with_context(active_test=False).search(
@@ -194,7 +223,16 @@ class Loader:
             else:
                 create_vals = {k: v for k, v in vals.items() if v not in (False, None, "")}
                 create_vals["name"] = vals["name"]
-                target = self.Partner.create(create_vals)
+                try:
+                    with self.env.cr.savepoint():
+                        target = self.Partner.create(create_vals)
+                except ValidationError as err:  # e.g. a VAT Odoo rejects: loaded without it, reported for decision
+                    if not create_vals.get("vat"):
+                        raise
+                    self.log["discarded"].append((o17_id, "vat", rec.get("vat"), f"rejected by Odoo: {err}"))
+                    create_vals.pop("vat")
+                    vals["vat"] = False
+                    target = self.Partner.create(create_vals)
                 if not rec.get("active", True):
                     target.active = False
                 self.link(o17_id, target)
@@ -209,7 +247,7 @@ class Loader:
             current = current.id if hasattr(current, "id") else current
             if current in (False, None, ""):
                 fill[field] = value
-            elif field == "vat" and norm_vat(target.vat) == value:
+            elif field == "vat" and vat_keys(target.vat, target.country_id.code) & vat_keys(value, target.country_id.code):
                 continue
             elif current != value and field not in ("parent_id",):
                 self.log["differs"].append((o17_id, target.id, field, current, value))
@@ -266,7 +304,7 @@ def load(env, path):
     return Loader(env, records).run()
 
 
-if __name__ == "__main__" or "env" in globals():
+if __name__ != "lib" and "env" in globals():  # the sample check imports this file as «lib»
     log = load(env, f"/tmp/boss/{DATA_FILE}")  # noqa: F821
     summary = {k: (len(v) if isinstance(v, (list, set, dict)) else v) for k, v in log.items()}
     print("MIGRATION", json.dumps(summary, ensure_ascii=False))

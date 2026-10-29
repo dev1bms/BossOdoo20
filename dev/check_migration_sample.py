@@ -63,6 +63,8 @@ def snapshot(ids=None):
     return out
 
 
+existing_msc = env["res.partner"].search([("name", "=", "MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.")], limit=1)
+existing_wfs = env["res.partner"].search([("ref", "=", "O17:23336")], limit=1)
 before = snapshot()
 count_before = len(before)
 xmlids_before = env["ir.model.data"].search_count([("module", "=", "o17_partner")])
@@ -82,7 +84,7 @@ print("   unmatched country/state:", log1["unmatched_country_state"][:10])
 
 check("1 every sample record is linked to exactly one boss20 contact", len(records),
       env["ir.model.data"].search_count([("module", "=", "o17_partner"), ("model", "=", "res.partner"),
-                                         ("name", "like", "res_partner_")]) - xmlids_before)
+                                         ("name", "=like", "res_partner_%"), ("name", "not like", "family")]) - xmlids_before)
 target = lambda o17: ns["Loader"](env, []).xmlid_target(o17)  # noqa: E731
 # 2. a company with its child addresses
 company = next((r for r in records if r.get("is_company") and not r.get("parent_id")
@@ -104,12 +106,16 @@ if cs:
 msc = [r["id"] for r in records if r["id"] in ns["MSC_FAMILY"]]
 if msc:
     heads = {target(i).boss_carrier_group_id.id for i in msc}
-    existing_msc = env["res.partner"].search([("name", "=", "MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.")], limit=1)
     check(f"4 the {len(msc)} MSC entities point to one family head", (1, True), (len(heads), bool(heads - {False})))
     check("4 the MSC entity already on boss20 is linked (not duplicated) and in the family", (True, True),
           (existing_msc.id in [target(i).id for i in msc], existing_msc.boss_carrier_group_id.id in heads))
     check("4 family members from any entity", True,
           all(set(target(i)._boss_carrier_family_ids()) == set(target(msc[0])._boss_carrier_family_ids()) for i in msc))
+if existing_wfs and any(r["id"] == 23336 for r in records):
+    check("4b supplier already on boss20 (ref O17:23336) is linked, not duplicated", existing_wfs, target(23336))
+check("4c no second contact with the MSC Spain name", 1,
+      env["res.partner"].with_context(active_test=False).search_count(
+          [("name", "=", "MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.")]))
 # 5. VAT duplicates in the source: both loaded, listed, not merged
 dups = log1["source_vat_duplicates"]
 if dups:
@@ -136,7 +142,9 @@ log2 = ns["load"](env, "/tmp/sample_flat.json")
 env.flush_all()
 check("8 second run creates nothing and links nothing new", (0, 0), (len(log2["created"]), len(log2["linked_existing"])))
 check("8 second run changes no contact", {}, {pid for pid, h in snapshot().items() if snap1.get(pid) != h} or {})
-check("8 contact count after two runs = before + created once", count_before + len(created), len(snapshot()))
+heads = env["ir.model.data"].search_count([("module", "=", "o17_partner"), ("name", "like", "family")])
+check("8 contact count after two runs = before + created once (+ family head)", count_before + len(created) + heads,
+      len(snapshot()))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
 if len(results) - sum(results):
