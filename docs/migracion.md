@@ -5,7 +5,7 @@ Estado: **análisis, no aprobado**. Nada se ha cargado. Alcance y mapeo dependen
 
 No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MCP y en boss20 solo `SELECT`. Aquí no aparecen nombres de personas, NIF ni IBAN.
 
-**Lo principal:** de los 21.695 contactos activos de Odoo 17, solo unos 1.300 tienen documentos contables y 746 aparecen como ordenantes. Recomiendo migrar unos 2.000–3.500 contactos principales más sus hijos útiles, no los 21.695. No he podido medir la cifra exacta: queda como primer paso del ensayo. Además, la idea de que «PENDIENTE» son lugares no se sostiene.
+**Lo principal:** de los 21.695 contactos activos de Odoo 17, solo unos 1.300 tienen documentos contables y 746 aparecen como ordenantes. El alcance medido el 29/10 es de **1.295 contactos principales** (sección 2), no los 21.695. Además, la idea de que «PENDIENTE» son lugares no se sostiene.
 
 **Límite de la herramienta:** `search_records` solo admite un filtro de texto parcial sobre un campo. No acepta dominios, `search_count` ni agrupaciones, y `list_contacts` y `list_invoices` dan error. Los totales los he sacado de `ir.model.count` y el resto paginando hasta el último registro. No se pueden cruzar condiciones (tipo y NIF, actividad y año), así que esos cruces quedan abiertos.
 
@@ -36,64 +36,95 @@ No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MC
 - **Marcas de MSC.** Las 5 entidades tienen tipo Proveedor, pero 23022 y 23493 no llevan la marca de naviera. La marca `is_carrier` no basta para formar la familia.
 - **Marcas mezcladas.** `is_carrier` incluye camioneros y algunas personas físicas, y `is_airline`/`is_provider` incluyen unas 600 aerolíneas de catálogo IATA sin actividad.
 
-## 2. Alcance recomendado (N01; depende de F0-B01 y F0-B02, aún no aprobadas)
+## 2. Alcance medido (29/10/2026; propuesta, pendiente de aprobación)
 
-- **Contactos principales:** empresas y personas sin padre citadas desde el 1/1/2024 en un expediente (ordenante, agente, naviera, aerolínea, expedidor, destinatario, agente de aduanas, camionero, «facturar a»), en un asiento contable o en una oferta. Se suman los que tengan un expediente abierto o saldo pendiente al corte.
-  - Estimación: **≈2.000–3.500** (mínimo: unión de 1.321 con asiento y 746 ordenantes, más los citados en las partidas).
-  - El catálogo IATA sin actividad (≈600) y el resto, hasta ≈10.700, se quedan en Odoo 17.
-- **Hijos de los contactos principales:**
-  - Personas de contacto: sí, con su email y teléfono. Es lo mínimo necesario por RGPD.
-  - Direcciones de factura: solo si su dirección es distinta de la del padre. Las ≈5.400 «Invoice Address» suelen ser copias.
-  - Direcciones de entrega: solo las que use un expediente abierto o una oferta; el resto se queda en Odoo 17.
-  - Estimación de hijos: **≈1,0–1,5 por cada contacto principal**.
-- **Exclusiones:** archivados (226); contactos sin padre ni actividad; lugares como contacto principal; registros con `x_studio_secret`.
-- **Cuentas bancarias** (hasta 671): solo si Ángel aprueba F0-A02/F0-B04, solo de proveedores dentro del alcance y copiadas de Odoo a Odoo, sin que pasen por chat ni por ficheros.
-- **Condiciones de pago:** crear 6, 20 y 60 días en boss20. Antes de crear 75 y 90 días hay que medir si algún proveedor las usa.
+Medido en Odoo 17 con búsquedas de solo lectura. Cada conjunto se ha comprobado contra el total que da Odoo. La
+contabilidad de Odoo 17 empieza en 09/2024, así que «con documento contable» equivale a «con actividad desde 2024».
 
-## 3. Mapeo de campos Odoo 17 → Odoo 20
+| Conjunto (contactos principales activos) | 2024 | 2025 | 2026 | 2024–2026 |
+|---|---:|---:|---:|---:|
+| Con factura o abono de cliente (F, FR) | 288 | 291 | 182 | **518** |
+| Con factura o abono de proveedor (BILL, RBILL) | 468 | 476 | 251 | **823** |
+| Ordenantes de expediente (E24–E26) | 180 | 135 | 94 | **272** |
+| Cliente y proveedor a la vez | | | | 69 |
+| Ordenantes sin ningún documento contable | | | | 21 |
+| **Unión (activos)** | | | | **1.293** |
+| Archivados con facturas en Odoo 17 (se cargan archivados) | | | | **2** |
+| **Contactos principales en el alcance** | | | | **1.295** |
+| Hijos activos de esos contactos (direcciones y personas; 735 contactos tienen alguno) | | | | **2.404** |
+| **Total de registros a cargar** | | | | **3.699** |
+| Cuentas bancarias de esos contactos (no se cargan hasta que Ángel decida) | | | | 577 |
 
-- **Copia directa:** `name`, `is_company`, `type`, `street`, `street2`, `zip`, `city`, `state_id` (por código), `country_id` (por código), `email`, `phone`, `lang`, `website`, `comment`, `company_registry`.
-  - `vat` va normalizado (sin espacios ni guiones, en mayúsculas).
-  - `parent_id` se resuelve con el mapa de ids.
-- **Campos sin destino directo:**
-  - `mobile` no existe en el modelo base de Odoo 20 (lo he comprobado en `base/models/res_partner.py`); va a `phone` si este está vacío.
-  - `x_studio_code` va a `ref` solo si no choca con el id de Odoo 17. Si no, va a una nota.
-- **Trazabilidad:** `ref` = id de Odoo 17 (hoy ningún `ref` de boss20 es numérico, así que no hay choques). Así la carga es idempotente.
-- **`x_studio_kam` → `user_id`** por correspondencia de usuarios (depende de W08 / F0-C01).
-- **`x_studio_type` → `boss_is_customer`/`boss_is_supplier` (`customer_rank`/`supplier_rank`) y `boss_role_ids`** (depende de F0-C02):
-  - Cliente → cliente; Cliente+Proveedor → los dos; Proveedor y Acreedor → proveedor; Agente → papel `agent` (más cliente o proveedor según su uso).
-  - Expedidor/destinatario → papeles `shipper` y `consignee`, sin rango.
-  - PENDIENTE y sin tipo → se deducen del uso (proveedor si tiene facturas de proveedor). Si no hay uso, quedan «pendiente de decisión».
-  - Las marcas dan papeles: carrier y airline → `carrier`; customs_agent → `customs_broker`; trucker → `haulier`. Los papeles `handler`, `notify`, `warehouse` e `insurer` no tienen origen en Odoo 17.
-  - La validación del ordenante sigue R-A3: al principio solo avisa (no aprobado).
-- **`boss_carrier_group_id`:** una lista de variantes por transportista que se revisa antes de cargar. Las 5 entidades de MSC apuntan a una matriz de MSC (F0-B05 está decidida). Cuál es la matriz y qué pasa con las otras familias lo decide Cristina.
-- **Pagos y crédito:** `property_payment_term_id` / `property_supplier_payment_term_id` por nombre (los 6, 20 y 60 días necesitan creación). `credit_limit`, nivel de reclamación y `x_studio_payment_type`/`x_studio_remesa` solo si Ángel decide (pendiente).
+- **Saldos abiertos:** todo saldo abierto está en una factura o abono desde 09/2024, así que ya está dentro de la unión.
+- **Archivados:** de los 226 archivados, 3 tienen documentos o expedientes; 2 entran (facturas) y 1 no (solo
+  expedientes de 2023). Se cargan **archivados**, nunca se excluyen por estar archivados.
+- **Hijos:** se cargan **todos** los hijos de los contactos del alcance (direcciones de entrega y factura y personas),
+  sin excluir ninguno por ciudad, código postal o falta de teléfono o email. Un hijo con nombre de lugar es una
+  dirección de entrega válida.
+- **Fuera del alcance (se quedan en Odoo 17, consultables):** los contactos sin documento ni expediente desde 2024,
+  incluido el catálogo IATA sin actividad.
+- **Diferencia con la medición del 28/10:** había 1.321 contactos con algún apunte y aquí 1.272 tienen factura o
+  abono; los 49 restantes no tienen factura
+  F/FR/BILL/RBILL (sin comprobar: asientos de otros diarios u otra numeración). Se revisan en la carga real: si alguno
+  tiene saldo, entra.
+- **No medido con estas herramientas:** contactos que solo aparecen como agente, expedidor o destinatario de un
+  expediente sin factura propia. Se miden en la exportación real (necesita acceso de solo lectura a Odoo 17 desde el
+  servidor).
 
-## 4. Riesgos y ensayo
+## 3. Destino de cada campo (Odoo 17 → Odoo 20)
 
-- **Duplicados:** 205 marcados como mínimo, y hay variantes de sucursal (Maersk, CMA CGM, COSCO).
-  - Clave 1: NIF normalizado del contacto principal (los hijos se ignoran).
-  - Clave 2: nombre normalizado. Las coincidencias aproximadas van a una lista de revisión y nunca se fusionan solas.
-- **Lugares:** se filtran los hijos de entrega cuyo nombre parece un código postal o ciudad y que no tienen email ni teléfono.
-- **RGPD:** ≈13.500 personas de contacto.
-  - Se migran solo las de contactos dentro del alcance, sin notas libres.
-  - Los ficheros intermedios se quedan en el servidor, fuera de Git y del chat.
-  - Las cuentas bancarias solo pasan de Odoo a Odoo.
-- **Ensayo en boss20, en una transacción que se deshace al final (política 27/10):**
-  1. Modo de medición: recuentos exactos por SQL de solo lectura en Odoo 17 (unión de actividad, PENDIENTE sin NIF, valores de NIF repetidos).
-  2. Carga completa y recuentos por tipo, papel y familia comparados con `docs/migracion.md`.
-  3. Comparación campo a campo de 20 contactos con `read_record`.
-  4. Comprobaciones SQL: 0 NIF duplicados entre empresas; las 5 entidades de MSC en la misma familia.
-  5. Una segunda ejecución crea 0 registros.
-  6. Rollback; la carga real solo cuando haya aprobación.
+| Odoo 17 | Odoo 20 | Nota |
+|---|---|---|
+| `name`, `is_company`, `type`, `street`, `street2`, `zip`, `city`, `email`, `website`, `company_registry` | igual | copia directa |
+| `country_id`, `state_id` | igual | por nombre (es/en); lo que no casa se lista |
+| `phone` | `phone` | |
+| `mobile` | `boss_mobile` (campo «Móvil» en boss_expediente) | Odoo 20 no tiene móvil; **no se mezcla con el teléfono** |
+| `lang` | `lang` | solo idiomas instalados; si no, se lista como descartado |
+| `comment` | `comment` | las notas se conservan tal cual |
+| `vat` | `vat` | normalizado (sin espacios ni puntos); los hijos heredan el del padre. Si Odoo lo rechaza, se carga sin él y se lista para decidir |
+| `parent_id` | `parent_id` | por el vínculo del padre |
+| `x_studio_code` (código comercial) | `ref` | solo si `ref` está vacío; si ya tiene valor, se conserva y el código se lista |
+| `x_studio_type` + marcas `x_studio_is_*` | `customer_rank`, `supplier_rank`, `boss_role_ids` | propuesta F0-C02 (no aprobada) |
+| `property_payment_term_id`, `property_supplier_payment_term_id` | igual | por nombre o días; falta «60 días» en boss20 (se lista) |
+| 5 entidades MSC | `boss_carrier_group_id` → cabecera «Mediterranean Shipping Company (MSC)» | F0-B05 (decidida) |
+| `credit_limit`, nivel de reclamación, `x_studio_payment_type`, `x_studio_remesa`, cuentas bancarias | — | **no se cargan** hasta que Ángel decida (F0-A02, F0-A03, F0-B04) |
+| `x_studio_kam` | — | **no se carga** hasta la lista de usuarios (W08, F0-C01) |
+| `x_studio_secret`, tokens, imágenes, mensajes | — | **descartados**: datos técnicos o sensibles sin uso en Odoo 20 |
 
-## 5. Pendiente
+Todo dato descartado o no cargado sale en el registro de la carga con su motivo.
 
-- Recuento exacto del alcance (unión de las partes de expediente y partida desde 2024 con asientos y saldos): requiere SQL o XML-RPC de solo lectura sobre Odoo 17.
-- Corregir la premisa de F0-B02: los lugares son hijos de entrega, no PENDIENTE.
-- Decisiones abiertas: F0-C02 y R-A3 (Cristina), F0-A02/F0-B04 y crédito/reclamación (Ángel), W08 (lista de los 15 usuarios con su papel; idioma es_ES).
-- Medir el uso de 75 y 90 días en proveedores.
-- Elegir la matriz de cada familia de transportista.
-- Destino de las ≈600 aerolíneas IATA sin actividad.
-- Destino de `mobile`.
-- Por qué boss20 tiene 56 proveedores sin marca de prueba cuando el plan dice 8: los 43 transportistas del catálogo explican la diferencia.
+## 4. Vínculo, duplicados y repetición
+
+- **Vínculo estable:** un identificador externo de Odoo por contacto, `o17_partner.res_partner_<id de Odoo 17>`,
+  independiente de `ref` y de los códigos comerciales, que nunca se sobrescriben.
+- **Contactos que ya están en boss20** (navieras, proveedores): se **enlazan**, no se duplican. Orden de búsqueda:
+  1. referencia «O17:<id>» puesta a mano antes en boss20 (así están MSC España y WFS);
+  2. NIF del contacto principal, con o sin prefijo de país (boss20 guarda «ESB…», Odoo 17 «B…»);
+  3. nombre normalizado exacto, solo entre empresas sin NIF.
+  En un contacto enlazado solo se rellenan los campos vacíos; las diferencias se listan, nada se sobrescribe.
+- **Sin fusión automática:** dos contactos de Odoo 17 con el mismo NIF se cargan los dos y se listan para revisión.
+  Tampoco se fusiona por nombre parecido.
+- **Repetir la carga** no crea ni cambia nada: el vínculo encuentra el mismo destino.
+
+## 5. Ensayo con muestra (29/10/2026, boss20, transacción deshecha)
+
+Muestra de 14 contactos reales: una empresa con sus 4 hijos (entrega con nombre de lugar, factura sin nombre, dos
+personas), un proveedor ya presente en boss20, las 5 entidades de MSC (una ya en boss20), un par con el mismo NIF y un
+archivado que es cliente y proveedor. Resultado: **16 comprobaciones correctas, 0 fallos**
+(`docs/evidencias/20261029_0921_check_migration_sample_boss20_febb56be3a72.txt`).
+
+- 12 creados y 2 enlazados a contactos existentes (MSC España y WFS), sin duplicados.
+- Dos ejecuciones seguidas: la segunda no crea ni cambia nada.
+- Ningún otro contacto de boss20 cambia; en los enlazados no se sobrescribe ningún valor.
+- El ensayo detectó y corrigió dos fallos del cargador antes de la evidencia: no reconocía la referencia «O17:» ya
+  puesta en boss20 ni el NIF con prefijo «ES», y habría duplicado MSC España y WFS.
+
+## 6. Excepciones que necesitan decisión
+
+- **Registros genéricos con facturas:** «ACREEDORES DIVERSOS», «ACREEDORES VARIOS», «HOTELES VARIOS», «GASOLINERAS
+  VARIAS», «RESTAURANTES VARIOS», «AYUNTAMIENTOS VARIOS» y un contacto llamado «TEST» con factura de 2024. Están en el
+  alcance porque tienen documentos; propuesta: cargarlos como están (Ángel decide si se mantienen en Odoo 20).
+- **Condición de pago «60 días»** no existe en boss20: propuesta, crearla antes de la carga (paquete 8, F0-A01).
+- **Carga real:** requiere aprobar el alcance (F0-B01) y un acceso de solo lectura a Odoo 17 desde el servidor para la
+  exportación completa; la muestra se leyó con la herramienta de consulta, que no sirve para 1.295 contactos y sus
+  hijos de una vez.
