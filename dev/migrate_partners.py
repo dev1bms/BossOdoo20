@@ -74,6 +74,14 @@ def m2o_id(value):
     return value[0] if isinstance(value, (list, tuple)) and value else False
 
 
+class Ambiguous(Exception):
+    """Several boss20 contacts could be the same Odoo 17 record: nothing is linked or created, it is reported."""
+
+
+class Deferred(Exception):
+    """A record that is not loaded now, with the reason it waits (missing parent, decision pending)."""
+
+
 class Loader:
     def __init__(self, env, records):
         self.env = env
@@ -89,6 +97,8 @@ class Loader:
         self.protected = set(env["res.company"].search([]).partner_id.ids) | set(
             env["res.users"].with_context(active_test=False).search([("share", "=", False)]).partner_id.ids)
         self.log["protected"] = []
+        self.log["ambiguous"] = []
+        self.log["deferred"] = []
         self.log["skipped"] = []
         self.terms = {norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="es_ES").search([])}
         self.terms.update({norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="en_US").search([])})
@@ -198,10 +208,16 @@ class Loader:
         if cands:
             return cands[:1]
         if parent:
+            # a child is the same address only when parent, type, name AND street/zip/city agree; an empty name
+            # never matches by itself. Several candidates are not resolved by picking the first: they are reported.
             cands = self.Partner.with_context(active_test=False).search(
                 [("parent_id", "=", parent.id), ("type", "=", vals["type"])])
-            cands = cands.filtered(lambda p: p.id not in taken and norm(p.name) == norm(vals["name"]))
-            return cands[:1]
+            def same(p):
+                return (p.id not in taken and norm(p.name) == norm(vals["name"]) and vals["name"]
+                        and norm(p.street) == norm(vals["street"]) and norm(p.zip) == norm(vals["zip"])
+                        and norm(p.city) == norm(vals["city"]))
+            cands = cands.filtered(same)
+            return self._one(cands, rec, "child")
         if vals["vat"]:
             country = self.env["res.country"].browse(vals["country_id"]).code if vals["country_id"] else False
             keys = vat_keys(vals["vat"], country)
@@ -209,10 +225,16 @@ class Loader:
                 [("is_company", "=", True), ("parent_id", "=", False), ("vat", "!=", False)])
             cands = cands.filtered(lambda p: p.id not in taken and vat_keys(p.vat, p.country_id.code) & keys)
             if cands:
-                return cands[:1]
+                return self._one(cands, rec, "vat")
         cands = self.Partner.with_context(active_test=False).search(
             [("is_company", "=", True), ("parent_id", "=", False), ("vat", "=", False)])
-        cands = cands.filtered(lambda p: p.id not in taken and norm(p.name) == norm(vals["name"]))
+        cands = cands.filtered(lambda p: p.id not in taken and norm(p.name) == norm(vals["name"]) and vals["name"])
+        return self._one(cands, rec, "name")
+
+    def _one(self, cands, rec, how):
+        if len(cands) > 1:
+            self.log["ambiguous"].append((rec["id"], how, sorted(cands.ids)))
+            raise Ambiguous()
         return cands[:1]
 
     def apply(self, o17_id):
@@ -225,7 +247,11 @@ class Loader:
                 if parent_src in self.records:
                     parent = self.apply(parent_src)
                 else:
-                    self.log["discarded"].append((o17_id, "parent_id", parent_src, "parent not in the export"))
+                    self.log["deferred"].append((o17_id, parent_src, "parent not in the export: child not loaded alone"))
+                    return self.Partner
+                if not parent:  # the parent itself was deferred or is ambiguous: the child waits with it
+                    self.log["deferred"].append((o17_id, parent_src, "parent deferred: child waits with it"))
+                    return self.Partner
         if parent and parent.id in self.protected and not self.xmlid_target(o17_id):
             self.log["skipped"].append((o17_id, parent.id, "parent is BOSS's own company or a user: needs decision"))
             return self.Partner
@@ -235,7 +261,10 @@ class Loader:
         if target:
             self.log["already_linked"].append(o17_id)
         else:
-            target = self.match_existing(rec, vals, parent)
+            try:
+                target = self.match_existing(rec, vals, parent)
+            except Ambiguous:
+                return self.Partner
             if target:
                 self.link(o17_id, target)
                 self.log["linked_existing"].append((o17_id, target.id, target.name))
@@ -324,7 +353,7 @@ class Loader:
                 by_vat.setdefault(norm_vat(rec["vat"]), []).append(rec["id"])
         self.log["source_vat_duplicates"] = {v: ids for v, ids in by_vat.items() if len(ids) > 1}
         for o17_id in sorted(self.records):
-            if not self.xmlid_target(o17_id) or o17_id not in self.log["already_linked"]:
+            if not self.xmlid_target(o17_id):
                 self.apply(o17_id)
         self.families()
         return self.log
