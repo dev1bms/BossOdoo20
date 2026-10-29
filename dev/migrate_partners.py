@@ -63,6 +63,7 @@ def vat_keys(vat, country_code=False):
 
 
 COUNTRY_CODES = set()  # filled from res.country when the loader starts
+COUNTRY_ALIASES = {"Turkey": "Türkiye"}  # Odoo 17 name → Odoo 20 name
 
 
 def m2o_name(value):
@@ -84,6 +85,11 @@ class Loader:
                     "unmatched_country_state": [], "pending_decisions": set()}
         self.roles = {r.code: r.id for r in env["boss.partner.role"].search([])}
         COUNTRY_CODES.update(c for c in env["res.country"].search([]).mapped("code") if c)
+        # BOSS's own company contacts and internal users' contacts: linked if they match, never written, no children added
+        self.protected = set(env["res.company"].search([]).partner_id.ids) | set(
+            env["res.users"].with_context(active_test=False).search([("share", "=", False)]).partner_id.ids)
+        self.log["protected"] = []
+        self.log["skipped"] = []
         self.terms = {norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="es_ES").search([])}
         self.terms.update({norm(t.name): t.id for t in env["account.payment.term"].with_context(lang="en_US").search([])})
 
@@ -103,6 +109,7 @@ class Loader:
         name = m2o_name(rec.get("country_id"))
         if not name:
             return False
+        name = COUNTRY_ALIASES.get(name, name)
         for lang in ("es_ES", "en_US"):
             c = self.env["res.country"].with_context(lang=lang).search([("name", "=ilike", name)], limit=1)
             if c:
@@ -114,9 +121,12 @@ class Loader:
         name = m2o_name(rec.get("state_id"))
         if not name:
             return False
-        base = re.sub(r"\s*\([A-Z]{2}\)$", "", name)
+        base = re.sub(r"(\s*\([A-Z]{2}\))+$", "", name)
         domain = [("name", "=ilike", base)] + ([("country_id", "=", country.id)] if country else [])
         s = self.env["res.country.state"].search(domain, limit=1)
+        if not s and country:  # accent-insensitive: «Tokyo» = «Tōkyō»
+            s = self.env["res.country.state"].search([("country_id", "=", country.id)]).filtered(
+                lambda st: norm(st.name) == norm(base))[:1]
         if not s:
             self.log["unmatched_country_state"].append((rec["id"], "state", name))
         return s or False
@@ -153,6 +163,12 @@ class Loader:
             "property_payment_term_id": self.payment_term(rec, "property_payment_term_id"),
             "property_supplier_payment_term_id": self.payment_term(rec, "property_supplier_payment_term_id"),
         }
+        types = dict(self.Partner._fields["type"]._description_selection(self.env))
+        if vals["type"] not in types:  # e.g. Odoo 17 «followup»: Odoo 20 sends reminders to the invoice address
+            self.log["discarded"].append((rec["id"], "type", vals["type"], "type not in Odoo 20: loaded as «other»"))
+            self.log["pending_decisions"].add(f"address type {vals['type']!r} loaded as «other» (follow-up contacts: "
+                                              "decide whether they become invoice addresses)")
+            vals["type"] = "other"
         if rec.get("lang") and rec["lang"] not in [c for c, _n in self.env["res.lang"].get_installed()]:
             self.log["discarded"].append((rec["id"], "lang", rec["lang"], "language not installed in boss20"))
             vals["lang"] = False
@@ -210,6 +226,9 @@ class Loader:
                     parent = self.apply(parent_src)
                 else:
                     self.log["discarded"].append((o17_id, "parent_id", parent_src, "parent not in the export"))
+        if parent and parent.id in self.protected and not self.xmlid_target(o17_id):
+            self.log["skipped"].append((o17_id, parent.id, "parent is BOSS's own company or a user: needs decision"))
+            return self.Partner
         vals = self.values(rec, parent)
         extra = {k: vals.pop(k) for k in ("_customer_rank", "_supplier_rank", "_roles", "_code")}
         target = self.xmlid_target(o17_id)
@@ -220,6 +239,8 @@ class Loader:
             if target:
                 self.link(o17_id, target)
                 self.log["linked_existing"].append((o17_id, target.id, target.name))
+                if target.id in self.protected:
+                    self.log["protected"].append((o17_id, target.id, "BOSS's own company or a user: linked, nothing written"))
             else:
                 create_vals = {k: v for k, v in vals.items() if v not in (False, None, "")}
                 create_vals["name"] = vals["name"]
@@ -238,6 +259,8 @@ class Loader:
                 self.link(o17_id, target)
                 self.log["created"].append((o17_id, target.id))
                 vals = {}  # everything already written
+        if target.id in self.protected:
+            return target
         # fill empty fields only; report differences
         fill = {}
         for field, value in vals.items():
@@ -252,8 +275,19 @@ class Loader:
             elif current != value and field not in ("parent_id",):
                 self.log["differs"].append((o17_id, target.id, field, current, value))
         if fill:
-            target.write(fill)
-            self.log["filled"].append((o17_id, target.id, sorted(fill)))
+            try:
+                with self.env.cr.savepoint():
+                    target.write(fill)
+            except ValidationError as err:  # a VAT Odoo rejects (already reported when the contact was created)
+                if "vat" not in fill:
+                    raise
+                if not any(d[0] == o17_id and d[1] == "vat" for d in self.log["discarded"]):
+                    self.log["discarded"].append((o17_id, "vat", fill["vat"], f"rejected by Odoo: {err}"))
+                fill.pop("vat")
+                if fill:
+                    target.write(fill)
+            if fill:
+                self.log["filled"].append((o17_id, target.id, sorted(fill)))
         # ranks, roles, commercial code
         if extra["_customer_rank"] and not target.customer_rank:
             target.customer_rank = 1
