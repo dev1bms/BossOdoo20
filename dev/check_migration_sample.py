@@ -65,7 +65,15 @@ def snapshot(ids=None):
 
 existing_msc = env["res.partner"].search([("name", "=", "MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.")], limit=1)
 existing_wfs = env["res.partner"].search([("ref", "=", "O17:23336")], limit=1)
+def raw_values(ids):
+    out = {}
+    for p in Partner.browse(ids):
+        out[p.id] = {f: (sorted(p[f].ids) if hasattr(p[f], "ids") else p[f]) for f in FIELDS}
+    return out
+
+
 before = snapshot()
+before_raw = raw_values(list(before))
 count_before = len(before)
 xmlids_before = env["ir.model.data"].search_count([("module", "=", "o17_partner")])
 log1 = ns["load"](env, "/tmp/sample_flat.json")
@@ -73,16 +81,31 @@ env.flush_all()
 created = {o17 for o17, _t in log1["created"]}
 linked = {o17: t for o17, t, _n in log1["linked_existing"]}
 print("RUN1", {k: (len(v) if isinstance(v, (list, set, dict)) else v) for k, v in log1.items()})
+DETAIL = len(records) <= 50  # full scope: aggregates only, so no personal value reaches the evidence file in Git
 for item in log1["linked_existing"]:
     print("   linked:", item[0], "->", item[1])
-for item in log1["differs"][:20]:
+for item in (log1["differs"][:20] if DETAIL else []):
     print("   differs:", item)
-for item in log1["discarded"][:20]:
+for item in (log1["discarded"][:20] if DETAIL else []):
     print("   discarded:", item)
+from collections import Counter  # noqa: E402
+by_id = {r["id"]: r for r in records}
+print("   SUMMARY created by type:", dict(Counter((by_id[o].get("type") or "contact", bool(by_id[o].get("parent_id")))
+                                              for o in created)))
+print("   SUMMARY archived created:", sum(1 for o in created if by_id[o].get("active") is False))
+print("   SUMMARY discarded by field and reason:", dict(Counter((d[1], d[3].split(":")[0]) for d in log1["discarded"])))
+print("   SUMMARY differs by field:", dict(Counter(d[2] for d in log1["differs"])))
+print("   SUMMARY source VAT duplicate groups:", len(log1["source_vat_duplicates"]),
+      "records:", sum(len(v) for v in log1["source_vat_duplicates"].values()))
+print("   SUMMARY pending decisions:", sorted(log1["pending_decisions"]))
 print("   unmatched payment terms:", sorted(log1["unmatched_payment_terms"]))
-print("   unmatched country/state:", log1["unmatched_country_state"][:10])
+print("   unmatched country/state:", dict(Counter((c[1], c[2]) for c in log1["unmatched_country_state"])))
 
-check("1 every sample record is linked to exactly one boss20 contact", len(records),
+skipped = {s[0] for s in log1.get("skipped", [])}
+for item in log1.get("protected", []) + log1.get("skipped", []):
+    print("   EXCEPTION:", item)
+check("1 every sample record (except those under BOSS's own contacts) is linked to one boss20 contact",
+      len(records) - len(skipped),
       env["ir.model.data"].search_count([("module", "=", "o17_partner"), ("model", "=", "res.partner"),
                                          ("name", "=like", "res_partner_%"), ("name", "not like", "family")]) - xmlids_before)
 target = lambda o17: ns["Loader"](env, []).xmlid_target(o17)  # noqa: E731
@@ -134,8 +157,15 @@ else:
 after = snapshot(list(before))
 touched = {pid for pid, h in after.items() if before[pid] != h}
 check("7 boss20 contacts not linked by the sample are untouched", set(), touched - set(linked.values()))
-check("7 linked contacts: no value overwritten (only empty fields filled)", [],
-      [d for d in log1["differs"] if d[2] in ("name", "vat", "ref")])
+after_raw = raw_values(list(set(linked.values())))
+overwritten = [(pid, f) for pid, vals in after_raw.items() for f, v in vals.items()
+               if before_raw[pid][f] not in (False, None, "", []) and before_raw[pid][f] != v
+               and f not in ("customer_rank", "supplier_rank", "boss_role_ids", "boss_carrier_group_id")]
+check("7 linked contacts: no non-empty value overwritten (only empty fields filled; ranks/roles/family only added)",
+      [], overwritten)
+protected_ids = {p[1] for p in log1.get("protected", [])}
+check("7 BOSS's own company and user contacts unchanged", set(),
+      {pid for pid in protected_ids | {3} if pid in before and before[pid] != after.get(pid)})
 # 8. second run: nothing created, nothing changed
 snap1 = snapshot()
 log2 = ns["load"](env, "/tmp/sample_flat.json")
