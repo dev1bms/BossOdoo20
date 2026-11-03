@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Consolidaciones en BOSS · Odoo 20 — un máster, varias casas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink:#1f2933; --muted:#5f6b7a; --line:#d9dee5; --bg:#f7f8fa; --boss:#7c2d52; --ok:#1f7a4d; --warn:#b26a00; --bad:#b3261e; --blue:#1d5fa6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: "Segoe UI", system-ui, Arial, sans-serif; color:var(--ink); background:var(--bg); line-height:1.45; }
+  header { background:var(--boss); color:#fff; padding:28px 40px; }
+  header h1 { margin:0 0 6px; font-size:28px; font-weight:600; }
+  header p { margin:0; opacity:.9; }
+  main { max-width:1180px; margin:0 auto; padding:24px 40px 60px; }
+  section { background:#fff; border:1px solid var(--line); border-radius:10px; padding:22px 26px; margin:18px 0; }
+  h2 { margin:0 0 12px; font-size:20px; color:var(--boss); }
+  h3 { margin:16px 0 8px; font-size:16px; }
+  p, li { font-size:15px; }
+  .muted { color:var(--muted); }
+  .grid { display:grid; gap:18px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) { .g2, .g3 { grid-template-columns: 1fr; } }
+  .card { border:1px solid var(--line); border-radius:8px; padding:14px 16px; background:#fff; }
+  .card.before { border-top:4px solid var(--warn); }
+  .card.after { border-top:4px solid var(--ok); }
+  .kpi { display:flex; gap:14px; flex-wrap:wrap; }
+  .kpi div { flex:1 1 150px; border:1px solid var(--line); border-radius:8px; padding:12px; text-align:center; }
+  .kpi b { display:block; font-size:26px; color:var(--boss); }
+  .kpi span { font-size:13px; color:var(--muted); }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:#f1f3f6; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag.ok { background:#e3f3ea; color:var(--ok); } .tag.warn { background:#fff1dc; color:var(--warn); } .tag.bad { background:#fde8e6; color:var(--bad); } .tag.blue { background:#e4edf8; color:var(--blue); }
+  figure { margin:12px 0; } figure img { width:100%; border:1px solid var(--line); border-radius:6px; } figcaption { font-size:13px; color:var(--muted); margin-top:4px; }
+  .ar { direction:rtl; text-align:right; font-size:16px; background:#fbf6f8; border:1px solid #e8cdd9; border-radius:10px; padding:18px 22px; }
+  .ar h2 { color:var(--boss); }
+  .steps { counter-reset: s; list-style:none; padding:0; }
+  .steps li { counter-increment: s; margin:8px 0; padding-left:38px; position:relative; }
+  .steps li::before { content: counter(s); position:absolute; left:0; top:0; width:26px; height:26px; border-radius:50%; background:var(--boss); color:#fff; text-align:center; line-height:26px; font-weight:600; font-size:13px; }
+  svg text { font-family: "Segoe UI", system-ui, Arial, sans-serif; }
+  .verdict { border-left:6px solid var(--ok); background:#f3faf6; padding:14px 18px; border-radius:6px; }
+  .small { font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Consolidaciones: un máster, varias casas</h1>
+  <p>Paso 8 de la hoja de ruta · BOSS Continental en Odoo 20 (boss20) · 03/11/2026 · ADR-013</p>
+</header>
+<main>
+
+<section class="ar">
+  <h2>ملخّص بالعربية</h2>
+  <p><b>ما المشكلة؟</b> الشحنة المجمّعة = بوليصة رئيسية واحدة (MBL أو MAWB) وتحتها عدة بوالص فرعية (HBL أو HAWB)، كل واحدة لشاحن أو عميل مختلف، ولها جماركها وفاتورتها. في Odoo 20 كان الملف الواحد = بوليصة واحدة، فلم يكن هناك مكان للشحنة المجمّعة.</p>
+  <p><b>ماذا كان في Odoo 17؟</b> الملف (E) يحمل البوليصة الرئيسية والتكاليف المشتركة، وداخله «partidas» (P) لكل بوليصة فرعية: جماركها وبيعها وفاتورتاها. توزيع التكاليف المشتركة بين الـ P كان يدوياً. من 20,792 ملفاً هناك 22,063 partida: أي أن أغلب الملفات فيها partida واحدة فقط، والشحنات المجمّعة قليلة لكنها موجودة (مثل E260468: حاوية واحدة فيها 5 بوالص فرعية لعميل واحد).</p>
+  <p><b>ماذا صار في Odoo 20؟</b> ملف رئيسي (máster) يحمل البوليصة الرئيسية والمشتريات المشتركة، وتحته ملفات فرعية (casas) ملف لكل بوليصة فرعية. بيانات النقل تُنسخ تلقائياً من الرئيسي إلى الفرعية. التكاليف المشتركة تُوزَّع آلياً بالوزن القابل للتسعير (أو الحجم أو بالتساوي أو يدوياً)، ويظهر نصيب كل ملف فرعي في هامشه، ويظهر في الرئيسي الهامش الموحّد للكل. الملف المفرد لم يتغيّر فيه شيء.</p>
+  <p><b>تقييمي:</b> مناسب لـ BOSS، لأنه يحفظ طريقة عمل Odoo 17 نفسها (الشراء المشترك على الرئيسي، البيع والجمارك لكل بوليصة) ويزيل العمل اليدوي في التوزيع، ويعيد استخدام كل ما بُني في Odoo 20 دون أن يكسره. ما بقي مفتوحاً: أساس التوزيع (الافتراضي وزن قابل للتسعير، وكريستينا لم تختر بين الوزن الحقيقي والقابل للتسعير)، ومستندات HBL/HAWB والمانيفست، ونقل ملفات Odoo 17 المفتوحة ذات عدة partidas.</p>
+</section>
+
+<section>
+  <h2>1. Qué es una consolidación y cuánto pesa en BOSS</h2>
+  <div class="grid g2">
+    <div>
+      <p>Un <b>máster</b> es el documento del transportista (MBL en mar, MAWB en aire) por el conjunto; cada <b>casa</b> (HBL / HAWB) es el documento de BOSS para un embarcador o un cliente dentro de ese conjunto, con su propia aduana y su propia factura. Pasa en tres casos: la <b>consolidación de comprador</b> (un cliente, varios proveedores en un contenedor), el <b>grupaje LCL</b> (varios clientes en un contenedor de un coloader) y el <b>aéreo consolidado</b> (un MAWB con varios HAWB).</p>
+      <div class="kpi">
+        <div><b>20 792</b><span>expedientes en Odoo 17</span></div>
+        <div><b>22 063</b><span>partidas (casas)</span></div>
+        <div><b>≈ 6 %</b><span>partidas de más: las consolidaciones</span></div>
+        <div><b>22 %</b><span>de las líneas de coste son compartidas (solo en el E)</span></div>
+      </div>
+      <p class="small muted">Fuentes: lectura de Odoo 17 el 03/11/2026; correo de Cristina del 28/09/2026 («Explicaciones previsiones» A92–A120); «Nuevo Odoo» › OPS- exptes A27 y A62; ADR-009 §7; Odoo 19 (modelo partida y reparto).</p>
+    </div>
+    <div>
+      <h3>Caso real de Odoo 17: E260468</h3>
+      <svg viewBox="0 0 520 300" width="100%" role="img" aria-label="Un contenedor con cinco casas">
+        <rect x="20" y="20" width="480" height="70" rx="8" fill="#f1f3f6" stroke="#7c2d52" stroke-width="2"/>
+        <text x="40" y="48" font-size="15" font-weight="600" fill="#1f2933">Expediente E260468 · 1 × 40' NOR · Shekou → Valencia · ONE</text>
+        <text x="40" y="72" font-size="13" fill="#5f6b7a">Compras compartidas: flete, gastos locales, transporte (12 líneas)</text>
+        <g font-size="12" fill="#1f2933">
+          <rect x="20" y="120" width="88" height="150" rx="6" fill="#fff" stroke="#d9dee5"/>
+          <rect x="118" y="120" width="88" height="150" rx="6" fill="#fff" stroke="#d9dee5"/>
+          <rect x="216" y="120" width="88" height="150" rx="6" fill="#fff" stroke="#d9dee5"/>
+          <rect x="314" y="120" width="88" height="150" rx="6" fill="#fff" stroke="#d9dee5"/>
+          <rect x="412" y="120" width="88" height="150" rx="6" fill="#fff" stroke="#d9dee5"/>
+          <text x="64" y="140" text-anchor="middle" font-weight="600">P260510</text>
+          <text x="162" y="140" text-anchor="middle" font-weight="600">P260807</text>
+          <text x="260" y="140" text-anchor="middle" font-weight="600">P260808</text>
+          <text x="358" y="140" text-anchor="middle" font-weight="600">P260809</text>
+          <text x="456" y="140" text-anchor="middle" font-weight="600">P260810</text>
+          <g fill="#5f6b7a" font-size="11">
+            <text x="64" y="162" text-anchor="middle">HBL propio</text><text x="64" y="180" text-anchor="middle">DUA propio</text><text x="64" y="198" text-anchor="middle">3 costes aduana</text><text x="64" y="216" text-anchor="middle">10 líneas de venta</text><text x="64" y="234" text-anchor="middle">2 facturas</text><text x="64" y="256" text-anchor="middle">18,7 m³</text>
+            <text x="162" y="162" text-anchor="middle">HBL propio</text><text x="162" y="180" text-anchor="middle">DUA propio</text><text x="162" y="198" text-anchor="middle">3 costes aduana</text><text x="162" y="216" text-anchor="middle">10 líneas de venta</text><text x="162" y="234" text-anchor="middle">2 facturas</text><text x="162" y="256" text-anchor="middle">5,2 m³</text>
+            <text x="260" y="162" text-anchor="middle">HBL propio</text><text x="260" y="180" text-anchor="middle">DUA propio</text><text x="260" y="198" text-anchor="middle">3 costes aduana</text><text x="260" y="216" text-anchor="middle">10 líneas de venta</text><text x="260" y="234" text-anchor="middle">2 facturas</text><text x="260" y="256" text-anchor="middle">11,2 m³</text>
+            <text x="358" y="162" text-anchor="middle">HBL propio</text><text x="358" y="180" text-anchor="middle">DUA propio</text><text x="358" y="198" text-anchor="middle">3 costes aduana</text><text x="358" y="216" text-anchor="middle">10 líneas de venta</text><text x="358" y="234" text-anchor="middle">2 facturas</text><text x="358" y="256" text-anchor="middle">15,6 m³</text>
+            <text x="456" y="162" text-anchor="middle">HBL propio</text><text x="456" y="180" text-anchor="middle">DUA propio</text><text x="456" y="198" text-anchor="middle">3 costes aduana</text><text x="456" y="216" text-anchor="middle">10 líneas de venta</text><text x="456" y="234" text-anchor="middle">2 facturas</text><text x="456" y="256" text-anchor="middle">6,2 m³</text>
+          </g>
+          <line x1="260" y1="90" x2="260" y2="120" stroke="#7c2d52" stroke-width="2"/>
+          <line x1="64" y1="105" x2="456" y2="105" stroke="#7c2d52" stroke-width="2"/>
+          <line x1="64" y1="105" x2="64" y2="120" stroke="#7c2d52" stroke-width="2"/><line x1="162" y1="105" x2="162" y2="120" stroke="#7c2d52" stroke-width="2"/><line x1="358" y1="105" x2="358" y2="120" stroke="#7c2d52" stroke-width="2"/><line x1="456" y1="105" x2="456" y2="120" stroke="#7c2d52" stroke-width="2"/>
+        </g>
+        <text x="260" y="292" text-anchor="middle" font-size="12" fill="#5f6b7a">Un importador de libros, cinco embarcadores, una partida por HBL. El reparto del flete entre las cinco lo hizo el operativo a mano.</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>2. Antes y después</h2>
+  <div class="grid g2">
+    <div class="card before">
+      <h3><span class="tag warn">Antes</span> Odoo 20 hasta el 03/11</h3>
+      <ul>
+        <li>Un expediente = una partida. Sin sitio para el máster con varias casas (ADR-009: «no construido»).</li>
+        <li>Para consolidar había que abrir varios expedientes que <b>repetían</b> el MBL, el buque y las fechas a mano.</li>
+        <li>Los costes compartidos (flete, THC, transporte del contenedor) se <b>repartían a mano</b> entre expedientes, o se cargaban en uno solo (margen falso).</li>
+        <li>Odoo 17: el operativo elegía E o P para cada línea; «nunca se sabe dónde vive una línea» (Cristina, A27).</li>
+      </ul>
+    </div>
+    <div class="card after">
+      <h3><span class="tag ok">Después</span> Odoo 20 desde el 03/11</h3>
+      <ul>
+        <li>Un <b>expediente máster</b> con sus <b>casas</b> (un expediente por HBL/HAWB). El expediente de siempre no cambia: es un «envío único».</li>
+        <li>Naviera, buque, viaje, reserva, MBL/MAWB y fechas se <b>copian del máster a las casas</b>, y vuelven a copiarse a cada cambio (solo lectura en la casa).</li>
+        <li>Los costes compartidos se compran <b>una vez</b> en el máster y se <b>reparten solos</b> entre las casas: peso tasable (W/M), peso bruto, volumen, partes iguales o a mano. Las partes suman 100.</li>
+        <li>Cada casa ve su margen con su parte del máster; el máster ve el <b>margen consolidado</b>.</li>
+        <li>Cada ítem tiene un único sitio: lo compartido en el máster, lo de cada casa en su casa (lo que pedía Cristina).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>3. Cómo queda el modelo</h2>
+  <svg viewBox="0 0 1100 360" width="100%" role="img" aria-label="Máster y casas en Odoo 20">
+    <defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#7c2d52"/></marker></defs>
+    <rect x="330" y="20" width="440" height="120" rx="10" fill="#fbf6f8" stroke="#7c2d52" stroke-width="2"/>
+    <text x="550" y="48" text-anchor="middle" font-size="16" font-weight="600" fill="#7c2d52">EXPEDIENTE MÁSTER (E260231)</text>
+    <text x="550" y="72" text-anchor="middle" font-size="13" fill="#1f2933">MBL/MAWB · naviera · buque y viaje · reserva · fechas · contenedores</text>
+    <text x="550" y="92" text-anchor="middle" font-size="13" fill="#1f2933">Compras compartidas: flete, THC, transporte del contenedor</text>
+    <text x="550" y="114" text-anchor="middle" font-size="13" fill="#5f6b7a">Reparto por: peso tasable (W/M) · peso bruto · volumen · partes iguales · manual</text>
+    <g stroke="#7c2d52" stroke-width="2" fill="none" marker-end="url(#a)">
+      <path d="M470,140 L250,200"/><path d="M630,140 L850,200"/>
+    </g>
+    <text x="320" y="180" font-size="12" fill="#5f6b7a">copia datos de transporte + 78,24 % de los costes</text>
+    <text x="660" y="180" font-size="12" fill="#5f6b7a">copia datos de transporte + 21,76 % de los costes</text>
+    <rect x="40" y="200" width="420" height="140" rx="10" fill="#fff" stroke="#1d5fa6" stroke-width="2"/>
+    <text x="250" y="226" text-anchor="middle" font-size="15" font-weight="600" fill="#1d5fa6">CASA E260232 · 18,7 m³ · 6 150 kg</text>
+    <text x="250" y="250" text-anchor="middle" font-size="13">cliente · oferta y venta por W/M · HBL y su liberación</text>
+    <text x="250" y="270" text-anchor="middle" font-size="13">carga · aduana (DUA, canal, levante) · entrega</text>
+    <text x="250" y="290" text-anchor="middle" font-size="13">compras propias (despacho) · factura al cliente</text>
+    <text x="250" y="318" text-anchor="middle" font-size="13" fill="#1f7a4d" font-weight="600">margen = venta − (coste propio + parte del máster)</text>
+    <rect x="640" y="200" width="420" height="140" rx="10" fill="#fff" stroke="#1d5fa6" stroke-width="2"/>
+    <text x="850" y="226" text-anchor="middle" font-size="15" font-weight="600" fill="#1d5fa6">CASA E260233 · 5,2 m³ · 1 900 kg</text>
+    <text x="850" y="250" text-anchor="middle" font-size="13">cliente · oferta y venta por W/M · HBL y su liberación</text>
+    <text x="850" y="270" text-anchor="middle" font-size="13">carga · aduana (DUA, canal, levante) · entrega</text>
+    <text x="850" y="290" text-anchor="middle" font-size="13">compras propias (despacho) · factura al cliente</text>
+    <text x="850" y="318" text-anchor="middle" font-size="13" fill="#1f7a4d" font-weight="600">margen = venta − (coste propio + parte del máster)</text>
+  </svg>
+  <table>
+    <tr><th style="width:18%">Qué</th><th style="width:41%">Máster</th><th>Casa</th></tr>
+    <tr><td>Guarda</td><td>MBL / MAWB, naviera, buque, reserva, fechas, contenedores; las compras compartidas; la base de reparto</td><td>Su cliente, oferta y líneas de venta; embarcador y consignatario; HBL / HAWB y su liberación; carga y pesos; aduana; recogida y entrega; sus compras (despacho, derechos); sus facturas; su parte (%)</td></tr>
+    <tr><td>Datos de transporte</td><td>Se teclean aquí</td><td>Copiados del máster, solo lectura, se vuelven a copiar a cada cambio</td></tr>
+    <tr><td>Compras</td><td>Se piden una vez</td><td>Lo que compra el máster queda «comprado en el máster» (no se pide dos veces); la casa soporta su % del coste del máster, previsto y facturado</td></tr>
+    <tr><td>Cifras</td><td>Las suyas + vista consolidada: venta de las casas, sus costes propios, margen consolidado</td><td>Venta − (costes propios + parte del máster) = margen de la casa</td></tr>
+    <tr><td>Estados</td><td>«En tránsito» en el máster pasa las casas a tránsito</td><td>«Entregado» por casa, con sus condiciones (paso 5)</td></tr>
+    <tr><td>Cierre económico</td><td>Solo cuando todas las casas están cerradas</td><td>Espera a los costes del máster (su parte cuenta como «coste sin factura»)</td></tr>
+    <tr><td>Siguiente paso</td><td>Nunca «vincular la oferta» (un máster no vende por sí mismo)</td><td>Como cualquier expediente</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>4. Cómo se trabaja (en pantalla)</h2>
+  <ol class="steps">
+    <li><b>Abrir el máster</b>: un expediente nuevo con el caso y la ruta, la naviera, el MBL/MAWB, el contenedor; en «Servicios y costes» las compras compartidas (flete, THC, transporte). Puede abrirse antes de ninguna oferta (prealerta).</li>
+    <li><b>Casas</b>: cada oferta aceptada abre su expediente; en él se pone «Expediente máster». O desde la pestaña «Casas» del máster, «Nueva casa» abre una casa con el mismo caso y ruta, ya vinculada.</li>
+    <li><b>Al vincular</b>: la casa recibe naviera, buque, reserva, MBL y fechas; sus servicios que el máster compra pasan a «comprado en el máster»; su parte (%) se calcula con la base del máster.</li>
+    <li><b>Operar</b>: pedidos de compra en el máster; «En tránsito» en el máster; aduana, entrega y factura en cada casa, con el «Siguiente paso» de cada una.</li>
+    <li><b>Cerrar</b>: cada casa cierra operaciones y, cuando el máster tiene sus facturas, cierra económicamente; el máster cierra el último, con el margen consolidado.</li>
+  </ol>
+  <figure><img src="img/consol-master.jpg" alt="Expediente máster E260231"><figcaption>El máster: botón «Casas 2», «Costes compartidos repartidos por: peso tasable (W/M)», sus compras compartidas en el siguiente paso.</figcaption></figure>
+  <figure><img src="img/consol-master-houses.jpg" alt="Pestaña Casas del máster"><figcaption>Pestaña «Casas»: cada casa con su carga, su parte (21,76 % y 78,24 %, suman 100), su parte del coste del máster, su venta, su margen y su siguiente paso. Importes ficticios de prueba.</figcaption></figure>
+  <figure><img src="img/consol-house.jpg" alt="Expediente casa E260232"><figcaption>La casa: aviso «Casa del máster E260231: naviera, buque, reserva, documento máster y fechas siguen al máster; esta casa soporta 78,24 % de sus costes», y su propio siguiente paso.</figcaption></figure>
+</section>
+
+<section>
+  <h2>5. Por qué así y no de otra forma</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Opción elegida (A): máster con casas</h3>
+      <ul>
+        <li>Reutiliza todo lo construido por expediente: aduana (paso 5), condiciones de entrega, factura por cliente, siguiente paso, margen, portal, documentos.</li>
+        <li>Cada cosa en un único sitio (Cristina, A27 y A62).</li>
+        <li>Varios clientes en un grupaje: una casa por cliente con su oferta, su factura y su acceso al portal.</li>
+        <li>Es el modelo del sector: CargoWise (consol → shipments), Linbis (máster → houses, datos que bajan del máster), las apps de flete de Odoo (Direct / Master / House).</li>
+        <li>Conserva la práctica de Odoo 17: compras compartidas en el E, venta y aduana por P, una factura por P. Lo nuevo es que el reparto se calcula y se explica.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Opción descartada (B): partida dentro del expediente</h3>
+      <ul>
+        <li>Es la forma de Odoo 17 y de Odoo 19, pero obligaría a mover la aduana, la facturación, los documentos y el margen a un nivel nuevo (tamaño XL en el plan F16) y tocaría el flujo de los expedientes de una sola casa, que son más del 90 %.</li>
+        <li>La jornada LCL de Odoo 19 con Flor nunca se cerró.</li>
+      </ul>
+      <h3>Coste aceptado de A</h3>
+      <ul>
+        <li>Una consolidación son dos o más registros en vez de una página; la pestaña «Casas» del máster los lista con sus cifras y su siguiente paso.</li>
+        <li>La casa repite algunos campos del máster (copiados, solo lectura).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>6. Pruebas y evidencia</h2>
+  <div class="kpi">
+    <div><b>22 / 0</b><span>comprobaciones de la consolidación (check_file_consolidation)</span></div>
+    <div><b>83 / 0</b><span>arnés de extremo a extremo (sin regresión)</span></div>
+    <div><b>10 / 0</b><span>cola de trabajo</span></div>
+    <div><b>E260231</b><span>consolidación [PRUEBA] en boss20 (modelo E260468)</span></div>
+  </div>
+  <p class="small muted">Lo comprobado: máster con un 40' y tres compras compartidas; dos casas de dos clientes vendidas por W/M; copia y recopia de los datos de transporte; servicios compartidos cubiertos y aduana propia conservada; partes por peso tasable (66,67 / 33,33), iguales (50 / 50) y manuales (70 / 30) que suman 100; la parte en el coste, el margen y la explicación de cada casa; la vista consolidada del máster; tránsito conjunto; una factura por cliente; los dos cierres económicos rechazados en el orden equivocado; una casa no puede ser máster; «Nueva casa»; un expediente único sin cambios. Evidencias en <code>docs/evidencias/20261103_1610_*</code>.</p>
+</section>
+
+<section>
+  <h2>7. Valoración: ¿encaja en BOSS?</h2>
+  <div class="verdict">
+    <p><b>Sí, con reservas pequeñas.</b> Cubre los tres casos reales (consolidación de comprador como E260468, grupaje LCL con varios clientes, aéreo consolidado) sin cambiar nada para el expediente de una casa. Quita el trabajo manual que Cristina y el equipo hacían en Odoo 17 (repetir datos del máster, repartir el flete a mano, decidir dónde va cada línea) y deja el margen por casa y el consolidado a la vista, que es lo que el sector llama «P&amp;L por HBL».</p>
+    <p><b>Reservas</b> (ninguna bloquea el uso):</p>
+    <ul>
+      <li><b>Base del reparto.</b> Por defecto peso tasable (W/M), como cobran las navieras; Cristina nunca eligió entre peso real y tasable (Odoo 19 tampoco). Está a un clic en el máster y queda registrado quién lo cambió.</li>
+      <li><b>Despacho más barato por casa</b> (Cristina A120, «comprobar con Laura»): es un precio de venta por casa, no una regla; se pondrá en la lista de precios cuando Laura lo confirme.</li>
+      <li><b>Contabilidad analítica.</b> La parte del máster es una cifra de la casa (su margen), no un asiento en las facturas del máster; si Ángel quiere el reparto en el libro, se hará con distribuciones analíticas.</li>
+      <li><b>Pendiente de construir</b>: documentos HBL/HAWB y manifiesto de carga (F0-C45), página del portal para una consolidación, migración de los expedientes de Odoo 17 abiertos con varias partidas (F0-C74).</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>8. Fuentes</h2>
+  <ul class="small">
+    <li>Cristina, correo 28/09/2026: «Plan detallado previsiones» › Explicaciones previsiones A92, A93, A113–A120; «Nuevo Odoo» › OPS- exptes A27, A39, A62, A73; hoja «partidas».</li>
+    <li>Odoo 17 (lectura 03/11/2026): x_dashboard, x_partidas, x_lines; expediente E260468 y sus cinco partidas; volúmenes de e2e_plan_research.json.</li>
+    <li>Odoo 19: boss_shipments/partida.py, boss_pricing/pricing_allocation.py (métodos de reparto), BOSS_REPORTS_DECISIONS D3.</li>
+    <li>Odoo 20: ADR-009 revisión 2 §7 (opciones A y B), decisiones-f0 F0-C30 y M2-I, paquete 7; ADR-013 (esta decisión).</li>
+    <li>Sector: CargoWise (consol, «Apportion To Consols»), Linbis (máster → houses), apps de flete de Odoo (Direct / Master / House), guías LCL (reparto por W/M).</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>

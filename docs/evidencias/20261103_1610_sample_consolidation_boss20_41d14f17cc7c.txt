@@ -1,0 +1,16 @@
+# Evidence: dev/sample_consolidation.py on boss20
+# Date: 2026-11-03 16:10    
+# Commit tested: 41d14f17cc7c (feat(dev): [PRUEBA] consolidation on boss20 modelled on the real Odoo 17 file E260468 (a master with)
+# Installed on boss20: boss_documents 20.0.1.1.0 boss_expediente 20.0.1.22.0 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.18.1 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 15:10:58,628 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 15:10:58,690 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 15:10:59,530 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CASE master E260231 created
+CASE house E260232 created for casa 1 · shipper Luhao
+CASE house E260233 created for casa 2 · shipper Everpurple
+RESULT master E260231: 2 houses, shares [21.76, 78.24] (sum 100.0)
+# Exit status: 0

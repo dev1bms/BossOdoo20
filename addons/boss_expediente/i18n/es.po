@@ -33,11 +33,6 @@ msgstr ""
 "   parte del máster %(master)s: %(share)s %% de su coste previsto = %(amount)s"
 
 #. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
-msgid "% of its costs."
-msgstr "% de sus costes."
-
-#. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid ""
@@ -273,15 +268,6 @@ msgstr "%s: el periodo termina antes de empezar."
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_docs_sent_date
 msgid "(A36)"
 msgstr "(A36)"
-
-#. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
-msgid ""
-": carrier,\n"
-"                        vessel, booking, master document and dates follow the master; this house bears"
-msgstr ""
-": naviera,\n"
-"                        buque, reserva, documento máster y fechas siguen al máster; esta casa soporta"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
@@ -4674,3 +4660,13 @@ msgstr "descarga del buque"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
 msgid "· ETA"
 msgstr "· ETA"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ": carrier, vessel, booking, master document and dates follow the master; this house bears"
+msgstr ": naviera, buque, reserva, documento máster y fechas siguen al máster; esta casa soporta"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "% of its costs."
+msgstr "% de sus costes."
