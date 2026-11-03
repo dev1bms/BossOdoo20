@@ -201,7 +201,8 @@ con su fuente escrita; ninguna se inventa.
    - BORRADOR hasta «Emitir documento house», que dice lo que falta y después da el número del expediente y la fecha de
      emisión;
    - «Manifiesto de carga» del máster (una línea por casa, totales), rechazado sin agente como en Odoo 17 (acción 1543).
-   Visto el PDF de E260232 (HBL borrador) y E260231 (manifiesto). Evidencia:
+   Se imprimen desde ⋮ › Imprimir del expediente; la cabecera solo tiene «Emitir HBL» / «Emitir HAWB» (Belal no los
+   encontraba entre los botones, 03/11). Visto el PDF de E260232 (HBL borrador) y E260231 (manifiesto). Evidencia:
    `docs/evidencias/20261103_1732_check_house_documents_boss20_3839d0616caa.txt` (11/0), documentos 19/0.
    Pendiente: el AWB IATA en su formulario preimpreso, las cláusulas del BL, el aviso de texto que no cabe en su casilla
    y bloquear un BL ya emitido.

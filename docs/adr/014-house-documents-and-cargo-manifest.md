@@ -26,6 +26,8 @@ partida.
   without the agent abroad, as Odoo 17 action 1543 did.
 - The documents keep the boxes of the Odoo 17 reports and are printed in English whatever the user's language
   (international transport documents), on A4 low margins.
+- The three documents are in the file's ⋮ › Print menu (Belal looked for them there, 03/11/2026); the header only
+  keeps «Issue HBL» / «Issue HAWB» until issued. A file without that document prints one line saying why and where.
 - Nothing is sent from Odoo: the operator prints and sends.
 
 ## Not done (reversible, later)
