@@ -5,9 +5,311 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 
 #. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "%(file)s cannot issue its house document yet, it lacks: %(problems)s."
+msgstr ""
+"%(file)s aún no puede emitir su documento house, le falta: %(problems)s."
+
+#. module: boss_documents
+#: model:ir.actions.report,print_report_name:boss_documents.action_report_cargo_manifest
+msgid "'%s CARGO MANIFEST' % object.name"
+msgstr ""
+
+#. module: boss_documents
+#: model:ir.actions.report,print_report_name:boss_documents.action_report_house_awb
+msgid ""
+"'HAWB %s%s' % (object.hawb_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')"
+msgstr ""
+
+#. module: boss_documents
+#: model:ir.actions.report,print_report_name:boss_documents.action_report_house_bl
+msgid ""
+"'HBL %s%s' % (object.hbl_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')"
+msgstr ""
+
+#. module: boss_documents
 #: model:ir.actions.report,print_report_name:boss_documents.action_report_transport_order
 msgid "'OT %s' % object.name"
 msgstr "'OT %s' % object.name"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "/ SEAL"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "3 / THREE"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Airport of departure</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Airport of destination</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">By first carrier</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Chargeable weight (kg)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Charges</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Consignee (agent at destination)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Consignee (if «to order» so indicate)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Consignee name / address</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Consignee's name and address</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Container &amp; seal numbers</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Date</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid ""
+"<span class=\"box-label\">Description of packages and goods (particulars furnished by shipper)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Destination agent</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Executed on (date) at (place)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">File</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Final place of delivery</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Flight</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid ""
+"<span class=\"box-label\">Freight and disbursements</span>\n"
+"                                    AS ARRANGED — FREIGHT"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Freight payable at</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Freight</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Gross weight (kg)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Gross weight (kilos)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Handling information</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">House air waybill</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Issuing carrier's agent</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Marks &amp; numbers</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Measurement (CBM)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid ""
+"<span class=\"box-label\">Nature and quantity of goods (incl. dimensions or volume)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Nature of goods</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">No. of packages</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">No. of pieces</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid ""
+"<span class=\"box-label\">Notify party (carrier not responsible for failure to notify)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Number of original B/L</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Ocean vessel</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Owner operator</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Pieces</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Place and date of issue</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Place of receipt</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Port of discharge</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Port of loading</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Port of unloading</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Rate / charge</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Shipper name / address</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "<span class=\"box-label\">Shipper's name and address</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Shipper</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid ""
+"<span class=\"box-label\">Signature of issuing carrier or its agent</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Signed on behalf of the carrier</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Volume (m³)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "<span class=\"box-label\">Voyage No.</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<span class=\"box-label\">Weight (kg)</span>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "<strong>TOTALS</strong>"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "AS AGREED"
+msgstr ""
 
 #. module: boss_documents
 #. odoo-python
@@ -28,15 +330,40 @@ msgid "B/L (master / house)"
 msgstr "B/L (máster / house)"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "B/L No."
+msgstr ""
+
+#. module: boss_documents
 #: model:ir.module.module,shortdesc:base.module_boss_documents
 msgid "BOSS Documents"
 msgstr "Documentos BOSS"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"BOSS's house air waybill: a DRAFT for the shipper to check until it is issued."
+msgstr ""
+"AWB house de BOSS: BORRADOR para que lo revise el expedidor hasta que se emite."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"BOSS's house bill of lading (NVOCC): a DRAFT for the shipper to check until it is issued."
+msgstr ""
+"BL house de BOSS (NVOCC): BORRADOR para que lo revise el expedidor hasta que se emite."
 
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Booking"
 msgstr "Booking"
+
+#. module: boss_documents
+#: model:ir.actions.report,name:boss_documents.action_report_cargo_manifest
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid "Cargo manifest"
+msgstr "Manifiesto de carga"
 
 #. module: boss_documents
 #. odoo-python
@@ -49,6 +376,11 @@ msgstr "Transportista"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Chargeable weight"
 msgstr "Peso tasable"
+
+#. module: boss_documents
+#: model:ir.model.fields.selection,name:boss_documents.selection__boss_expediente__house_doc_freight__collect
+msgid "Collect"
+msgstr "Pagadero en destino (collect)"
 
 #. module: boss_documents
 #. odoo-python
@@ -79,6 +411,17 @@ msgstr ""
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Customs reference"
 msgstr "Referencia de aduana"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "DESTINATION"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "DRAFT — FOR CHECKING ONLY, NOT ISSUED"
+msgstr ""
 
 #. module: boss_documents
 #. odoo-python
@@ -120,9 +463,43 @@ msgid "ETD"
 msgstr "ETD (salida prevista)"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "EXPRESS 0 / ZERO"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid ""
+"Excess value declaration: refer to the clauses of BOSS's\n"
+"                                        bill of lading."
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "Express B/L No."
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "FOR COMBINED TRANSPORT SHIPMENT OR PORT TO PORT"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
 msgid "File"
 msgstr "Expediente"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "Flight"
+msgstr ""
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__house_doc_freight
+msgid "Freight payable"
+msgstr "Flete pagadero"
 
 #. module: boss_documents
 #. odoo-python
@@ -148,6 +525,33 @@ msgid "Gross weight"
 msgstr "Peso bruto"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "HAWB number"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "HAWBs"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "HBL number"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "HBLs"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "HS CODE"
+msgstr ""
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "HS code"
@@ -159,9 +563,34 @@ msgid "Haulier"
 msgstr "Transportista"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid "House AWB"
+msgstr "AWB house"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid "House B/L"
+msgstr "BL house"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "House B/L:"
 msgstr "HBL:"
+
+#. module: boss_documents
+#: model:ir.actions.report,name:boss_documents.action_report_house_awb
+msgid "House air waybill"
+msgstr "Conocimiento aéreo house (HAWB)"
+
+#. module: boss_documents
+#: model:ir.actions.report,name:boss_documents.action_report_house_bl
+msgid "House bill of lading"
+msgstr "Conocimiento de embarque house (HBL)"
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__house_doc_issue_date
+msgid "House document issued on"
+msgstr "Documento house emitido el"
 
 #. module: boss_documents
 #: model:ir.model.fields,field_description:boss_documents.field_account_move__id
@@ -172,10 +601,27 @@ msgid "ID"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "INTERNATIONAL BILL OF LADING"
+msgstr ""
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Incoterm"
 msgstr "Incoterm"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid "Issue house document"
+msgstr "Emitir documento house"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"Issue the house document? It takes its number and today's date, and stops printing as a draft."
+msgstr ""
+"¿Emitir el documento house? Toma su número y la fecha de hoy, y deja de imprimirse como borrador."
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_account_move
@@ -183,10 +629,62 @@ msgid "Journal Entry"
 msgstr "Asiento contable"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "LCL"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "M3"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "MANIFIESTO DE CARGA — CARGO MANIFEST"
+msgstr ""
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__house_doc_marks
+msgid "Marks and numbers"
+msgstr "Marcas y números"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid "Master B/L"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "Master air waybill"
+msgstr ""
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "No cargo manifest for %(file)s yet, it lacks: %(problems)s."
+msgstr "Aún no hay manifiesto de carga para %(file)s, le falta: %(problems)s."
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/boss_expediente.py:0
 msgid "No transport order for %(file)s yet: %(problems)s."
 msgstr "Todavía no hay orden de transporte para %(file)s: %(problems)s."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "Not negotiable — issued by"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "Notify / destination agent:"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "ORIGIN"
+msgstr ""
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
@@ -229,6 +727,18 @@ msgstr ""
 "                            el albarán firmado indicando la referencia del expediente."
 
 #. module: boss_documents
+#: model:ir.model.fields.selection,name:boss_documents.selection__boss_expediente__house_doc_freight__prepaid
+msgid "Prepaid"
+msgstr "Pagado en origen (prepaid)"
+
+#. module: boss_documents
+#: model:ir.model.fields,help:boss_documents.field_boss_expediente__house_doc_freight
+msgid ""
+"Printed on the house B/L or air waybill and the manifest. Proposed from the incoterm: C and D terms prepaid (the seller pays the main carriage), E and F terms collect (the buyer pays it)."
+msgstr ""
+"Se imprime en el BL o AWB house y en el manifiesto. Propuesto desde el incoterm: términos C y D prepaid (el vendedor paga el transporte principal), términos E y F collect (lo paga el comprador)."
+
+#. module: boss_documents
 #: model:ir.model,name:boss_documents.model_purchase_order
 msgid "Purchase Order"
 msgstr "Pedido de compra"
@@ -237,6 +747,21 @@ msgstr "Pedido de compra"
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "Return of the empty"
 msgstr "Devolución del vacío"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "SAME AS CONSIGNEE"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "SAME AS SHIPPER"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "SHIPPER'S LOAD, STOW AND COUNT"
+msgstr ""
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_sale_order
@@ -254,6 +779,13 @@ msgid "Services of BOSS:"
 msgstr "Servicios de BOSS:"
 
 #. module: boss_documents
+#: model:ir.model.fields,help:boss_documents.field_boss_expediente__house_doc_issue_date
+msgid ""
+"Set by «Issue»: until then the house B/L or air waybill prints as a DRAFT for the shipper to check."
+msgstr ""
+"Lo fija «Emitir»: hasta entonces el BL o AWB house se imprime como BORRADOR para que lo revise el expedidor."
+
+#. module: boss_documents
 #: model:ir.model,name:boss_documents.model_boss_expediente
 msgid "Shipment file (expediente)"
 msgstr "Expediente"
@@ -265,9 +797,26 @@ msgid "Shipper"
 msgstr "Expedidor"
 
 #. module: boss_documents
+#: model:ir.model.fields,help:boss_documents.field_boss_expediente__house_doc_marks
+msgid "Shipping marks on the packages, printed on the house B/L."
+msgstr "Marcas de los bultos, impresas en el BL house."
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "Size / type"
 msgstr "Tamaño / tipo"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.house_document_party
+msgid "Tax ID"
+msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"The houses travelling under the master document: shipper, consignee, packages, weight, goods."
+msgstr ""
+"Las casas que viajan bajo el documento máster: expedidor, destinatario, bultos, peso y mercancía."
 
 #. module: boss_documents
 #. odoo-python
@@ -295,8 +844,14 @@ msgid "Type of unit"
 msgstr "Tipo de unidad"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "VOLUME"
+msgstr ""
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
 msgid "Vessel / voyage"
 msgstr "Buque / viaje"
 
@@ -312,10 +867,21 @@ msgid "Your reference:"
 msgstr "Su referencia:"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
+msgid "at"
+msgstr ""
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/boss_expediente.py:0
 msgid "choose the haulier (References and dates › Other parties)"
 msgstr "elija el transportista (Referencias y fechas › Otras partes)"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "consignee"
+msgstr "destinatario"
 
 #. module: boss_documents
 #. odoo-python
@@ -337,9 +903,65 @@ msgstr "entrega"
 
 #. module: boss_documents
 #. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "destination port or airport"
+msgstr "puerto o aeropuerto de destino"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "flight"
+msgstr "vuelo"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "freight prepaid or collect"
+msgstr "flete prepaid o collect"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "goods"
+msgstr "mercancía"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "gross weight"
+msgstr "peso bruto"
+
+#. module: boss_documents
+#. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "main carriage"
 msgstr "transporte principal"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "master air waybill"
+msgstr "AWB máster"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "number of packages"
+msgstr "número de bultos"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid ""
+"only a sea or air file that is not a master has a house B/L or air waybill"
+msgstr ""
+"solo un expediente marítimo o aéreo que no sea máster tiene BL o AWB house"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "origin port or airport"
+msgstr "puerto o aeropuerto de origen"
 
 #. module: boss_documents
 #. odoo-python
@@ -350,11 +972,46 @@ msgstr "recogida"
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "shipper"
+msgstr "expedidor"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "the agent abroad (Who)"
+msgstr "el agente en el extranjero (Quién)"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
 msgid ""
 "the house B/L is not released nor a sea waybill (References and dates)"
 msgstr "el HBL no está liberado ni es un sea waybill (Referencias y fechas)"
 
 #. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "the master B/L or air waybill"
+msgstr "el BL o AWB máster"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "the number of every container"
+msgstr "el número de cada contenedor"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "vessel"
+msgstr "buque"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
 msgid "· Quotation"
 msgstr "· Oferta"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
+msgid "— NVOCC SHIPPING LINE"
+msgstr ""

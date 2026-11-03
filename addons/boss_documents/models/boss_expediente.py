@@ -99,8 +99,8 @@ class BossExpediente(models.Model):
             (self.goods_description, _("goods")), (self.house_doc_freight, _("freight prepaid or collect")),
         ]
         if kind == "hbl" and self.load_type == "fcl":
-            checks.append((self.container_ids and all(self.container_ids.mapped("number")),
-                           _("the number of every container")))
+            containers = self.container_ids or self.master_id.container_ids  # a house travels in its master's
+            checks.append((containers and all(containers.mapped("number")), _("the number of every container")))
         if kind == "hawb":
             checks.append((self.mawb_ref, _("master air waybill")))
         return [label for value, label in checks if not value]

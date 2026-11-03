@@ -67,7 +67,7 @@
                             <tr>
                                 <td colspan="2" rowspan="2">
                                     <span class="box-label">Shipper</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.shipper_id"/></t>
+                                    <t t-set="party" t-value="doc.shipper_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2">
                                     <span class="box-label"><t t-if="express">Express B/L No.</t><t t-else="">B/L No.</t></span>
@@ -85,11 +85,11 @@
                             <tr>
                                 <td colspan="2">
                                     <span class="box-label">Consignee (if «to order» so indicate)</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.consignee_id"/></t>
+                                    <t t-set="party" t-value="doc.consignee_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2" rowspan="2">
                                     <span class="box-label">Destination agent</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.agent_id"/></t>
+                                    <t t-set="party" t-value="doc.agent_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                             </tr>
                             <tr>
@@ -97,7 +97,7 @@
                                     <span class="box-label">Notify party (carrier not responsible for failure to notify)</span>
                                     <t t-if="not doc.notify_id or doc.notify_id == doc.consignee_id">SAME AS CONSIGNEE</t>
                                     <t t-elif="doc.notify_id == doc.shipper_id">SAME AS SHIPPER</t>
-                                    <t t-else=""><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.notify_id"/></t></t>
+                                    <t t-else=""><t t-set="party" t-value="doc.notify_id"/><t t-call="boss_documents.house_document_party"/></t>
                                 </td>
                             </tr>
                             <tr>
@@ -131,7 +131,7 @@
                                 <td class="box-value" t-out="doc.house_doc_marks or 'N/M'"/>
                                 <td>
                                     <div t-if="doc.load_type != 'fcl'">LCL</div>
-                                    <div t-foreach="doc.container_ids" t-as="c">
+                                    <div t-foreach="doc.container_ids or doc.master_id.container_ids" t-as="c">
                                         <t t-out="c.number or '—'"/> <t t-out="c.size"/>' <t t-out="c.container_type_id.code"/>
                                         <t t-if="c.seal"> / SEAL <t t-out="c.seal"/></t>
                                     </div>
@@ -191,7 +191,7 @@
                             <tr>
                                 <td colspan="2">
                                     <span class="box-label">Shipper's name and address</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.shipper_id"/></t>
+                                    <t t-set="party" t-value="doc.shipper_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2">
                                     <span class="box-label">House air waybill</span>
@@ -203,11 +203,11 @@
                             <tr>
                                 <td colspan="2">
                                     <span class="box-label">Consignee's name and address</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.consignee_id"/></t>
+                                    <t t-set="party" t-value="doc.consignee_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2">
                                     <span class="box-label">Issuing carrier's agent</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="company.partner_id"/></t>
+                                    <t t-set="party" t-value="company.partner_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                             </tr>
                             <tr>
@@ -301,11 +301,11 @@
                             <tr>
                                 <td colspan="2">
                                     <span class="box-label">Shipper</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="company.partner_id"/></t>
+                                    <t t-set="party" t-value="company.partner_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2">
                                     <span class="box-label">Consignee (agent at destination)</span>
-                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.agent_id"/></t>
+                                    <t t-set="party" t-value="doc.agent_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                             </tr>
                         </table>
@@ -327,8 +327,8 @@
                                 <td t-out="house.packages"/>
                                 <td t-out="'%.2f' % house.gross_kg"/>
                                 <td><t t-if="house.volume_m3" t-out="'%.3f' % house.volume_m3"/></td>
-                                <td><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="house.shipper_id"/></t></td>
-                                <td><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="house.consignee_id"/></t></td>
+                                <td><t t-set="party" t-value="house.shipper_id"/><t t-call="boss_documents.house_document_party"/></td>
+                                <td><t t-set="party" t-value="house.consignee_id"/><t t-call="boss_documents.house_document_party"/></td>
                                 <td>
                                     <div class="box-value" t-out="house.goods_description"/>
                                     <div t-if="house.hs_code">HS CODE <t t-out="house.hs_code"/></div>
