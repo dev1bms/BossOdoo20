@@ -1,0 +1,23 @@
+# Evidence: dev/check_work_queue.py on boss20
+# Date: 2026-11-03 15:39    
+# Commit tested: ab5b9e9bc866 (feat(expediente): operational close as Cristina wrote and Odoo 17 enforced (everything invoiced, mar)
+# Installed on boss20: boss_documents 20.0.1.1.0 boss_expediente 20.0.1.21.0 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.18.1 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 14:39:25,267 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 14:39:25,328 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 14:39:26,169 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS a file of a customer with an operator for its traffic gets that operator as responsible: expected ('IMB', res.users(245,)) got ('IMB', res.users(245,))
+CHECK PASS ... and says so in its history: expected True got True
+CHECK PASS another traffic of the same customer (IAB) keeps who opened it: expected ('IAB', res.users(244,)) got ('IAB', res.users(244,))
+CHECK PASS a customer without operator keeps who opened it: expected res.users(244,) got res.users(244,)
+CHECK PASS «Needs action» finds the new files (next step not done): expected True got True
+CHECK PASS a step filter finds a file by its next step (opened without quotation: «Link the accepted quotation»): expected (True, 'link_quotation') got (True, 'link_quotation')
+CHECK PASS ... and leaves it out of another step («Put the file in transit»): expected False got False
+CHECK PASS «My work» of the operator shows the file assigned to the operator: expected True got True
+CHECK PASS «My work» opens the board by status first, with «My files» and «Needs action»: expected ('kanban', True, True) got ('kanban', True, True)
+CHECK PASS the board shows the next step on each card: expected True got True
+RESULT 10 passed, 0 failed
+# Exit status: 0
