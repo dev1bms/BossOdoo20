@@ -95,7 +95,7 @@ def build(case):
     """The quotation of the case (reused when it exists, by its customer reference)."""
     key = case["key"]
     reference = f"[PRUEBA] caso real {case['model']} ({key})"
-    order = env["sale.order"].search([("client_order_ref", "=", reference)], limit=1)
+    order = env["sale.order"].search([("client_order_ref", "=", reference), ("state", "!=", "cancel")], limit=1)
     if order:
         print(f"CASE {key}: quotation {order.name} reused")
         return order
@@ -156,10 +156,10 @@ def report(case, order):
         manual(key, f"cost on request (supplier named, no price on boss20): "
                     f"{', '.join(on_request.mapped('product_id.default_code'))}")
     missing = order.order_line.filtered(lambda l: l.product_id and l.boss_sale_status == "missing")
-    for line in missing:
-        line.price_unit = 100.0
+    for line in missing:  # 100 EUR for the whole service, whatever its unit (per kg, per W/M, per container…)
+        line.price_unit = round(100.0 / (line.product_uom_qty or 1.0), 4)
     if missing:
-        manual(key, f"selling price typed, fictitious 100 (no price list for it yet: item 3): "
+        manual(key, f"selling price typed, fictitious 100 EUR per service (no price list for it yet: item 3): "
                     f"{', '.join(missing.mapped('product_id.default_code'))}")
     for line in order.order_line.filtered(lambda l: l.product_id and l.boss_cost_status not in (
             "ok", "manual", "no_tariff") and not l.boss_cost_on_request):
