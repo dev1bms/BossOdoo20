@@ -1,6 +1,6 @@
-# Migración de contactos (F2) — análisis de solo lectura, 28/10/2026
+# Migración de contactos (F2) — carga hecha el 03/11/2026
 
-Estado: **análisis, no aprobado**. Nada se ha cargado. Alcance y mapeo dependen de F0-B01, F0-B02, F0-C02, R-A3, F0-A02/F0-B04 (ver `docs/paquetes-aprobacion-f0.md`). Comprobado a mano: campo `x_studio_type` (ir.model.fields 18028) y los ejemplos 57786 y 54130, que son direcciones de entrega hijas de una empresa, no contactos «lugar».
+Estado: **alcance aprobado y cargado el 03/11/2026** (ver «Estado»). Antes: Alcance y mapeo dependen de F0-B01, F0-B02, F0-C02, R-A3, F0-A02/F0-B04 (ver `docs/paquetes-aprobacion-f0.md`). Comprobado a mano: campo `x_studio_type` (ir.model.fields 18028) y los ejemplos 57786 y 54130, que son direcciones de entrega hijas de una empresa, no contactos «lugar».
 
 
 No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MCP y en boss20 solo `SELECT`. Aquí no aparecen nombres de personas, NIF ni IBAN.
@@ -9,15 +9,49 @@ No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MC
 
 **Límite de la herramienta:** `search_records` solo admite un filtro de texto parcial sobre un campo. No acepta dominios, `search_count` ni agrupaciones, y `list_contacts` y `list_invoices` dan error. Los totales los he sacado de `ir.model.count` y el resto paginando hasta el último registro. No se pueden cruzar condiciones (tipo y NIF, actividad y año), así que esos cruces quedan abiertos.
 
-## Estado (29/10/2026)
+## Estado (03/11/2026): carga permanente hecha
 
-- **Ensayo del alcance actual (3.699 registros):** rollback en boss20, 17 de 17 comprobaciones. Resultado: 3.664 nuevos,
-  34 enlazados sin cambios de nombre, 1 registro de BOSS protegido, 1 hijo bajo BOSS diferido para decisión.
-- **Ampliación en curso:** jefes de expediente, agentes, navieras, destinatarios, líneas y ofertas, saldos abiertos y
-  expedientes antiguos sin cerrar. **No completada:** falta un acceso XML-RPC de solo lectura autorizado para Odoo 17;
-  la herramienta de consulta no lee las relaciones de partner en los expedientes.
-- **Cifras de las secciones 1 a 5 abajo:** son las medidas previas al ensayo, no las finales.
-- **Carga permanente:** no aprobada.
+**Alcance aprobado por Belal el 03/11/2026: 4.237 registros de Odoo 17**, cargados en boss20 (`dev/load_partners.py`,
+reglas en ADR-012). Las cifras de las secciones 1 a 6 son las medidas anteriores (28-29/10); valen como historia.
+
+| Resultado de la carga | Registros |
+|---|---:|
+| Contactos nuevos creados | 4.162 |
+| Enlazados a contactos que ya estaban en boss20 (sin duplicar) | 51 |
+| de ellos, con campos vacíos rellenados (ningún valor sobrescrito) | 50 |
+| Hijos bajo la empresa BOSS no cargados (esperan decisión) | 24 |
+| Coincidencias ambiguas / hijos sin padre | 0 / 0 |
+
+Cómo se formó el alcance:
+- 3.699 registros de las facturas, abonos y facturas de proveedor desde 09/2024 y de los ordenantes E24-E26, con sus
+  hijos y dos archivados con facturas (secciones 2 y 5).
+- 538 registros más: 225 contactos citados en los expedientes E22-E26 leídos (ordenante, agente, facturar a, naviera,
+  transportista, contactos), con sus hijos y padres.
+
+Comprobación de aceptación (`dev/check_migration_accept.py`, evidencia en `docs/evidencias/`):
+- Una segunda ejecución no crea, no enlaza y no cambia nada.
+- 20 contactos iguales a Odoo 17 campo a campo.
+- Ningún NIF duplicado creado por la migración: los 18 grupos que comparten NIF ya lo compartían en Odoo 17.
+- Las 5 entidades de MSC en una familia.
+
+**Pendiente de leer (nada se supone):**
+- 1.177 de los 10.477 expedientes E22-E26.
+- Las partidas (expedidor y destinatario).
+- Los saldos abiertos leídos directamente.
+- Los 49 contactos con asientos fuera de las series de factura.
+
+**Excepciones que necesitan decisión:**
+- 308 empresas de Odoo 17 sin NIF utilizable (177 agentes, 85 proveedores) aparecen como persona en Odoo 20: el estándar
+  calcula «es empresa» como entidad propia con NIF (`res_partner._compute_is_company`). Decidir si se completan los
+  NIF o se adapta la regla (ADR nuevo).
+- 24 hijos bajo la empresa BOSS.
+- 10 NIF rechazados por Odoo 20 (cargados sin NIF).
+- 2 direcciones «followup» cargadas como «other».
+- Condiciones de pago 6, 60 y 75 días inexistentes en boss20.
+- 1 cliente español migrado sin NIF (P31).
+- 50 códigos comerciales no trasladados porque el contacto ya tenía referencia.
+
+El registro privado con los valores originales está fuera de Git (`.research/f2_exceptions_register.md`).
 
 ## 1. Números
 

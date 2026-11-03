@@ -69,10 +69,9 @@ for o in sample:
     exp = {"name": r.get("name") or False, "street": r.get("street") or False, "street2": r.get("street2") or False,
            "city": r.get("city") or False, "zip": r.get("zip") or False, "email": r.get("email") or False,
            "phone": r.get("phone") or False, "boss_mobile": r.get("mobile") or False,
-           "active": r.get("active", True),
-           # Odoo 20 computes «is a company» (base res_partner._compute_is_company): own commercial entity WITH a VAT.
-           # An Odoo 17 company without a usable VAT is therefore a person in Odoo 20 (exception listed, see INFO B)
-           "is_company": bool(r.get("is_company")) and not r.get("parent_id") and bool(p.vat)}
+           "active": r.get("active", True)}
+    # «is a company» is not compared: Odoo 20 computes it and ignores the loaded value (base: own entity with a VAT;
+    # l10n_es: a Spanish contact is a company unless its VAT is a freelancer's). Changes are counted below (INFO B).
     for f, v in exp.items():
         if (p[f] or False) != v:
             mism.append((o, f))
@@ -88,9 +87,12 @@ for o in sample:
     if (r.get("country_id") or [0, False])[1] and not p.country_id:
         mism.append((o, "country_id"))
 print("SAMPLE B:", sample)
-no_vat_co = [o for o, r in by_id.items() if r.get("is_company") and not r.get("parent_id") and o in links
-             and not P.browse(links[o].res_id).is_company]
-print(f"INFO B Odoo 17 companies shown as persons in Odoo 20 (no usable VAT): {len(no_vat_co)}")
+mains = [(o, r, P.browse(links[o].res_id)) for o, r in by_id.items() if not r.get("parent_id") and o in links]
+to_person = [o for o, r, p in mains if r.get("is_company") and not p.is_company]
+to_company = [o for o, r, p in mains if not r.get("is_company") and p.is_company]
+print(f"INFO B «is a company» recomputed by Odoo 20: {len(to_person)} Odoo 17 companies are persons in Odoo 20 "
+      f"(no VAT, not Spanish: {sum(1 for o in to_person if by_id[o].get('country_id') and by_id[o]['country_id'][1] != 'Spain')}); "
+      f"{len(to_company)} Odoo 17 persons are companies in Odoo 20")
 check("B 20 loaded contacts equal to Odoo 17 field by field", [], mism)
 
 # C. VAT shared by companies on boss20 vs Odoo 17
