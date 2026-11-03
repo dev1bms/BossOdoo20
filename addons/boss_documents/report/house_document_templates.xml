@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- House documents BOSS issues as NVOCC (roadmap item 11, F0-C45, ADR-014): the house bill of lading (sea) and the
+         house air waybill (air) of a house file, and the cargo manifest of a master. The boxes are those of the Odoo 17
+         documents (reports 1387 HBL, 1143 WB Template, 1193 Cargo Manifest). Their labels stay in English: they are
+         international transport documents. A house document prints «DRAFT» until it is issued. -->
+    <record id="action_report_house_bl" model="ir.actions.report">
+        <field name="name">House bill of lading</field>
+        <field name="model">boss.expediente</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">boss_documents.report_house_bl</field>
+        <field name="print_report_name">'HBL %s%s' % (object.hbl_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')</field>
+    </record>
+    <record id="action_report_house_awb" model="ir.actions.report">
+        <field name="name">House air waybill</field>
+        <field name="model">boss.expediente</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">boss_documents.report_house_awb</field>
+        <field name="print_report_name">'HAWB %s%s' % (object.hawb_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')</field>
+    </record>
+    <record id="action_report_cargo_manifest" model="ir.actions.report">
+        <field name="name">Cargo manifest</field>
+        <field name="model">boss.expediente</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">boss_documents.report_cargo_manifest</field>
+        <field name="print_report_name">'%s CARGO MANIFEST' % object.name</field>
+    </record>
+
+    <template id="house_document_style">
+        <style>
+            .boss-hd { font-size: 9pt; }
+            .boss-hd table.boxes { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            .boss-hd table.boxes td { border: 1px solid #000; padding: 3px 5px; vertical-align: top; }
+            .boss-hd .box-label { font-size: 6.5pt; font-weight: bold; text-transform: uppercase; display: block; }
+            .boss-hd .box-value { white-space: pre-line; }
+            .boss-hd .draft { border: 2px solid #c00; color: #c00; font-weight: bold; text-align: center; padding: 4px;
+                              margin-bottom: 6px; font-size: 11pt; }
+            .boss-hd h1 { font-size: 14pt; margin: 0; }
+        </style>
+    </template>
+
+    <!-- A party box: name in capitals, then the address, as Odoo 17 printed it. -->
+    <template id="house_document_party">
+        <t t-if="party">
+            <div t-out="(party.commercial_partner_id.name or party.name or '').upper()"/>
+            <div class="box-value" t-out="party._display_address(without_name=True)"/>
+            <div t-if="party.commercial_partner_id.vat">Tax ID <t t-out="party.commercial_partner_id.vat"/></div>
+        </t>
+    </template>
+
+    <template id="report_house_bl">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="boss_documents.report_house_bl_document" t-lang="'en_US'"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_house_bl_document">
+                <t t-call="web.basic_layout">
+                    <t t-call="boss_documents.house_document_style"/>
+                    <t t-set="company" t-value="doc.company_id"/>
+                    <t t-set="express" t-value="doc.hbl_release == 'swb'"/>
+                    <div class="page boss-hd">
+                        <div t-if="not doc.house_doc_issue_date" class="draft">DRAFT — FOR CHECKING ONLY, NOT ISSUED</div>
+                        <table class="boxes">
+                            <tr>
+                                <td colspan="2" rowspan="2">
+                                    <span class="box-label">Shipper</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.shipper_id"/></t>
+                                </td>
+                                <td colspan="2">
+                                    <span class="box-label"><t t-if="express">Express B/L No.</t><t t-else="">B/L No.</t></span>
+                                    <h1 t-out="doc.hbl_ref or doc.name"/>
+                                    <div>File <t t-out="doc.name"/></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h1>INTERNATIONAL BILL OF LADING</h1>
+                                    <div>FOR COMBINED TRANSPORT SHIPMENT OR PORT TO PORT</div>
+                                    <div class="mt-1"><strong t-out="company.name.upper()"/> — NVOCC SHIPPING LINE</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="box-label">Consignee (if «to order» so indicate)</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.consignee_id"/></t>
+                                </td>
+                                <td colspan="2" rowspan="2">
+                                    <span class="box-label">Destination agent</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.agent_id"/></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="box-label">Notify party (carrier not responsible for failure to notify)</span>
+                                    <t t-if="not doc.notify_id or doc.notify_id == doc.consignee_id">SAME AS CONSIGNEE</t>
+                                    <t t-elif="doc.notify_id == doc.shipper_id">SAME AS SHIPPER</t>
+                                    <t t-else=""><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.notify_id"/></t></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="box-label">Place of receipt</span><t t-out="(doc.origin_place or doc.origin_port_id.name or '').upper()"/></td>
+                                <td><span class="box-label">Port of loading</span><t t-out="doc.origin_port_id.display_name"/></td>
+                                <td><span class="box-label">Ocean vessel</span><t t-out="doc.vessel"/></td>
+                                <td><span class="box-label">Voyage No.</span><t t-out="doc.voyage"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="box-label">Port of discharge</span><t t-out="doc.destination_port_id.display_name"/></td>
+                                <td><span class="box-label">Final place of delivery</span><t t-out="(doc.destination_place or doc.destination_port_id.name or '').upper()"/></td>
+                                <td><span class="box-label">Freight payable at</span>
+                                    <t t-if="doc.house_doc_freight == 'prepaid'">ORIGIN</t>
+                                    <t t-elif="doc.house_doc_freight == 'collect'">DESTINATION</t>
+                                </td>
+                                <td><span class="box-label">Number of original B/L</span>
+                                    <t t-if="express">EXPRESS 0 / ZERO</t><t t-else="">3 / THREE</t>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="boxes mt-2">
+                            <tr>
+                                <td style="width: 22%;"><span class="box-label">Marks &amp; numbers</span></td>
+                                <td style="width: 22%;"><span class="box-label">Container &amp; seal numbers</span></td>
+                                <td style="width: 10%;"><span class="box-label">No. of packages</span></td>
+                                <td style="width: 26%;"><span class="box-label">Description of packages and goods (particulars furnished by shipper)</span></td>
+                                <td style="width: 10%;"><span class="box-label">Gross weight (kilos)</span></td>
+                                <td style="width: 10%;"><span class="box-label">Measurement (CBM)</span></td>
+                            </tr>
+                            <tr style="height: 300px;">
+                                <td class="box-value" t-out="doc.house_doc_marks or 'N/M'"/>
+                                <td>
+                                    <div t-if="doc.load_type != 'fcl'">LCL</div>
+                                    <div t-foreach="doc.container_ids" t-as="c">
+                                        <t t-out="c.number or '—'"/> <t t-out="c.size"/>' <t t-out="c.container_type_id.code"/>
+                                        <t t-if="c.seal"> / SEAL <t t-out="c.seal"/></t>
+                                    </div>
+                                </td>
+                                <td>
+                                    <t t-out="doc.packages"/>
+                                    <div t-if="doc.package_type" t-field="doc.package_type"/>
+                                </td>
+                                <td>
+                                    <div class="box-value" t-out="doc.goods_description"/>
+                                    <div t-if="doc.hs_code">HS CODE <t t-out="doc.hs_code"/></div>
+                                    <div t-if="doc.load_type == 'fcl'" class="mt-2">SHIPPER'S LOAD, STOW AND COUNT</div>
+                                </td>
+                                <td><t t-out="'%.2f' % doc.gross_kg"/></td>
+                                <td><t t-if="doc.volume_m3" t-out="'%.3f' % doc.volume_m3"/></td>
+                            </tr>
+                        </table>
+                        <table class="boxes mt-2">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <span class="box-label">Freight and disbursements</span>
+                                    AS ARRANGED — FREIGHT <t t-out="(doc.house_doc_freight or '').upper()"/>
+                                    <div class="small mt-1">Excess value declaration: refer to the clauses of BOSS's
+                                        bill of lading.</div>
+                                </td>
+                                <td style="width: 25%;">
+                                    <span class="box-label">Place and date of issue</span>
+                                    <t t-out="(company.city or '').upper()"/>,
+                                    <t t-if="doc.house_doc_issue_date" t-out="doc.house_doc_issue_date.strftime('%d/%m/%Y')"/>
+                                    <t t-else="">—</t>
+                                </td>
+                                <td style="width: 25%; height: 70px;">
+                                    <span class="box-label">Signed on behalf of the carrier</span>
+                                    <t t-out="company.name.upper()"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+    </template>
+
+    <template id="report_house_awb">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="boss_documents.report_house_awb_document" t-lang="'en_US'"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_house_awb_document">
+                <t t-call="web.basic_layout">
+                    <t t-call="boss_documents.house_document_style"/>
+                    <t t-set="company" t-value="doc.company_id"/>
+                    <div class="page boss-hd">
+                        <div t-if="not doc.house_doc_issue_date" class="draft">DRAFT — FOR CHECKING ONLY, NOT ISSUED</div>
+                        <table class="boxes">
+                            <tr>
+                                <td colspan="2">
+                                    <span class="box-label">Shipper's name and address</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.shipper_id"/></t>
+                                </td>
+                                <td colspan="2">
+                                    <span class="box-label">House air waybill</span>
+                                    <h1 t-out="doc.hawb_ref or doc.name"/>
+                                    <div>Master air waybill <strong t-out="doc.mawb_ref"/></div>
+                                    <div>Not negotiable — issued by <t t-out="company.name.upper()"/></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="box-label">Consignee's name and address</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.consignee_id"/></t>
+                                </td>
+                                <td colspan="2">
+                                    <span class="box-label">Issuing carrier's agent</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="company.partner_id"/></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><span class="box-label">Airport of departure</span><t t-out="doc.origin_port_id.display_name"/></td>
+                                <td colspan="2"><span class="box-label">Airport of destination</span><t t-out="doc.destination_port_id.display_name"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="box-label">By first carrier</span><t t-out="doc.carrier_id.name"/></td>
+                                <td><span class="box-label">Flight</span><t t-out="doc.vessel"/></td>
+                                <td><span class="box-label">Date</span>
+                                    <t t-if="doc.atd or doc.etd" t-out="(doc.atd.date() if doc.atd else doc.etd).strftime('%d/%m/%Y')"/>
+                                </td>
+                                <td><span class="box-label">Charges</span><t t-out="(doc.house_doc_freight or '').upper()"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="height: 45px;">
+                                    <span class="box-label">Handling information</span>
+                                    <span class="box-value" t-out="doc.house_doc_marks"/>
+                                    <t t-if="doc.agent_id"> Notify / destination agent: <t t-out="doc.agent_id.commercial_partner_id.name"/></t>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="boxes mt-2">
+                            <tr>
+                                <td style="width: 12%;"><span class="box-label">No. of pieces</span></td>
+                                <td style="width: 14%;"><span class="box-label">Gross weight (kg)</span></td>
+                                <td style="width: 14%;"><span class="box-label">Chargeable weight (kg)</span></td>
+                                <td style="width: 15%;"><span class="box-label">Rate / charge</span></td>
+                                <td style="width: 45%;"><span class="box-label">Nature and quantity of goods (incl. dimensions or volume)</span></td>
+                            </tr>
+                            <tr style="height: 260px;">
+                                <td><t t-out="doc.packages"/> <div t-if="doc.package_type" t-field="doc.package_type"/></td>
+                                <td t-out="'%.2f' % doc.gross_kg"/>
+                                <td><t t-if="doc.awb_kg or doc.chargeable_kg" t-out="'%.2f' % (doc.awb_kg or doc.chargeable_kg)"/></td>
+                                <td>AS AGREED</td>
+                                <td>
+                                    <div class="box-value" t-out="doc.goods_description"/>
+                                    <div t-if="doc.hs_code">HS CODE <t t-out="doc.hs_code"/></div>
+                                    <div t-if="doc.volume_m3">VOLUME <t t-out="'%.3f' % doc.volume_m3"/> M3</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="boxes mt-2">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <span class="box-label">Executed on (date) at (place)</span>
+                                    <t t-if="doc.house_doc_issue_date" t-out="doc.house_doc_issue_date.strftime('%d/%m/%Y')"/>
+                                    <t t-else="">—</t> at <t t-out="(company.city or '').upper()"/>
+                                </td>
+                                <td style="width: 50%; height: 60px;">
+                                    <span class="box-label">Signature of issuing carrier or its agent</span>
+                                    <t t-out="company.name.upper()"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+    </template>
+
+    <template id="report_cargo_manifest">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="boss_documents.report_cargo_manifest_document" t-lang="'en_US'"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_cargo_manifest_document">
+                <t t-call="web.basic_layout">
+                    <t t-call="boss_documents.house_document_style"/>
+                    <t t-set="company" t-value="doc.company_id"/>
+                    <t t-set="houses" t-value="doc._boss_manifest_houses()"/>
+                    <t t-set="air" t-value="doc.transport_mode == 'air'"/>
+                    <div class="page boss-hd">
+                        <h1 class="text-center mb-3">MANIFIESTO DE CARGA — CARGO MANIFEST</h1>
+                        <table class="boxes">
+                            <tr>
+                                <td><span class="box-label">Owner operator</span><t t-out="company.name.upper()"/></td>
+                                <td><span class="box-label"><t t-if="air">Master air waybill</t><t t-else="">Master B/L</t></span>
+                                    <t t-out="doc.mawb_ref if air else doc.mbl_ref"/></td>
+                                <td><span class="box-label"><t t-if="air">Flight</t><t t-else="">Vessel / voyage</t></span>
+                                    <t t-out="' '.join(x for x in (doc.vessel, doc.voyage) if x)"/></td>
+                                <td><span class="box-label">File</span><t t-out="doc.name"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><span class="box-label">Port of loading</span><t t-out="doc.origin_port_id.display_name"/>,
+                                    <t t-out="doc.origin_port_id.country_id.name"/></td>
+                                <td colspan="2"><span class="box-label">Port of unloading</span><t t-out="doc.destination_port_id.display_name"/>,
+                                    <t t-out="doc.destination_port_id.country_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="box-label">Shipper</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="company.partner_id"/></t>
+                                </td>
+                                <td colspan="2">
+                                    <span class="box-label">Consignee (agent at destination)</span>
+                                    <t t-call="boss_documents.house_document_party"><t t-set="party" t-value="doc.agent_id"/></t>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="boxes mt-3">
+                            <tr>
+                                <td style="width: 11%;"><span class="box-label"><t t-if="air">HAWB number</t><t t-else="">HBL number</t></span></td>
+                                <td style="width: 6%;"><span class="box-label">Freight</span></td>
+                                <td style="width: 7%;"><span class="box-label">Pieces</span></td>
+                                <td style="width: 9%;"><span class="box-label">Weight (kg)</span></td>
+                                <td style="width: 8%;"><span class="box-label">Volume (m³)</span></td>
+                                <td style="width: 21%;"><span class="box-label">Shipper name / address</span></td>
+                                <td style="width: 21%;"><span class="box-label">Consignee name / address</span></td>
+                                <td style="width: 17%;"><span class="box-label">Nature of goods</span></td>
+                            </tr>
+                            <tr t-foreach="houses" t-as="house">
+                                <td><t t-out="(house.hawb_ref if air else house.hbl_ref) or house.name"/>
+                                    <div class="small" t-if="(house.hawb_ref if air else house.hbl_ref)">File <t t-out="house.name"/></div></td>
+                                <td t-out="{'prepaid': 'P', 'collect': 'C'}.get(house.house_doc_freight, '')"/>
+                                <td t-out="house.packages"/>
+                                <td t-out="'%.2f' % house.gross_kg"/>
+                                <td><t t-if="house.volume_m3" t-out="'%.3f' % house.volume_m3"/></td>
+                                <td><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="house.shipper_id"/></t></td>
+                                <td><t t-call="boss_documents.house_document_party"><t t-set="party" t-value="house.consignee_id"/></t></td>
+                                <td>
+                                    <div class="box-value" t-out="house.goods_description"/>
+                                    <div t-if="house.hs_code">HS CODE <t t-out="house.hs_code"/></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>TOTALS</strong></td>
+                                <td/>
+                                <td><strong t-out="sum(houses.mapped('packages'))"/></td>
+                                <td><strong t-out="'%.2f' % sum(houses.mapped('gross_kg'))"/></td>
+                                <td><strong t-out="'%.3f' % sum(houses.mapped('volume_m3'))"/></td>
+                                <td colspan="3"><strong><t t-if="air">HAWBs</t><t t-else="">HBLs</t>: <t t-out="len(houses)"/></strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+    </template>
+</odoo>

@@ -12,7 +12,28 @@
                         groups="purchase.group_purchase_user"
                         invisible="state in ('closed', 'cancel') or not (scope_pickup or scope_delivery)"
                         help="PDF for the haulier: pickup, delivery, containers and goods. Printed, never sent from Odoo."/>
+                <button name="action_print_house_document" type="object" string="House B/L"
+                        groups="purchase.group_purchase_user"
+                        invisible="transport_mode != 'sea' or consolidation_role == 'master' or state == 'cancel'"
+                        help="BOSS's house bill of lading (NVOCC): a DRAFT for the shipper to check until it is issued."/>
+                <button name="action_print_house_document" type="object" string="House AWB"
+                        groups="purchase.group_purchase_user"
+                        invisible="transport_mode != 'air' or consolidation_role == 'master' or state == 'cancel'"
+                        help="BOSS's house air waybill: a DRAFT for the shipper to check until it is issued."/>
+                <button name="action_issue_house_document" type="object" string="Issue house document"
+                        groups="purchase.group_purchase_user"
+                        invisible="transport_mode not in ('sea', 'air') or consolidation_role == 'master' or house_doc_issue_date or state == 'cancel'"
+                        confirm="Issue the house document? It takes its number and today's date, and stops printing as a draft."/>
+                <button name="action_print_cargo_manifest" type="object" string="Cargo manifest"
+                        groups="purchase.group_purchase_user"
+                        invisible="transport_mode not in ('sea', 'air') or consolidation_role == 'house' or state == 'cancel'"
+                        help="The houses travelling under the master document: shipper, consignee, packages, weight, goods."/>
             </button>
+            <xpath expr="//field[@name='hbl_release']" position="after">
+                <field name="house_doc_freight" invisible="transport_mode not in ('sea', 'air')"/>
+                <field name="house_doc_issue_date" invisible="transport_mode not in ('sea', 'air')" readonly="1"/>
+                <field name="house_doc_marks" invisible="transport_mode != 'sea'"/>
+            </xpath>
         </field>
     </record>
 </odoo>
