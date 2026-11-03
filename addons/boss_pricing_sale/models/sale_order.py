@@ -194,10 +194,46 @@ class SaleOrder(models.Model):
                 self[order_field] = template[template_field]
         self._onchange_boss_direction_spain()
         self._boss_apply_orderer_party()
+        self._boss_propose_spanish_address()
+        self._boss_propose_spanish_port()
 
     @api.onchange("partner_id", "boss_direction", "boss_business")
     def _onchange_boss_orderer_party(self):
         self._boss_apply_orderer_party()
+        self._boss_propose_spanish_address()
+        self._boss_propose_spanish_port()
+
+    @api.onchange("boss_consignee_id", "boss_shipper_id", "boss_transport_mode")
+    def _onchange_boss_spanish_proposals(self):
+        self._boss_propose_spanish_address()
+        self._boss_propose_spanish_port()
+
+    def _boss_propose_spanish_port(self):
+        """Spanish port or airport proposed from practice, never from a rule: the one of the customer's latest
+        quotation with the same traffic and mode, else the one BOSS uses most for that mode. Only fills an empty
+        field (the user changes it when the shipment goes through another port)."""
+        side = spanish_side(self.boss_direction)
+        if not side or not self.boss_transport_mode or self[f"boss_{side}_port_id"]:
+            return
+        field = f"boss_{side}_port_id"
+        kind = {"sea": "sea", "air": "air"}.get(self.boss_transport_mode)
+        if not kind:
+            return
+        base = [(field, "!=", False), (f"{field}.kind", "=", kind), (f"{field}.country_id.code", "=", "ES"),
+                ("id", "not in", self.ids)]
+        customer = self.partner_id.commercial_partner_id
+        previous = self.env["sale.order"]
+        if customer and self.boss_traffic_code:
+            previous = self.search(base + [("partner_id", "child_of", customer.id),
+                                           ("boss_traffic_code", "=", self.boss_traffic_code)],
+                                   order="date_order desc, id desc", limit=1)
+        if previous:
+            self[field] = previous[field]
+            return
+        groups = self._read_group(base + [("boss_direction", "=", self.boss_direction)], [field], ["__count"],
+                                  order="__count desc", limit=1)
+        if groups:
+            self[field] = groups[0][0]
 
     @api.onchange("boss_delivery_address_id", "boss_pickup_address_id", "boss_direction")
     def _onchange_boss_spanish_address(self):

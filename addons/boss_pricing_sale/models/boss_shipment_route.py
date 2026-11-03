@@ -237,6 +237,33 @@ class BossShipmentRoute(models.AbstractModel):
         self.ensure_one()
         return self.boss_awb_kg or self.boss_chargeable_kg or None
 
+    @api.onchange("boss_origin_port_id", "boss_destination_port_id")
+    def _onchange_boss_port_country(self):
+        """A port belongs to one country: choosing the port fills (or corrects) the country of its side, so the
+        country need not be typed first (the port list is not restricted while the country is empty)."""
+        for side in ("origin", "destination"):
+            port = self[f"boss_{side}_port_id"]
+            if port and self[f"boss_{side}_country_id"] != port.country_id:
+                self[f"boss_{side}_country_id"] = port.country_id
+
+    def _boss_propose_spanish_address(self):
+        """Address of the Spanish side proposed from the party of that side (the consignee of an import, the shipper
+        of an export; the ordering party for a national shipment): its only delivery address, else the party itself
+        when its address is in Spain. Only fills an empty field; the user chooses another warehouse when needed."""
+        side = spanish_side(self.boss_direction)
+        if not side:
+            return
+        field = "boss_delivery_address_id" if side == "destination" else "boss_pickup_address_id"
+        party = self.boss_consignee_id if side == "destination" else self.boss_shipper_id
+        party = (party or self.partner_id).commercial_partner_id  # quotation and opportunity both name a partner
+        if self[field] or not party:
+            return
+        deliveries = party.child_ids.filtered(lambda c: c.type == "delivery" and c.country_id.code == "ES")
+        if len(deliveries) == 1:
+            self[field] = deliveries
+        elif not deliveries and party.country_id.code == "ES" and party.state_id:
+            self[field] = party
+
     @api.onchange("boss_direction")
     def _onchange_boss_direction_spain(self):
         """Import and export: the Spanish side is Spain and the side abroad cannot be. National: both sides are Spain.

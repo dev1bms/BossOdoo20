@@ -24,7 +24,7 @@
                             <field name="boss_scope_main"/>
                             <field name="boss_scope_destination_customs"/>
                             <field name="boss_scope_delivery"/>
-                            <field name="boss_carrier_id"/>
+                            <field name="boss_carrier_id" domain="[('is_company', '=', True)]" options="{'no_create': True}"/>
                             <field name="boss_port_kind" invisible="1"/>
                         </group>
                     </group>
