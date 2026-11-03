@@ -3,7 +3,9 @@
 Each case is a quotation of a real customer already on boss20 with the route, parties, cargo and services of the Odoo 17
 file it copies (dates moved to the coming weeks). No Odoo 17 amount is copied: costs come from the boss20 tariffs; where
 none exists the line is «cost on request» (named supplier without price, M2-19) or, for freight, a fictitious amount
-typed as manual cost; BOSS's own fees get a fictitious typed price. Every such step is printed as MANUAL.
+typed as manual cost. Selling prices come from the pricelists (BOSS's Odoo 17 prices since 03/11/2026, item 3): the
+customer's agreed prices, the general «Standard» prices, else cost + %; a service still without one gets a fictitious
+typed price of 100 for the whole service. Every such step is printed as MANUAL.
     IMB-FCL  sea import FCL, model E260883 (Xingang → Valencia, 1×20' DV + 1×40' HC, MSC, origin agent)
     IAB      air import, model E260167 (Guangzhou → Madrid, Qatar Airways, handler WFS)
     EMB-LCL  sea export LCL, model E260769 (Algeciras → Conakry, MSC)
@@ -55,14 +57,14 @@ CASES = [
                "boss_gross_kg": 35700.0, "boss_volume_m3": 60.0},
      "suppliers": {"FMI": PORTEVER, "THC": MSC, "BL": MSC, "GLO-CCC": MSC, "T3-PAD": MSC, "FAD": ADUCEX,
                    "TTE-FCL": MSC},
-     "manual_cost": {"FMI": 1000.0}, "own_price": {"CSM": 60.0}},
+     "manual_cost": {"FMI": 1000.0}},
     {"key": "IAB", "model": "E260167", "customer": o17(23012), "template": "IAB FOB", "carrier": QATAR,
      "origin": ("CN", "CAN", "air"), "destination": ("ES", "MAD", "air"),
      "etd": date(2026, 11, 17), "eta": date(2026, 11, 18), "containers": [],
      "cargo": {"boss_goods_description": "[PRUEBA] Latiguillos de fibra (patchcord)", "boss_packages": 14,
                "boss_package_type": "CT", "boss_gross_kg": 172.0, "boss_volume_m3": 0.83},
      "suppliers": {"FAI": SINOTECH, "HAN": WFS, "AWB": WFS, "ETX": WFS, "FAD": ADUCEX, "TTE-CON": BARBICAN},
-     "manual_cost": {"FAI": 4.0}, "own_price": {"CSA": 60.0}},
+     "manual_cost": {"FAI": 4.0}},
     {"key": "EMB-LCL", "model": "E260769", "customer": o17(23014), "template": False, "carrier": MSC,
      "direction": "export", "mode": "sea", "load": "lcl",
      "origin": ("ES", "ESALG", "sea"), "destination": ("GN", "GNCKY", "sea"),
@@ -71,7 +73,7 @@ CASES = [
                "boss_package_type": "PL", "boss_gross_kg": 1800.0, "boss_volume_m3": 6.0},
      "lines": ["FME-LCL", "DEX", "CSM"],
      "suppliers": {"FME-LCL": MSC, "DEX": ADUCEX},
-     "manual_cost": {"FME-LCL": 50.0}, "own_price": {"CSM": 60.0}},
+     "manual_cost": {"FME-LCL": 50.0}},
     {"key": "IMA-LCL", "model": "E250834", "customer": o17(23584), "template": False, "carrier": False,
      "business": "agent", "direction": "import", "mode": "sea", "load": "lcl",
      "origin": ("HK", "HKHKG", "sea"), "destination": ("ES", "ESVLC", "sea"),
@@ -81,7 +83,7 @@ CASES = [
      "lines": ["THC-LCL", "FAD", "TTE-CON", "CSM"],
      "suppliers": {"FAD": ADUCEX, "TTE-CON": BARBICAN},
      "walk_suppliers": {"THC-LCL": 23073},  # the CFS that handled E250834 in Odoo 17 (TRANSGLORY), chosen on the file
-     "manual_cost": {}, "own_price": {"CSM": 60.0}},
+     "manual_cost": {}},
 ]
 
 
@@ -136,9 +138,6 @@ def build(case):
         order.order_line.filtered(lambda l, c=code: l.product_id.default_code == c).write(
             {"boss_manual_cost": amount, "boss_manual_cost_note": "[PRUEBA] importe ficticio, no es el de Odoo 17"})
         manual(key, f"{code}: fictitious freight cost typed (no freight rate for this route on boss20)")
-    for code, price in case["own_price"].items():
-        order.order_line.filtered(lambda l, c=code: l.product_id.default_code == c).price_unit = price
-        manual(key, f"{code}: BOSS fee typed, fictitious (selling prices of Odoo 17 not loaded yet: item 3)")
     order.action_boss_update_costs()
     print(f"CASE {key}: quotation {order.name} created for {order.partner_id.name} ({order.boss_traffic_code})")
     return order
