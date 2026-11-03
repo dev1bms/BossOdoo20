@@ -59,6 +59,20 @@ msgstr "%(file)s todavía no puede cerrar operaciones: %(problems)s."
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%(file)s: %(parties)s"
+msgstr "%(file)s: %(parties)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%(files)s: operations are closed, so its shipment data is frozen (%(fields)s). Reopen the file to change it."
+msgstr ""
+"%(files)s: las operaciones están cerradas, así que sus datos del envío están congelados (%(fields)s). Reabra el expediente para cambiarlos."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%(group)s margin %(margin)s, minimum %(minimum)s"
 msgstr "%(group)s margen %(margin)s, mínimo %(minimum)s"
 
@@ -296,6 +310,11 @@ msgid "(A36)"
 msgstr "(A36)"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_rating__rating
+msgid "0 very bad, 10 excellent."
+msgstr "0 muy malo, 10 excelente."
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
 msgid "<span class=\"o_stat_text\">File</span>"
 msgstr "<span class=\"o_stat_text\">Expediente</span>"
@@ -339,6 +358,11 @@ msgstr "<strong>Siguiente paso:</strong>"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "<strong>Still to rate: </strong>"
+msgstr "<strong>Pendiente de valorar: </strong>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "<strong>To do: </strong>"
 msgstr "<strong>Pendiente: </strong>"
 
@@ -363,6 +387,11 @@ msgstr ""
 msgid "A house hangs from a master file, and a master is not a house itself."
 msgstr ""
 "Una casa cuelga de un expediente máster, y un máster no es a su vez una casa."
+
+#. module: boss_expediente
+#: model:ir.model.constraint,message:boss_expediente.constraint_boss_expediente_rating_party_unique
+msgid "A party is rated once per file and role."
+msgstr "Una parte se valora una vez por expediente y papel."
 
 #. module: boss_expediente
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_expediente_allocation_file_line_unique
@@ -686,6 +715,15 @@ msgid "Attachment Count"
 msgstr "Número de adjuntos"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__supplier_rating
+#: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_rating_avg
+#: model:ir.model.fields,help:boss_expediente.field_res_users__boss_rating_avg
+msgid ""
+"Average of the ratings (0-10) given on its files, as customer or supplier (F0-C66)."
+msgstr ""
+"Media de las valoraciones (0-10) recibidas en sus expedientes, como cliente o proveedor (F0-C66)."
+
+#. module: boss_expediente
 #: model:ir.module.module,shortdesc:base.module_boss_expediente
 msgid "BOSS Shipment Files"
 msgstr "Expedientes BOSS"
@@ -988,6 +1026,11 @@ msgid "Collected (with taxes)"
 msgstr "Cobrado (con impuestos)"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__note
+msgid "Comment"
+msgstr "Comentario"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__commercial
 msgid "Commercial"
 msgstr "Comercial"
@@ -1010,6 +1053,7 @@ msgstr "Compras comprometidas"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__company_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__company_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__company_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__company_id
 msgid "Company"
 msgstr "Compañía"
@@ -1231,6 +1275,7 @@ msgstr "Crear las solicitudes de presupuesto"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_uid
@@ -1249,6 +1294,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_date
@@ -1289,6 +1335,7 @@ msgstr "Moneda"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__partner_id
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_customer
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_customer
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_rating__role__customer
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "Customer"
@@ -1565,6 +1612,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__display_name
@@ -1597,11 +1645,6 @@ msgid ""
 "Documented exception to the purchase order: amounts paid on behalf of the customer (duties, import VAT of the customs declaration) are known from the declaration and billed by the customs broker at cost. Their bill is entered with 'Cost without purchase order' on the file and matched here by service."
 msgstr ""
 "Excepción documentada al pedido de compra: los importes pagados en nombre del cliente (derechos, IVA de importación del DUA) se conocen por la declaración y los factura el agente de aduanas al coste. Su factura se registra con «Coste sin pedido de compra» en el expediente y se casa aquí por servicio."
-
-#. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_attachment_ids
-msgid "Documents published to the customer"
-msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_docs_sent_date
@@ -1913,6 +1956,7 @@ msgstr "Cifras del"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__expediente_id
@@ -1933,6 +1977,12 @@ msgstr "Expediente %s: datos para el despacho de aduanas"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "File dates changed"
 msgstr "Cambio de fechas del expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_rating_ids
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_rating_ids
+msgid "File ratings"
+msgstr "Valoraciones en expedientes"
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_account_move_line__boss_expediente_id
@@ -2081,6 +2131,14 @@ msgstr "Entrada del lleno en terminal"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__pickup_date
 msgid "Full pickup"
 msgstr "Recogida del lleno"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"Give each one a rating from 0 to 10 in the «Ratings» tab, then close operations."
+msgstr ""
+"Dé a cada una una valoración de 0 a 10 en la pestaña «Valoraciones» y después cierre las operaciones."
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -2263,6 +2321,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__id
@@ -2478,6 +2537,7 @@ msgstr "LCL (grupaje)"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_uid
@@ -2496,6 +2556,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_date
@@ -2521,6 +2582,11 @@ msgstr "Vincular la oferta aceptada"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
 msgid "Link to an existing file"
 msgstr "Vincular a un expediente existente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "List the parties to rate"
+msgstr "Listar las partes a valorar"
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_is_customer
@@ -2737,12 +2803,6 @@ msgid "My files"
 msgstr "Mis expedientes"
 
 #. module: boss_expediente
-#: model:ir.actions.act_window,name:boss_expediente.boss_expediente_my_work_action
-#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_my_work
-msgid "My work"
-msgstr "Mi trabajo"
-
-#. module: boss_expediente
 #: model:boss.port,name:boss_expediente.port_esagp_air
 msgid "Málaga"
 msgstr "Málaga"
@@ -2923,11 +2983,6 @@ msgid "Nothing to order."
 msgstr "No hay nada que pedir."
 
 #. module: boss_expediente
-#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_my_work_action
-msgid "Nothing waiting for you"
-msgstr "Nada pendiente para usted"
-
-#. module: boss_expediente
 #: model:boss.partner.role,name:boss_expediente.role_notify
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__notify_id
 msgid "Notify party"
@@ -2991,12 +3046,6 @@ msgstr "Solo %s puede hacer esto en un expediente."
 msgid "Only a sales manager can add a service to an accepted order."
 msgstr ""
 "Solo un responsable de ventas puede añadir un servicio a un pedido aceptado."
-
-#. module: boss_expediente
-#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__portal_attachment_ids
-msgid ""
-"Only these documents reach the customer's portal (never the whole chatter). A master document may contain other customers' data: publish it only when it is this customer's."
-msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_margin_final
@@ -3256,6 +3305,18 @@ msgstr ""
 "Parte de los costes del máster que soporta esta casa, según la base del máster (tecleada cuando la base es manual)."
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__rating_missing
+msgid ""
+"Parties of the file without a rating (customer and suppliers bought from)."
+msgstr ""
+"Partes del expediente sin valorar (cliente y proveedores a los que se compró)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__partner_id
+msgid "Party"
+msgstr "Parte"
+
+#. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_account_payment_register
 msgid "Pay"
 msgstr "Pagar"
@@ -3413,11 +3474,6 @@ msgstr ""
 "Provincia de la entrega (importación) o recogida (exportación) en España, según su dirección; los transportistas cobran por zona."
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__portal_published
-msgid "Published to the customer"
-msgstr ""
-
-#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__purchase_count
 msgid "Purchase Count"
 msgstr "Número de compras"
@@ -3524,6 +3580,49 @@ msgstr "Solicitudes de presupuesto sin confirmar (no cuentan)"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "RFQs to confirm"
 msgstr "solicitudes de presupuesto por confirmar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Rate the parties before closing"
+msgstr "Valore las partes antes de cerrar"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__user_id
+msgid "Rated by"
+msgstr "Valorado por"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_rating_avg
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_rating_avg
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_list_todo
+msgid "Rating"
+msgstr "Valoración"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__rating
+msgid "Rating (0-10)"
+msgstr "Valoración (0-10)"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente_rating
+msgid "Rating of a party of a shipment file"
+msgstr "Valoración de una parte de un expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__rating_ids
+#: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_rating_count
+#: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_rating_count
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Ratings"
+msgstr "Valoraciones"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_ratings_to_close
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_ratings_to_close
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Ratings required to close operations"
+msgstr "Valoraciones obligatorias para el cierre operativo"
 
 #. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_boss_rebill_wizard
@@ -3689,6 +3788,11 @@ msgid ""
 "Road transport supplier of the pickup or delivery; from the accepted quotation."
 msgstr ""
 "Proveedor del transporte por carretera de la recogida o la entrega; de la oferta aceptada."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__role
+msgid "Role"
+msgstr "Papel"
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_res_partner__boss_role_ids
@@ -4054,6 +4158,11 @@ msgid "Still expected"
 msgstr "Aún previsto"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__rating_missing
+msgid "Still to rate"
+msgstr "Pendiente de valorar"
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__next_step
 msgid ""
 "Suggested next step in BOSS's order of work. A guide: it blocks nothing."
@@ -4069,6 +4178,7 @@ msgstr "Resumen"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__partner_id
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_supplier
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_supplier
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_rating__role__supplier
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
 msgid "Supplier"
 msgstr "Proveedor"
@@ -4104,6 +4214,11 @@ msgid "Supplier price"
 msgstr "Precio de proveedor"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__supplier_rating
+msgid "Supplier rating"
+msgstr "Valoración del proveedor"
+
+#. module: boss_expediente
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files_suppliers
 msgid "Suppliers"
 msgstr "Proveedores"
@@ -4114,11 +4229,6 @@ msgid "Tariff date"
 msgstr "Fecha de tarifa"
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__portal_text
-msgid "Text for the customer"
-msgstr ""
-
-#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "The actual arrival (ATA) is known. Typing the ATA does it by itself."
 msgstr "Se conoce la llegada real (ATA). Al teclear la ATA se marca solo."
@@ -4127,6 +4237,30 @@ msgstr "Se conoce la llegada real (ATA). Al teclear la ATA se marca solo."
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_partner_role_code_unique
 msgid "The code of a logistic role must be unique."
 msgstr "El código de un rol logístico debe ser único."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_ratings_to_close
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_ratings_to_close
+msgid ""
+"The customer and every supplier of a file are rated (0-10) before its operations close, as in Odoo 17."
+msgstr ""
+"El cliente y cada proveedor de un expediente se valoran (0-10) antes del cierre operativo, como en Odoo 17."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025)."
+msgstr ""
+"El cliente y cada proveedor de un expediente se valoran de 0 a 10 antes del cierre operativo (F0-C66, como en Odoo 17 desde el 01/03/2025)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ""
+"The customer and every supplier the file bought from, from 0\n"
+"                                (very bad) to 10 (excellent), before operations close (as in Odoo 17). Their average is shown\n"
+"                                on the contact and in «Services to buy»."
+msgstr ""
+"El cliente y cada proveedor al que compró el expediente, de 0 (muy malo) a 10 (excelente), antes del cierre operativo (como en Odoo 17). Su media se ve en el contacto y en «Servicios a comprar»."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__port_id
@@ -4291,16 +4425,6 @@ msgstr "Población de la entrega; se rellena con la dirección de entrega."
 #: model:ir.model.fields,help:boss_expediente.field_crm_lead__boss_origin_place
 msgid "Town of the pickup; filled from the pickup address."
 msgstr "Población de la recogida; se rellena con la dirección de recogida."
-
-#. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_tracking_url
-msgid "Tracking link"
-msgstr ""
-
-#. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_tracking_token
-msgid "Tracking link token"
-msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__traffic_code
@@ -4520,11 +4644,6 @@ msgstr ""
 "Lo que pide el cliente. Rellene lo que se sepa; «Nuevo presupuesto» lo pasa una vez a la oferta."
 
 #. module: boss_expediente
-#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_event__portal_text
-msgid "What the customer reads. The internal note is never shown."
-msgstr ""
-
-#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_broker_text
 msgid ""
 "What the customs broker needs to clear the goods (Cristina, «Nuevo Odoo» › OPS- exptes A37): parties, transport documents, containers, goods and the freight, THC, T3 and insurance sold for the customs value. Copied and sent by the operator; Odoo never sends it."
@@ -4612,15 +4731,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
-
-#. module: boss_expediente
-#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_my_work_action
-msgid ""
-"Your files that need an action appear here, by status, with their next step. Remove the «My files» filter to\n"
-"                see everybody's."
-msgstr ""
-"Aquí aparecen sus expedientes que necesitan una acción, por estado, con su siguiente paso. Quite el filtro «Mis\n"
-"                expedientes» para ver los de todos."
 
 #. module: boss_expediente
 #. odoo-python
@@ -4823,6 +4933,12 @@ msgstr "fecha y hora de recogida"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "purchase orders to review after a cost recalculation"
 msgstr "pedidos de compra a revisar tras un recálculo de coste"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "rate first: %s"
+msgstr "valore antes: %s"
 
 #. module: boss_expediente
 #. odoo-python
