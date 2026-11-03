@@ -306,6 +306,7 @@ msgstr "Acción necesaria"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__active
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__active
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__active
 msgid "Active"
 msgstr "Activo"
 
@@ -517,6 +518,7 @@ msgstr "Cero aprobado"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_airline_handler_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Archived"
 msgstr "Archivado"
 
@@ -749,6 +751,11 @@ msgstr ""
 "Peso tasable escrito en la guía aérea; los handlers cobran sobre él. Vacío: se usa el peso tasable estimado."
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__choose_supplier
+msgid "Choose the missing suppliers"
+msgstr "Elegir los proveedores que faltan"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
 msgid ""
 "Choose the services to invoice now; the others stay to invoice. To invoice part of a\n"
@@ -763,14 +770,14 @@ msgid "Choose the supplier of: %s"
 msgstr "Elija el proveedor de: %s"
 
 #. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__close_financial
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Close financially"
 msgstr "Cerrar económicamente"
 
 #. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__close_operations
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Close operations"
 msgstr "Cerrar operaciones"
 
@@ -832,6 +839,11 @@ msgstr ""
 #: model:ir.model,name:boss_expediente.model_res_config_settings
 msgid "Config Settings"
 msgstr "Ajustes de configuración"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__confirm_rfq
+msgid "Confirm the requests for quotation with the suppliers"
+msgstr "Confirmar las solicitudes de presupuesto con los proveedores"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__confirmed
@@ -972,6 +984,11 @@ msgid "Create draft invoice"
 msgstr "Crear factura en borrador"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__order
+msgid "Create the requests for quotation"
+msgstr "Crear las solicitudes de presupuesto"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__create_uid
@@ -1023,6 +1040,7 @@ msgstr "Moneda"
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_customer
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_customer
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__partner_id
 msgid "Customer"
 msgstr "Cliente"
 
@@ -1297,6 +1315,7 @@ msgstr "ETA"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__etd
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_etd
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
 msgid "ETD"
 msgstr "ETD"
 
@@ -1714,6 +1733,16 @@ msgid "Has Message"
 msgstr "Tiene mensaje"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__has_to_invoice
+msgid "Has To Invoice"
+msgstr "Hay importe por facturar"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__has_to_order
+msgid "Has To Order"
+msgstr "Hay servicios por pedir"
+
+#. module: boss_expediente
 #: model:boss.partner.role,name:boss_expediente.role_haulier
 msgid "Haulier"
 msgstr "Transportista terrestre"
@@ -1871,6 +1900,11 @@ msgid "Invoice services"
 msgstr "Facturar servicios"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__invoice
+msgid "Invoice the customer"
+msgstr "Facturar al cliente"
+
+#. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_invoiced
@@ -1955,6 +1989,11 @@ msgstr "Última actualización el"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__lead_id
 msgid "Lead"
 msgstr "Oportunidad"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__link_quotation
+msgid "Link the accepted quotation"
+msgstr "Vincular la oferta aceptada"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
@@ -2042,6 +2081,16 @@ msgid "Mark as performed"
 msgstr "Marcar como prestado"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__delivered
+msgid "Mark the file delivered"
+msgstr "Marcar el expediente como entregado"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__perform
+msgid "Mark the ordered services performed"
+msgstr "Marcar como realizados los servicios pedidos"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__mawb_ref
 msgid "Master AWB"
 msgstr "Master AWB"
@@ -2124,6 +2173,12 @@ msgid "My files"
 msgstr "Mis expedientes"
 
 #. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_expediente_my_work_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_my_work
+msgid "My work"
+msgstr "Mi trabajo"
+
+#. module: boss_expediente
 #: model:boss.port,name:boss_expediente.port_esagp_air
 msgid "Málaga"
 msgstr "Málaga"
@@ -2143,6 +2198,11 @@ msgstr "Nombre"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "National"
 msgstr "Nacional"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Needs action"
+msgstr "Necesitan acción"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__extra_class__approval
@@ -2181,6 +2241,16 @@ msgid "Next Activity Type"
 msgstr "Tipo de la siguiente actividad"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__next_step
+msgid "Next step"
+msgstr "Siguiente paso"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__next_step_detail
+msgid "Next step detail"
+msgstr "Detalle del siguiente paso"
+
+#. module: boss_expediente
 #: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
 msgid "No cost expected yet"
 msgstr "Todavía no hay ningún coste previsto"
@@ -2189,6 +2259,11 @@ msgstr "Todavía no hay ningún coste previsto"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__closed
 msgid "No more cost expected"
 msgstr "No se espera más coste"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_operator_assignment_action
+msgid "No operator assigned yet"
+msgstr "Todavía no hay operativos asignados"
 
 #. module: boss_expediente
 #. odoo-python
@@ -2249,6 +2324,11 @@ msgid "Note"
 msgstr "Nota"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__done
+msgid "Nothing left to do"
+msgstr "Nada pendiente"
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__closed
 msgid ""
 "Nothing more will be ordered or billed (service cancelled, supplier replaced, cost not incurred)."
@@ -2266,6 +2346,11 @@ msgstr "No hay nada que facturar en %s."
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Nothing to order."
 msgstr "No hay nada que pedir."
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_my_work_action
+msgid "Nothing waiting for you"
+msgstr "Nada pendiente para usted"
 
 #. module: boss_expediente
 #: model:boss.partner.role,name:boss_expediente.role_notify
@@ -2364,6 +2449,18 @@ msgstr "Operaciones cerradas"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Operations closed, finance open"
 msgstr "Operaciones cerradas, economía abierta"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__user_id
+msgid "Operator"
+msgstr "Operativo"
+
+#. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_operator_assignment_action
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_operators
+msgid "Operators by customer and traffic"
+msgstr "Operativos por cliente y tráfico"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__order_id
@@ -2744,6 +2841,11 @@ msgid "Purchases"
 msgstr "Compras"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__in_transit
+msgid "Put the file in transit"
+msgstr "Pasar el expediente a «En tránsito»"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_list_todo
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Qty"
@@ -2848,6 +2950,11 @@ msgid "Recomputed with the file data"
 msgstr "Recalculada con los datos del expediente"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__bills
+msgid "Record the supplier bills"
+msgstr "Registrar las facturas de proveedor"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__name
 msgid "Reference"
 msgstr "Referencia"
@@ -2902,9 +3009,22 @@ msgid "Responsible User"
 msgstr "Usuario responsable"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"Responsible proposed from «Operators by customer and traffic»: %(operator)s (%(traffic)s)."
+msgstr ""
+"Responsable propuesto desde «Operativos por cliente y tráfico»: %(operator)s (%(traffic)s)."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__status
 msgid "Result"
 msgstr "Resultado"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__review
+msgid "Review the pending items"
+msgstr "Revisar los pendientes"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__road
@@ -3185,6 +3305,7 @@ msgstr "Servicios vendidos en este expediente"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__source
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__source
 msgid "Source"
 msgstr "Origen del dato"
 
@@ -3220,6 +3341,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__pending_amount_company
 msgid "Still expected"
 msgstr "Aún previsto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__next_step
+msgid ""
+"Suggested next step in BOSS's order of work. A guide: it blocks nothing."
+msgstr ""
+"Siguiente paso sugerido en el orden de trabajo de BOSS. Es una guía: no bloquea nada."
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -3333,6 +3461,11 @@ msgid "The quantity of a file must be positive."
 msgstr "La cantidad de un expediente debe ser positiva."
 
 #. module: boss_expediente
+#: model:ir.model.constraint,message:boss_expediente.constraint_boss_operator_assignment_unique
+msgid "This customer already has an operator for this traffic."
+msgstr "Este cliente ya tiene un operativo para este tráfico."
+
+#. module: boss_expediente
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_airline_handler_unique
 msgid "This handler is already set for the airline at this airport."
 msgstr "Este handler ya está registrado para la aerolínea en este aeropuerto."
@@ -3355,6 +3488,11 @@ msgid "To do"
 msgstr "Pendiente"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "To do in operations"
+msgstr "Pendiente en operaciones"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__target_id
 msgid "To file"
 msgstr "Al expediente"
@@ -3370,6 +3508,11 @@ msgstr "Por facturar"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__to_invoice_quantity
 msgid "To invoice in this file"
 msgstr "Por facturar en este expediente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "To invoice or close"
+msgstr "Por facturar o cerrar"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__quantity
@@ -3402,6 +3545,8 @@ msgstr "Población de la recogida; se rellena con la dirección de recogida."
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_traffic_code
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__traffic_code
 msgid "Traffic"
 msgstr "Tráfico"
 
@@ -3434,6 +3579,11 @@ msgstr "Tipo de bulto"
 #: code:addons/boss_expediente/wizard/boss_expediente_split.py:0
 msgid "Type the quantity to move of at least one service."
 msgstr "Escriba la cantidad a mover de al menos un servicio."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__type_cost
+msgid "Type the unknown costs"
+msgstr "Teclear los costes desconocidos"
 
 #. module: boss_expediente
 #. odoo-python
@@ -3600,6 +3750,15 @@ msgid "What this person is contacted for."
 msgstr "Para qué se contacta a esta persona."
 
 #. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_operator_assignment_action
+msgid ""
+"When a file opens, the operator of its customer for its traffic (IMB, IAB, EMB…) becomes its responsible.\n"
+"                Without one, the responsible is who opened the file. It can always be changed on the file."
+msgstr ""
+"Al abrir un expediente, el operativo de su cliente para su tráfico (IMB, IAB, EMB…) pasa a ser su responsable.\n"
+"                Si no hay ninguno, el responsable es quien abrió el expediente. Siempre se puede cambiar en el expediente."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__profit_explanation
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Where the figures come from"
@@ -3653,6 +3812,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_my_work_action
+msgid ""
+"Your files that need an action appear here, by status, with their next step. Remove the «My files» filter to\n"
+"                see everybody's."
+msgstr ""
+"Aquí aparecen sus expedientes que necesitan una acción, por estado, con su siguiente paso. Quite el filtro «Mis\n"
+"                expedientes» para ver los de todos."
 
 #. module: boss_expediente
 #. odoo-python
@@ -3808,86 +3976,21 @@ msgid "tax ID"
 msgstr "NIF"
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__next_step
-msgid "Next step"
-msgstr "Siguiente paso"
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
+msgid "· ETA"
+msgstr "· ETA"
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__next_step_detail
-msgid "Next step detail"
-msgstr "Detalle del siguiente paso"
+#: model:ir.model,name:boss_expediente.model_boss_operator_assignment
+msgid "Operator of a customer for a traffic"
+msgstr "Operativo de un cliente para un tráfico"
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__has_to_order
-msgid "Has To Order"
-msgstr "Hay servicios por pedir"
+#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__traffic_code
+msgid "Direction, mode and whose client: IMB, IAB, EMB, EAB, IMA… (as on the file)."
+msgstr "Dirección, modo y de quién es el cliente: IMB, IAB, EMB, EAB, IMA… (como en el expediente)."
 
 #. module: boss_expediente
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__has_to_invoice
-msgid "Has To Invoice"
-msgstr "Hay importe por facturar"
-
-#. module: boss_expediente
-#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__next_step
-msgid "Suggested next step in BOSS's order of work. A guide: it blocks nothing."
-msgstr "Siguiente paso sugerido en el orden de trabajo de BOSS. Es una guía: no bloquea nada."
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__link_quotation
-msgid "Link the accepted quotation"
-msgstr "Vincular la oferta aceptada"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__choose_supplier
-msgid "Choose the missing suppliers"
-msgstr "Elegir los proveedores que faltan"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__type_cost
-msgid "Type the unknown costs"
-msgstr "Teclear los costes desconocidos"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__order
-msgid "Create the requests for quotation"
-msgstr "Crear las solicitudes de presupuesto"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__confirm_rfq
-msgid "Confirm the requests for quotation with the suppliers"
-msgstr "Confirmar las solicitudes de presupuesto con los proveedores"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__in_transit
-msgid "Put the file in transit"
-msgstr "Pasar el expediente a «En tránsito»"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__delivered
-msgid "Mark the file delivered"
-msgstr "Marcar el expediente como entregado"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__perform
-msgid "Mark the ordered services performed"
-msgstr "Marcar como realizados los servicios pedidos"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__invoice
-msgid "Invoice the customer"
-msgstr "Facturar al cliente"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__bills
-msgid "Record the supplier bills"
-msgstr "Registrar las facturas de proveedor"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__review
-msgid "Review the pending items"
-msgstr "Revisar los pendientes"
-
-#. module: boss_expediente
-#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__done
-msgid "Nothing left to do"
-msgstr "Nada pendiente"
+#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__source
+msgid "Where the assignment comes from (Odoo 17 «Operative Assign», a manager…)."
+msgstr "De dónde viene la asignación (Odoo 17 «Operative Assign», un responsable…)."

@@ -1,5 +1,6 @@
 from . import res_partner
 from . import boss_airline_handler
+from . import boss_operator_assignment
 from . import boss_expediente
 from . import boss_expediente_cost
 from . import boss_expediente_allocation

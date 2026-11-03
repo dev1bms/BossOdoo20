@@ -35,3 +35,5 @@ boss_expediente_split_line_salesman,Move services to another file (lines),boss.e
 boss_airline_handler_read,Airline handlers: read,boss.airline.handler,base.group_user,r,
 boss_airline_handler_purchase,Airline handlers: maintain (purchase),boss.airline.handler,purchase.group_purchase_user,crud,
 boss_airline_handler_manager,Airline handlers: maintain (sales manager),boss.airline.handler,sales_team.group_sale_manager,crud,
+boss_operator_assignment_read,Operators by customer and traffic: read,boss.operator.assignment,base.group_user,r,
+boss_operator_assignment_manager,Operators by customer and traffic: maintain,boss.operator.assignment,sales_team.group_sale_manager,crud,

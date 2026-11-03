@@ -347,6 +347,7 @@ class BossExpediente(models.Model):
                                      groups=MARGIN_GROUPS)
     completeness = fields.Text("To do", compute="_compute_amounts", compute_sudo=True)
     next_step = fields.Selection(NEXT_STEPS, "Next step", compute="_compute_amounts", compute_sudo=True,
+                                 search="_search_next_step",
                                  help="Suggested next step in BOSS's order of work. A guide: it blocks nothing.")
     next_step_detail = fields.Char("Next step detail", compute="_compute_amounts", compute_sudo=True)
     has_to_order = fields.Boolean(compute="_compute_amounts", compute_sudo=True)
@@ -366,9 +367,35 @@ class BossExpediente(models.Model):
                 vals["name"] = self.env["ir.sequence"].next_by_code("boss.expediente") or "/"
         files = super().create(vals_list)
         files._boss_create_analytic_account()
+        files._boss_propose_operator()
         for file in files.filtered(lambda f: not f.handler_id and len(f.handler_candidate_ids) == 1):
             file.handler_id = file.handler_candidate_ids  # the only handler known for the airline at the airport
         return files
+
+    def _boss_propose_operator(self):
+        """The operator of the customer for the file's traffic («Operators by customer and traffic», the Odoo 17
+        practice) becomes the responsible when the file opens; without one the responsible stays who opened it (the
+        salesman of the accepted quotation). It can be changed on the file at any time."""
+        Assignment = self.env["boss.operator.assignment"].sudo()
+        for file in self.sudo():  # who opens it may no longer see it once another user is responsible (own files)
+            operator = Assignment._operator_for(file.partner_id, file.traffic_code)
+            if operator and operator != file.user_id:
+                file.user_id = operator
+                file.message_post(body=self.env._(
+                    "Responsible proposed from «Operators by customer and traffic»: %(operator)s (%(traffic)s).",
+                    operator=operator.name, traffic=file.traffic_code))
+
+    def _search_next_step(self, operator, value):
+        """Files whose suggested next step is (not) one of the values. The step is not stored (it follows every
+        document of the file): it is computed on the files not closed financially, which is the work in progress."""
+        if operator not in ("in", "not in"):
+            return NotImplemented
+        values = {value} if isinstance(value, str) or not value else set(value)
+        files = self.search([("state", "!=", "cancel"), ("financial_closed", "=", False)])
+        ids = [file.id for file in files if file.next_step in values]
+        if "done" in values:
+            ids += self.search([("financial_closed", "=", True)]).ids
+        return [("id", "in" if operator == "in" else "not in", ids)]
 
     def _boss_create_analytic_account(self):
         plan = self.env.ref("boss_expediente.analytic_plan_files")

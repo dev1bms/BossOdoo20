@@ -4,6 +4,8 @@
     <menuitem id="menu_boss_files_root" name="Shipment files" sequence="25"
               web_icon="boss_expediente,static/description/icon.svg"
               groups="sales_team.group_sale_salesman,purchase.group_purchase_user,account.group_account_invoice"/>
+    <menuitem id="menu_boss_files_my_work" name="My work" parent="menu_boss_files_root" sequence="5"
+              action="boss_expediente_my_work_action"/>
     <menuitem id="menu_boss_files" name="Files" parent="menu_boss_files_root" sequence="10"
               action="boss_expediente_action"/>
     <menuitem id="menu_boss_files_costs" name="Services to buy" parent="menu_boss_files_root" sequence="20"
@@ -16,6 +18,9 @@
               action="account.res_partner_action_supplier"/>
     <menuitem id="menu_boss_files_handlers" name="Airlines and handlers" parent="menu_boss_files_root"
               sequence="50" action="boss_airline_handler_action"
+              groups="purchase.group_purchase_user,sales_team.group_sale_manager"/>
+    <menuitem id="menu_boss_files_operators" name="Operators by customer and traffic" parent="menu_boss_files_root"
+              sequence="55" action="boss_operator_assignment_action"
               groups="purchase.group_purchase_user,sales_team.group_sale_manager"/>
     <menuitem id="menu_boss_files_roles" name="Logistic roles" parent="menu_boss_files_root" sequence="90"
               action="boss_partner_role_action" groups="sales_team.group_sale_manager"/>
