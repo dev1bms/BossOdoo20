@@ -40,6 +40,11 @@ pantalla sin salida. No se inventa ninguna regla de negocio: lo que no está dec
    expedientes muestra la columna «Siguiente paso». Es una guía y no bloquea nada.
    *Hecho cuando* esté instalado en boss20, se vea en Chrome en un expediente [PRUEBA] (en español y en inglés), un
    script de comprobación recorra todos los pasos de un expediente sin fallos y la evidencia esté en `docs/evidencias/`.
+   **Entregado el 03/11** (boss_expediente 20.0.1.17.0, commit `2342252`): arnés 70/0 con 17 comprobaciones nuevas
+   (cada paso y cada «Ir», de la aceptación a «Nada pendiente»), evidencia
+   `docs/evidencias/20261103_1209_check_file_e2e_boss20_2342252c1235.txt`; visto en Chrome en E260038 (cabecera de 10 a
+   6 botones, «Ir» abre los servicios sin proveedor, menú «Acción», columna en la lista: 25 expedientes en 341 ms);
+   textos en español comprobados en boss20.
 2. **Español para todos y una lista limpia.** Poner en español los usuarios de BOSS (M2-11; Belal lo confirma),
    cancelar los 10 expedientes que quedan de la prueba del portal y hacer que esa prueba deshaga lo que crea.
    *Hecho cuando* Ángel y el resto vean 2.500,00 y textos en español, y la lista «En curso» no tenga restos de pruebas.
