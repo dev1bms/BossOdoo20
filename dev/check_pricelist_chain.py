@@ -1,5 +1,5 @@
-"""Check of roadmap item 3, G1 (boss20, rolled back): selling prices per container size and a customer pricelist that
-falls back to the general «cost + %» rule.
+"""Check of roadmap item 3, G1 and G4 (boss20, rolled back): selling prices per container size, a customer pricelist
+that falls back to the general «cost + %» rule, and the minimum margin warning of Odoo 17.
 
 A [PRUEBA] customer with its own pricelist agrees THC per container size (fictitious 611 for 20', 622 for 40'); its last
 rule is «based on the general pricelist». A sea import FCL quotation (template IMB FOB, MSC, Xingang → Valencia,
@@ -60,7 +60,7 @@ def quotation():
                 row.size = size
                 row.container_type_id = ref(f"boss_pricing.container_type_{ctype}")
     order = form.save()
-    for line in order.order_line.filtered(lambda l: l.product_id.default_code in ("THC", "BL", "FMI")):
+    for line in order.order_line.filtered(lambda l: l.product_id.default_code in ("THC", "BL", "FMI", "GLO-CCC")):
         line.boss_supplier_id = msc
     order.order_line.filtered(lambda l: l.product_id.default_code == "FMI").write(
         {"boss_manual_cost": 1000.0, "boss_manual_cost_note": "[PRUEBA] flete ficticio"})
@@ -74,15 +74,38 @@ check("THC has one line per container size", ["20", "40"], sorted(thc_lines.mapp
 check("THC 20' and 40' take the agreed price of their size",
       [("20", 611.0, "agreed"), ("40", 622.0, "agreed")],
       sorted((l.boss_container_size, l.price_unit, l.boss_sale_status) for l in thc_lines))
+glo = order.order_line.filtered(lambda l: l.product_id.default_code == "GLO-CCC")[:1]
+expected_glo = round(glo.purchase_price * (1 + markup / 100), 2)
+check("GLO-CCC, agreed nowhere, falls back to the general rule: cost + %", (expected_glo, "cost_based", True),
+      (round(glo.price_unit, 2), glo.boss_sale_status, bool(glo.purchase_price)))
+print(f"      {glo.boss_sale_explanation}")
 bl = order.order_line.filtered(lambda l: l.product_id.default_code == "BL")
-expected_bl = round(bl.purchase_price * (1 + markup / 100), 2)
-check("BL, not agreed, falls back to the general rule: cost + %", (expected_bl, "cost_based", True),
-      (round(bl.price_unit, 2), bl.boss_sale_status, bool(bl.purchase_price)))
-print(f"      {bl.boss_sale_explanation}")
+check("BL takes the general pricelist's agreed price (Odoo 17 «Standard»), not cost + %", "agreed", bl.boss_sale_status)
 fmi = order.order_line.filtered(lambda l: l.product_id.default_code == "FMI")
 check("freight with a manual cost falls back to the general rule too",
       [(round(1000.0 * (1 + markup / 100), 2), "cost_based")] * len(fmi),
       [(round(l.price_unit, 2), l.boss_sale_status) for l in fmi])
+
+# G4: the minimum margin warning of Odoo 17 (10 % of the cost per service group, 10 of tolerance; paid on behalf exact)
+check("no margin warning while every group is above 10 % of its cost", False, order.boss_margin_alert)
+fad = order.order_line.filtered(lambda l: l.product_id.default_code == "FAD")
+fad.boss_supplier_id = env.ref("o17_partner.res_partner_22998")  # ADUCEX: customs clearance tariff on boss20
+order.action_boss_update_costs()
+fad.price_unit = round(fad.purchase_price - 5.0, 2)  # 5 below the cost: margin -5 + 10 < 10 % of the cost
+order.write({"order_line": [Command.create({"product_id": product("ARA").id, "product_uom_id": product("ARA").uom_id.id,
+                                            "boss_manual_cost": 500.0, "boss_manual_cost_note": "[PRUEBA] aranceles"})]})
+order.action_boss_update_costs()
+ara = order.order_line.filtered(lambda l: l.product_id.default_code == "ARA")
+ara.price_unit = 520.0  # typed with a margin: an amount paid on behalf is re-invoiced at the amount paid
+print(f"      ARA cost {ara.boss_cost_status} {ara.purchase_price} sale {ara.boss_sale_status} {ara.price_unit} "
+      f"execution {ara.boss_execution} on behalf {ara.product_id.boss_paid_on_behalf}")
+print(f"      {order.boss_margin_alert}")
+alert = order.boss_margin_alert or ""
+check("a service group sold below 10 % of its cost is warned (customs, typed below cost)", True,
+      fad.product_id.categ_id.name in alert and "minimum" in alert)
+check("an amount paid on behalf re-invoiced with a margin is warned (must be equal)", True, "paid on behalf" in alert)
+check("the warning does not block the quotation (nothing about the margin in what stops it)", False,
+      any("margin" in issue.lower() for issue in order._boss_readiness_issues()))
 
 pricelist.item_ids.filtered(lambda i: i.base == "pricelist").unlink()
 order2 = quotation()

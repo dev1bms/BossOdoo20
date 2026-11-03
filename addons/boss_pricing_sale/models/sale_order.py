@@ -1,5 +1,8 @@
+from collections import defaultdict
+
 from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools.misc import formatLang
 
 from .boss_shipment_container import shipment_quantity
 from .boss_shipment_route import spanish_side
@@ -7,6 +10,12 @@ from .boss_shipment_route import spanish_side
 # Case data a quotation template gives to the quotation (ADR-006): what the template is for.
 # Road transport services (inland leg): their supplier is the haulier, the inland carrier (Ángel, 27/10/2026).
 ROAD_SERVICE_CODES = ("TTE-CON", "TTE-FCL")
+# Minimum margin per service group, the base rule of Odoo 17 (summary_utils: BASE_MARGIN_PERC 10 % of the cost,
+# VALUE_ROUND 10 of tolerance) and its «exact» rule for amounts paid on behalf. A warning only (P01/P02, package 2 of
+# docs/paquetes-aprobacion-f0.md: warn, never block); Odoo 17's 12 group rules by traffic and its exceptions per
+# customer are not loaded yet (docs/hoja-de-ruta.md).
+MIN_MARGIN_RATE = 0.10
+MIN_MARGIN_TOLERANCE = 10.0
 TEMPLATE_CASE_FIELDS = {"boss_business": "boss_business", "boss_direction": "boss_direction",
                         "boss_transport_mode": "boss_transport_mode", "boss_load_type": "boss_load_type",
                         "boss_incoterm_id": "incoterm"}
@@ -42,6 +51,10 @@ class SaleOrder(models.Model):
         help="Set when the quotation is accepted: prices only change through Re-price, with a reason.")
     boss_snapshot_ids = fields.One2many("boss.pricing.snapshot", "order_id", "Pricing history", readonly=True)
     boss_pricing_alert = fields.Text(compute="_compute_boss_pricing_alert")
+    boss_margin_alert = fields.Text(
+        "Margin below the minimum", compute="_compute_boss_margin_alert",
+        help="Per service group, the margin of the services whose cost is known against 10 % of their cost (10 of "
+        "tolerance), as in Odoo 17; amounts paid on behalf must be re-invoiced exactly. A warning: nothing is blocked.")
     boss_rate_quotation = fields.Boolean(
         "Rate quotation (no quantities)", copy=True,
         help="The customer asks for rates (per container of each size, per B/L...) without saying how many "
@@ -253,6 +266,35 @@ class SaleOrder(models.Model):
                 if count:
                     issues.append(f"{label}: {count}")
             order.boss_pricing_alert = " · ".join(issues) if issues else False
+
+    @api.depends("order_line.price_subtotal", "order_line.purchase_price", "order_line.product_uom_qty",
+                 "order_line.boss_cost_status", "order_line.boss_manual_cost")
+    def _compute_boss_margin_alert(self):
+        _ = self.env._
+        for order in self:
+            groups = defaultdict(lambda: [0.0, 0.0])  # category: [sale, cost]
+            exact = defaultdict(lambda: [0.0, 0.0])
+            for line in order.order_line.filtered(
+                    lambda l: l.product_id.boss_pricing_mode and not l.display_type and l.boss_sale_status != "missing"
+                    and (l.boss_execution == "boss" or l._boss_cost_known())):
+                cost = 0.0 if line.boss_execution == "boss" else line.purchase_price * line.product_uom_qty
+                target = exact if line.product_id.boss_paid_on_behalf else groups
+                target[line.product_id.categ_id][0] += line.price_subtotal
+                target[line.product_id.categ_id][1] += cost
+            currency = order.currency_id or order.company_id.currency_id
+            money = lambda amount: formatLang(self.env, amount, currency_obj=currency)  # noqa: E731
+            issues = []
+            for category, (sale, cost) in sorted(groups.items(), key=lambda item: item[0].name or ""):
+                minimum = MIN_MARGIN_RATE * cost
+                if cost and sale - cost + MIN_MARGIN_TOLERANCE < minimum:
+                    issues.append(_("%(group)s: margin %(margin)s, minimum %(minimum)s (10 %% of %(cost)s)",
+                                    group=category.name, margin=money(sale - cost), minimum=money(minimum),
+                                    cost=money(cost)))
+            for category, (sale, cost) in exact.items():
+                if not currency.is_zero(sale - cost):
+                    issues.append(_("%(group)s: paid on behalf, re-invoiced %(sale)s for %(cost)s paid (must be equal)",
+                                    group=category.name, sale=money(sale), cost=money(cost)))
+            order.boss_margin_alert = " · ".join(issues) or False
 
     def _boss_customer_zone_missing(self):
         """The customer's VAT zone is unknown: no country on the contact (or a province Odoo cannot place)."""
