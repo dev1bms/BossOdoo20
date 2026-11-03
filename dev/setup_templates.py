@@ -7,7 +7,12 @@ E261152 (Odoo 17); sea import FCL = Odoo 19 «proposed by default» classificati
 with T3-PAD (MSC «PAD - Additional Port Expenses (T-3 incluido)»); air export = Odoo 19 classification. Cristina still
 confirms the always/sometimes split per case (task TP03). Optional services (EXW-AIR pickup at origin, ALM, inspections,
 SEG, CAU, QBR, extras) are added on the quotation with «Add services». The template note is Odoo's customer-facing
-«Terms and conditions»: left empty (internal guidance lives in the user guide)."""
+«Terms and conditions»: left empty (internal guidance lives in the user guide).
+
+03/11/2026 (roadmap item 3, Belal: apply what is documented instead of asking again): sea export FCL, LCL import, LCL
+export and road, with the services of the documented proposal F0-C09 (docs/decisiones-f0.md), built from BOSS's real
+offers (NEW ODOO/COSTO_VENTA_MULTINIVEL.xlsx, sheets FCL_DAP and LCL IMB FOB). Reversible defaults: a service is
+added or removed on the quotation, and the template is corrected as data."""
 from odoo import Command
 
 assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
@@ -18,11 +23,21 @@ TEMPLATES = {
     "IMB FOB · Importación marítima FCL · servicios fijos": ["FMI", "THC", "BL", "GLO-CCC", "T3-PAD", "FAD", "CSM",
                                                              "TTE-FCL"],
     "EAB · Exportación aérea · servicios fijos": ["TTE-CON", "HAN", "AWB", "DEX", "CSA", "FAE"],
+    "EMB · Exportación marítima FCL · servicios fijos": ["THC", "GLO-CCC", "BL", "VGM", "CSM", "T3-PAD", "DEX", "FME"],
+    "IMB LCL FOB · Importación marítima LCL (grupaje) FOB · servicios fijos": ["FMI-LCL", "THC-LCL", "T3", "CSM", "BL",
+                                                                                "FAD", "TTE-CON"],
+    "EMB LCL · Exportación marítima LCL (grupaje) · servicios fijos": ["TTE-CON", "DEX", "CSM", "BL", "THC-LCL", "T3",
+                                                                        "FME-LCL"],
+    "TTE · Transporte por carretera · servicios fijos": ["TTE-CON", "CST"],
 }
 EN_NAMES = dict(zip(TEMPLATES, [
     "IAB FOB · Air import FOB · fixed services",
     "IMB FOB · Sea import FCL · fixed services",
     "EAB · Air export · fixed services",
+    "EMB · Sea export FCL · fixed services",
+    "IMB LCL FOB · Sea import LCL (groupage) FOB · fixed services",
+    "EMB LCL · Sea export LCL (groupage) · fixed services",
+    "TTE · Road transport · fixed services",
 ]))
 # The case of each template (ADR-006, meeting with Ángel 27/10/2026: the template fills the quotation). Direction, mode
 # and whose client come from the case code (IAB = import · air · BOSS client, decision B13); the incoterm from the name;
@@ -36,6 +51,15 @@ CASES = {
                     incoterm="FOB", scope=("main", "destination_customs", "delivery")),
     "EAB": dict(boss_business="boss", boss_direction="export", boss_transport_mode="air", boss_load_type="air",
                 incoterm=False, scope=("pickup", "origin_customs", "main")),
+    "EMB": dict(boss_business="boss", boss_direction="export", boss_transport_mode="sea", boss_load_type="fcl",
+                incoterm=False, scope=("origin_customs", "main")),  # pickup (TTE-FCL) only when BOSS does it
+    "IMB LCL FOB": dict(boss_business="boss", boss_direction="import", boss_transport_mode="sea", boss_load_type="lcl",
+                        incoterm="FOB", scope=("main", "destination_customs", "delivery")),
+    "EMB LCL": dict(boss_business="boss", boss_direction="export", boss_transport_mode="sea", boss_load_type="lcl",
+                    incoterm=False, scope=("pickup", "origin_customs", "main")),
+    # road: national, import or export, chosen on the quotation (customs FAD/DEX added when BOSS clears)
+    "TTE": dict(boss_business="boss", boss_direction=False, boss_transport_mode="road", boss_load_type="road",
+                incoterm=False, scope=("main", "delivery")),
 }
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
 OLD_NOTE = "Plantilla de servicios que aplican SIEMPRE"
