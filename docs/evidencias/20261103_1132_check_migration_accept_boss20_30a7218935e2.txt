@@ -1,0 +1,27 @@
+# Evidence: dev/check_migration_accept.py on boss20
+# Date: 2026-11-03 11:32    
+# Commit tested: 30a7218935e2 (fix(migration): acceptance check follows Odoo 20's computed «is a company» (own entity with a VAT))
+# Installed on boss20: boss_documents 20.0.1.0.4 boss_expediente 20.0.1.16.0 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.16.1 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 10:32:58,534 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 10:32:58,595 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 10:32:59,424 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+LINKS 4213 Odoo 17 ids linked; scope 4237
+CHECK PASS A second run creates no contact: expected 0 got 0
+CHECK PASS A second run links no new contact: expected 0 got 0
+CHECK PASS A contact count unchanged: expected 4303 got 4303
+CHECK PASS A no contact changed by the second run: expected [] got []
+CHECK PASS A every scope record linked except the BOSS children waiting for a decision: expected 4213 got 4213
+SAMPLE B: [18625, 25885, 39980, 41626, 44477, 45842, 46852, 47623, 48122, 49044, 49784, 50509, 51171, 52110, 52980, 54066, 54906, 55628, 56379, 57199]
+INFO B Odoo 17 companies shown as persons in Odoo 20 (no usable VAT): 360
+CHECK FAIL B 20 loaded contacts equal to Odoo 17 field by field: expected [] got [(18625, 'is_company'), (49044, 'is_company')]
+INFO companies sharing a VAT on boss20: 18 groups; already shared in Odoo 17: 18
+CHECK PASS C no VAT duplicate created by the migration (only those already in Odoo 17, listed for review): expected [] got []
+INFO P31: Spanish migrated customers without VAT: 1
+CHECK PASS E contacts with a carrier family > 0: expected True got True
+CHECK PASS E the 5 MSC entities in one family: expected (5, 1) got (5, 1)
+RESULT 8 passed, 1 failed
+# Exit status: 1

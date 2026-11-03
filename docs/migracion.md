@@ -41,9 +41,10 @@ Comprobación de aceptación (`dev/check_migration_accept.py`, evidencia en `doc
 - Los 49 contactos con asientos fuera de las series de factura.
 
 **Excepciones que necesitan decisión:**
-- 308 empresas de Odoo 17 sin NIF utilizable (177 agentes, 85 proveedores) aparecen como persona en Odoo 20: el estándar
-  calcula «es empresa» como entidad propia con NIF (`res_partner._compute_is_company`). Decidir si se completan los
-  NIF o se adapta la regla (ADR nuevo).
+- 360 empresas de Odoo 17 aparecen como persona en Odoo 20. Odoo 20 calcula «es empresa» y no usa el valor cargado:
+  entidad propia con NIF (base) y, para contactos españoles, empresa salvo NIF de autónomo (l10n_es). 239 son
+  extranjeras sin NIF, sobre todo agentes y proveedores; 121 son españolas con NIF de persona. Decidir si se completan
+  los NIF de las extranjeras o se adapta la regla (ADR nuevo). Ninguna persona de Odoo 17 pasa a empresa.
 - 24 hijos bajo la empresa BOSS.
 - 10 NIF rechazados por Odoo 20 (cargados sin NIF).
 - 2 direcciones «followup» cargadas como «other».
