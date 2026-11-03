@@ -1,9 +1,9 @@
 """Check of roadmap item 3, G1 and G4 (boss20, rolled back): selling prices per container size, a customer pricelist
 that falls back to the general «cost + %» rule, and the minimum margin warning of Odoo 17.
 
-A [PRUEBA] customer with its own pricelist agrees THC per container size (fictitious 111 for 20', 222 for 40'); its last
+A [PRUEBA] customer with its own pricelist agrees THC per container size (fictitious 611 for 20', 622 for 40'); its last
 rule is «based on the general pricelist». A sea import FCL quotation (template IMB FOB, MSC, Xingang → Valencia,
-1×20' DV + 1×40' HC) must give: THC 20' 111 and THC 40' 222 (agreed), the services it does not agree priced by the
+1×20' DV + 1×40' HC) must give: THC 20' 611 and THC 40' 622 (agreed), the services it does not agree priced by the
 general rule from their cost (cost + %), the freight with a manual cost priced the same way, and, without the last rule,
 those services without a selling price (the behaviour before). Prints «CHECK PASS|FAIL …» and «RESULT …», never an amount of a boss20 tariff or pricelist (real prices stay out of
 Git: only the fictitious prices of the [PRUEBA] pricelist are printed).
@@ -37,7 +37,7 @@ pricelist = env["product.pricelist"].create({
     "name": "[PRUEBA] Tarifa cliente por tamaño", "currency_id": env.company.currency_id.id,
     "item_ids": [Command.create({"applied_on": "1_product", "product_tmpl_id": thc.product_tmpl_id.id,
                                  "uom_id": container.id, "compute_price": "fixed", "fixed_price": price,
-                                 "boss_container_size": size}) for size, price in (("20", 111.0), ("40", 222.0))]
+                                 "boss_container_size": size}) for size, price in (("20", 611.0), ("40", 622.0))]
     + [Command.create({"applied_on": "3_global", "compute_price": "discount", "price_discount": 0.0,
                        "base": "pricelist", "base_pricelist_id": general.id})]})
 customer = env["res.partner"].create({"name": "[PRUEBA] Cliente tarifa por tamaño", "is_company": True,
@@ -73,7 +73,7 @@ order = quotation()
 thc_lines = order.order_line.filtered(lambda l: l.product_id == thc)
 check("THC has one line per container size", ["20", "40"], sorted(thc_lines.mapped("boss_container_size")))
 check("THC 20' and 40' take the agreed price of their size",
-      [("20", 111.0, "agreed"), ("40", 222.0, "agreed")],
+      [("20", 611.0, "agreed"), ("40", 622.0, "agreed")],
       sorted((l.boss_container_size, l.price_unit, l.boss_sale_status) for l in thc_lines))
 glo = order.order_line.filtered(lambda l: l.product_id.default_code == "GLO-CCC")[:1]
 expected_glo = round(glo.purchase_price * (1 + markup / 100), 2)
@@ -99,7 +99,7 @@ check("a container type changed on screen: one THC line per container, none left
       sorted((l.boss_container_size, l.boss_container_type_id.code) for l in order.order_line if l.product_id == thc))
 
 # G4: the minimum margin warning of Odoo 17 (10 % of the cost per service group, 10 of tolerance; paid on behalf exact)
-check("no margin warning while every group is above 10 % of its cost", False, order.boss_margin_alert)
+check("no margin warning while every group is above 10 % of its cost", False, bool(order.boss_margin_alert))
 fad = order.order_line.filtered(lambda l: l.product_id.default_code == "FAD")
 fad.boss_supplier_id = env.ref("o17_partner.res_partner_22998")  # ADUCEX: customs clearance tariff on boss20
 order.action_boss_update_costs()
@@ -121,7 +121,7 @@ order2 = quotation()
 fmi2 = order2.order_line.filtered(lambda l: l.product_id.default_code == "FMI")
 check("without the last rule the freight has no selling price (the behaviour before)", ["missing"] * len(fmi2),
       fmi2.mapped("boss_sale_status"))
-check("... and THC still takes its agreed price per size", [111.0, 222.0],
+check("... and THC still takes its agreed price per size", [611.0, 622.0],
       sorted(order2.order_line.filtered(lambda l: l.product_id == thc).mapped("price_unit")))
 
 env.cr.rollback()
