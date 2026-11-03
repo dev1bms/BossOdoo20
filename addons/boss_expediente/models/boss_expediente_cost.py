@@ -47,6 +47,7 @@ class BossExpedienteCost(models.Model):
     product_id = fields.Many2one("product.product", "Service", required=True,
                                  domain="[('purchase_ok', '=', True), ('type', '=', 'service')]")
     name = fields.Char("Description")
+    supplier_rating = fields.Float(related="partner_id.commercial_partner_id.boss_rating_avg", string="Supplier rating")
     partner_id = fields.Many2one("res.partner", "Supplier", help="Can be changed while nothing is ordered "
                                  "(cancel the purchase order first to replace the supplier).")
     currency_id = fields.Many2one("res.currency", required=True,

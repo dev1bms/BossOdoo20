@@ -283,6 +283,8 @@ def walk(case, file):
                               True, blocked)
                         file.sudo().margin_exception_reason = "[PRUEBA] coste ficticio de la prueba"
                         manual(key, "walk: a sales manager writes why it closes with a low margin")
+                    file._boss_sync_ratings()  # F0-C66: the parties are rated before closing (as in Odoo 17)
+                    file.rating_ids.filtered(lambda r: not r.rating).write({"rating": "8"})
                     file.action_next_step()
                 else:  # order, close_financial
                     file.action_next_step()

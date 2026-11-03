@@ -26,6 +26,9 @@ class BossExpediente(models.Model):
         "House document issued on", copy=False, tracking=True,
         help="Set by «Issue»: until then the house B/L or air waybill prints as a DRAFT for the shipper to check.")
 
+    def _boss_frozen_fields(self):
+        return super()._boss_frozen_fields() + ("house_doc_freight", "house_doc_marks", "house_doc_issue_date")
+
     @api.depends("incoterm_id")
     def _compute_house_doc_freight(self):
         for file in self:

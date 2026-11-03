@@ -23,6 +23,10 @@
                          help="A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time).">
                     <field name="boss_bill_before_invoice"/>
                 </setting>
+                <setting id="boss_ratings_to_close" string="Ratings required to close operations"
+                         help="The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025).">
+                    <field name="boss_ratings_to_close"/>
+                </setting>
             </setting>
         </field>
     </record>

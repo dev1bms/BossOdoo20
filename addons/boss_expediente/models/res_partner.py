@@ -36,6 +36,18 @@ class ResPartner(models.Model):
         [("commercial", "Commercial"), ("operations", "Operations"), ("accounting", "Accounting")], "Contact for",
         help="What this person is contacted for.")
     boss_missing_data = fields.Char("Missing data", compute="_compute_boss_missing_data")
+    boss_rating_ids = fields.One2many("boss.expediente.rating", "partner_id", "File ratings")
+    boss_rating_avg = fields.Float(
+        "Rating", digits=(3, 1), compute="_compute_boss_rating", store=True,
+        help="Average of the ratings (0-10) given on its files, as customer or supplier (F0-C66).")
+    boss_rating_count = fields.Integer("Ratings", compute="_compute_boss_rating", store=True)
+
+    @api.depends("boss_rating_ids.rating")
+    def _compute_boss_rating(self):
+        for partner in self:
+            values = [int(r.rating) for r in partner.boss_rating_ids if r.rating]
+            partner.boss_rating_count = len(values)
+            partner.boss_rating_avg = sum(values) / len(values) if values else 0.0
 
     @api.depends("customer_rank")
     def _compute_boss_is_customer(self):

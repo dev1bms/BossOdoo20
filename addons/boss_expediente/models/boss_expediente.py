@@ -68,6 +68,23 @@ NEXT_STEPS = [
     ("done", "Nothing left to do"),
 ]
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
+# Shipment data frozen when operations close (plan-expediente-completo (10); Odoo 17 froze about 140 fields of the
+# file at its close): parties, route, cargo, references, dates and customs. Not frozen: the services, costs and late
+# supplier bills (Cristina closes against the forecast and records the bills later without reopening, F0-C60), the
+# containers (their return dates drive demurrage and detention), notes, ratings and the financial close.
+FROZEN_FIELDS = (
+    "partner_id", "business", "shipper_id", "consignee_id", "notify_id", "agent_id", "carrier_id", "handler_id",
+    "haulier_id", "customs_broker_id", "direction", "transport_mode", "load_type", "incoterm_id", "origin_country_id",
+    "origin_port_id", "pickup_address_id", "origin_place", "destination_country_id", "destination_port_id",
+    "delivery_address_id", "destination_place", "port_id", "country_id", "inland_state_id", "scope_pickup",
+    "scope_origin_customs", "scope_main", "scope_destination_customs", "scope_delivery", "goods_description",
+    "packages", "package_type", "hs_code", "gross_kg", "volume_m3", "awb_kg", "pallets", "goods_value", "duties_amount",
+    "booking_ref", "mbl_ref", "hbl_ref", "mawb_ref", "hawb_ref", "vessel", "voyage", "customs_ref", "etd", "eta", "atd",
+    "ata", "noa", "foh", "emptying_date", "discharge_date", "pickup_date", "delivery_date", "delivered_date",
+    "customs_channel", "customs_admission_date", "customs_release_date", "customs_guarantee",
+    "customs_docs_received_date", "customs_docs_sent_date", "hbl_release", "master_id",
+)
+FROZEN_STATES = ("closed", "cancel")
 # Charges Cristina sends to the customs broker for the customs value (A37): freight, THC, T3 and insurance, by
 # service code and its variants (FMI-LCL, THC-LCL, T3-PAD). By code, not by service group: the freight group also
 # holds QBR and the insurance group the courier (MEN).
@@ -180,6 +197,9 @@ class BossExpediente(models.Model):
                                help="Direction (I/E), mode (M sea, A air, T road) and whose client (B BOSS, A agent).")
     user_id = fields.Many2one("res.users", "Responsible", default=lambda self: self.env.user, tracking=True)
     state = fields.Selection(STATES, default="open", required=True, tracking=True, copy=False)
+    rating_ids = fields.One2many("boss.expediente.rating", "expediente_id", "Ratings", copy=False)
+    rating_missing = fields.Char("Still to rate", compute="_compute_rating_missing",
+                                 help="Parties of the file without a rating (customer and suppliers bought from).")
     preliminary = fields.Boolean(
         compute="_compute_preliminary",
         help="Opened before an accepted quotation (pre-alert, documents received). Link the quotation when it is "
@@ -722,6 +742,7 @@ class BossExpediente(models.Model):
         return self[FILE_EVENT_FIELDS[event]] or None
 
     def write(self, vals):
+        self._boss_check_frozen(vals)
         res = super().write(vals)
         if vals.get("ata") and "state" not in vals:
             arriving = self.filtered(lambda f: f.state == "in_transit")
@@ -838,7 +859,7 @@ class BossExpediente(models.Model):
             values = {f: (master[f].id if isinstance(master[f], models.BaseModel) else master[f])
                       for f in MASTER_FIELDS if vals is None or f in vals}
             if values:
-                master.house_ids.filtered(lambda h: h.state != "cancel").write(values)
+                master.house_ids.filtered(lambda h: h.state not in FROZEN_STATES).write(values)
 
     def _boss_cover_house_services(self):
         """A house sells services the master buys (freight, local charges…): their purchase needs on the house are
@@ -1037,6 +1058,68 @@ class BossExpediente(models.Model):
                 selection = dict(file._fields["customs_guarantee"]._description_selection(env))
                 lines.append(_("Duties paid or guaranteed by: %s", selection[file.customs_guarantee]))
             file.customs_broker_text = "\n".join(lines)
+
+    # --- ratings (F0-C66) and freeze at the operational close ------------------------------------------------------
+
+    def _boss_rating_parties(self):
+        """Who is rated on this file: the customer, and every supplier the file bought from (confirmed purchase orders
+        and posted bills), each by its legal entity. [(partner, role)]"""
+        self.ensure_one()
+        suppliers = (self.purchase_order_ids.filtered(lambda p: p.state == "purchase").partner_id
+                     | self.bill_ids.filtered(lambda m: m.state == "posted").partner_id).commercial_partner_id
+        customer = self.partner_id.commercial_partner_id
+        return [(customer, "customer")] * bool(customer) + [(supplier, "supplier") for supplier in suppliers]
+
+    @api.depends("rating_ids.rating", "partner_id", "purchase_order_ids.state", "bill_ids.state")
+    def _compute_rating_missing(self):
+        for file in self:
+            rated = {(r.partner_id, r.role) for r in file.rating_ids if r.rating}
+            missing = [partner.name for partner, role in file._boss_rating_parties() if (partner, role) not in rated]
+            file.rating_missing = ", ".join(missing) or False
+
+    def _boss_sync_ratings(self):
+        """Add a line to rate for each party not listed yet (nothing is removed: a rating stays)."""
+        for file in self:
+            listed = {(r.partner_id, r.role) for r in file.rating_ids}
+            new = [{"expediente_id": file.id, "partner_id": partner.id, "role": role}
+                   for partner, role in file._boss_rating_parties() if (partner, role) not in listed]
+            if new:  # listing who to rate is the system's; the rating itself is the user's
+                self.env["boss.expediente.rating"].sudo().create(new)
+
+    def action_rate_parties(self):
+        self._boss_sync_ratings()
+
+    def _boss_frozen_fields(self):
+        """Fields that cannot change once operations are closed (extended by the documents module)."""
+        return FROZEN_FIELDS
+
+    def _boss_check_frozen(self, vals):
+        frozen = set(vals) & set(self._boss_frozen_fields())
+        if not frozen or self.env.context.get("boss_unfreeze"):
+            return
+        closed = self.filtered(lambda f: f.state in FROZEN_STATES)
+        if closed:
+            labels = ", ".join(sorted(self._fields[f].get_description(self.env)["string"] for f in frozen))
+            raise UserError(self.env._(
+                "%(files)s: operations are closed, so its shipment data is frozen (%(fields)s). Reopen the file to "
+                "change it.", files=", ".join(closed.mapped("name")), fields=labels))
+
+    @api.model
+    def _get_view(self, view_id=None, view_type="form", **options):
+        """The frozen fields are read-only on the form of a closed or cancelled file (the server refuses them too)."""
+        arch, view = super()._get_view(view_id, view_type, **options)
+        if view_type == "form":
+            frozen = set(self._boss_frozen_fields())
+            condition = "state in %s" % (FROZEN_STATES,)
+            for node in arch.xpath("//field[@name]"):
+                if node.get("name") not in frozen or node.xpath("ancestor::field"):
+                    continue
+                current = node.get("readonly")
+                if current in ("1", "True", "true"):
+                    continue
+                node.set("readonly", f"({current}) or {condition}" if current and current not in ("0", "False")
+                         else condition)
+        return arch, view
 
     def _boss_service_group(self, product):
         """Name of the service group of a product: its category under «BOSS services», else «Other»."""
@@ -1325,7 +1408,9 @@ class BossExpediente(models.Model):
                 step, detail = "invoice", money(amount_sale - invoiced) if sees_sale else False
             elif file.state == "delivered":
                 step = "close_operations"
-                if file.delivered_date:
+                if file.rating_missing and file.company_id.boss_ratings_to_close:
+                    detail = _("rate first: %s", file.rating_missing)
+                elif file.delivered_date:
                     days = (today - file.delivered_date).days
                     detail = (_("delivered %s days ago: Cristina asks to close within a week", days) if days > 7
                               else _("delivered %s days ago", days))
@@ -1534,6 +1619,7 @@ class BossExpediente(models.Model):
                     "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and "
                     "dates» and «Customs».", file=file.name, missing=", ".join(missing)))
         self.write({"state": "delivered", "delivered_date": fields.Date.context_today(self)})
+        self._boss_sync_ratings()  # the parties to rate before closing are listed in «Ratings»
 
     def _boss_margin_warnings(self):
         """Service groups of the file below the minimum margin: the base rule of Odoo 17 also used on the quotation
@@ -1574,7 +1660,19 @@ class BossExpediente(models.Model):
             if problems:
                 raise UserError(_("%(file)s cannot close operations yet: %(problems)s.", file=file.name,
                                   problems="; ".join(problems)))
+        # Ratings (F0-C66, Odoo 17 since 01/03/2025; a setting): the lines to rate are added and kept, and the user is
+        # sent to them instead of an error that would undo them.
+        to_rate = self.filtered(lambda f: f.company_id.boss_ratings_to_close)
+        to_rate._boss_sync_ratings()
+        missing = to_rate.filtered("rating_missing")
+        if missing:
+            return {"type": "ir.actions.client", "tag": "display_notification", "params": {
+                "type": "warning", "sticky": True, "title": _("Rate the parties before closing"),
+                "message": "; ".join(_("%(file)s: %(parties)s", file=f.name, parties=f.rating_missing) for f in missing)
+                + ". " + _("Give each one a rating from 0 to 10 in the «Ratings» tab, then close operations."),
+                "next": {"type": "ir.actions.client", "tag": "soft_reload"}}}
         self.write({"state": "closed"})
+        return True
 
     def action_reopen(self):
         self.write({"state": "open"})

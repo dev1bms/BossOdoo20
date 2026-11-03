@@ -517,14 +517,24 @@ outcome(shared_invoice)
 outcome(shared_bill)
 
 # ---- 10. closes: operations, then accounting -----------------------------------------------------------------------------
+action = go(ops)  # «Go» on «Close operations»: the parties are not rated yet (F0-C66, as Odoo 17)
+check("10 the close first asks to rate the customer and the suppliers (lines listed in «Ratings», nothing closed)",
+      ("display_notification", "delivered", True), (action["tag"], file.state, bool(file.rating_ids)))
+check("10 the customer and every supplier bought from are listed to rate", True,
+      {customer.commercial_partner_id, haulier.commercial_partner_id} <= set(file.rating_ids.partner_id))
+file.rating_ids.with_user(ops).write({"rating": "8"})
+manual("10 operations rates the customer and the suppliers of the file (0-10)")
 go(ops)  # «Go» on «Close operations»
 check("10 operations closes operations", "closed", file.state)
+check("10 the supplier's average rating is on the contact and in «Services to buy»", (8.0, 8.0),
+      (haulier.commercial_partner_id.boss_rating_avg,
+       file.cost_ids.filtered(lambda n: n.partner_id.commercial_partner_id == haulier.commercial_partner_id)[:1].supplier_rating))
+refused("10 the shipment data is frozen once operations are closed (Odoo 17 froze it): the vessel cannot change",
+        lambda: file.with_user(ops).write({"vessel": "[PRUEBA] OTRO BUQUE"}))
 next_step("10", "review", acct)
 action = go(acct)
 check("10 «Go» opens the services to review (variances)", ["BL", "THC"],
       sorted(env["boss.expediente.cost"].browse(action["domain"][0][2]).mapped("product_id.default_code")))
-gap("S1 shipment data frozen once operations are closed (Odoo 17 froze about 140 fields)", "feature", "F10",
-    "closed files stay editable")
 refused("10 the financial close waits for the cost variances to be reviewed",
         lambda: file.with_user(acct).action_close_financial())
 to_review = file.cost_ids.filtered("variance_to_review")

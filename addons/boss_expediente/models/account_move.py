@@ -16,12 +16,17 @@ class ResCompany(models.Model):
         [("warn", "Warn only"), ("block_payment", "Block payment (posting allowed)"),
          ("block", "Block posting and payment")],
         "Supplier bill before the customer invoice", default="block_payment", required=True)
+    # F0-C66: Odoo 17 required the ratings of the customer and the suppliers to close a file since 01/03/2025.
+    boss_ratings_to_close = fields.Boolean(
+        "Ratings required to close operations", default=True,
+        help="The customer and every supplier of a file are rated (0-10) before its operations close, as in Odoo 17.")
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     boss_bill_before_invoice = fields.Selection(related="company_id.boss_bill_before_invoice", readonly=False)
+    boss_ratings_to_close = fields.Boolean(related="company_id.boss_ratings_to_close", readonly=False)
 
 
 class AccountMove(models.Model):

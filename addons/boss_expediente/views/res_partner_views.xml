@@ -15,6 +15,8 @@
             </xpath>
             <xpath expr="//group[@name='purchase']" position="inside">
                 <field name="boss_is_supplier"/>
+                <field name="boss_rating_avg" invisible="not boss_rating_count"/>
+                <field name="boss_rating_count" invisible="not boss_rating_count"/>
             </xpath>
             <xpath expr="//group[@name='misc']" position="inside">
                 <field name="boss_role_ids" widget="many2many_tags" options="{'no_create': True}"/>
