@@ -139,6 +139,19 @@ con su fuente escrita; ninguna se inventa.
 7. **Cierre y margen.** Cierre operativo con las condiciones de Cristina e informe de margen por usuario, cliente y
    tráfico.
    *Hecho cuando* un expediente se cierre una semana después de la entrega y su margen salga en el informe.
+   **Entregado el 03/11** (boss_expediente 20.0.1.21.0, commit `ab5b9e9`; arnés 83/0,
+   `docs/evidencias/20261103_1538_check_file_e2e_boss20_ab5b9e9bc866.txt`; muestras 6/0; cola de trabajo 10/0):
+   - el cierre operativo pide lo que Cristina escribió y Odoo 17 aplicaba (F0-C60; F0-A07 de Belal): todo facturado y,
+     si un grupo de servicios queda por debajo del margen mínimo (la regla base de Odoo 17), el motivo escrito por un
+     responsable comercial («Cerrado con margen bajo porque»). Los costes aún sin factura no lo impiden: se cierra contra
+     la previsión y las facturas tardías entran sin reabrir (A69);
+   - se guarda el día de la entrega; el siguiente paso dice «entregado hace N días» y avisa pasada una semana (A69);
+     filtro «Entregados hace más de una semana»;
+   - informe «Margen por expediente»: venta pactada, margen previsto y final por responsable, comercial, cliente,
+     tráfico y mes (Cristina CR-O11); se recalcula al abrirlo y el de un expediente cerrado económicamente queda fijo.
+     Visto en Chrome.
+   Pendiente: congelar los datos del envío al cerrar (Odoo 17 congelaba unos 140 campos); las valoraciones de
+   proveedores que Odoo 17 pedía al cerrar.
 8. **Consolidaciones (un máster, varias casas).** El máster (MBL/MAWB) es el expediente y cada casa (HBL/HAWB) una
    partida (Cristina, «Plan detallado previsiones» › Explicaciones previsiones A120 y A92); reparto de costes del
    máster a mano, como en Odoo 17.
