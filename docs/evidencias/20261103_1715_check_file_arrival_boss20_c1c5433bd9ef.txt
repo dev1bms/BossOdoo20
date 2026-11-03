@@ -1,0 +1,25 @@
+# Evidence: dev/check_file_arrival.py on boss20
+# Date: 2026-11-03 17:15    
+# Commit tested: c1c5433bd9ef (feat(expediente): «Arrived» status (Odoo 17 «Llegado», F0-C22) set by typing the ATA, houses arr)
+# Installed on boss20: boss_documents 20.0.1.1.0 boss_expediente 20.0.1.23.0 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.19.0 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 16:15:15,935 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 16:15:15,996 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 16:15:16,828 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 in transit: the next step is the arrival, and it says the ATA is missing: expected ('arrived', True) got ('arrived', True)
+CHECK PASS 2 «Arrived» without ATA is refused with the reason: expected 'refused' got 'refused'
+CHECK PASS 3 typing the ATA marks the file arrived by itself: expected 'arrived' got 'arrived'
+CHECK PASS 4 arrived: the next step is «Delivered» and says what it still lacks: expected ('delivered', True) got ('delivered', True)
+CHECK PASS 5 from arrived to delivered when its conditions are met: expected 'delivered' got 'delivered'
+CHECK PASS 6 broker text names the file, the DUA, the importer with tax ID and EORI, the exporter: expected (True, True, True, True) got (True, True, True, True)
+CHECK PASS 7 ... the transport documents, the container with its seal and the goods: expected (True, True, True, True) got (True, True, True, True)
+      charges: {'Flete': 'amount', 'THC': 'amount', 'T3': 'amount', 'Seguro': 'amount'}
+CHECK PASS 8 ... the four charges of the customs value, each with the amount sold (fictitious); customs (FAD) is not one: expected (4, True, False) got (4, True, False)
+CHECK PASS 9 ... in the broker's language (Spanish): expected True got True
+CHECK PASS 10 a user who does not see the sale gets the text without the amounts: expected (True, False) got (True, False)
+CHECK PASS 11 the master's ATA arrives the master and its house: expected ('arrived', 'arrived') got ('arrived', 'arrived')
+RESULT 11 passed, 0 failed
+# Exit status: 0

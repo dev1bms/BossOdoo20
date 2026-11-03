@@ -117,7 +117,8 @@ con su fuente escrita; ninguna se inventa.
    - «Orden de transporte»: PDF para el transportista (recogida, entrega, contenedores, mercancía; sin precios ni la
      referencia del cliente), solo con transportista elegido y, en importación marítima, con el HBL liberado. Se imprime,
      nunca se envía desde Odoo. Visto en Chrome en E260181 (aviso claro mientras el HBL no está liberado).
-   Pendiente: el estado «Llegado» (F0-C22) y los avisos al cliente; generar el texto para el agente de aduanas (A37).
+   Pendiente: los avisos al cliente (sin correos mientras dure la prueba). «Llegado» y el texto para el agente de
+   aduanas: tarea 10.
 6. **Factura y cobro como en Odoo 17.** Diarios bancarios EUR y USD con sus cuentas, plazos de pago que faltan, límites
    de crédito, un nivel de reclamación, series F/FR, suplidos en factura aparte, cuenta bancaria y menciones legales en
    el PDF, fecha de factura según la norma.
@@ -175,6 +176,21 @@ con su fuente escrita; ninguna se inventa.
    tamaño del contenedor. Evidencia: `docs/evidencias/20261103_1659_check_quote_clarity_boss20_647f44839f55.txt` (12/0);
    sin regresión con el código nuevo: cadena de tarifas 12/0, reunión 2 69/0, flujo 39/0, coste + % 30/0, arnés 83/0,
    matriz 19/0, rutas 53/0.
+10. **«Llegado» y datos para el agente de aduanas.** *Hecho cuando* el expediente pase por «Llegado» como en Odoo 17 y
+   el operativo copie en un clic lo que el agente necesita. **Entregado el 03/11** (boss_expediente 20.0.1.23.1,
+   boss_portal 20.0.1.0.7, commits `c1c5433`, `20b570e`):
+   - estado «Llegado» entre «En tránsito» y «Entregado» (etapa de Odoo 17, F0-C22): teclear la ATA lo marca solo; las
+     casas llegan con su máster; el siguiente paso pide la ATA y después dice qué falta para «Entregado»; el portal del
+     cliente muestra «Llegado»;
+   - pestaña «Aduana»: «Datos para el agente de aduanas» con botón «Copiar» (Cristina, OPS- exptes A37): partes con NIF
+     y EORI, DUA, ruta, buque, MBL/HBL, contenedores con precinto, mercancía (TARIC, bultos, peso, volumen), valor de la
+     mercancía, garantía, y flete, THC, T3 y seguro vendidos al cliente para el valor en aduana; en el idioma del agente
+     (español por defecto); sin importes para quien no ve la venta. Odoo no envía nada: lo copia y envía el operativo.
+     Visto en Chrome en E260181.
+   Por defecto reversible: los importes son los vendidos al cliente (lo que paga el importador por el transporte), no
+   los costes de BOSS. Evidencia: `docs/evidencias/20261103_1715_check_file_arrival_boss20_c1c5433bd9ef.txt` (11/0) y el
+   arnés con el paso «Llegado» `docs/evidencias/20261103_1715_check_file_e2e_boss20_c1c5433bd9ef.txt` (85/0);
+   consolidaciones 22/0, cola 10/0, portal 46/0.
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -210,4 +226,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
