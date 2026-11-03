@@ -6,24 +6,14 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_create_rfqs" type="object" string="Create RFQs" class="btn-primary"
-                            groups="purchase.group_purchase_user" invisible="state == 'cancel'"
+                    <!-- Only the buttons that apply now; the occasional ones are in the «Actions» menu (cog). -->
+                    <button name="action_create_rfqs" type="object" string="Create RFQs"
+                            groups="purchase.group_purchase_user" invisible="state == 'cancel' or not has_to_order"
                             help="Draft requests for quotation for the services still to order, one per supplier and currency."/>
-                    <button name="action_recompute_costs" type="object" string="Recompute expected cost"
-                            invisible="state == 'cancel' or financial_closed or preliminary"
-                            help="Expected cost of the services to buy again, with the file's current data (containers, weights, days, dates, supplier). Sale prices do not change."/>
-                    <button name="action_split" type="object" string="Move services to another file"
-                            invisible="state in ('closed', 'cancel') or preliminary or financial_closed"
-                            help="Part of the accepted quantities goes to another file (e.g. a container on another vessel)."/>
-                    <button name="action_add_service" type="object" string="Add a service"
-                            groups="sales_team.group_sale_manager" invisible="state == 'cancel' or preliminary"
-                            help="Service sold after acceptance (executed by BOSS or a supplier), with price and reason."/>
                     <button name="action_invoice_services" type="object" string="Invoice services"
-                            invisible="state == 'cancel' or preliminary"/>
-                    <button name="action_new_quotation" type="object" string="Sell another service"
-                            invisible="state == 'cancel'"/>
+                            invisible="state == 'cancel' or preliminary or not has_to_invoice"/>
                     <button name="action_new_bill" type="object" string="Cost without purchase order"
-                            groups="account.group_account_invoice" invisible="state == 'cancel'"/>
+                            groups="account.group_account_invoice" invisible="state == 'cancel' or financial_closed"/>
                     <button name="action_in_transit" type="object" string="In transit" invisible="state != 'open'"/>
                     <button name="action_delivered" type="object" string="Delivered"
                             invisible="state not in ('open', 'in_transit')"/>
@@ -60,8 +50,22 @@
                     <div class="alert alert-info mb-2" role="status" invisible="not preliminary or state == 'cancel'">
                         Preliminary file: no accepted quotation yet. Link it from the quotation (field <strong>File</strong>).
                     </div>
-                    <div class="alert alert-warning mb-2" role="status" invisible="not completeness or financial_closed">
-                        <strong>To do: </strong><field name="completeness" nolabel="1" class="d-inline"/>
+                    <div class="alert alert-warning mb-2" role="status"
+                         invisible="financial_closed or state == 'cancel' or (not completeness and next_step == 'done')">
+                        <div class="d-flex flex-wrap align-items-center gap-2" invisible="not next_step">
+                            <strong>Next step:</strong>
+                            <field name="next_step" readonly="1" nolabel="1" class="d-inline fw-bold"/>
+                            <span invisible="not next_step_detail">·</span>
+                            <field name="next_step_detail" nolabel="1" class="d-inline" invisible="not next_step_detail"/>
+                            <button name="action_next_step" type="object" string="Go" class="btn btn-primary btn-sm"
+                                    invisible="next_step == 'done'"
+                                    help="Does the step when it is one click, otherwise opens what it is about."/>
+                        </div>
+                        <div class="mt-2" invisible="not completeness">
+                            <strong>To do: </strong><field name="completeness" nolabel="1" class="d-inline"/>
+                        </div>
+                        <field name="has_to_order" invisible="1"/>
+                        <field name="has_to_invoice" invisible="1"/>
                     </div>
                     <div class="alert alert-success mb-2" role="status" invisible="not financial_closed">
                         Financially closed on <field name="financial_closed_date" class="d-inline"/> by
@@ -366,6 +370,8 @@
                 <field name="booking_ref" optional="hide"/>
                 <field name="mbl_ref" optional="hide"/>
                 <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="next_step" optional="show" widget="badge" decoration-success="next_step == 'done'"
+                       decoration-warning="next_step in ('choose_supplier', 'type_cost', 'review')"/>
                 <field name="state" widget="badge" decoration-info="state in ('open', 'in_transit')"
                        decoration-success="state == 'closed'" decoration-muted="state == 'cancel'"/>
                 <field name="financial_closed" optional="show"/>
@@ -418,6 +424,78 @@
             <p class="o_view_nocontent_smiling_face">No shipment file yet</p>
             <p>A file opens when a quotation is accepted. Create one here only when the shipment starts before the
                 quotation (pre-alert, documents received).</p>
+        </field>
+    </record>
+
+    <!-- Occasional actions of a file, in the «Actions» menu of its form (fewer buttons in the header). -->
+    <record id="boss_expediente_action_recompute_costs" model="ir.actions.server">
+        <field name="name">Recompute expected cost</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_recompute_costs()</field>
+    </record>
+    <record id="boss_expediente_action_split" model="ir.actions.server">
+        <field name="name">Move services to another file</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_split()</field>
+    </record>
+    <record id="boss_expediente_action_add_service" model="ir.actions.server">
+        <field name="name">Add a service</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">form</field>
+        <field name="group_ids" eval="[Command.link(ref('sales_team.group_sale_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_add_service()</field>
+    </record>
+    <record id="boss_expediente_action_new_quotation" model="ir.actions.server">
+        <field name="name">Sell another service</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_new_quotation()</field>
+    </record>
+
+    <!-- The services a next step is about (no supplier, unknown cost, ordered, to review), completed in place. -->
+    <record id="boss_expediente_cost_view_list_todo" model="ir.ui.view">
+        <field name="name">boss.expediente.cost.list.todo</field>
+        <field name="model">boss.expediente.cost</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" create="0" delete="0" decoration-danger="cost_unknown"
+                  decoration-warning="po_to_review">
+                <field name="expediente_id" readonly="1" optional="hide"/>
+                <field name="product_id" readonly="1"/>
+                <field name="partner_id" options="{'no_create': True}" readonly="purchase_line_ids"/>
+                <field name="quantity" string="Qty" readonly="purchase_line_ids"/>
+                <field name="uom_id" string="Unit" readonly="1"/>
+                <field name="currency_id" readonly="purchase_line_ids" options="{'no_create': True}"/>
+                <field name="expected_unit_cost" string="Unit cost"/>
+                <field name="expected_amount" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state in ('performed', 'billed')"
+                       decoration-info="state in ('rfq', 'ordered')"
+                       decoration-warning="state in ('to_order', 'no_supplier', 'awaiting_bill')"/>
+                <field name="variance_company" optional="show" decoration-danger="variance_company &gt; 0"/>
+                <field name="variance_to_review" column_invisible="1"/>
+                <field name="variance_reviewed" invisible="not variance_to_review and not variance_reviewed"/>
+                <field name="variance_note" optional="show"/>
+                <field name="kind" column_invisible="1"/>
+                <field name="extra_class" optional="hide" invisible="kind != 'extra'"/>
+                <field name="po_to_review" column_invisible="1"/>
+                <field name="cost_unknown" column_invisible="1"/>
+                <field name="purchase_line_ids" column_invisible="1"/>
+                <field name="company_currency_id" column_invisible="1"/>
+                <button name="action_mark_performed" type="object" icon="check" title="Mark as performed"
+                        groups="purchase.group_purchase_user" invisible="state != 'ordered'"/>
+                <button name="action_open_purchase_lines" type="object" icon="shopping_cart"
+                        title="Purchase orders" invisible="not purchase_line_ids" groups="purchase.group_purchase_user"/>
+            </list>
         </field>
     </record>
 

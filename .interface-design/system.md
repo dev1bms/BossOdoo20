@@ -70,6 +70,7 @@ Checked at 1366×768: quotation lines 1318/1318 px, no horizontal scroll.
 | Zero needs «Sin coste» | A missing price is never a valid zero | 2026-10-22 |
 | Readiness not stored | It depends on today's date; searchable through a search method | 2026-10-22 |
 | Chatter below the form, never beside it (`boss_web`) | BOSS forms are wide (quotation, file, tariff); on an XXL screen Odoo halves the form for the chatter. One JS patch of the standard layout choice; attachment previews keep their place | 2026-10-27 |
+| Next step on the file (`boss_expediente`) | One line «Siguiente paso: … · n servicios [Ir]» above «Pendiente», in BOSS's order of work; «Ir» does the step when it is one click or opens exactly its records (no dead end); a guide, never a block. Header shows only the buttons that apply now; occasional actions (recompute, move, add, sell another) in the form's «Acción» menu; «Siguiente paso» badge in the files list | 2026-11-03 |
 | Form sheet at full width, centred (`boss_web`) | The standard sheet stops at 1400px pinned left for a chatter beside it; with the chatter below it fills the content area like a fluid container, equal side padding. Dialogs keep the standard width | 2026-11-03 |
 
 ## Performance note

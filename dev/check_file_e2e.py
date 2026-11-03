@@ -78,6 +78,18 @@ def manual(step):
     print(f"MANUAL {step}")
 
 
+def next_step(label, expected, user=None):
+    """The suggested next step of the file (roadmap item 1), as the role that works on it sees it."""
+    env.invalidate_all()
+    check(f"{label} next step «{expected}»", expected, (file.with_user(user) if user else file).next_step)
+
+
+def go(user):
+    """The «Go» button of the next step, pressed by the role: the action it returns (or None)."""
+    env.invalidate_all()
+    return file.with_user(user).action_next_step()
+
+
 ref = env.ref
 port = lambda code, kind: env["boss.port"].search([("code", "=", code), ("kind", "=", kind)], limit=1)  # noqa: E731
 state = lambda code: env["res.country.state"].search([("country_id.code", "=", "ES"), ("code", "=", code)], limit=1)  # noqa: E731
@@ -215,13 +227,20 @@ bought = order.order_line.filtered(lambda l: l.product_id and l.boss_execution =
 check("2 one purchase need per bought service", len(bought), len(file.cost_ids))
 refused("2 the salesman cannot read the cost variance of a need (cost groups only)",
         lambda: file.cost_ids[:1].with_user(sales).read(["variance_company"]))
+next_step("2 the salesman sees the", "order", sales)
+check("2 «Create RFQs» shown (something to order) and «Invoice services» shown (something to invoice)", (True, True),
+      (file.has_to_order, file.has_to_invoice))
+bindings = env["ir.actions.actions"].with_user(ops).get_bindings("boss.expediente")["action"]
+check("2 occasional actions in the «Actions» menu of the form; «Add a service» for sales managers only",
+      ["Move services to another file", "Recompute expected cost", "Sell another service"],
+      sorted(b["name"] for b in bindings if b.get("binding_view_types") == "form"))
 gap("S1 operator of the file and milestone plan of its traffic", "feature", "F5 (plan per traffic: Cristina)",
     "the salesman is the responsible, no activities")
 gap("S1 documents folder of the file", "feature", "F6", "attachments in the chatter only")
 
 # ---- 3. purchases (operations) -------------------------------------------------------------------------------------------
 file_ops = file.with_user(ops)
-file_ops.action_create_rfqs()
+go(ops)  # «Go» on «Create the requests for quotation»
 pos = file.purchase_order_ids
 print(f"      purchase orders seen by superuser {len(pos)}, by operations {len(file_ops.purchase_order_ids)}, "
       f"by the salesman {len(file.with_user(sales).purchase_order_ids)}")
@@ -230,6 +249,10 @@ check("3 operations creates the RFQs: carrier EUR + carrier USD + customs broker
       sorted((p.partner_id.name, p.currency_id.name) for p in pos))
 check("3 duties (ARA) wait for the broker's bill without order", "awaiting_bill",
       file.cost_ids.filtered(lambda n: n.product_id == product("ARA")).state)
+next_step("3", "confirm_rfq", ops)
+action = go(ops)
+check("3 «Go» opens the 4 RFQs to confirm, «Create RFQs» hidden", ("purchase.order", sorted(pos.ids), False),
+      (action["res_model"], sorted(action["domain"][0][2]), file.has_to_order))
 for po in pos.with_user(ops):
     po.partner_ref = f"[PRUEBA] conf. {po.partner_id.name[-12:]}"
     po.button_confirm()
@@ -249,8 +272,10 @@ atd_field = arch.xpath("//page[@name='references']//field[@name='atd']")
 pickup_field = arch.xpath("//page[@name='references']//field[@name='pickup_date']")  # not the containers' column
 check("4 ATD and actual pickup shown on every file (import ATD, export pickup)", (True, True),
       (bool(atd_field) and not atd_field[0].get("invisible"), bool(pickup_field) and not pickup_field[0].get("invisible")))
-file_ops.action_in_transit()
+next_step("4", "in_transit", ops)
+go(ops)  # «Go» on «Put the file in transit»
 check("4 operations puts the file in transit", "in_transit", file.state)
+next_step("4", "delivered", ops)
 
 # ---- 5. destination (operations) ------------------------------------------------------------------------------------------
 got, _msg = outcome(file_ops.action_delivered)
@@ -262,13 +287,21 @@ gap("S1 customs status, channel and release (levante) of the DUA", "feature", "F
 file_ops.container_ids.write({"pickup_date": date(2026, 12, 10), "return_date": date(2026, 12, 12)})
 file_ops.delivery_date = datetime(2026, 12, 10, 11, 0)
 gap("S1 transport order (OT) to the haulier from Odoo", "feature", "F7")
-file_ops.action_delivered()
+go(ops)  # «Go» on «Mark the file delivered»
 check("5 operations marks the file delivered", "delivered", file.state)
 
 # ---- 6. performed services (operations) and vendor bills (accounting) -----------------------------------------------------
 ordered = file.cost_ids.filtered("purchase_line_ids")
+next_step("6", "perform", ops)
+action = go(ops)
+todo_view = ref("boss_expediente.boss_expediente_cost_view_list_todo")
+check("6 «Go» opens the ordered services in the list where they are marked performed",
+      ("boss.expediente.cost", sorted(ordered.ids), todo_view.id),
+      (action["res_model"], sorted(action["domain"][0][2]), action["views"][0][0]))
 ordered.with_user(ops).action_mark_performed()
 check("6 operations marks every ordered service performed", ["performed"] * len(ordered), ordered.mapped("state"))
+next_step("6 operations sees the", "invoice", ops)
+check("6 «Go» on «Invoice the customer» opens the invoice wizard", "boss.invoice.services", go(ops)["res_model"])
 po_eur = pos.filtered(lambda p: p.partner_id == carrier and p.currency_id == eur)
 po_usd = pos.filtered(lambda p: p.partner_id == carrier and p.currency_id == usd)
 po_broker = pos.filtered(lambda p: p.partner_id == broker)
@@ -375,6 +408,8 @@ inv2.action_post()
 env.invalidate_all()
 check("8 everything invoiced (partial THC, then the rest)", (round(file.amount_sale, 2), 0.0),
       (round(file.amount_invoiced, 2), round(file.amount_to_invoice, 2)))
+next_step("8", "close_operations", ops)
+check("8 «Invoice services» hidden (nothing left to invoice)", False, file.has_to_invoice)
 check("8 the customer invoice lines carry the file", True,
       all(l.boss_expediente_id == file for l in (inv1 | inv2).invoice_line_ids))
 gap("S1 duties invoiced apart from the services (separate invoice or section)", "decision", "F0-A21 (Ángel) / F9",
@@ -450,8 +485,12 @@ outcome(shared_invoice)
 outcome(shared_bill)
 
 # ---- 10. closes: operations, then accounting -----------------------------------------------------------------------------
-file_ops.action_close_operations()
+go(ops)  # «Go» on «Close operations»
 check("10 operations closes operations", "closed", file.state)
+next_step("10", "review", acct)
+action = go(acct)
+check("10 «Go» opens the services to review (variances)", ["BL", "THC"],
+      sorted(env["boss.expediente.cost"].browse(action["domain"][0][2]).mapped("product_id.default_code")))
 gap("S1 conditions of the operational close and freeze of the shipment data", "decision", "F10 (Cristina)",
     "a click, nothing frozen")
 refused("10 the financial close waits for the cost variances to be reviewed",
@@ -464,9 +503,11 @@ to_review.with_user(acct).write({"variance_reviewed": True,
 manual("10 variances reviewed by accounting with a note (THC +20, BL -10)")
 env.invalidate_all()
 check("10 nothing left in «To do»", False, file.completeness)
+next_step("10", "close_financial", acct)
 refused("10 operations cannot close financially (checked on the server)", lambda: file_ops.action_close_financial())
 file.with_user(acct).action_close_financial()
 check("10 accounting closes financially", True, file.financial_closed)
+next_step("10 the salesman sees the", "done", sales)
 refused("10 accounting (not administrator) cannot reopen it", lambda: file.with_user(acct).action_reopen_financial())
 
 

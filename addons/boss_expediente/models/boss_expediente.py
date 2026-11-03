@@ -46,6 +46,24 @@ STATES = [
     ("closed", "Operations closed"),
     ("cancel", "Cancelled"),
 ]
+# Suggested next step of a file, in BOSS's order of work (docs/hoja-de-ruta.md, item 1). A guide computed from the
+# file's documents: it blocks nothing and decides no business rule; «To do» keeps listing everything that is open.
+NEXT_STEPS = [
+    ("link_quotation", "Link the accepted quotation"),
+    ("choose_supplier", "Choose the missing suppliers"),
+    ("type_cost", "Type the unknown costs"),
+    ("order", "Create the requests for quotation"),
+    ("confirm_rfq", "Confirm the requests for quotation with the suppliers"),
+    ("in_transit", "Put the file in transit"),
+    ("delivered", "Mark the file delivered"),
+    ("perform", "Mark the ordered services performed"),
+    ("invoice", "Invoice the customer"),
+    ("close_operations", "Close operations"),
+    ("bills", "Record the supplier bills"),
+    ("review", "Review the pending items"),
+    ("close_financial", "Close financially"),
+    ("done", "Nothing left to do"),
+]
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
 # Type of unit of the cargo: the Odoo 17 taxonomy of a partida (x_studio_unit_type), as Ángel asked (27/10/2026).
 PACKAGE_TYPES = [("CT", "Cartons"), ("PL", "Pallets"), ("CR", "Crates"), ("PC", "Packages"), ("BT", "Bottles"),
@@ -328,6 +346,11 @@ class BossExpediente(models.Model):
     profit_explanation = fields.Text("Where the figures come from", compute="_compute_amounts", compute_sudo=True,
                                      groups=MARGIN_GROUPS)
     completeness = fields.Text("To do", compute="_compute_amounts", compute_sudo=True)
+    next_step = fields.Selection(NEXT_STEPS, "Next step", compute="_compute_amounts", compute_sudo=True,
+                                 help="Suggested next step in BOSS's order of work. A guide: it blocks nothing.")
+    next_step_detail = fields.Char("Next step detail", compute="_compute_amounts", compute_sudo=True)
+    has_to_order = fields.Boolean(compute="_compute_amounts", compute_sudo=True)
+    has_to_invoice = fields.Boolean(compute="_compute_amounts", compute_sudo=True)
     financial_closed = fields.Boolean("Financially closed", readonly=True, copy=False, tracking=True)
     summary_html = fields.Html("Buying and selling by service group", compute="_compute_summary_html",
                                compute_sudo=True, sanitize=False, groups=MARGIN_GROUPS)
@@ -405,6 +428,9 @@ class BossExpediente(models.Model):
 
     def action_split(self):
         self.ensure_one()
+        self._boss_check_active()
+        if self.state == "closed":
+            raise UserError(self.env._("%s: operations are closed, reopen the file first.", self.name))
         return {"type": "ir.actions.act_window", "res_model": "boss.expediente.split", "view_mode": "form",
                 "views": [(False, "form")], "target": "new", "name": self.env._("Move services to another file"),
                 "context": {"default_expediente_id": self.id}}
@@ -612,6 +638,7 @@ class BossExpediente(models.Model):
 
     def action_recompute_costs(self):
         """Expected cost again with the file's current data. Sale prices and the acceptance snapshot do not change."""
+        self._boss_check_active()
         for file in self:
             revisions = file.cost_ids._boss_recompute(self.env.context.get("boss_reason"))
             changed = revisions.filtered("applied")
@@ -948,6 +975,50 @@ class BossExpediente(models.Model):
                 todo.append(_("%s of cost not billed yet", money(pending)))
             file.completeness = "\n".join(todo) or False
 
+            # Next step: the first open one in BOSS's order of work; the same for every role (the detail shows only
+            # the figures the user may see).
+            no_supplier = needs.filtered(lambda n: n.state == "no_supplier")
+            to_order = needs.filtered(lambda n: n.state == "to_order")
+            ordered = needs.filtered(lambda n: n.state == "ordered")
+            to_invoice = float_compare(amount_sale - invoiced, 0.0, precision_rounding=currency.rounding) > 0
+            review = len(needs.filtered(lambda n: n.variance_to_review or n.po_to_review or (
+                n.extra_class in ("approval", "disputed") and not n.closed))) + len(
+                draft_invoices | draft_bills
+                | posted_bills.filtered(lambda b: b.boss_paid_before_invoice and b._boss_bill_order_problems()))
+            step, detail = False, False
+            if file.state == "cancel":
+                pass
+            elif file.financial_closed:
+                step = "done"
+            elif file.preliminary:
+                step = "link_quotation"
+            elif no_supplier:
+                step, detail = "choose_supplier", _("%s services", len(no_supplier))
+            elif unknown:
+                step, detail = "type_cost", _("%s services", len(unknown))
+            elif to_order:
+                step, detail = "order", _("%s services", len(to_order))
+            elif draft_rfqs:
+                step, detail = "confirm_rfq", _("%s requests for quotation", len(draft_rfqs))
+            elif file.state == "open":
+                step = "in_transit"
+            elif file.state == "in_transit":
+                step = "delivered"
+            elif ordered:
+                step, detail = "perform", _("%s services", len(ordered))
+            elif to_invoice:
+                step, detail = "invoice", money(amount_sale - invoiced) if sees_sale else False
+            elif file.state == "delivered":
+                step = "close_operations"
+            elif not currency.is_zero(pending):
+                step, detail = "bills", money(pending) if sees_cost else False
+            elif review:
+                step, detail = "review", _("%s items", review)
+            else:
+                step = "close_financial"
+            file.update({"next_step": step, "next_step_detail": detail, "has_to_order": bool(to_order),
+                         "has_to_invoice": to_invoice})
+
     # --- actions ---------------------------------------------------------------------------------------------------
 
     def _boss_lock(self):
@@ -1007,6 +1078,13 @@ class BossExpediente(models.Model):
             raise UserError(self.env._("%s is financially closed: an accounting manager reopens it first.",
                                        ", ".join(closed.mapped("name"))))
 
+    def _boss_check_active(self):
+        """The actions of the «Actions» menu of the file never run on a cancelled or financially closed file."""
+        self._boss_check_open_financially()
+        cancelled = self.filtered(lambda f: f.state == "cancel")
+        if cancelled:
+            raise UserError(self.env._("%s is cancelled.", ", ".join(cancelled.mapped("name"))))
+
     def action_invoice_services(self):
         self._boss_check_open_financially()
         self.ensure_one()
@@ -1019,6 +1097,7 @@ class BossExpediente(models.Model):
     def action_new_quotation(self):
         """A service sold later: a new quotation of the same customer, linked to this file, with its shipment data."""
         self.ensure_one()
+        self._boss_check_active()
         context = {"default_partner_id": self.partner_id.id, "default_boss_expediente_id": self.id,
                    "default_origin": self.name}
         for fname, order_field in FROM_ORDER.items():
@@ -1030,6 +1109,7 @@ class BossExpediente(models.Model):
     def action_add_service(self):
         """A service sold after acceptance, added to the accepted order of the file (explicit change, reason)."""
         self.ensure_one()
+        self._boss_check_active()
         order = self.sale_order_ids.filtered(lambda o: o.state == "sale").sorted("date_order")[:1]
         if not order:
             raise UserError(self.env._("%s has no accepted order yet.", self.name))
@@ -1106,6 +1186,65 @@ class BossExpediente(models.Model):
     def action_reopen_financial(self):
         self._boss_check_group("account.group_account_manager")
         self.write({"financial_closed": False, "financial_closed_date": False, "financial_closed_by": False})
+
+    def _boss_open_needs(self, needs, name):
+        """The services of the file a step is about, in a list where they are completed in place."""
+        view = self.env.ref("boss_expediente.boss_expediente_cost_view_list_todo")
+        return {"type": "ir.actions.act_window", "res_model": "boss.expediente.cost", "name": name,
+                "view_mode": "list", "views": [(view.id, "list")], "domain": [("id", "in", needs.ids)],
+                "context": {"default_expediente_id": self.id}}
+
+    def action_next_step(self):
+        """Do the suggested next step when it is one click (a state change, the RFQs, the invoice wizard), otherwise
+        open exactly the records it is about. Every action keeps its own rights and checks."""
+        self.ensure_one()
+        _ = self.env._
+        step = self.next_step
+        needs = self.cost_ids
+        if step == "link_quotation":
+            customer = self.partner_id.commercial_partner_id
+            orders = self.env["sale.order"].search([("partner_id", "child_of", customer.id),
+                                                    ("state", "in", ("draft", "sent"))])
+            return self._boss_action("sale.order", orders, _("Open quotations of %s", self.partner_id.display_name))
+        if step == "choose_supplier":
+            return self._boss_open_needs(needs.filtered(lambda n: n.state == "no_supplier"),
+                                         _("Services without supplier"))
+        if step == "type_cost":
+            return self._boss_open_needs(needs.filtered("cost_unknown"), _("Services with unknown cost"))
+        if step == "order":
+            return self.action_create_rfqs()
+        if step == "confirm_rfq":
+            rfqs = self.purchase_order_ids.filtered(lambda p: p.state in ("draft", "sent", "to approve"))
+            return self._boss_action("purchase.order", rfqs, _("Requests for quotation to confirm"))
+        if step == "in_transit":
+            return self.action_in_transit()
+        if step == "delivered":
+            return self.action_delivered()
+        if step == "perform":
+            return self._boss_open_needs(needs.filtered(lambda n: n.state == "ordered"), _("Ordered services"))
+        if step == "invoice":
+            return self.action_invoice_services()
+        if step == "close_operations":
+            return self.action_close_operations()
+        if step == "bills":
+            orders = self.purchase_order_ids.filtered(
+                lambda p: p.state == "purchase" and p.invoice_status == "to invoice")
+            if orders:
+                return self._boss_action("purchase.order", orders, _("Purchase orders to bill"))
+            return self.action_new_bill()
+        if step == "review":
+            to_review = needs.filtered(lambda n: n.variance_to_review or n.po_to_review or (
+                n.extra_class in ("approval", "disputed") and not n.closed))
+            if to_review:
+                return self._boss_open_needs(to_review, _("Services to review"))
+            documents = self.sudo()
+            moves = (documents.invoice_ids | documents.bill_ids).filtered(lambda m: m.state == "draft" or (
+                m.state == "posted" and m.boss_paid_before_invoice and m._boss_bill_order_problems()))
+            return self._boss_action("account.move", self.env["account.move"].browse(moves.ids),
+                                     _("Documents to review"))
+        if step == "close_financial":
+            return self.action_close_financial()
+        return False
 
 
 class BossExpedienteContainer(models.Model):
