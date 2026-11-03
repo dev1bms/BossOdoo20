@@ -104,6 +104,21 @@ con su fuente escrita; ninguna se inventa.
 5. **Estados con sus condiciones, aduana y entrega.** Avisos de «En tránsito» y «Entregado» y condiciones del cierre
    tal como Cristina las escribió; DUA con canal y levante; orden de transporte al transportista.
    *Hecho cuando* el arnés recorra esos avisos y el DUA y la orden de transporte queden en el expediente.
+   **Entregado el 03/11** (boss_expediente 20.0.1.19.0, boss_documents 20.0.1.1.0, commit `48bd227`; arnés 77/0 con 15
+   huecos en vez de 19, `docs/evidencias/20261103_1443_check_file_e2e_boss20_48bd227435fd.txt`; muestras 4/0; documentos
+   19/0):
+   - pestaña «Aduana» del expediente: DUA, agente, garantía de los impuestos (aval de BOSS, del cliente o pago 031),
+     canal (verde, naranja, rojo), documentación completa, envío al agente, admisión y levante (Odoo 17 y Cristina,
+     «Nuevo Odoo» › OPS- exptes A32–A36); estado del HBL (originales, liberado, sea waybill; A39);
+   - «Entregado» exige lo que Cristina escribió y Odoo 17 aplicaba: ATA y descarga del buque en importación, levante si
+     BOSS despacha, fecha y hora de recogida o entrega si BOSS transporta (A42) y HBL liberado o sea waybill antes de
+     entregar una importación marítima (A73); el siguiente paso dice qué falta;
+   - «En tránsito» sin ATD, reserva, BL/AWB máster o números de contenedor avisa y lo anota en el historial, sin
+     bloquear (práctica de Odoo 17; el paquete 3 solo obliga lo que Cristina escribió);
+   - «Orden de transporte»: PDF para el transportista (recogida, entrega, contenedores, mercancía; sin precios ni la
+     referencia del cliente), solo con transportista elegido y, en importación marítima, con el HBL liberado. Se imprime,
+     nunca se envía desde Odoo. Visto en Chrome en E260181 (aviso claro mientras el HBL no está liberado).
+   Pendiente: el estado «Llegado» (F0-C22) y los avisos al cliente; generar el texto para el agente de aduanas (A37).
 6. **Factura y cobro como en Odoo 17.** Diarios bancarios EUR y USD con sus cuentas, plazos de pago que faltan, límites
    de crédito, un nivel de reclamación, series F/FR, suplidos en factura aparte, cuenta bancaria y menciones legales en
    el PDF, fecha de factura según la norma.

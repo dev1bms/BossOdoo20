@@ -1,0 +1,30 @@
+# Evidence: dev/sample_real_cases.py on boss20
+# Date: 2026-11-03 14:43    
+# Commit tested: 48bd227435fd (feat(expediente): customs of the file (DUA channel, admission, release, guarantee, document dates) a)
+# Installed on boss20: boss_documents 20.0.1.1.0 boss_expediente 20.0.1.19.0 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.18.1 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 13:43:46,475 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 13:43:46,537 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 13:43:47,360 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CASE IMB-FCL: quotation S00917 reused
+CASE IMB-FCL: S00917 sale file E260181 next step type_cost (2 services)
+WALK IMB-FCL: type_cost → order → confirm_rfq → in_transit → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IMB-FCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE IAB: quotation S00918 reused
+CASE IAB: S00918 sale file E260182 next step type_cost (5 services)
+WALK IAB: type_cost → order → confirm_rfq → in_transit → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IAB walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE EMB-LCL: quotation S00919 reused
+CASE EMB-LCL: S00919 sale file E260183 next step type_cost (1 services)
+WALK EMB-LCL: type_cost → order → confirm_rfq → in_transit → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS EMB-LCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE IMA-LCL: quotation S00920 reused
+CASE IMA-LCL: S00920 sale file E260184 next step choose_supplier (1 services)
+MANUAL IMA-LCL: walk: operations chooses the supplier of THC-LCL as in the real file (TRANSGLORY, S.A.)
+WALK IMA-LCL: choose_supplier → type_cost → order → confirm_rfq → in_transit → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IMA-LCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+RESULT 4 passed, 0 failed, 0 gaps, 1 manual steps | mode commit | IMB-FCL S00917 sale E260181 type_cost | IAB S00918 sale E260182 type_cost | EMB-LCL S00919 sale E260183 type_cost | IMA-LCL S00920 sale E260184 choose_supplier
+# Exit status: 0
