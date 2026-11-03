@@ -123,6 +123,19 @@ con su fuente escrita; ninguna se inventa.
    de crédito, un nivel de reclamación, series F/FR, suplidos en factura aparte, cuenta bancaria y menciones legales en
    el PDF, fecha de factura según la norma.
    *Hecho cuando* la factura [PRUEBA] lleve todo eso y el arnés cobre y pague por los diarios reales.
+   **Entregado en parte el 03/11** (boss_expediente 20.0.1.20.0, commit `1b36bd6`; arnés 80/0 con 14 huecos,
+   `docs/evidencias/20261103_1523_check_file_e2e_boss20_1b36bd6c73c3.txt`; muestras 4/0):
+   - los suplidos (derechos, IVA de importación…) se facturan aparte de los servicios, en la misma serie, con la
+     mención «Suplidos: importes pagados en nombre y por cuenta del cliente, no incluidos en la base imponible (art.
+     78.Tres.3º de la Ley 37/1992)» y el número de DUA (práctica de Odoo 17; F0-A21, F0-A22, F0-A15);
+   - plazos de pago de Odoo 17 que faltaban: 6, 20 y 60 días (`dev/setup_finance_o17.py`);
+   - los 9 diarios bancarios de Odoo 17 (Santander, Popular, Caixabank, Bankinter, WCA; EUR y USD), sin número de
+     cuenta: **el IBAN de cada diario lo teclea Belal o Ángel** (Contabilidad › Configuración › Diarios); con él, la
+     factura imprime la cuenta de cobro.
+   Pendiente: 75 y 90 días (Odoo 17 los tiene, pero la Ley 3/2004 fija 60 días como máximo entre empresas: pregunta
+   para Ángel); series F/FR de Odoo 17 al arrancar 2027 (F0-A18); límites de crédito y vencimiento propio de los
+   suplidos por cliente (datos de Odoo 17, misma lectura por lotes que los operativos); un nivel de reclamación a los 7
+   días (no se toca mientras pueda enviar correos a clientes reales); fecha de la operación en la factura (F0-A20).
 7. **Cierre y margen.** Cierre operativo con las condiciones de Cristina e informe de margen por usuario, cliente y
    tráfico.
    *Hecho cuando* un expediente se cierre una semana después de la entrega y su margen salga en el informe.
@@ -149,8 +162,9 @@ español como en Odoo 17 («0 % S»); fecha de factura = fecha de expedición co
 (RD 1619/2012, art. 6); dos decimales con cuatro solo en precios por kg; estimación de derechos tecleada (no hay tabla
 TARIC).
 
-**Para una reunión (una sola pregunta).** SII o VERI*FACTU desde el 01/01/2027 (P45-a): obligación legal que no consta
-en ninguna fuente; Odoo 20 trae los dos módulos sin instalar. Mientras tanto no se instala ni se envía nada.
+**Para una reunión (dos preguntas legales).** SII o VERI*FACTU desde el 01/01/2027 (P45-a): obligación legal que no
+consta en ninguna fuente; Odoo 20 trae los dos módulos sin instalar, mientras tanto no se instala ni se envía nada. Y si
+los plazos de 75 y 90 días de Odoo 17 siguen en uso (la Ley 3/2004 fija 60 días como máximo entre empresas).
 
 ---
 
