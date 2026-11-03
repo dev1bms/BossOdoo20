@@ -13,7 +13,7 @@ typed price of 100 for the whole service. Every such step is printed as MANUAL.
 
 MODE «dry»: everything rolled back. MODE «commit»: the quotations are kept (idempotent: a case whose quotation exists,
 by its customer reference, is reused) and accepted, so each file shows its next step. Then each file is walked with
-«Siguiente paso» up to the financial close (RFQs confirmed, in transit, delivered, services performed, customer invoice
+«Siguiente paso» up to the financial close (RFQs confirmed, in transit, arrived, delivered, services performed, customer invoice
 and supplier bills posted) inside a savepoint that is rolled back: the kept file stays where acceptance left it. Payments
 are not repeated here (dev/check_file_e2e.py proves them). Sequence numbers used by the walk are not given back.
 Prints «CASE …», «LINE …», «MANUAL …», «GAP …», «WALK …», «CHECK PASS|FAIL …» and «RESULT …», never an amount of a
@@ -235,6 +235,8 @@ def walk(case, file):
                                 ("mawb_ref" if air else "mbl_ref"): f"[PRUEBA] M-{key}",
                                 ("hawb_ref" if air else "hbl_ref"): f"[PRUEBA] H-{key}"})
                     file.action_next_step()
+                elif step == "arrived":
+                    file.ata = case["eta"]  # typing the ATA marks the file arrived (F0-C22)
                 elif step == "delivered":
                     file.write({"ata": case["eta"], "discharge_date": case["eta"], "pickup_date": case["etd"],
                                 "delivery_date": case["eta"], "customs_ref": f"[PRUEBA] DUA-{key}",

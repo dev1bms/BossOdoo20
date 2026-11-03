@@ -8,7 +8,8 @@ from odoo.tools import consteq
 
 def state_label(env, state):
     """Status shown to the customer, in the customer's language (literal strings so that Odoo extracts them)."""
-    labels = {"open": env._("Booked"), "in_transit": env._("In transit"), "delivered": env._("Delivered"),
+    labels = {"open": env._("Booked"), "in_transit": env._("In transit"), "arrived": env._("Arrived"),
+              "delivered": env._("Delivered"),
               "closed": env._("Delivered"), "cancel": env._("Cancelled")}
     return labels.get(state, state)
 

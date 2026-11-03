@@ -6,7 +6,7 @@ import io
 from odoo.tools.translate import trans_export
 
 assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
-for module in ("boss_services", "boss_pricing", "boss_pricing_sale", "boss_expediente", "boss_documents"):
+for module in ("boss_services", "boss_pricing", "boss_pricing_sale", "boss_expediente", "boss_documents", "boss_portal"):
     buffer = io.BytesIO()
     trans_export(False, [module], buffer, "po", env)  # noqa: F821
     print(f"=====POT {module}")

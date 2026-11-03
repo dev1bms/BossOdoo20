@@ -43,6 +43,7 @@ DEFAULT_PERIOD_EVENTS = {
 STATES = [
     ("open", "Open"),
     ("in_transit", "In transit"),
+    ("arrived", "Arrived"),
     ("delivered", "Delivered"),
     ("closed", "Operations closed"),
     ("cancel", "Cancelled"),
@@ -56,6 +57,7 @@ NEXT_STEPS = [
     ("order", "Create the requests for quotation"),
     ("confirm_rfq", "Confirm the requests for quotation with the suppliers"),
     ("in_transit", "Put the file in transit"),
+    ("arrived", "Record the arrival (ATA)"),
     ("delivered", "Mark the file delivered"),
     ("perform", "Mark the ordered services performed"),
     ("invoice", "Invoice the customer"),
@@ -66,6 +68,11 @@ NEXT_STEPS = [
     ("done", "Nothing left to do"),
 ]
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
+# Charges Cristina sends to the customs broker for the customs value (A37): freight, THC, T3 and insurance, by
+# service code and its variants (FMI-LCL, THC-LCL, T3-PAD). By code, not by service group: the freight group also
+# holds QBR and the insurance group the courier (MEN).
+CUSTOMS_VALUE_CHARGES = (("freight", ("FMI", "FME", "FAI", "FAE")), ("THC", ("THC",)), ("T3", ("T3",)),
+                         ("insurance", ("SEG",)))
 # Transport data of a consolidation that belongs to the master (MBL / MAWB) and is copied to its houses (ADR-013).
 MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd", "ata",
                  "discharge_date")
@@ -268,6 +275,11 @@ class BossExpediente(models.Model):
     customs_docs_received_date = fields.Date("Customer documents complete",
                                              help="Every document of the customer for the declaration received (A35).")
     customs_docs_sent_date = fields.Date("Documents sent to the customs broker", help="(A36)")
+    customs_broker_text = fields.Text(
+        "Data for the customs broker", compute="_compute_customs_broker_text",
+        help="What the customs broker needs to clear the goods (Cristina, «Nuevo Odoo» › OPS- exptes A37): parties, "
+             "transport documents, containers, goods and the freight, THC, T3 and insurance sold for the customs value. "
+             "Copied and sent by the operator; Odoo never sends it.")
     hbl_release = fields.Selection(
         [("pending", "Originals, not released yet"), ("released", "Released (telex or originals surrendered)"),
          ("swb", "Sea waybill (no originals)")], "House B/L release", tracking=True,
@@ -711,6 +723,10 @@ class BossExpediente(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
+        if vals.get("ata") and "state" not in vals:
+            arriving = self.filtered(lambda f: f.state == "in_transit")
+            if arriving:
+                arriving.action_arrived()
         if vals.get("master_id"):
             linked = self.filtered("master_id")
             linked.master_id._boss_sync_houses()
@@ -948,6 +964,79 @@ class BossExpediente(models.Model):
     def _boss_user_can(self, groups):
         user = self.env.user
         return any(user.has_group(group) for group in groups.split(","))
+
+    @staticmethod
+    def _boss_customs_value_charge(product):
+        """Which charge of the customs value (A37) a service is, or None."""
+        code = product.default_code or ""
+        for key, codes in CUSTOMS_VALUE_CHARGES:
+            if any(code == c or code.startswith(c + "-") for c in codes):
+                return key
+        return None
+
+    @api.depends("name", "customs_ref", "customs_broker_id.lang", "shipper_id", "consignee_id", "incoterm_id",
+                 "origin_country_id", "origin_port_id", "destination_port_id", "vessel", "voyage", "mbl_ref", "hbl_ref",
+                 "mawb_ref", "hawb_ref", "container_ids.number", "container_ids.seal", "goods_description", "hs_code",
+                 "packages", "gross_kg", "volume_m3", "goods_value", "customs_guarantee", "order_link_ids",
+                 "allocation_ids")
+    @api.depends_context("uid")
+    def _compute_customs_broker_text(self):
+        """One text the operator copies to the broker, in the broker's language (Spanish by default). The amounts are
+        the services sold to the customer (what the importer pays for the transport), shown only to users who see
+        the sale; nothing is judged here, the broker declares."""
+        for file in self:
+            lang = file.customs_broker_id.lang or "es_ES"
+            env = file.with_context(lang=lang).env
+            _ = env._
+            na = "—"
+            lines = [_("File %s: data for the customs clearance", file.name)]
+            if file.customs_ref:
+                lines.append(_("Declaration (DUA): %s", file.customs_ref))
+            for label, party in ((_("Importer / consignee"), file.consignee_id),
+                                 (_("Exporter / shipper"), file.shipper_id)):
+                partner = party.commercial_partner_id
+                ids = ", ".join(x for x in (partner.vat and _("tax ID %s", partner.vat),
+                                            partner.boss_eori and _("EORI %s", partner.boss_eori)) if x)
+                lines.append(f"{label}: {partner.name or na}" + (f" ({ids})" if ids else ""))
+            lines.append(_("Incoterm: %s", file.incoterm_id.code or na))
+            origin = ", ".join(x for x in (file.origin_port_id.display_name, file.origin_country_id.with_env(env).name)
+                               if x)
+            lines.append(_("From %(origin)s to %(destination)s", origin=origin or na,
+                           destination=file.destination_port_id.display_name or na))
+            transport = " ".join(x for x in (file.vessel, file.voyage) if x)
+            if transport:
+                lines.append(_("Vessel / flight: %s", transport))
+            documents = [f"{label} {ref}" for label, ref in (("MBL", file.mbl_ref), ("HBL", file.hbl_ref),
+                                                             ("MAWB", file.mawb_ref), ("HAWB", file.hawb_ref)) if ref]
+            if documents:
+                lines.append(_("Transport documents: %s", ", ".join(documents)))
+            containers = [" ".join(x for x in (c.number, c.seal and _("seal %s", c.seal)) if x)
+                          for c in file.container_ids if c.number]
+            if containers:
+                lines.append(_("Containers: %s", "; ".join(containers)))
+            goods = [x for x in (file.goods_description, file.hs_code and _("HS %s", file.hs_code),
+                                 file.packages and _("%s packages", file.packages),
+                                 file.gross_kg and _("%s kg gross", formatLang(env, file.gross_kg, digits=2)),
+                                 file.volume_m3 and _("%s m³", formatLang(env, file.volume_m3, digits=3))) if x]
+            lines.append(_("Goods: %s", ", ".join(goods) or na))
+            if file.goods_value:
+                lines.append(_("Goods value: %s", formatLang(env, file.goods_value, currency_obj=file.currency_id)))
+            if file._boss_user_can(SALE_GROUPS):
+                sold = defaultdict(lambda: defaultdict(float))
+                orders = file.sudo().sale_order_ids.filtered(lambda o: o.state == "sale")
+                for line in orders.order_line.filtered(lambda l: not l.display_type):
+                    key = file._boss_customs_value_charge(line.product_id)
+                    if key:
+                        sold[key][line.currency_id] += line.price_subtotal
+                lines.append(_("Charges for the customs value (sold to the customer):"))
+                labels = {"freight": _("Freight"), "THC": "THC", "T3": "T3", "insurance": _("Insurance")}
+                for key, _codes in CUSTOMS_VALUE_CHARGES:
+                    amounts = [formatLang(env, amount, currency_obj=currency) for currency, amount in sold[key].items()]
+                    lines.append(f"  {labels[key]}: {' + '.join(amounts) or na}")
+            if file.customs_guarantee:
+                selection = dict(file._fields["customs_guarantee"]._description_selection(env))
+                lines.append(_("Duties paid or guaranteed by: %s", selection[file.customs_guarantee]))
+            file.customs_broker_text = "\n".join(lines)
 
     def _boss_service_group(self, product):
         """Name of the service group of a product: its category under «BOSS services», else «Other»."""
@@ -1224,6 +1313,9 @@ class BossExpediente(models.Model):
                 step = "in_transit"
                 detail = _("still without: %s", ", ".join(transit_missing)) if transit_missing else False
             elif file.state == "in_transit":
+                step = "arrived"
+                detail = False if file.ata else _("type the ATA in «References and dates»")
+            elif file.state == "arrived":
                 delivery_missing = file._boss_delivery_missing()
                 step = "delivered"
                 detail = _("first: %s", ", ".join(delivery_missing)) if delivery_missing else False
@@ -1424,6 +1516,16 @@ class BossExpediente(models.Model):
                     "In transit without: %s. A warning: complete them when they are known.", ", ".join(missing)))
         files.write({"state": "in_transit"})
 
+    def action_arrived(self):
+        """Arrived (Odoo 17 stage «Llegado», F0-C22): the actual arrival (ATA) is known. Typing the ATA of a file in
+        transit does it by itself (see write); the houses arrive with their master, whose ATA they share."""
+        for file in self:
+            if not file.ata:
+                raise UserError(self.env._("%s has no ATA yet: type the actual arrival in «References and dates» and "
+                                           "the file is marked arrived.", file.name))
+        files = self | self.house_ids.filtered(lambda h: h.state in ("open", "in_transit") and h.ata)
+        files.filtered(lambda f: f.state in ("open", "in_transit")).write({"state": "arrived"})
+
     def action_delivered(self):
         for file in self:
             missing = file._boss_delivery_missing()
@@ -1542,6 +1644,8 @@ class BossExpediente(models.Model):
             return self._boss_action("purchase.order", rfqs, _("Requests for quotation to confirm"))
         if step == "in_transit":
             return self.action_in_transit()
+        if step == "arrived":
+            return self.action_arrived()
         if step == "delivered":
             return self.action_delivered()
         if step == "perform":

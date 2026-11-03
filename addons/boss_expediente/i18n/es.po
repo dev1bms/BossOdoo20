@@ -147,6 +147,14 @@ msgstr "%s tiene casas: no puede ser casa de otro expediente."
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%s has no ATA yet: type the actual arrival in «References and dates» and the file is marked arrived."
+msgstr ""
+"%s aún no tiene ATA: teclee la llegada real en «Referencias y fechas» y el expediente se marca como llegado."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%s has no accepted order yet."
 msgstr "%s aún no tiene pedido aceptado."
 
@@ -186,8 +194,26 @@ msgstr "%s elementos"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s kg gross"
+msgstr "%s kg brutos"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s m³"
+msgstr "%s m³"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%s of cost not billed yet"
 msgstr "%s de coste aún sin factura de proveedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s packages"
+msgstr "%s bultos"
 
 #. module: boss_expediente
 #. odoo-python
@@ -278,6 +304,23 @@ msgstr "<span class=\"o_stat_text\">Expediente</span>"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "<span invisible=\"not next_step_detail\">·</span>"
 msgstr "<span invisible=\"not next_step_detail\">·</span>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "<span>% of its costs.</span>"
+msgstr "<span>% de sus costes.</span>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid ""
+"<span>: carrier, vessel, booking, master document and dates follow the master; this house bears</span>"
+msgstr ""
+"<span>: naviera, buque, reserva, documento máster y fechas siguen al máster; esta casa soporta</span>"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "<span>House of the master</span>"
+msgstr "<span>Casa del máster</span>"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_move_form
@@ -626,6 +669,13 @@ msgstr ""
 "Llegada de una importación, salida de los demás (real o, si no, prevista)."
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__arrived
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__arrived
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Arrived"
+msgstr "Llegado"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__on_request
 msgid "Asked to the supplier (case by case)"
 msgstr "A consultar al proveedor (caso por caso)"
@@ -881,6 +931,12 @@ msgstr ""
 "Peso tasable escrito en la guía aérea; los handlers cobran sobre él. Vacío: se usa el peso tasable estimado."
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Charges for the customs value (sold to the customer):"
+msgstr "Gastos para el valor en aduana (vendidos al cliente):"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__choose_supplier
 msgid "Choose the missing suppliers"
 msgstr "Elegir los proveedores que faltan"
@@ -1048,6 +1104,22 @@ msgstr "Contenedores"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Containers: %(agreed)s → %(actual)s"
 msgstr "Contenedores: %(agreed)s → %(actual)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Containers: %s"
+msgstr "Contenedores: %s"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Copy"
+msgstr "Copiar"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Copy it and send it to the broker yourself: Odoo sends nothing."
+msgstr "Cópielo y envíelo usted al agente de aduanas: Odoo no envía nada."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__new_amount
@@ -1329,6 +1401,12 @@ msgid "Customs tariff code of the goods: it decides the duties."
 msgstr "Código arancelario de la mercancía: decide los derechos."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_broker_text
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Data for the customs broker"
+msgstr "Datos para el agente de aduanas"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__inputs
 msgid "Data used"
 msgstr "Datos usados"
@@ -1366,6 +1444,12 @@ msgstr "Días"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Declaration"
 msgstr "Declaración"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Declaration (DUA): %s"
+msgstr "Declaración (DUA): %s"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__delivered
@@ -1515,6 +1599,11 @@ msgstr ""
 "Excepción documentada al pedido de compra: los importes pagados en nombre del cliente (derechos, IVA de importación del DUA) se conocen por la declaración y los factura el agente de aduanas al coste. Su factura se registra con «Coste sin pedido de compra» en el expediente y se casa aquí por servicio."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_attachment_ids
+msgid "Documents published to the customer"
+msgstr ""
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_docs_sent_date
 msgid "Documents sent to the customs broker"
 msgstr "Documentos enviados al agente de aduanas"
@@ -1559,10 +1648,22 @@ msgid "Duties paid or guaranteed by"
 msgstr "Impuestos pagados o garantizados con"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Duties paid or guaranteed by: %s"
+msgstr "Impuestos pagados o garantizados por: %s"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_eori
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_eori
 msgid "EORI"
 msgstr "EORI"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "EORI %s"
+msgstr "EORI %s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__eta
@@ -1766,6 +1867,12 @@ msgid "Export: full container delivered to the port terminal."
 msgstr "Exportación: contenedor lleno entregado en la terminal del puerto."
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Exporter / shipper"
+msgstr "Exportador / expedidor"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "External cost"
 msgstr "Coste externo"
@@ -1814,6 +1921,12 @@ msgstr "Cifras del"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
 msgid "File"
 msgstr "Expediente"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "File %s: data for the customs clearance"
+msgstr "Expediente %s: datos para el despacho de aduanas"
 
 #. module: boss_expediente
 #. odoo-python
@@ -1936,11 +2049,23 @@ msgid "Forecast margin after external costs"
 msgstr "Margen previsto tras costes externos"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Freight"
+msgstr "Flete"
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__paid_in_advance
 msgid ""
 "Freight paid in advance to an agent: its bill may be posted once the sale line exists, before the customer is invoiced (Cristina, «Nuevo Odoo», Facturación A3)."
 msgstr ""
 "Flete pagado por adelantado a un agente: su factura puede contabilizarse en cuanto existe la línea de venta, antes de facturar al cliente (Cristina, «Nuevo Odoo», Facturación A3)."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "From %(origin)s to %(destination)s"
+msgstr "De %(origin)s a %(destination)s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__expediente_id
@@ -1983,6 +2108,18 @@ msgid "Goods value"
 msgstr "Valor de la mercancía"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Goods value: %s"
+msgstr "Valor de la mercancía: %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Goods: %s"
+msgstr "Mercancía: %s"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_channel__green
 msgid "Green (automatic release)"
 msgstr "Verde (levante automático)"
@@ -1998,6 +2135,12 @@ msgstr "Peso bruto"
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_gross_kg
 msgid "Gross weight (kg)"
 msgstr "Peso bruto (kg)"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "HS %s"
+msgstr "TARIC %s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__handler_id
@@ -2066,11 +2209,6 @@ msgstr "House BL"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__house_count
 msgid "House Count"
 msgstr "Número de casas"
-
-#. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
-msgid "House of the master"
-msgstr "Casa del máster"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__house_ids
@@ -2191,6 +2329,12 @@ msgid "Important date"
 msgstr "Fecha importante"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Importer / consignee"
+msgstr "Importador / destinatario"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "In progress"
@@ -2227,6 +2371,12 @@ msgid "Incoterm"
 msgstr "Incoterm"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Incoterm: %s"
+msgstr "Incoterm: %s"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__haulier_id
 msgid "Inland carrier (haulier)"
 msgstr "Transportista terrestre"
@@ -2236,6 +2386,12 @@ msgstr "Transportista terrestre"
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_inland_state_id
 msgid "Inland province"
 msgstr "Provincia interior"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Insurance"
+msgstr "Seguro"
 
 #. module: boss_expediente
 #: model:boss.partner.role,name:boss_expediente.role_insurer
@@ -2837,6 +2993,12 @@ msgstr ""
 "Solo un responsable de ventas puede añadir un servicio a un pedido aceptado."
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__portal_attachment_ids
+msgid ""
+"Only these documents reach the customer's portal (never the whole chatter). A master document may contain other customers' data: publish it only when it is this customer's."
+msgstr ""
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__amount_margin_final
 msgid ""
 "Only when every external cost is billed or closed and the agreed sale is invoiced: invoiced (credit notes deducted) minus actual cost."
@@ -3251,6 +3413,11 @@ msgstr ""
 "Provincia de la entrega (importación) o recogida (exportación) en España, según su dirección; los transportistas cobran por zona."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__portal_published
+msgid "Published to the customer"
+msgstr ""
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__purchase_count
 msgid "Purchase Count"
 msgstr "Número de compras"
@@ -3409,6 +3576,11 @@ msgstr "Recalcular coste previsto"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__forecast_status__recomputed
 msgid "Recomputed with the file data"
 msgstr "Recalculada con los datos del expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__arrived
+msgid "Record the arrival (ATA)"
+msgstr "Registrar la llegada (ATA)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__bills
@@ -3942,6 +4114,16 @@ msgid "Tariff date"
 msgstr "Fecha de tarifa"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__portal_text
+msgid "Text for the customer"
+msgstr ""
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "The actual arrival (ATA) is known. Typing the ATA does it by itself."
+msgstr "Se conoce la llegada real (ATA). Al teclear la ATA se marca solo."
+
+#. module: boss_expediente
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_partner_role_code_unique
 msgid "The code of a logistic role must be unique."
 msgstr "El código de un rol logístico debe ser único."
@@ -4111,6 +4293,16 @@ msgid "Town of the pickup; filled from the pickup address."
 msgstr "Población de la recogida; se rellena con la dirección de recogida."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_tracking_url
+msgid "Tracking link"
+msgstr ""
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__portal_tracking_token
+msgid "Tracking link token"
+msgstr ""
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__traffic_code
@@ -4120,6 +4312,12 @@ msgstr "Población de la recogida; se rellena con la dirección de recogida."
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Traffic"
 msgstr "Tráfico"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Transport documents: %s"
+msgstr "Documentos de transporte: %s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__transport_mode
@@ -4258,6 +4456,12 @@ msgid "Vessel / flight"
 msgstr "Buque / vuelo"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Vessel / flight: %s"
+msgstr "Buque / vuelo: %s"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__discharge_date
 msgid "Vessel discharge"
 msgstr "Descarga del buque"
@@ -4314,6 +4518,18 @@ msgid ""
 "                        once to the quotation."
 msgstr ""
 "Lo que pide el cliente. Rellene lo que se sepa; «Nuevo presupuesto» lo pasa una vez a la oferta."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_event__portal_text
+msgid "What the customer reads. The internal note is never shown."
+msgstr ""
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_broker_text
+msgid ""
+"What the customs broker needs to clear the goods (Cristina, «Nuevo Odoo» › OPS- exptes A37): parties, transport documents, containers, goods and the freight, THC, T3 and insurance sold for the customs value. Copied and sent by the operator; Odoo never sends it."
+msgstr ""
+"Lo que el agente de aduanas necesita para despachar (Cristina, «Nuevo Odoo» › OPS- exptes A37): partes, documentos de transporte, contenedores, mercancía y el flete, THC, T3 y seguro vendidos para el valor en aduana. Lo copia y envía el operativo; Odoo nunca lo envía."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_sale_order__boss_package_type
@@ -4611,6 +4827,12 @@ msgstr "pedidos de compra a revisar tras un recálculo de coste"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "seal %s"
+msgstr "precinto %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "services to order (RFQ)"
 msgstr "servicios por pedir (solicitud de presupuesto)"
 
@@ -4653,6 +4875,18 @@ msgstr "NIF"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "tax ID %s"
+msgstr "NIF %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "type the ATA in «References and dates»"
+msgstr "teclee la ATA en «Referencias y fechas»"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "vessel discharge"
 msgstr "descarga del buque"
 
@@ -4660,13 +4894,3 @@ msgstr "descarga del buque"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
 msgid "· ETA"
 msgstr "· ETA"
-
-#. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
-msgid ": carrier, vessel, booking, master document and dates follow the master; this house bears"
-msgstr ": naviera, buque, reserva, documento máster y fechas siguen al máster; esta casa soporta"
-
-#. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
-msgid "% of its costs."
-msgstr "% de sus costes."

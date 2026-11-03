@@ -288,7 +288,7 @@ check("4 ATD and actual pickup shown on every file (import ATD, export pickup)",
 next_step("4", "in_transit", ops)
 go(ops)  # «Go» on «Put the file in transit»
 check("4 operations puts the file in transit", "in_transit", file.state)
-next_step("4", "delivered", ops)
+next_step("4", "arrived", ops)
 
 # ---- 5. destination (operations) ------------------------------------------------------------------------------------------
 refused("5 «Delivered» is refused while arrival, discharge, customs release, delivery date or B/L release are missing "
@@ -296,6 +296,8 @@ refused("5 «Delivered» is refused while arrival, discharge, customs release, d
 file_ops.write({"ata": datetime(2026, 12, 7, 6, 0), "discharge_date": datetime(2026, 12, 7, 14, 0),
                 "customs_ref": "[PRUEBA] 26ES00460010000001", "customs_guarantee": "boss",
                 "customs_admission_date": datetime(2026, 12, 8, 9, 0)})
+check("5 typing the ATA marks the file arrived (Odoo 17 «Llegado», F0-C22)", "arrived", file.state)
+next_step("5", "delivered", ops)
 file_ops.container_ids.write({"pickup_date": date(2026, 12, 10), "return_date": date(2026, 12, 12)})
 file_ops.delivery_date = datetime(2026, 12, 10, 11, 0)
 refused("5 no transport order to the haulier before the house B/L is released or a sea waybill (Cristina A73)",

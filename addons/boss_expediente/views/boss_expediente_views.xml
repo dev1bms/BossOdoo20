@@ -15,8 +15,10 @@
                     <button name="action_new_bill" type="object" string="Cost without purchase order"
                             groups="account.group_account_invoice" invisible="state == 'cancel' or financial_closed"/>
                     <button name="action_in_transit" type="object" string="In transit" invisible="state != 'open'"/>
+                    <button name="action_arrived" type="object" string="Arrived" invisible="state != 'in_transit'"
+                            help="The actual arrival (ATA) is known. Typing the ATA does it by itself."/>
                     <button name="action_delivered" type="object" string="Delivered"
-                            invisible="state not in ('open', 'in_transit')"/>
+                            invisible="state not in ('open', 'in_transit', 'arrived')"/>
                     <button name="action_close_operations" type="object" string="Close operations"
                             invisible="state != 'delivered'"/>
                     <button name="action_reopen" type="object" string="Reopen"
@@ -28,7 +30,7 @@
                     <button name="action_cancel" type="object" string="Cancel file"
                             invisible="state in ('closed', 'cancel')"
                             confirm="Cancel this file? Confirmed purchases and posted invoices must be cancelled or credited first."/>
-                    <field name="state" widget="statusbar" statusbar_visible="open,in_transit,delivered,closed"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,in_transit,arrived,delivered,closed"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -415,6 +417,11 @@
                                     <field name="customs_release_date"/>
                                 </group>
                             </group>
+                            <separator string="Data for the customs broker"/>
+                            <div class="text-muted small mb-1">Copy it and send it to the broker yourself: Odoo sends nothing.</div>
+                            <field name="customs_broker_text" widget="CopyClipboardButton" string="Copy" nolabel="1"
+                                   options="{'icon': 'fa-clipboard'}"/>
+                            <field name="customs_broker_text" nolabel="1" class="text-break" style="white-space: pre-wrap;"/>
                         </page>
                         <page string="Events" name="events">
                             <field name="event_ids">
@@ -458,7 +465,7 @@
                        decoration-warning="next_step in ('choose_supplier', 'type_cost', 'review')"/>
                 <field name="consolidation_role" optional="hide"/>
                 <field name="master_id" optional="hide"/>
-                <field name="state" widget="badge" decoration-info="state in ('open', 'in_transit')"
+                <field name="state" widget="badge" decoration-info="state in ('open', 'in_transit', 'arrived')"
                        decoration-success="state == 'closed'" decoration-muted="state == 'cancel'"/>
                 <field name="financial_closed" optional="show"/>
             </list>
@@ -514,11 +521,11 @@
                 <filter name="needs_action" string="Needs action"
                         domain="[('next_step', 'not in', ['done']), ('state', '!=', 'cancel')]"/>
                 <filter name="for_operations" string="To do in operations"
-                        domain="[('next_step', 'in', ['choose_supplier', 'type_cost', 'order', 'confirm_rfq', 'in_transit', 'delivered', 'perform', 'close_operations'])]"/>
+                        domain="[('next_step', 'in', ['choose_supplier', 'type_cost', 'order', 'confirm_rfq', 'in_transit', 'arrived', 'delivered', 'perform', 'close_operations'])]"/>
                 <filter name="for_accounting" string="To invoice or close"
                         domain="[('next_step', 'in', ['invoice', 'bills', 'review', 'close_financial'])]"/>
                 <separator/>
-                <filter name="active_files" string="In progress" domain="[('state', 'in', ('open', 'in_transit', 'delivered'))]"/>
+                <filter name="active_files" string="In progress" domain="[('state', 'in', ('open', 'in_transit', 'arrived', 'delivered'))]"/>
                 <filter name="to_close_ops" string="Delivered over a week ago"
                         domain="[('state', '=', 'delivered'), ('delivered_date', '&lt;', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
                 <filter name="to_close" string="Operations closed, finance open"

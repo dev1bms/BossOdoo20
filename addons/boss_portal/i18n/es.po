@@ -18,7 +18,8 @@ msgstr ", pendiente de revisión por BOSS:"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_shipment_events
 msgid ". No live position is shown: updates come from BOSS's records."
-msgstr ". No se muestra la posición en tiempo real: las novedades vienen de los registros de BOSS."
+msgstr ""
+". No se muestra la posición en tiempo real: las novedades vienen de los registros de BOSS."
 
 #. module: boss_portal
 #: model:mail.template,body_html:boss_portal.email_template_rate_quotation
@@ -43,7 +44,27 @@ msgid ""
 "    </p>\n"
 "</div>\n"
 "            "
-msgstr "<div style=\"margin: 0px; padding: 0px;\">\n    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n        Hola,\n        <br/><br/>\n        Sus tarifas <span style=\"font-weight: bold;\" t-out=\"object.name or ''\">S00052</span>\n        <t t-if=\"object.client_order_ref\">(<t t-out=\"object.client_order_ref or ''\">CUSTOMER REF</t>)</t>\n        están listas para revisar: cada precio se aplica por contenedor de su tamaño y tipo, por B/L o por la unidad indicada en\n        cada línea.\n        <t t-if=\"object.validity_date\">Son válidas hasta el <t t-out=\"format_date(object.validity_date) or ''\">05/05/2026</t>.</t>\n        <br/><br/>\n        Para reservar, indíquenos los contenedores que va a embarcar, o use «Solicitar reserva» en la oferta si es\n        representante autorizado.\n        <br/><br/>\n        No dude en contactarnos si tiene cualquier pregunta.\n        <t t-if=\"not is_html_empty(object.user_id.signature)\">\n            <div data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/><t t-out=\"object.user_id.signature or ''\">Mitchell Admin</t></div>\n        </t>\n    </p>\n</div>\n            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Hola,\n"
+"        <br/><br/>\n"
+"        Sus tarifas <span style=\"font-weight: bold;\" t-out=\"object.name or ''\">S00052</span>\n"
+"        <t t-if=\"object.client_order_ref\">(<t t-out=\"object.client_order_ref or ''\">CUSTOMER REF</t>)</t>\n"
+"        están listas para revisar: cada precio se aplica por contenedor de su tamaño y tipo, por B/L o por la unidad indicada en\n"
+"        cada línea.\n"
+"        <t t-if=\"object.validity_date\">Son válidas hasta el <t t-out=\"format_date(object.validity_date) or ''\">05/05/2026</t>.</t>\n"
+"        <br/><br/>\n"
+"        Para reservar, indíquenos los contenedores que va a embarcar, o use «Solicitar reserva» en la oferta si es\n"
+"        representante autorizado.\n"
+"        <br/><br/>\n"
+"        No dude en contactarnos si tiene cualquier pregunta.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\">\n"
+"            <div data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/><t t-out=\"object.user_id.signature or ''\">Mitchell Admin</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>\n"
+"            "
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
@@ -52,8 +73,10 @@ msgstr "<small class=\"text-muted\">(prev.)</small>"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_public_tracking
-msgid "<small class=\"text-muted\">Shipment tracking · BOSS Continental</small>"
-msgstr "<small class=\"text-muted\">Seguimiento del envío · BOSS Continental</small>"
+msgid ""
+"<small class=\"text-muted\">Shipment tracking · BOSS Continental</small>"
+msgstr ""
+"<small class=\"text-muted\">Seguimiento del envío · BOSS Continental</small>"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_shipment_dates
@@ -68,9 +91,9 @@ msgstr "<span class=\"badge text-bg-success\">Real</span>"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_shipment_dates
 msgid ""
-"<span class=\"text-muted\">(not confirmed: the arrival is shown as actual "
-"only when recorded)</span>"
-msgstr "<span class=\"text-muted\">(sin confirmar: la llegada se muestra como real solo cuando se registra)</span>"
+"<span class=\"text-muted\">(not confirmed: the arrival is shown as actual only when recorded)</span>"
+msgstr ""
+"<span class=\"text-muted\">(sin confirmar: la llegada se muestra como real solo cuando se registra)</span>"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_public_tracking
@@ -87,7 +110,9 @@ msgstr "<span>·</span>"
 msgid ""
 "<strong>Booking requested from the portal</strong>\n"
 "                    by"
-msgstr "<strong>Reserva solicitada desde el portal</strong>\n                    por"
+msgstr ""
+"<strong>Reserva solicitada desde el portal</strong>\n"
+"                    por"
 
 #. module: boss_portal
 #. odoo-python
@@ -100,6 +125,12 @@ msgstr "Ya hay una petición de reserva pendiente de revisión por BOSS."
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
 msgid "Arrival"
 msgstr "Llegada"
+
+#. module: boss_portal
+#. odoo-python
+#: code:addons/boss_portal/models/boss_expediente.py:0
+msgid "Arrived"
+msgstr "Llegado"
 
 #. module: boss_portal
 #: model:ir.model.fields.selection,name:boss_portal.selection__res_partner__boss_portal_role__approver
@@ -164,9 +195,9 @@ msgstr "Petición de reserva de %s"
 #. odoo-python
 #: code:addons/boss_portal/models/sale_order.py:0
 msgid ""
-"Booking request from the portal by %s (to review: containers, then accept "
-"the quotation with them)."
-msgstr "Solicitud de reserva desde el portal de %s (revisar: contenedores, después aceptar la oferta con ellos)."
+"Booking request from the portal by %s (to review: containers, then accept the quotation with them)."
+msgstr ""
+"Solicitud de reserva desde el portal de %s (revisar: contenedores, después aceptar la oferta con ellos)."
 
 #. module: boss_portal
 #: model:ir.model.fields,field_description:boss_portal.field_sale_order__boss_booking_lines
@@ -244,13 +275,9 @@ msgstr "Portal del cliente"
 #. module: boss_portal
 #: model:ir.module.module,summary:base.module_boss_portal
 msgid ""
-"Customer portal on the standard Odoo portal: roles granted by BOSS "
-"(tracking, commercial, authorised representative), quotations and invoices "
-"of the customer's own legal entity, rate quotations without totals, booking "
-"requests reviewed by BOSS, My Shipments with published events and documents,"
-" and a revocable tracking link. BOSS costs and margins never reach the "
-"customer (ADR-010)."
-msgstr "Portal de clientes sobre el portal estándar de Odoo: roles concedidos por BOSS (seguimiento, comercial, representante autorizado), ofertas y facturas de la propia entidad legal del cliente, ofertas de tarifas sin totales, solicitudes de reserva revisadas por BOSS, Mis envíos con novedades y documentos publicados, y un enlace de seguimiento revocable. Los costes y márgenes de BOSS nunca llegan al cliente (ADR-010)."
+"Customer portal on the standard Odoo portal: roles granted by BOSS (tracking, commercial, authorised representative), quotations and invoices of the customer's own legal entity, rate quotations without totals, booking requests reviewed by BOSS, My Shipments with published events and documents, and a revocable tracking link. BOSS costs and margins never reach the customer (ADR-010)."
+msgstr ""
+"Portal de clientes sobre el portal estándar de Odoo: roles concedidos por BOSS (seguimiento, comercial, representante autorizado), ofertas y facturas de la propia entidad legal del cliente, ofertas de tarifas sin totales, solicitudes de reserva revisadas por BOSS, Mis envíos con novedades y documentos publicados, y un enlace de seguimiento revocable. Los costes y márgenes de BOSS nunca llegan al cliente (ADR-010)."
 
 #. module: boss_portal
 #. odoo-python
@@ -292,10 +319,9 @@ msgstr "Documentos publicados al cliente"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
 msgid ""
-"Each price applies per unit of its basis (per container of the size and type"
-" shown, per B/L...). The total depends on the containers you ship: no total "
-"is given here."
-msgstr "Cada precio se aplica por unidad de su base (por contenedor del tamaño y tipo indicados, por B/L...). El total depende de los contenedores que embarque: aquí no se da ningún total."
+"Each price applies per unit of its basis (per container of the size and type shown, per B/L...). The total depends on the containers you ship: no total is given here."
+msgstr ""
+"Cada precio se aplica por unidad de su base (por contenedor del tamaño y tipo indicados, por B/L...). El total depende de los contenedores que embarque: aquí no se da ningún total."
 
 #. module: boss_portal
 #. odoo-python
@@ -306,9 +332,9 @@ msgstr "Indique un número entero de contenedores entre 0 y %s."
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.view_order_form
 msgid ""
-"Enter the containers in the Shipment tab and accept the quotation, or mark "
-"the request as handled."
-msgstr "Introduzca los contenedores en la pestaña Envío y acepte la oferta, o marque la petición como atendida."
+"Enter the containers in the Shipment tab and accept the quotation, or mark the request as handled."
+msgstr ""
+"Introduzca los contenedores en la pestaña Envío y acepte la oferta, o marque la petición como atendida."
 
 #. module: boss_portal
 #. odoo-python
@@ -330,9 +356,9 @@ msgstr "Novedad de un expediente"
 #. module: boss_portal
 #: model:portal.entry,description:boss_portal.portal_entry_my_shipments
 msgid ""
-"Follow your shipments: route, dates, containers, events and documents "
-"published by BOSS"
-msgstr "Siga sus envíos: ruta, fechas, contenedores, novedades y documentos publicados por BOSS"
+"Follow your shipments: route, dates, containers, events and documents published by BOSS"
+msgstr ""
+"Siga sus envíos: ruta, fechas, contenedores, novedades y documentos publicados por BOSS"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipment
@@ -344,11 +370,9 @@ msgstr "Origen"
 #: model:ir.model.fields,help:boss_portal.field_res_partner__boss_portal_role
 #: model:ir.model.fields,help:boss_portal.field_res_users__boss_portal_role
 msgid ""
-"Granted by a BOSS sales manager. Tracking: My Shipments, published events "
-"and documents. Commercial: also the quotations, selling prices and invoices "
-"of the customer. Authorised representative: also accepts quotations and "
-"requests bookings. Empty: the portal account sees nothing of BOSS."
-msgstr "Lo concede un responsable comercial de BOSS. Seguimiento: Mis envíos, novedades y documentos publicados. Comercial: además las ofertas, los precios de venta y las facturas del cliente. Representante autorizado: además acepta ofertas y solicita reservas. Vacío: la cuenta del portal no ve nada de BOSS."
+"Granted by a BOSS sales manager. Tracking: My Shipments, published events and documents. Commercial: also the quotations, selling prices and invoices of the customer. Authorised representative: also accepts quotations and requests bookings. Empty: the portal account sees nothing of BOSS."
+msgstr ""
+"Lo concede un responsable comercial de BOSS. Seguimiento: Mis envíos, novedades y documentos publicados. Comercial: además las ofertas, los precios de venta y las facturas del cliente. Representante autorizado: además acepta ofertas y solicita reservas. Vacío: la cuenta del portal no ve nada de BOSS."
 
 #. module: boss_portal
 #: model:ir.model.fields.selection,name:boss_portal.selection__sale_order__boss_booking_state__handled
@@ -431,7 +455,8 @@ msgstr "Nota para BOSS (opcional)"
 #. odoo-python
 #: code:addons/boss_portal/models/res_partner.py:0
 msgid "Only a BOSS sales manager grants or changes portal roles."
-msgstr "Solo un responsable de ventas de BOSS concede o cambia roles del portal."
+msgstr ""
+"Solo un responsable de ventas de BOSS concede o cambia roles del portal."
 
 #. module: boss_portal
 #. odoo-python
@@ -442,17 +467,16 @@ msgstr "Solo un apoderado de %s puede pedir una reserva."
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_expediente_view_form
 msgid ""
-"Only the documents chosen here reach the customer. A master document can "
-"carry other customers' data: publish it only when it is this customer's."
-msgstr "Solo los documentos elegidos aquí llegan al cliente. Un documento máster puede llevar datos de otros clientes: publíquelo solo cuando sea de este cliente."
+"Only the documents chosen here reach the customer. A master document can carry other customers' data: publish it only when it is this customer's."
+msgstr ""
+"Solo los documentos elegidos aquí llegan al cliente. Un documento máster puede llevar datos de otros clientes: publíquelo solo cuando sea de este cliente."
 
 #. module: boss_portal
 #: model:ir.model.fields,help:boss_portal.field_boss_expediente__portal_attachment_ids
 msgid ""
-"Only these documents reach the customer's portal (never the whole chatter). "
-"A master document may contain other customers' data: publish it only when it"
-" is this customer's."
-msgstr "Solo estos documentos llegan al portal del cliente (nunca todo el historial). Un documento máster puede contener datos de otros clientes: publíquelo solo cuando sea de este cliente."
+"Only these documents reach the customer's portal (never the whole chatter). A master document may contain other customers' data: publish it only when it is this customer's."
+msgstr ""
+"Solo estos documentos llegan al portal del cliente (nunca todo el historial). Un documento máster puede contener datos de otros clientes: publíquelo solo cuando sea de este cliente."
 
 #. module: boss_portal
 #: model:ir.model.fields,field_description:boss_portal.field_res_partner__boss_portal_scope_id
@@ -549,10 +573,9 @@ msgstr "Seguimiento de envíos"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_expediente_view_form
 msgid ""
-"Shows the route, the dates (estimated and actual), the containers by size "
-"and the published events; never parties, prices, references or documents. "
-"Creating a new link stops the earlier one."
-msgstr "Muestra la ruta, las fechas (previstas y reales), los contenedores por tamaño y las novedades publicadas; nunca partes, precios, referencias ni documentos. Crear un enlace nuevo anula el anterior."
+"Shows the route, the dates (estimated and actual), the containers by size and the published events; never parties, prices, references or documents. Creating a new link stops the earlier one."
+msgstr ""
+"Muestra la ruta, las fechas (previstas y reales), los contenedores por tamaño y las novedades publicadas; nunca partes, precios, referencias ni documentos. Crear un enlace nuevo anula el anterior."
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
@@ -567,10 +590,9 @@ msgstr "Impuestos incluidos"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
 msgid ""
-"Tell us how many containers you will ship of each rate. BOSS reviews the "
-"request; nothing is confirmed, invoiced or charged until BOSS confirms the "
-"shipment with you."
-msgstr "Indíquenos cuántos contenedores embarcará de cada tarifa. BOSS revisa la solicitud; no se confirma, factura ni cobra nada hasta que BOSS confirme el envío con usted."
+"Tell us how many containers you will ship of each rate. BOSS reviews the request; nothing is confirmed, invoiced or charged until BOSS confirms the shipment with you."
+msgstr ""
+"Indíquenos cuántos contenedores embarcará de cada tarifa. BOSS revisa la solicitud; no se confirma, factura ni cobra nada hasta que BOSS confirme el envío con usted."
 
 #. module: boss_portal
 #: model:ir.model.fields,field_description:boss_portal.field_boss_expediente_event__portal_text
@@ -587,26 +609,24 @@ msgstr "El token de acceso no es válido."
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.view_partner_form
 msgid ""
-"The customer must be this contact's own company: until then the portal shows"
-" nothing."
-msgstr "El cliente debe ser la propia empresa de este contacto: hasta entonces el portal no muestra nada."
+"The customer must be this contact's own company: until then the portal shows nothing."
+msgstr ""
+"El cliente debe ser la propia empresa de este contacto: hasta entonces el portal no muestra nada."
 
 #. module: boss_portal
 #: model:ir.model.fields,help:boss_portal.field_res_partner__boss_portal_customer_id
 #: model:ir.model.fields,help:boss_portal.field_res_users__boss_portal_customer_id
 msgid ""
-"The legal entity whose records this contact sees. It must be the contact's "
-"own company: a contact of another company, or of a group company, gets "
-"nothing until BOSS decides how groups are handled."
-msgstr "La entidad legal cuyos registros ve este contacto. Debe ser la propia empresa del contacto: un contacto de otra empresa, o de una empresa del grupo, no ve nada hasta que BOSS decida cómo tratar los grupos."
+"The legal entity whose records this contact sees. It must be the contact's own company: a contact of another company, or of a group company, gets nothing until BOSS decides how groups are handled."
+msgstr ""
+"La entidad legal cuyos registros ve este contacto. Debe ser la propia empresa del contacto: un contacto de otra empresa, o de una empresa del grupo, no ve nada hasta que BOSS decida cómo tratar los grupos."
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.view_partner_form
 msgid ""
-"The portal account itself is created with the standard «Grant portal "
-"access». The role decides what it sees; removing the role or the access "
-"stops it at once."
-msgstr "La cuenta del portal se crea con el estándar «Conceder acceso al portal». El rol decide lo que ve; quitar el rol o el acceso lo corta en el acto."
+"The portal account itself is created with the standard «Grant portal access». The role decides what it sees; removing the role or the access stops it at once."
+msgstr ""
+"La cuenta del portal se crea con el estándar «Conceder acceso al portal». El rol decide lo que ve; quitar el rol o el acceso lo corta en el acto."
 
 #. module: boss_portal
 #. odoo-python
@@ -624,9 +644,9 @@ msgstr "La selección no corresponde a las tarifas de esta oferta."
 #. odoo-python
 #: code:addons/boss_portal/controllers/portal.py:0
 msgid ""
-"This order cannot be paid from here: an authorised representative of the "
-"customer pays it."
-msgstr "Este pedido no se puede pagar desde aquí: lo paga un apoderado del cliente."
+"This order cannot be paid from here: an authorised representative of the customer pays it."
+msgstr ""
+"Este pedido no se puede pagar desde aquí: lo paga un apoderado del cliente."
 
 #. module: boss_portal
 #. odoo-python
@@ -649,9 +669,9 @@ msgstr "Destino"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
 msgid ""
-"To book these rates, contact BOSS or an authorised representative of your "
-"company."
-msgstr "Para reservar estas tarifas, contacte con BOSS o con un apoderado de su empresa."
+"To book these rates, contact BOSS or an authorised representative of your company."
+msgstr ""
+"Para reservar estas tarifas, contacte con BOSS o con un apoderado de su empresa."
 
 #. module: boss_portal
 #: model:ir.model.fields,field_description:boss_portal.field_boss_expediente__portal_tracking_url
@@ -693,9 +713,9 @@ msgstr "Novedades"
 #. module: boss_portal
 #: model:mail.template,description:boss_portal.email_template_rate_quotation
 msgid ""
-"Used for rate quotations (unit rates without quantities): no total in the "
-"message"
-msgstr "Se usa para las ofertas de tarifas (tarifas por unidad sin cantidades): sin total en el mensaje"
+"Used for rate quotations (unit rates without quantities): no total in the message"
+msgstr ""
+"Se usa para las ofertas de tarifas (tarifas por unidad sin cantidades): sin total en el mensaje"
 
 #. module: boss_portal
 #: model:ir.model,name:boss_portal.model_res_users
@@ -721,14 +741,15 @@ msgstr "Escriba el texto para el cliente antes de publicar «%s»."
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
 msgid "Your account has no access to shipments yet: ask your BOSS contact."
-msgstr "Su cuenta todavía no tiene acceso a los envíos: consulte a su contacto en BOSS."
+msgstr ""
+"Su cuenta todavía no tiene acceso a los envíos: consulte a su contacto en BOSS."
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
 msgid ""
-"Your booking request was sent. BOSS reviews it and confirms the shipment "
-"with you."
-msgstr "Su petición de reserva se ha enviado. BOSS la revisa y confirma el envío con usted."
+"Your booking request was sent. BOSS reviews it and confirms the shipment with you."
+msgstr ""
+"Su petición de reserva se ha enviado. BOSS la revisa y confirma el envío con usted."
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
@@ -743,9 +764,9 @@ msgstr "el"
 #. module: boss_portal
 #: model:mail.template,subject:boss_portal.email_template_rate_quotation
 msgid ""
-"{{ object.company_id.name }} Rates {{ object.name or 'n/a' }} {{ "
-"object.client_order_ref and ('(' + object.client_order_ref + ')') or '' }}"
-msgstr "{{ object.company_id.name }} Tarifas {{ object.name or 'n/a' }} {{ object.client_order_ref and ('(' + object.client_order_ref + ')') or '' }}"
+"{{ object.company_id.name }} Rates {{ object.name or 'n/a' }} {{ object.client_order_ref and ('(' + object.client_order_ref + ')') or '' }}"
+msgstr ""
+"{{ object.company_id.name }} Tarifas {{ object.name or 'n/a' }} {{ object.client_order_ref and ('(' + object.client_order_ref + ')') or '' }}"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipment
