@@ -1070,7 +1070,9 @@ class BossExpediente(models.Model):
         customer = self.partner_id.commercial_partner_id
         return [(customer, "customer")] * bool(customer) + [(supplier, "supplier") for supplier in suppliers]
 
-    @api.depends("rating_ids.rating", "partner_id", "purchase_order_ids.state", "bill_ids.state")
+    # Not stored: computed when read. Only stored fields trigger it (bill_ids is itself computed, so a bill posted
+    # elsewhere must not search files through it).
+    @api.depends("rating_ids.rating", "partner_id", "purchase_order_ids.state")
     def _compute_rating_missing(self):
         for file in self:
             rated = {(r.partner_id, r.role) for r in file.rating_ids if r.rating}
