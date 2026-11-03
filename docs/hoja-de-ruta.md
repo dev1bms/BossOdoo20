@@ -163,7 +163,7 @@ con su fuente escrita; ninguna se inventa.
    en el máster» en las casas; cada casa ve su margen con su parte y el máster el margen consolidado; «En tránsito»
    conjunto; cierres económicos en orden; «Nueva casa». Evidencia: `docs/evidencias/20261103_1610_check_file_consolidation_boss20_a8239ee5c56a.txt`
    (22/0), arnés 83/0, cola 10/0; consolidación [PRUEBA] E260231 con dos casas en boss20 (modelo E260468 de Odoo 17).
-   Pendiente: documentos HBL/HAWB y manifiesto (F0-C45), portal de una consolidación, migración de los expedientes de
+   Pendiente: portal de una consolidación (HBL/HAWB y manifiesto: tarea 11), migración de los expedientes de
    Odoo 17 abiertos con varias partidas (F0-C74); la base del reparto queda como elección registrada en el máster
    (Cristina nunca eligió peso real o tasable).
 9. **Oferta con menos entradas.** *Hecho cuando* una oferta IMB FCL desde la plantilla se precie con unas 6 entradas en
@@ -191,6 +191,20 @@ con su fuente escrita; ninguna se inventa.
    los costes de BOSS. Evidencia: `docs/evidencias/20261103_1715_check_file_arrival_boss20_c1c5433bd9ef.txt` (11/0) y el
    arnés con el paso «Llegado» `docs/evidencias/20261103_1715_check_file_e2e_boss20_c1c5433bd9ef.txt` (85/0);
    consolidaciones 22/0, cola 10/0, portal 46/0.
+11. **Documentos house y manifiesto (F0-C45).** *Hecho cuando* una casa imprima su HBL o HAWB y el máster su manifiesto,
+   como en Odoo 17. **Entregado el 03/11** (boss_documents 20.0.1.2.2, commits `b0ef6b7`, `d3f7318`, `3839d06`; ADR-014):
+   - «BL house» (marítimo) y «AWB house» (aéreo) en cada expediente que no es máster, con las casillas de los informes
+     1387 y 1143 de Odoo 17: expedidor, destinatario, notify («same as consignee»), agente en destino, lugares y
+     puertos, buque y viaje o vuelo, flete prepaid/collect (propuesto desde el incoterm), originales (3, o express si es
+     sea waybill), marcas, contenedores y precintos (los del máster en una casa LCL), bultos, mercancía y TARIC, peso y
+     volumen; en inglés para cualquier usuario y en A4 de márgenes reducidos;
+   - BORRADOR hasta «Emitir documento house», que dice lo que falta y después da el número del expediente y la fecha de
+     emisión;
+   - «Manifiesto de carga» del máster (una línea por casa, totales), rechazado sin agente como en Odoo 17 (acción 1543).
+   Visto el PDF de E260232 (HBL borrador) y E260231 (manifiesto). Evidencia:
+   `docs/evidencias/20261103_1732_check_house_documents_boss20_3839d0616caa.txt` (11/0), documentos 19/0.
+   Pendiente: el AWB IATA en su formulario preimpreso, las cláusulas del BL, el aviso de texto que no cabe en su casilla
+   y bloquear un BL ya emitido.
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -226,4 +240,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
