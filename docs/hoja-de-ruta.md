@@ -49,6 +49,22 @@ con su fuente escrita; ninguna se inventa.
    (E260167), grupaje LCL de importación y exportación marítima, con los contactos reales de boss20 y sin importes
    reales; cada uno se recorre con «Siguiente paso».
    *Hecho cuando* existan en boss20, cada paso esté hecho o anotado y los huecos S3–S5 del arnés pasen a comprobaciones.
+   **Entregado el 03/11** (`dev/sample_real_cases.py`, evidencia
+   `docs/evidencias/20261103_1345_sample_real_cases_boss20_3453cfd01b5e.txt`: 4 pasos correctos, 0 fallos). En boss20,
+   aceptados y con su siguiente paso: E260175 importación FCL (Aguilera, Xingang → Valencia, 20' + 40' HC, MSC), E260176
+   importación aérea (Cofitel, Cantón → Madrid, Qatar Airways, WFS), E260177 exportación LCL (Leroy Merlin, Algeciras →
+   Conakry, MSC), E260178 importación LCL de agente (Publiship, Hong Kong → Valencia). Cada uno se recorre con «Siguiente
+   paso» hasta el cierre financiero dentro de una transacción deshecha. La primera tanda (E260171–E260174) se canceló en
+   Odoo: el precio ficticio se había puesto por unidad (90.000 € de transporte por kg); evidencia
+   `20261103_1343_…_4d872f00eb0e.txt`. Cubre los huecos S3 (sin NOA ni almacenaje) y S5; S4 (exportación FCL) sigue
+   abierto. Lo que aprendimos para la tarea 3:
+   - las tarifas de cliente (p. ej. Cofitel) no tienen la regla general «coste + 20 %» de respaldo: el flete con coste
+     manual queda sin precio de venta;
+   - el precio de venta debe poder variar por tamaño de contenedor (THC 20' y 40' en la plantilla «Standard»);
+   - sin plantilla (exportación marítima, LCL) el expediente queda sin incoterm ni «BOSS gestiona»;
+   - la tarifa WFS (punto 38) sigue pendiente de aprobación: sin ella la importación aérea solo se acepta con el motivo
+     del responsable comercial;
+   - no hay tarifas LCL ni de exportación marítima en boss20: esos costes van «a consultar».
 3. **Oferta rápida con los precios de BOSS.** Precios de venta de la plantilla «Standard» de Odoo 17 en la tarifa
    general y las 9 plantillas por cliente como tarifas de cliente; plantillas por tráfico (R-S1, F0-C09); aviso de
    margen mínimo con las 12 reglas de Odoo 17; regla ALM del 25/09.
