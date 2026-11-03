@@ -22,8 +22,8 @@ partida.
   vessel or flight, packages, gross weight, goods, freight; container numbers on FCL; the master AWB on air) and then
   gives the document the file's number (as Odoo 17 printed the partida's) unless one is typed, and today's date.
   Express B/L (zero originals) when the B/L release is «sea waybill», otherwise three originals.
-- The **cargo manifest** is printed from a master (one line per house) or a single file (one line), and is refused
-  without the agent abroad, as Odoo 17 action 1543 did.
+- The **cargo manifest** is printed from a master (one line per house) or a single file (one line); without the agent
+  abroad it prints a red warning in the consignee box, as the Odoo 17 report did.
 - The documents keep the boxes of the Odoo 17 reports and are printed in English whatever the user's language
   (international transport documents), on A4 low margins.
 - The three documents are in the file's ⋮ › Print menu (Belal looked for them there, 03/11/2026); the header only
