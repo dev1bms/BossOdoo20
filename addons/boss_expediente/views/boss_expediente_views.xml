@@ -419,8 +419,7 @@
                             </group>
                             <separator string="Data for the customs broker"/>
                             <div class="text-muted small mb-1">Copy it and send it to the broker yourself: Odoo sends nothing.</div>
-                            <field name="customs_broker_text" widget="CopyClipboardButton" string="Copy" nolabel="1"
-                                   options="{'icon': 'fa-clipboard'}"/>
+                            <field name="customs_broker_text" widget="CopyClipboardButton" string="Copy" nolabel="1"/>
                             <field name="customs_broker_text" nolabel="1" class="text-break" style="white-space: pre-wrap;"/>
                         </page>
                         <page string="Events" name="events">
