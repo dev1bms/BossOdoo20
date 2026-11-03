@@ -44,6 +44,24 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%(file)s cannot close operations yet: %(problems)s."
+msgstr "%(file)s todavía no puede cerrar operaciones: %(problems)s."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%(group)s margin %(margin)s, minimum %(minimum)s"
+msgstr "%(group)s margen %(margin)s, mínimo %(minimum)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%(group)s re-invoiced %(sale)s for %(cost)s paid"
+msgstr "%(group)s refacturado por %(sale)s con %(cost)s pagados"
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/account_move.py:0
 msgid ""
 "%(move)s cannot be paid yet:\n"
@@ -168,6 +186,12 @@ msgstr "%s solicitudes de presupuesto"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%s services"
 msgstr "%s servicios"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%s still to invoice: invoice the services first"
+msgstr "%s todavía por facturar: facture antes los servicios"
 
 #. module: boss_expediente
 #. odoo-python
@@ -354,6 +378,7 @@ msgstr "Icono del tipo de actividad"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_actual
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_cost_actual
 msgid "Actual cost"
 msgstr "Coste real"
 
@@ -440,6 +465,7 @@ msgstr "Clientes de agentes"
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_sale
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_sale
 msgid "Agreed sale"
 msgstr "Venta acordada"
 
@@ -459,12 +485,25 @@ msgstr ""
 "Venta acordada menos el coste final previsto. No es definitivo mientras haya un coste desconocido o sin facturar. El trabajo propio de BOSS (personal, oficina) no es un coste aquí: no es el beneficio neto."
 
 #. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_margin_report_action
+msgid ""
+"Agreed sale, forecast and final margin of every file, by responsible, salesperson, customer, traffic and\n"
+"                month. The files in progress are recomputed each time the report opens; a file closed financially keeps its\n"
+"                final figures."
+msgstr ""
+"Venta pactada, margen previsto y final de cada expediente, por responsable, comercial, cliente, tráfico y\n"
+"                mes. Los expedientes en curso se recalculan cada vez que se abre el informe; un expediente cerrado económicamente conserva sus\n"
+"                cifras finales."
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__air
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__transport_mode__air
 msgid "Air"
 msgstr "Aéreo"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__air
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__load_type__air
 msgid "Air cargo"
 msgstr "Carga aérea"
 
@@ -551,6 +590,12 @@ msgstr "Cero aprobado"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Archived"
 msgstr "Archivado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_margin_report__key_date
+msgid "Arrival of an import, departure of the others (actual, else planned)."
+msgstr ""
+"Llegada de una importación, salida de los demás (real o, si no, prevista)."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__on_request
@@ -739,6 +784,7 @@ msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__cancel
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__cancel
 msgid "Cancelled"
 msgstr "Cancelado"
 
@@ -827,6 +873,11 @@ msgid "Closed"
 msgstr "Cerrado"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__margin_exception_reason
+msgid "Closed with a low margin because"
+msgstr "Cerrado con margen bajo porque"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__code
 msgid "Code"
 msgstr "Código"
@@ -859,6 +910,7 @@ msgstr "Compras comprometidas"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__company_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__company_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__company_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__company_id
 msgid "Company"
 msgstr "Compañía"
 
@@ -1039,6 +1091,7 @@ msgstr "Crear las solicitudes de presupuesto"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_uid
@@ -1056,6 +1109,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_date
@@ -1071,6 +1125,7 @@ msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__cross
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__direction__cross
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Cross-trade"
 msgstr "Cruzado"
@@ -1080,16 +1135,19 @@ msgstr "Cruzado"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__currency_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__currency_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__currency_id
 msgid "Currency"
 msgstr "Moneda"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__customer_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__partner_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__partner_id
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_customer
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_customer
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "Customer"
 msgstr "Cliente"
 
@@ -1222,6 +1280,13 @@ msgid "Dates"
 msgstr "Fechas"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__delivered_date
+msgid ""
+"Day the file was marked delivered. Cristina: every delivered file closes operations within a week («Nuevo Odoo» › OPS- exptes A69)."
+msgstr ""
+"Día en que el expediente se marcó como entregado. Cristina: todo expediente entregado cierra operaciones en una semana («Nuevo Odoo» › OPS- exptes A69)."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__days
 msgid "Days"
 msgstr "Días"
@@ -1233,9 +1298,20 @@ msgstr "Declaración"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__delivered
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__delivered
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Delivered"
 msgstr "Entregado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__delivered_date
+msgid "Delivered on"
+msgstr "Entregado el"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+msgid "Delivered over a week ago"
+msgstr "Entregados hace más de una semana"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_delivery
@@ -1295,6 +1371,7 @@ msgstr "Diferencias con la oferta"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__direction
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__direction
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_direction
 msgid "Direction"
 msgstr "Sentido"
@@ -1336,6 +1413,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__display_name
@@ -1589,6 +1667,7 @@ msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__export
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__direction__export
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Export"
 msgstr "Exportación"
@@ -1632,6 +1711,7 @@ msgstr "Costes adicionales"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__fcl
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__load_type__fcl
 msgid "FCL (full container)"
 msgstr "FCL (contenedor completo)"
 
@@ -1641,11 +1721,17 @@ msgid "FOH (goods in the terminal)"
 msgstr "FOH (mercancía en la terminal)"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__refreshed_on
+msgid "Figures of"
+msgstr "Cifras del"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_account_move_line__boss_expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__expediente_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_purchase_order__boss_expediente_id
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_expediente_id
@@ -1680,6 +1766,11 @@ msgid "Files of %s"
 msgstr "Expedientes de %s"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_margin_final
+msgid "Final margin"
+msgstr "Margen final"
+
+#. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid ""
@@ -1704,6 +1795,8 @@ msgstr "Fecha de cierre económico"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__financial_closed
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__financial_closed
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "Financially closed"
 msgstr "Cerrado económicamente"
 
@@ -1731,6 +1824,7 @@ msgstr "Previsión"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_cost_forecast
 msgid "Forecast cost"
 msgstr "Coste previsto"
 
@@ -1750,6 +1844,7 @@ msgstr ""
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_margin_forecast
 msgid "Forecast margin"
 msgstr "Margen previsto"
 
@@ -1916,6 +2011,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__id
@@ -1956,6 +2052,7 @@ msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__import
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__direction__import
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Import"
 msgstr "Importación"
@@ -1971,7 +2068,14 @@ msgid "Import: full container out of the terminal."
 msgstr "Importación: salida del contenedor lleno de la terminal."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__key_date
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
+msgid "Important date"
+msgstr "Fecha importante"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "In progress"
 msgstr "En curso"
 
@@ -1983,6 +2087,7 @@ msgstr "En este expediente"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__in_transit
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__in_transit
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "In transit"
 msgstr "En tránsito"
@@ -2046,6 +2151,7 @@ msgstr "Facturar al cliente"
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_invoiced
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_invoiced
 msgid "Invoiced"
 msgstr "Facturado"
 
@@ -2087,6 +2193,7 @@ msgstr "Conocido"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__lcl
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__load_type__lcl
 msgid "LCL (groupage)"
 msgstr "LCL (grupaje)"
 
@@ -2101,6 +2208,7 @@ msgstr "LCL (grupaje)"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_uid
@@ -2118,6 +2226,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_date
@@ -2155,6 +2264,7 @@ msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__load_type
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__load_type
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_load_type
 msgid "Load type"
 msgstr "Tipo de carga"
@@ -2171,6 +2281,11 @@ msgstr "Rol logístico de un contacto"
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files_roles
 msgid "Logistic roles"
 msgstr "Roles logísticos"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Low margin"
+msgstr "Margen bajo"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_main
@@ -2210,7 +2325,18 @@ msgid "Margin at acceptance %(margin)s = %(sale)s - %(cost)s"
 msgstr "Margen en la aceptación %(margin)s = %(sale)s - %(cost)s"
 
 #. module: boss_expediente
+#: model:ir.actions.act_window,name:boss_expediente.boss_margin_report_action
+#: model:ir.actions.server,name:boss_expediente.boss_margin_report_open_server_action
+#: model:ir.model,name:boss_expediente.model_boss_margin_report
+#: model:ir.ui.menu,name:boss_expediente.menu_boss_files_margin
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_graph
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_pivot
+msgid "Margin by file"
+msgstr "Margen por expediente"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__margin_final
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__margin_final
 msgid "Margin final"
 msgstr "Margen definitivo"
 
@@ -2286,6 +2412,11 @@ msgstr ""
 "Móvil guardado aparte del teléfono (Odoo 20 tiene un solo campo de teléfono; migrado del móvil de Odoo 17, F2)."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
+msgid "Month"
+msgstr "Mes"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_split_view_form
 msgid "Move"
 msgstr "Mover"
@@ -2335,6 +2466,7 @@ msgstr "Nombre"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__national
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__direction__national
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "National"
 msgstr "Nacional"
@@ -2394,6 +2526,11 @@ msgstr "Detalle del siguiente paso"
 #: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
 msgid "No cost expected yet"
 msgstr "Todavía no hay ningún coste previsto"
+
+#. module: boss_expediente
+#: model_terms:ir.actions.act_window,help:boss_expediente.boss_margin_report_action
+msgid "No file yet"
+msgstr "Todavía no hay expedientes"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__closed
@@ -2519,6 +2656,13 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de entrega"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__margin_exception_reason
+msgid ""
+"Odoo 17 practice: a margin below the minimum stops the operational close until a manager unlocks it. Sales managers type the reason here."
+msgstr ""
+"Práctica de Odoo 17: un margen por debajo del mínimo detiene el cierre operativo hasta que un responsable lo desbloquea. Los responsables comerciales escriben aquí el motivo."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__old_currency_id
 msgid "Old Currency"
 msgstr "Moneda anterior"
@@ -2558,7 +2702,14 @@ msgstr ""
 "Solo cuando todo coste externo está facturado o cerrado y la venta acordada está facturada: facturado (abonos descontados) menos coste real."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Only when the margin is below the minimum and operations must close"
+msgstr ""
+"Solo cuando el margen está por debajo del mínimo y hay que cerrar operaciones"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__open
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__open
 msgid "Open"
 msgstr "Abierto"
 
@@ -2582,6 +2733,7 @@ msgstr "Operaciones"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__closed
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__closed
 msgid "Operations closed"
 msgstr "Operaciones cerradas"
 
@@ -3165,6 +3317,8 @@ msgstr "Solicitudes de presupuesto por confirmar"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__user_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__user_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 msgid "Responsible"
 msgstr "Responsable"
 
@@ -3193,11 +3347,13 @@ msgstr "Revisar los pendientes"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__road
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__transport_mode__road
 msgid "Road"
 msgstr "Terrestre"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__road
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__load_type__road
 msgid "Road cargo"
 msgstr "Carga terrestre"
 
@@ -3268,7 +3424,14 @@ msgid "Sales Order Line"
 msgstr "Línea de pedido de venta"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__salesman_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
+msgid "Salesperson"
+msgstr "Comercial"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__transport_mode__sea
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__transport_mode__sea
 msgid "Sea"
 msgstr "Marítimo"
 
@@ -3492,6 +3655,7 @@ msgid "State"
 msgstr "Estado"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__state
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Status"
@@ -3705,6 +3869,7 @@ msgstr "Por pedir"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_list
 msgid "Total"
 msgstr "Total"
 
@@ -3720,15 +3885,18 @@ msgstr "Población de la recogida; se rellena con la dirección de recogida."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__traffic_code
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_traffic_code
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_margin_report_view_search
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Traffic"
 msgstr "Tráfico"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__transport_mode
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__transport_mode
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_transport_mode
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Transport mode"
@@ -4074,6 +4242,18 @@ msgstr "defecto del servicio"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "delivered %s days ago"
+msgstr "entregado hace %s días"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "delivered %s days ago: Cristina asks to close within a week"
+msgstr "entregado hace %s días: Cristina pide cerrar en una semana"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "delivery date and time"
 msgstr "fecha y hora de entrega"
 
@@ -4130,6 +4310,14 @@ msgstr "antes: %s"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "house B/L released or sea waybill"
 msgstr "HBL liberado o sea waybill"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"margin below the minimum (%s): a sales manager writes why in «Closed with a low margin because»"
+msgstr ""
+"margen por debajo del mínimo (%s): un responsable comercial escribe el motivo en «Cerrado con margen bajo porque»"
 
 #. module: boss_expediente
 #. odoo-python

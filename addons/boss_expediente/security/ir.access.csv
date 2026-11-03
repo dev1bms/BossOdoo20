@@ -37,3 +37,6 @@ boss_airline_handler_purchase,Airline handlers: maintain (purchase),boss.airline
 boss_airline_handler_manager,Airline handlers: maintain (sales manager),boss.airline.handler,sales_team.group_sale_manager,crud,
 boss_operator_assignment_read,Operators by customer and traffic: read,boss.operator.assignment,base.group_user,r,
 boss_operator_assignment_manager,Operators by customer and traffic: maintain,boss.operator.assignment,sales_team.group_sale_manager,crud,
+boss_margin_report_manager,Margin by file (sales managers),boss.margin.report,sales_team.group_sale_manager,r,
+boss_margin_report_invoice,Margin by file (accounting),boss.margin.report,account.group_account_invoice,r,
+boss_margin_report_readonly,Margin by file (accounting read),boss.margin.report,account.group_account_readonly,r,

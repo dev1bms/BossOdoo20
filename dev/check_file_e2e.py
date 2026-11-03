@@ -312,6 +312,9 @@ check("5 the transport order shows the file, the haulier and the container, not 
       (True, True, True, False), (file.name in html, haulier.name in html, "PRUU1234565" in html, "PO-[PRUEBA]-E2E" in html))
 go(ops)  # «Go» on «Mark the file delivered»
 check("5 operations marks the file delivered", "delivered", file.state)
+check("5 the day of the delivery is kept (Cristina: close operations within a week of it)", True, bool(file.delivered_date))
+refused("5 operations cannot close before every service is invoiced (F0-A07, Belal; F0-C60, Cristina)",
+        file_ops.action_close_operations)
 
 # ---- 6. performed services (operations) and vendor bills (accounting) -----------------------------------------------------
 ordered = file.cost_ids.filtered("purchase_line_ids")
@@ -518,8 +521,8 @@ next_step("10", "review", acct)
 action = go(acct)
 check("10 «Go» opens the services to review (variances)", ["BL", "THC"],
       sorted(env["boss.expediente.cost"].browse(action["domain"][0][2]).mapped("product_id.default_code")))
-gap("S1 conditions of the operational close and freeze of the shipment data", "decision", "F10 (Cristina)",
-    "a click, nothing frozen")
+gap("S1 shipment data frozen once operations are closed (Odoo 17 froze about 140 fields)", "feature", "F10",
+    "closed files stay editable")
 refused("10 the financial close waits for the cost variances to be reviewed",
         lambda: file.with_user(acct).action_close_financial())
 to_review = file.cost_ids.filtered("variance_to_review")
@@ -534,6 +537,9 @@ next_step("10", "close_financial", acct)
 refused("10 operations cannot close financially (checked on the server)", lambda: file_ops.action_close_financial())
 file.with_user(acct).action_close_financial()
 check("10 accounting closes financially", True, file.financial_closed)
+row = env["boss.margin.report"].search([("expediente_id", "=", file.id)])
+check("10 «Margin by file» keeps the final margin of the file closed financially", (1, True, True),
+      (len(row), row.margin_final, file.currency_id.compare_amounts(row.amount_margin_final, file.amount_margin_final) == 0))
 next_step("10 the salesman sees the", "done", sales)
 refused("10 accounting (not administrator) cannot reopen it", lambda: file.with_user(acct).action_reopen_financial())
 

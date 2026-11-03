@@ -12,6 +12,7 @@ from odoo.tools.misc import formatLang
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
+from odoo.addons.boss_pricing_sale.models.sale_order import MIN_MARGIN_RATE, MIN_MARGIN_TOLERANCE
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import (BUSINESSES, chargeable_by_mode, chargeable_kg,
                                                                       abroad_side, key_date, spanish_side, traffic_code)
 
@@ -380,6 +381,14 @@ class BossExpediente(models.Model):
                                compute_sudo=True, sanitize=False, groups=MARGIN_GROUPS)
     financial_closed_date = fields.Date(readonly=True, copy=False)
     financial_closed_by = fields.Many2one("res.users", readonly=True, copy=False)
+    delivered_date = fields.Date(
+        "Delivered on", readonly=True, copy=False, tracking=True,
+        help="Day the file was marked delivered. Cristina: every delivered file closes operations within a week («Nuevo "
+             "Odoo» › OPS- exptes A69).")
+    margin_exception_reason = fields.Char(
+        "Closed with a low margin because", tracking=True, copy=False, groups="sales_team.group_sale_manager",
+        help="Odoo 17 practice: a margin below the minimum stops the operational close until a manager unlocks it. "
+             "Sales managers type the reason here.")
 
     # --- creation ------------------------------------------------------------------------------------------------
 
@@ -1064,6 +1073,10 @@ class BossExpediente(models.Model):
                 step, detail = "invoice", money(amount_sale - invoiced) if sees_sale else False
             elif file.state == "delivered":
                 step = "close_operations"
+                if file.delivered_date:
+                    days = (today - file.delivered_date).days
+                    detail = (_("delivered %s days ago: Cristina asks to close within a week", days) if days > 7
+                              else _("delivered %s days ago", days))
             elif not currency.is_zero(pending):
                 step, detail = "bills", money(pending) if sees_cost else False
             elif review:
@@ -1257,9 +1270,47 @@ class BossExpediente(models.Model):
                 raise UserError(self.env._(
                     "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and "
                     "dates» and «Customs».", file=file.name, missing=", ".join(missing)))
-        self.write({"state": "delivered"})
+        self.write({"state": "delivered", "delivered_date": fields.Date.context_today(self)})
+
+    def _boss_margin_warnings(self):
+        """Service groups of the file below the minimum margin: the base rule of Odoo 17 also used on the quotation
+        (10 % of the forecast cost, 10 of tolerance), amounts paid on behalf re-invoiced exactly."""
+        self.ensure_one()
+        _ = self.env._
+        currency = self.company_id.currency_id
+        duties = self.env.ref("boss_services.product_category_duties", raise_if_not_found=False)
+        money = lambda amount: formatLang(self.env, amount, currency_obj=currency)  # noqa: E731
+        warnings = []
+        for group, figures in self.sudo()._boss_summary_rows()[:-1]:
+            sale, cost, margin = figures["sale"], figures["forecast"], figures["margin"]
+            if duties and group == duties.name:
+                if not currency.is_zero(sale - cost):
+                    warnings.append(_("%(group)s re-invoiced %(sale)s for %(cost)s paid", group=group, sale=money(sale),
+                                      cost=money(cost)))
+            elif cost and margin + MIN_MARGIN_TOLERANCE < MIN_MARGIN_RATE * cost:
+                warnings.append(_("%(group)s margin %(margin)s, minimum %(minimum)s", group=group,
+                                  margin=money(margin), minimum=money(MIN_MARGIN_RATE * cost)))
+        return warnings
 
     def action_close_operations(self):
+        """Operational close as Cristina wrote it and Odoo 17 enforced it (F0-C60; F0-A07, Belal): every service
+        invoiced, no margin below the minimum unless a sales manager wrote why. Costs still to be billed do not stop
+        it: the file is closed against its forecast and the late bills are taken without reopening (OPS- exptes A69)."""
+        _ = self.env._
+        for file in self:
+            sudo = file.sudo()
+            currency = file.company_id.currency_id
+            problems = []
+            if float_compare(sudo.amount_to_invoice, 0.0, precision_rounding=currency.rounding) > 0:
+                problems.append(_("%s still to invoice: invoice the services first",
+                                  formatLang(self.env, sudo.amount_to_invoice, currency_obj=currency)))
+            warnings = file._boss_margin_warnings()
+            if warnings and not sudo.margin_exception_reason:
+                problems.append(_("margin below the minimum (%s): a sales manager writes why in «Closed with a low "
+                                  "margin because»", "; ".join(warnings)))
+            if problems:
+                raise UserError(_("%(file)s cannot close operations yet: %(problems)s.", file=file.name,
+                                  problems="; ".join(problems)))
         self.write({"state": "closed"})
 
     def action_reopen(self):
@@ -1288,10 +1339,12 @@ class BossExpediente(models.Model):
                                            problems="\n".join(problems)))
         self.write({"financial_closed": True, "financial_closed_date": fields.Date.context_today(self),
                     "financial_closed_by": self.env.uid})
+        self.env["boss.margin.report"]._boss_refresh(self)
 
     def action_reopen_financial(self):
         self._boss_check_group("account.group_account_manager")
         self.write({"financial_closed": False, "financial_closed_date": False, "financial_closed_by": False})
+        self.env["boss.margin.report"]._boss_refresh(self)
 
     def _boss_open_needs(self, needs, name):
         """The services of the file a step is about, in a list where they are completed in place."""

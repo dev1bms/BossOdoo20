@@ -39,6 +39,10 @@ with registry.cursor() as cr:
     loaded = []
     cr.execute("SELECT name FROM ir_module_module WHERE state = 'installed'")
     installed = {row[0] for row in cr.fetchall()}
+    # Model, field and selection records with their external ids per module, as a module update does: the XML of a new
+    # model refers to «model_<name>» and the translation template needs the new fields (03/11/2026).
+    for module in sorted(m for m in installed if m.startswith("boss_")):
+        registry.init_models(cr, names, {"module": module}, install=False)
     for module in sorted(os.listdir(WIP_ADDONS)):
         manifest = os.path.join(WIP_ADDONS, module, "__manifest__.py")
         if not module.startswith("boss_") or not os.path.exists(manifest) or module not in installed:

@@ -269,7 +269,20 @@ def walk(case, file):
                         gap(key, "walk: review without a variance")
                         break
                     to_review.write({"variance_reviewed": True, "variance_note": "[PRUEBA] revisado"})
-                else:  # order, close_operations, close_financial
+                elif step == "close_operations":
+                    if file._boss_margin_warnings():
+                        try:
+                            with env.cr.savepoint():
+                                file.action_close_operations()
+                            blocked = False
+                        except UserError:
+                            blocked = True
+                        check(f"{key} operations do not close with a margin below the minimum until a manager writes why",
+                              True, blocked)
+                        file.sudo().margin_exception_reason = "[PRUEBA] coste ficticio de la prueba"
+                        manual(key, "walk: a sales manager writes why it closes with a low margin")
+                    file.action_next_step()
+                else:  # order, close_financial
                     file.action_next_step()
                 env.invalidate_all()
                 if file.next_step == step:

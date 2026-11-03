@@ -163,6 +163,10 @@
                                     <field name="cost_complete"/>
                                     <field name="margin_final"/>
                                 </group>
+                                <group string="Low margin" groups="sales_team.group_sale_manager">
+                                    <field name="margin_exception_reason"
+                                           placeholder="Only when the margin is below the minimum and operations must close"/>
+                                </group>
                                 <group string="Differences with the quotation" invisible="not quote_difference">
                                     <field name="quote_difference" nolabel="1" colspan="2"/>
                                 </group>
@@ -323,6 +327,7 @@
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
                                     <field name="pickup_date"/>
                                     <field name="delivery_date"/>
+                                    <field name="delivered_date" invisible="not delivered_date"/>
                                 </group>
                                 <group string="Other parties">
                                     <field name="notify_id"/>
@@ -451,6 +456,8 @@
                         domain="[('next_step', 'in', ['invoice', 'bills', 'review', 'close_financial'])]"/>
                 <separator/>
                 <filter name="active_files" string="In progress" domain="[('state', 'in', ('open', 'in_transit', 'delivered'))]"/>
+                <filter name="to_close_ops" string="Delivered over a week ago"
+                        domain="[('state', '=', 'delivered'), ('delivered_date', '&lt;', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
                 <filter name="to_close" string="Operations closed, finance open"
                         domain="[('state', '=', 'closed'), ('financial_closed', '=', False)]"/>
                 <separator/>
