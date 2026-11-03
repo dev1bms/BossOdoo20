@@ -5,8 +5,8 @@ from markupsafe import Markup
 from psycopg2 import errors as pg_errors
 
 from odoo import Command, api, fields, models
-from odoo.exceptions import AccessError, UserError
-from odoo.tools import float_compare
+from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools import float_compare, float_round
 from odoo.tools.misc import formatLang
 
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
@@ -66,6 +66,16 @@ NEXT_STEPS = [
     ("done", "Nothing left to do"),
 ]
 SCOPES = ("pickup", "origin_customs", "main", "destination_customs", "delivery")
+# Transport data of a consolidation that belongs to the master (MBL / MAWB) and is copied to its houses (ADR-013).
+MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd", "ata",
+                 "discharge_date")
+# Case and route copied from a master to a new house (the house keeps its own parties, cargo and customs).
+HOUSE_FROM_MASTER = ("business", "direction", "transport_mode", "load_type", "incoterm_id", "origin_country_id",
+                     "origin_port_id", "origin_place", "destination_country_id", "destination_port_id",
+                     "destination_place", "agent_id", "handler_id",
+                     *(f"scope_{scope}" for scope in SCOPES))
+ALLOCATION_BASES = [("chargeable", "Chargeable weight (W/M)"), ("gross", "Gross weight"), ("volume", "Volume"),
+                    ("equal", "Equal parts"), ("manual", "Manual share")]
 # Type of unit of the cargo: the Odoo 17 taxonomy of a partida (x_studio_unit_type), as Ángel asked (27/10/2026).
 PACKAGE_TYPES = [("CT", "Cartons"), ("PL", "Pallets"), ("CR", "Crates"), ("PC", "Packages"), ("BT", "Bottles"),
                  ("BG", "Bags")]
@@ -385,6 +395,42 @@ class BossExpediente(models.Model):
         "Delivered on", readonly=True, copy=False, tracking=True,
         help="Day the file was marked delivered. Cristina: every delivered file closes operations within a week («Nuevo "
              "Odoo» › OPS- exptes A69).")
+    # Consolidation (roadmap item 8, ADR-013): a master file (the MBL / MAWB and the shared purchases) with house files
+    # (one per HBL / HAWB: its own customer, cargo, customs, delivery, sale and invoices). A file with neither is a
+    # single shipment, as every file was before.
+    master_id = fields.Many2one(
+        "boss.expediente", "Master file", index=True, tracking=True, check_company=True, copy=False,
+        domain="[('id', '!=', id), ('master_id', '=', False), ('state', '!=', 'cancel')]",
+        help="The file of the master B/L or AWB this house travels under. The master's transport data (carrier, "
+             "vessel, booking, master B/L or AWB, dates) is copied here, and its shared costs give this file its share.")
+    house_ids = fields.One2many("boss.expediente", "master_id", "Houses")
+    house_count = fields.Integer(compute="_compute_consolidation")
+    consolidation_role = fields.Selection(
+        [("single", "Single shipment"), ("master", "Master"), ("house", "House")], "Consolidation",
+        compute="_compute_consolidation")
+    allocation_basis = fields.Selection(
+        ALLOCATION_BASES, "Shared costs split by", default="chargeable", tracking=True,
+        help="How the costs of this master are shared among its houses: by chargeable weight (W/M: the higher of "
+             "weight and volume, the basis the carriers charge on), gross weight, volume, equal parts, or a share "
+             "typed on each house. Odoo 19 offered the same choices; the industry splits by weight or volume.")
+    master_allocation_basis = fields.Selection(related="master_id.allocation_basis")
+    master_share = fields.Float(
+        "Share of the master's costs (%)", digits=(16, 2), compute="_compute_master_share", store=True,
+        readonly=False, tracking=True, copy=False,
+        help="Part of the master's costs that this house bears, from the master's basis (typed when the basis is "
+             "manual).")
+    amount_master_cost = fields.Monetary(
+        "Share of the master's costs", compute="_compute_amounts", compute_sudo=True, groups=COST_GROUPS,
+        help="This house's share of the forecast cost of its master (counted in its cost and margin).")
+    amount_master_cost_actual = fields.Monetary("of which billed on the master", compute="_compute_amounts",
+                                                compute_sudo=True, groups=COST_GROUPS)
+    amount_houses_sale = fields.Monetary("Sale of the houses", compute="_compute_consolidated", compute_sudo=True,
+                                         groups=SALE_GROUPS)
+    amount_houses_cost = fields.Monetary("Own costs of the houses", compute="_compute_consolidated",
+                                         compute_sudo=True, groups=COST_GROUPS)
+    amount_consolidated_margin = fields.Monetary(
+        "Consolidated margin", compute="_compute_consolidated", compute_sudo=True, groups=MARGIN_GROUPS,
+        help="Sale of the master and its houses minus the costs of the master and the own costs of the houses.")
     margin_exception_reason = fields.Char(
         "Closed with a low margin because", tracking=True, copy=False, groups="sales_team.group_sale_manager",
         help="Odoo 17 practice: a margin below the minimum stops the operational close until a manager unlocks it. "
@@ -400,6 +446,7 @@ class BossExpediente(models.Model):
         files = super().create(vals_list)
         files._boss_create_analytic_account()
         files._boss_propose_operator()
+        files.filtered("master_id").master_id._boss_sync_houses()
         for file in files.filtered(lambda f: not f.handler_id and len(f.handler_candidate_ids) == 1):
             file.handler_id = file.handler_candidate_ids  # the only handler known for the airline at the airport
         return files
@@ -664,6 +711,12 @@ class BossExpediente(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
+        if vals.get("master_id"):
+            linked = self.filtered("master_id")
+            linked.master_id._boss_sync_houses()
+            linked._boss_cover_house_services()
+        if any(f in vals for f in MASTER_FIELDS):
+            self._boss_sync_houses(vals)
         if any(f in vals for f in self.PERIOD_FIELDS):
             self._boss_apply_dates()
         if vals.get("handler_id"):
@@ -709,6 +762,100 @@ class BossExpediente(models.Model):
                 file.message_post(body=Markup("<br/>").join(
                     [self.env._("Expected cost recomputed with the file data:")] + lines))
         return True
+
+    @api.depends("house_ids", "master_id")
+    def _compute_consolidation(self):
+        for file in self:
+            file.house_count = len(file.house_ids)
+            file.consolidation_role = "master" if file.house_ids else "house" if file.master_id else "single"
+
+    @api.depends("master_id", "master_id.allocation_basis", "master_id.house_ids", "master_id.house_ids.gross_kg",
+                 "master_id.house_ids.volume_m3", "master_id.house_ids.chargeable_kg", "master_id.house_ids.state")
+    def _compute_master_share(self):
+        """Share of each house in its master's costs, by the master's basis; the shares of a master add up to 100
+        (largest remainder). A manual basis keeps what was typed."""
+        for master in self.master_id:
+            houses = master.house_ids.filtered(lambda h: h.state != "cancel")
+            basis = master.allocation_basis
+            if basis == "manual":
+                continue
+            weight = {"chargeable": "chargeable_kg", "gross": "gross_kg", "volume": "volume_m3"}.get(basis)
+            values = {h: (h[weight] if weight else 1.0) or 0.0 for h in houses}
+            total = sum(values.values())
+            if not total:
+                values, total = {h: 1.0 for h in houses}, float(len(houses))  # no cargo data yet: equal parts
+            exact = {h: 100.0 * v / total for h, v in values.items()}
+            shares = {h: float_round(exact[h], precision_digits=2, rounding_method="DOWN") for h in houses}
+            remainder = round(100.0 - sum(shares.values()), 2)
+            for h in sorted(houses, key=lambda h: (exact[h] - shares[h], h.id), reverse=True):
+                if remainder <= 0:
+                    break
+                shares[h] = round(shares[h] + 0.01, 2)
+                remainder = round(remainder - 0.01, 2)
+            for house in houses:
+                house.master_share = shares[house]
+            (master.house_ids - houses).master_share = 0.0
+        self.filtered(lambda f: not f.master_id).master_share = 0.0
+
+    def _compute_consolidated(self):
+        """Consolidated view of a master: the sale of its houses, their own costs, and the margin of the whole."""
+        for file in self:
+            houses = file.house_ids.filtered(lambda h: h.state != "cancel")
+            houses_sale = sum(houses.mapped("amount_sale"))
+            houses_cost = sum(h.amount_cost_forecast - h.amount_master_cost for h in houses)
+            file.amount_houses_sale = houses_sale
+            file.amount_houses_cost = houses_cost
+            file.amount_consolidated_margin = (file.amount_sale + houses_sale) - (file.amount_cost_forecast + houses_cost)
+
+    @api.constrains("master_id", "house_ids")
+    def _check_consolidation(self):
+        for file in self:
+            if file.master_id and (file.master_id == file or file.master_id.master_id):
+                raise ValidationError(self.env._("A house hangs from a master file, and a master is not a house itself."))
+            if file.master_id and file.house_ids:
+                raise ValidationError(self.env._("%s has houses: it cannot be a house of another file.", file.name))
+
+    def _boss_sync_houses(self, vals=None):
+        """The master's transport data is the houses' data: copied to them (one carrier, one vessel, one master
+        document, one set of dates for the whole consolidation)."""
+        for master in self.filtered("house_ids"):
+            values = {f: (master[f].id if isinstance(master[f], models.BaseModel) else master[f])
+                      for f in MASTER_FIELDS if vals is None or f in vals}
+            if values:
+                master.house_ids.filtered(lambda h: h.state != "cancel").write(values)
+
+    def _boss_cover_house_services(self):
+        """A house sells services the master buys (freight, local charges…): their purchase needs on the house are
+        covered by the master (no second order), and the house takes its share of the master's cost instead."""
+        for house in self.filtered("master_id"):
+            # by service group: the master buys the freight per container (FMI), the house sells it per W/M (FMI-LCL)
+            shared = {house._boss_service_group(p) for p in house.master_id.cost_ids.filtered(lambda n: not n.closed).product_id}
+            needs = house.cost_ids.filtered(lambda n: n.kind == "sale" and not n.closed and not n.purchase_line_ids
+                                            and house._boss_service_group(n.product_id) in shared)
+            if needs:
+                needs.write({"closed": True, "master_covered": True,
+                             "reason": self.env._("Bought on the master file %s", house.master_id.name)})
+                house.message_post(body=self.env._("Services bought on the master %(master)s, not ordered here: %(codes)s.",
+                                                   master=house.master_id.name,
+                                                   codes=", ".join(needs.mapped("product_id.default_code"))))
+
+    def action_cover_house_services(self):
+        self.ensure_one()
+        self.house_ids._boss_cover_house_services()
+
+    def action_new_house(self):
+        """A house of this master: same case and route, the master's customer by default (changed on the house when
+        the consolidation carries several customers), linked at once."""
+        self.ensure_one()
+        values = {f: (self[f].id if isinstance(self[f], models.BaseModel) else self[f]) for f in HOUSE_FROM_MASTER}
+        values.update({"partner_id": self.partner_id.id, "master_id": self.id, "company_id": self.company_id.id,
+                       "user_id": self.user_id.id})
+        house = self.create(values)
+        return {"type": "ir.actions.act_window", "res_model": "boss.expediente", "view_mode": "form",
+                "views": [(False, "form")], "res_id": house.id}
+
+    def action_open_houses(self):
+        return self._boss_action("boss.expediente", self.house_ids, self.env._("Houses of %s", self.name))
 
     @api.depends("sale_order_ids.state")
     def _compute_preliminary(self):
@@ -927,8 +1074,15 @@ class BossExpediente(models.Model):
             for line in loose:
                 ordered = company_amount(line.price_subtotal, line.currency_id, line.order_id.date_order)
                 pending += max(ordered - billed_by_line.get(line.id, 0.0), 0.0)
+            # a house bears its share of the master's costs (ADR-013): forecast and billed, like its own
+            master = file.master_id
+            share = (file.master_share or 0.0) / 100.0 if master else 0.0
+            allocated_actual = share * master.amount_cost_actual if master else 0.0
+            allocated_pending = share * master.amount_cost_pending if master else 0.0
+            actual += allocated_actual
+            pending += allocated_pending
             unknown = needs.filtered("cost_unknown")
-            complete = not unknown and currency.is_zero(pending)
+            complete = not unknown and currency.is_zero(pending) and (not master or master.cost_complete)
             accepted_sale = amount_sale - amount_added
             accepted_cost = sum(accepted_needs.mapped("accepted_amount_company"))
 
@@ -959,6 +1113,8 @@ class BossExpediente(models.Model):
                                          for p in draft_rfqs),
                 "amount_draft_bills": -sum(draft_bills.mapped("amount_untaxed_signed")),
                 "cost_complete": complete, "margin_final": final,
+                "amount_master_cost": allocated_actual + allocated_pending,
+                "amount_master_cost_actual": allocated_actual,
             })
 
             # Where each figure comes from (the summary must be checkable by hand).
@@ -985,6 +1141,10 @@ class BossExpediente(models.Model):
                 unknown_text = " · " + _("COST UNKNOWN") if need.cost_unknown else ""
                 rows.append(f"   {need.product_id.default_code or need.product_id.name} ({basis}): "
                             f"{money(need.pending_amount_company)}{unknown_text}")
+            if master:
+                rows.append(_("   share of the master %(master)s: %(share)s %% of its forecast cost = %(amount)s",
+                              master=master.name, share=file.master_share,
+                              amount=money(allocated_actual + allocated_pending)))
             if loose:
                 rows.append(_("   purchase lines without file service: %s", money(sum(
                     max(company_amount(l.price_subtotal, l.currency_id, l.order_id.date_order)
@@ -1049,7 +1209,7 @@ class BossExpediente(models.Model):
                 pass
             elif file.financial_closed:
                 step = "done"
-            elif file.preliminary:
+            elif file.preliminary and not file.house_ids:  # a master usually sells nothing itself
                 step = "link_quotation"
             elif no_supplier:
                 step, detail = "choose_supplier", _("%s services", len(no_supplier))
@@ -1256,12 +1416,13 @@ class BossExpediente(models.Model):
         return missing
 
     def action_in_transit(self):
-        for file in self:
+        files = self | self.house_ids.filtered(lambda h: h.state == "open")  # the houses leave with their master
+        for file in files:
             missing = file._boss_transit_missing()
             if missing:
                 file.message_post(body=self.env._(
                     "In transit without: %s. A warning: complete them when they are known.", ", ".join(missing)))
-        self.write({"state": "in_transit"})
+        files.write({"state": "in_transit"})
 
     def action_delivered(self):
         for file in self:
@@ -1332,6 +1493,10 @@ class BossExpediente(models.Model):
             problems = []
             if file.state not in ("closed", "cancel"):
                 problems.append(self.env._("operations are not closed"))
+            open_houses = file.house_ids.filtered(lambda h: h.state != "cancel" and not h.financial_closed)
+            if open_houses:
+                problems.append(self.env._("its houses are not closed financially: %s",
+                                           ", ".join(open_houses.mapped("name"))))
             if file.completeness:
                 problems.append(file.completeness)
             if problems:

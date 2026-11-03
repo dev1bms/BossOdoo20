@@ -75,6 +75,9 @@ class BossExpedienteCost(models.Model):
         "before the customer is invoiced (Cristina, «Nuevo Odoo», Facturación A3).")
     closed = fields.Boolean("No more cost expected", help="Nothing more will be ordered or billed (service cancelled, "
                             "supplier replaced, cost not incurred).")
+    master_covered = fields.Boolean(
+        "Bought on the master", help="Consolidation (ADR-013): this service is bought once on the master file, not "
+        "here; this house bears its share of the master's cost instead.")
     purchase_line_ids = fields.One2many("purchase.order.line", "boss_cost_id", "Purchase lines", readonly=True)
     state = fields.Selection(NEED_STATES, compute="_compute_state", store=True)
     # «Previsiones» (Nuevo Odoo.xlsx, hoja «previsiones» A14-A15): estimated forecasts entered before the final data,

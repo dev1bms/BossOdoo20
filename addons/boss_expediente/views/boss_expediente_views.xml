@@ -42,13 +42,23 @@
                         <button name="action_open_invoices" type="object" class="oe_stat_button" icon="edit_square">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
+                        <button name="action_open_houses" type="object" class="oe_stat_button" icon="account_tree"
+                                invisible="not house_count">
+                            <field name="house_count" widget="statinfo" string="Houses"/>
+                        </button>
                         <button name="action_open_bills" type="object" class="oe_stat_button" icon="receipt_long"
                                 groups="account.group_account_invoice,purchase.group_purchase_user">
                             <field name="bill_count" widget="statinfo" string="Bills"/>
                         </button>
                     </div>
-                    <div class="alert alert-info mb-2" role="status" invisible="not preliminary or state == 'cancel'">
+                    <div class="alert alert-info mb-2" role="status"
+                         invisible="not preliminary or state == 'cancel' or house_count">
                         Preliminary file: no accepted quotation yet. Link it from the quotation (field <strong>File</strong>).
+                    </div>
+                    <div class="alert alert-info mb-2" role="status" invisible="not master_id">
+                        House of the master <field name="master_id" nolabel="1" class="d-inline" readonly="1"/>: carrier,
+                        vessel, booking, master document and dates follow the master; this house bears
+                        <field name="master_share" nolabel="1" class="d-inline" readonly="1"/> % of its costs.
                     </div>
                     <div class="alert alert-warning mb-2" role="status"
                          invisible="financial_closed or state == 'cancel' or (not completeness and next_step == 'done')">
@@ -80,7 +90,7 @@
                             <field name="business"/>
                             <field name="user_id"/>
                             <field name="agent_id"/>
-                            <field name="carrier_id"/>
+                            <field name="carrier_id" readonly="master_id"/>
                             <field name="handler_candidate_ids" invisible="1"/>
                             <field name="handler_id" invisible="transport_mode != 'air'"
                                    domain="[('id', 'in', handler_candidate_ids)] if handler_candidate_ids else [('boss_role_ids.code', '=', 'handler')]"/>
@@ -96,6 +106,12 @@
                             <field name="incoterm_id"/>
                             <field name="traffic_code" invisible="not traffic_code"/>
                             <field name="port_kind" invisible="1"/>
+                            <field name="master_id" invisible="house_count" options="{'no_create': True}"/>
+                            <field name="master_allocation_basis" invisible="1"/>
+                            <field name="master_share" invisible="not master_id"
+                                   readonly="master_allocation_basis != 'manual'"/>
+                            <field name="allocation_basis" invisible="not house_count"/>
+                            <field name="house_count" invisible="1"/>
                             <label for="scope_pickup" string="BOSS handles"/>
                             <div class="d-flex flex-wrap gap-3">
                                 <span><field name="scope_pickup" nolabel="1"/> Pickup</span>
@@ -116,7 +132,7 @@
                                    options="{'always_reload': True}"/>
                             <field name="origin_place"/>
                             <field name="inland_state_id" options="{'no_create': True}" invisible="direction != 'export'"/>
-                            <field name="etd"/>
+                            <field name="etd" readonly="master_id"/>
                         </group>
                         <group string="Destination">
                             <field name="consignee_id"/>
@@ -127,7 +143,7 @@
                                    options="{'always_reload': True}"/>
                             <field name="destination_place"/>
                             <field name="inland_state_id" options="{'no_create': True}" invisible="direction == 'export'"/>
-                            <field name="eta"/>
+                            <field name="eta" readonly="master_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -151,6 +167,7 @@
                                     <field name="amount_committed"/>
                                     <field name="amount_cost_actual"/>
                                     <field name="amount_cost_pending"/>
+                                    <field name="amount_master_cost" invisible="not master_id"/>
                                     <field name="amount_cost_forecast"/>
                                     <field name="amount_paid"/>
                                     <field name="amount_draft_rfqs"/>
@@ -236,6 +253,7 @@
                                     <field name="without_order" optional="hide"/>
                                     <field name="paid_in_advance" optional="hide"/>
                                     <field name="closed" optional="hide"/>
+                                    <field name="master_covered" optional="hide"/>
                                     <field name="cost_unknown" column_invisible="1"/>
                                     <field name="purchase_line_ids" column_invisible="1"/>
                                     <field name="rebill_line_id" optional="hide"/>
@@ -254,6 +272,45 @@
                                             groups="purchase.group_purchase_user"/>
                                 </list>
                             </field>
+                        </page>
+                        <page string="Houses" name="houses"
+                              invisible="master_id or (not house_count and not preliminary)">
+                            <div class="mb-2">
+                                <button name="action_new_house" type="object" string="New house" class="btn btn-secondary"
+                                        invisible="state == 'cancel'"
+                                        help="A house file of this master: same case and route, its own customer, cargo, customs and invoice."/>
+                                <button name="action_cover_house_services" type="object" string="Cover the houses' shared services"
+                                        class="btn btn-secondary" invisible="not house_count"
+                                        help="The services the houses sell and this master buys are not ordered again on the houses: each takes its share of the master's cost."/>
+                            </div>
+                            <field name="house_ids" readonly="1">
+                                <list decoration-muted="state == 'cancel'">
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="hbl_ref" optional="show"/>
+                                    <field name="hawb_ref" optional="hide"/>
+                                    <field name="packages" optional="hide"/>
+                                    <field name="gross_kg" optional="show" sum="Total"/>
+                                    <field name="volume_m3" optional="show" sum="Total"/>
+                                    <field name="chargeable_kg" optional="show" sum="Total"/>
+                                    <field name="master_share" sum="Total"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount_master_cost" sum="Total"/>
+                                    <field name="amount_sale" sum="Total"/>
+                                    <field name="amount_margin_forecast" sum="Total"/>
+                                    <field name="next_step" widget="badge" optional="show"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                            <group invisible="not house_count">
+                                <group string="Consolidated">
+                                    <field name="amount_sale" string="Sale of the master"/>
+                                    <field name="amount_houses_sale"/>
+                                    <field name="amount_cost_forecast" string="Shared costs (this master)"/>
+                                    <field name="amount_houses_cost"/>
+                                    <field name="amount_consolidated_margin"/>
+                                </group>
+                            </group>
                         </page>
                         <page string="Cost recalculations" name="revisions" invisible="not revision_ids">
                             <field name="revision_ids">
@@ -309,20 +366,21 @@
                         <page string="References and dates" name="references">
                             <group>
                                 <group string="References">
-                                    <field name="booking_ref"/>
-                                    <field name="mbl_ref" invisible="transport_mode == 'air'"/>
+                                    <field name="booking_ref" readonly="master_id"/>
+                                    <field name="mbl_ref" invisible="transport_mode == 'air'" readonly="master_id"/>
                                     <field name="hbl_ref" invisible="transport_mode == 'air'"/>
                                     <field name="hbl_release" invisible="transport_mode != 'sea'"/>
-                                    <field name="mawb_ref" invisible="transport_mode != 'air'"/>
+                                    <field name="mawb_ref" invisible="transport_mode != 'air'" readonly="master_id"/>
                                     <field name="hawb_ref" invisible="transport_mode != 'air'"/>
-                                    <field name="vessel"/>
-                                    <field name="voyage"/>
+                                    <field name="vessel" readonly="master_id"/>
+                                    <field name="voyage" readonly="master_id"/>
                                 </group>
                                 <group string="Dates">
-                                    <field name="atd"/>
+                                    <field name="atd" readonly="master_id"/>
                                     <field name="foh" invisible="direction != 'export'"/>
-                                    <field name="ata" invisible="direction == 'export'"/>
-                                    <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"/>
+                                    <field name="ata" invisible="direction == 'export'" readonly="master_id"/>
+                                    <field name="discharge_date" invisible="direction == 'export' or transport_mode != 'sea'"
+                                           readonly="master_id"/>
                                     <field name="emptying_date" invisible="direction == 'export' or load_type != 'lcl'"/>
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
                                     <field name="pickup_date"/>
@@ -395,6 +453,8 @@
                 <field name="user_id" optional="show" widget="many2one_avatar_user"/>
                 <field name="next_step" optional="show" widget="badge" decoration-success="next_step == 'done'"
                        decoration-warning="next_step in ('choose_supplier', 'type_cost', 'review')"/>
+                <field name="consolidation_role" optional="hide"/>
+                <field name="master_id" optional="hide"/>
                 <field name="state" widget="badge" decoration-info="state in ('open', 'in_transit')"
                        decoration-success="state == 'closed'" decoration-muted="state == 'cancel'"/>
                 <field name="financial_closed" optional="show"/>
@@ -465,6 +525,9 @@
                 <filter name="export" string="Export" domain="[('direction', '=', 'export')]"/>
                 <filter name="cross" string="Cross-trade" domain="[('direction', '=', 'cross')]"/>
                 <filter name="national" string="National" domain="[('direction', '=', 'national')]"/>
+                <separator/>
+                <filter name="masters" string="Masters (consolidations)" domain="[('house_ids', '!=', False)]"/>
+                <filter name="houses" string="Houses" domain="[('master_id', '!=', False)]"/>
                 <separator/>
                 <filter name="boss_business" string="BOSS clients" domain="[('business', '=', 'boss')]"/>
                 <filter name="agent_business" string="Agents' clients" domain="[('business', '=', 'agent')]"/>
