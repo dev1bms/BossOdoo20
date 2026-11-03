@@ -86,6 +86,18 @@ check("freight with a manual cost falls back to the general rule too",
       [(round(1000.0 * (1 + markup / 100), 2), "cost_based")] * len(fmi),
       [(round(l.price_unit, 2), l.boss_sale_status) for l in fmi])
 
+# a container entered as 40' DV and then changed to 40' HC (as on screen): its lines follow it, none stays beside
+with Form(order) as form:
+    with form.boss_container_ids.edit(1) as row:
+        row.container_type_id = ref("boss_pricing.container_type_dv")
+order.action_boss_update_costs()
+with Form(order) as form:
+    with form.boss_container_ids.edit(1) as row:
+        row.container_type_id = ref("boss_pricing.container_type_hc")
+check("a container type changed on screen: one THC line per container, none left for the old type",
+      [("20", "DV"), ("40", "HC")],
+      sorted((l.boss_container_size, l.boss_container_type_id.code) for l in order.order_line if l.product_id == thc))
+
 # G4: the minimum margin warning of Odoo 17 (10 % of the cost per service group, 10 of tolerance; paid on behalf exact)
 check("no margin warning while every group is above 10 % of its cost", False, order.boss_margin_alert)
 fad = order.order_line.filtered(lambda l: l.product_id.default_code == "FAD")

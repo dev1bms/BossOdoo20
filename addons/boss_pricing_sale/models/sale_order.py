@@ -147,7 +147,8 @@ class SaleOrder(models.Model):
         """Per-container services take the containers of the shipment: one line per container size and type, like the
         template and «Add services» do. A line without a size takes the first size and type its service still lacks;
         every other size and type it lacks gets a new line of the same service and supplier (priced for that size).
-        Lines already sized, frozen or not priced per container are kept. Also run when the containers are entered
+        Lines frozen or not priced per container are kept; on an ordinary quotation a line whose container is no
+        longer in the shipment (its size or type was changed) takes a missing one before a new line is made. Also run when the containers are entered
         after the services (Ángel's order of steps on 27/10/2026: template first, then 1×40'): otherwise
         size-dependent prices (T3-PAD, GLO-CCC) stay «missing shipment data». Containers entered one at a time give
         each size its lines (a 40' HC entered after a 20' got none before 03/11/2026)."""
@@ -163,7 +164,13 @@ class SaleOrder(models.Model):
                 own = lines.filtered(lambda l, p=product: l.product_id == p)
                 have = {(l.boss_container_size, l.boss_container_type_id) for l in own if l.boss_container_size}
                 missing = [group for group in groups if group not in have]
-                for line in own.filtered(lambda l: not l.boss_container_size):
+                free = own.filtered(lambda l: not l.boss_container_size)
+                if not order.boss_rate_quotation:
+                    # a container changed (40' DV → 40' HC): its lines follow it instead of staying beside new ones. On
+                    # a rate quotation the other sizes are rates on purpose, named at the booking (ADR-009).
+                    free |= own.filtered(lambda l: l.boss_container_size
+                                         and (l.boss_container_size, l.boss_container_type_id) not in groups)
+                for line in free:
                     if missing:
                         line.boss_container_size, line.boss_container_type_id = missing.pop(0)
                 model = own[:1]
