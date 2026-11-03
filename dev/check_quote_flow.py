@@ -3,6 +3,7 @@ part 2, ADR-007): the readiness message, orderer → consignee/shipper, 1×40' �
 own fee, the weekly freight rate entered from the quotation (port abroad, one week), history kept on accepted
 quotations, Confirm opening exactly one file with the costs to buy. Every record is made here and rolled back.
 Prints «CHECK PASS|FAIL …» and «RESULT n passed, m failed».    dev/uat_run.sh check_quote_flow.py boss20"""
+import re
 from datetime import date, timedelta
 
 from odoo.exceptions import UserError
@@ -17,9 +18,23 @@ assign_service_groups(env)  # service groups and the freight tariff date (the up
 results = []
 
 
+# Real figures never reach the evidence (docs/evidencias, Git): a passing check prints its name, a failing one its
+# values with the amounts hidden; the MSC cost is read from its tariff on boss20, never typed here (03/11/2026).
+MSC_THC = env["boss.tariff.line"].search([  # noqa: F821
+    ("tariff_id.name", "ilike", "MSC gastos locales importación (origen China)"), ("tariff_id.state", "=", "approved"),
+    ("product_id.default_code", "=", "THC")], limit=1).unit_price
+
+
+def _hidden(value):
+    return re.sub(r"\d+\.\d+", "·", repr(value))
+
+
 def check(name, expected, got):
     results.append(expected == got)
-    print(f"CHECK {'PASS' if expected == got else 'FAIL'} {name}: expected {expected!r} got {got!r}")
+    if expected == got:
+        print(f"CHECK PASS {name}")
+    else:
+        print(f"CHECK FAIL {name}: expected {_hidden(expected)} got {_hidden(got)}")
 
 
 ref = env.ref
@@ -74,9 +89,9 @@ imb = form.save()
 check("1 containers persisted 2x40'", [("40", "DV", 2)], [(c.size, c.container_type_id.code, c.quantity) for c in imb.boss_container_ids])
 check("1 quantities with 2x40': per container 2, per shipment 1", (2.0, 1.0, 2.0), (qty(imb)["THC"], qty(imb)["BL"], qty(imb)["FMI"]))
 thc = imb.order_line.filtered(lambda l: l.product_id.default_code == "THC")
-check("1 THC cost = 2 x 111 from MSC (buying), sale typed separately", ("ok", 222.0), (thc.boss_cost_status, round(thc.boss_cost_amount, 2)))
+check("1 THC cost = 2 x the MSC tariff (buying), sale typed separately", ("ok", round(2 * MSC_THC, 2)),
+      (thc.boss_cost_status, round(thc.boss_cost_amount, 2)))
 check("1 THC cost source auditable", True, "Source:" in (thc.boss_cost_explanation or "") and "MSC" in (thc.boss_cost_explanation or ""))
-print("   explanation:", (thc.boss_cost_explanation or "").replace("\n", " | ")[:300])
 fmi = imb.order_line.filtered(lambda l: l.product_id.default_code == "FMI")
 check("1 freight (FMI) is a manual amount when no rate exists", "manual", fmi.boss_cost_status)
 csm = imb.order_line.filtered(lambda l: l.product_id.default_code == "CSM")
@@ -164,9 +179,9 @@ check("8 file receives orderer, consignee, route, containers", (susaeta, susaeta
 check("8 no purchase order created by the acceptance", 0, len(file.purchase_order_ids))
 check("8 no invoice created by the acceptance", 0, len(file.invoice_ids))
 to_buy = {c.product_id.default_code: (c.partner_id.name, round(c.expected_amount, 2), c.state) for c in file.cost_ids.filtered(lambda c: c.kind == "sale")}
-check("8 costs to buy carried into the file: THC from MSC 222, FMI 3000", (("MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.", 222.0), ("MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.", 3000.0)),
+check("8 costs to buy carried into the file: THC from MSC (2 x its tariff), FMI 3000",
+      (("MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.", round(2 * MSC_THC, 2)), ("MEDITERRANEAN SHIPPING COMPANY ESPANA, S.L.U.", 3000.0)),
       (to_buy.get("THC", ("", 0))[:2], to_buy.get("FMI", ("", 0))[:2]))
-print("   to buy:", to_buy)
 
 # 9. history: a new MSC rate does not change the accepted quotation
 frozen_before = costs(imb)

@@ -4,6 +4,7 @@ import without AWB (chargeable weight 167 kg/m³), agent's client, the file and 
 national shipment (no Spain forced, key date never the unloading date). Every record is made
 here and rolled back. Prints «CHECK PASS|FAIL …» and «RESULT n passed, m failed».
     dev/uat_run.sh check_route_cases.py boss20"""
+import re
 from datetime import date
 
 from odoo.tests import Form
@@ -13,9 +14,23 @@ env = env(context=dict(env.context, tracking_disable=True, lang="en_US"))  # noq
 results = []
 
 
+# Real figures never reach the evidence (docs/evidencias, Git): a passing check prints its name, a failing one its
+# values with the amounts hidden; the MSC cost is read from its tariff on boss20, never typed here (03/11/2026).
+MSC_THC = env["boss.tariff.line"].search([  # noqa: F821
+    ("tariff_id.name", "ilike", "MSC gastos locales importación (origen China)"), ("tariff_id.state", "=", "approved"),
+    ("product_id.default_code", "=", "THC")], limit=1).unit_price
+
+
+def _hidden(value):
+    return re.sub(r"\d+\.\d+", "·", repr(value))
+
+
 def check(name, expected, got):
     results.append(expected == got)
-    print(f"CHECK {'PASS' if expected == got else 'FAIL'} {name}: expected {expected!r} got {got!r}")
+    if expected == got:
+        print(f"CHECK PASS {name}")
+    else:
+        print(f"CHECK FAIL {name}: expected {_hidden(expected)} got {_hidden(got)}")
 
 
 ref = env.ref
@@ -71,9 +86,8 @@ legacy = env["sale.order"].create({
                            "boss_container_type_id": l.boss_container_type_id.id}) for l in imb.order_line]})
 costs = lambda o: [(l.product_id.default_code, l.boss_cost_status, round(l.boss_cost_amount, 2)) for l in o.order_line]  # noqa: E731
 check("E1 costs equal to the same inputs typed directly", costs(legacy), costs(imb))
-check("E1 MSC THC priced from the route (ESVLC, China)", ("ok", 111.0),
+check("E1 MSC THC priced from the route (ESVLC, China)", ("ok", MSC_THC),
       next((s, a) for c, s, a in costs(imb) if c == "THC"))
-print("   E1 lines:", costs(imb))
 
 # E2 sea export: pickup in Zaragoza, Barcelona -> Tunis; the side abroad is never Spain
 with Form(env["sale.order"]) as form:

@@ -7,6 +7,7 @@ rate quotations (unit rates, no total, containers before acceptance, no buying p
 goods code to the file, header addresses hidden, selling/buying labels, two-decimal display. Every record is made
 here and rolled back. Prints «CHECK PASS|FAIL …» and «RESULT n passed, m failed».
     dev/uat_run.sh check_meeting2.py boss20"""
+import re
 from datetime import date, datetime
 
 from odoo import Command, fields
@@ -21,9 +22,23 @@ env = env(context=dict(env.context, tracking_disable=True, lang="en_US"))  # noq
 results = []
 
 
+# Real figures never reach the evidence (docs/evidencias, Git): a passing check prints its name, a failing one its
+# values with the amounts hidden; the MSC cost is read from its tariff on boss20, never typed here (03/11/2026).
+MSC_THC = env["boss.tariff.line"].search([  # noqa: F821
+    ("tariff_id.name", "ilike", "MSC gastos locales importación (origen China)"), ("tariff_id.state", "=", "approved"),
+    ("product_id.default_code", "=", "THC")], limit=1).unit_price
+
+
+def _hidden(value):
+    return re.sub(r"\d+\.\d+", "·", repr(value))
+
+
 def check(name, expected, got):
     results.append(expected == got)
-    print(f"CHECK {'PASS' if expected == got else 'FAIL'} {name}: expected {expected!r} got {got!r}")
+    if expected == got:
+        print(f"CHECK PASS {name}")
+    else:
+        print(f"CHECK FAIL {name}: expected {_hidden(expected)} got {_hidden(got)}")
 
 
 ref = env.ref
@@ -139,9 +154,9 @@ check("5 unit type and goods code go to the file", ("CT", "6109100010"), (file_v
 thc_group = line_of(quotation(carrier=msc_group), "THC")
 thc_swiss = line_of(quotation(carrier=msc_swiss), "THC")
 thc_cma = line_of(quotation(carrier=cma), "THC")
-check("6 quotation naming the MSC group: THC priced by the tariff of MSC Spain (111)", ("ok", 111.0),
+check("6 quotation naming the MSC group: THC priced by the tariff of MSC Spain", ("ok", MSC_THC),
       (thc_group.boss_cost_status, round(thc_group.boss_cost_amount, 2)))
-check("6 quotation naming MSC Switzerland (legal entity): same tariff, same cost", ("ok", 111.0),
+check("6 quotation naming MSC Switzerland (legal entity): same tariff, same cost", ("ok", MSC_THC),
       (thc_swiss.boss_cost_status, round(thc_swiss.boss_cost_amount, 2)))
 check("6 the supplier of the line stays the legal entity of the tariff (MSC Spain)", msc, thc_group.boss_tariff_line_id.partner_id)
 check("6 another carrier (CMA) is not priced by MSC", "no_tariff", thc_cma.boss_cost_status)
@@ -256,7 +271,7 @@ cma_tariff.action_submit()
 cma_tariff.with_user(belal).action_approve()
 o = quotation(carrier=msc, origin="CNNGB", lines=("THC", "FMI"))  # Ningbo: no approved freight rate
 thc, fmi = line_of(o, "THC"), line_of(o, "FMI")
-check("9 THC with MSC: cost 111, selling price 210 agreed (pricelist), not cost + 20 %", (111.0, "agreed", 210.0),
+check("9 THC with MSC: cost from its tariff, selling price 210 agreed (pricelist), not cost + 20 %", (MSC_THC, "agreed", 210.0),
       (round(thc.purchase_price, 2), thc.boss_sale_status, round(thc.price_unit, 2)))
 fmi.write({"boss_manual_cost": 1500.0, "boss_manual_cost_note": "[PRUEBA] oferta"})
 check("9 FMI without an agreed price: cost + 20 % (1500 -> 1800)", ("cost_based", 1800.0), (fmi.boss_sale_status, round(fmi.price_unit, 2)))
@@ -267,7 +282,7 @@ check("9 same shipment with CMA: THC cost 190, selling price still 210, margin f
 thc.price_unit = 215.0
 o.boss_carrier_id = msc
 thc._boss_recompute_cost()
-check("9 a typed selling price survives a carrier/supplier change", ("manual", 111.0, 215.0),
+check("9 a typed selling price survives a carrier/supplier change", ("manual", MSC_THC, 215.0),
       (thc.boss_sale_status, round(thc.purchase_price, 2), round(thc.price_unit, 2)))
 
 # --- cost asked case by case (S6): accepted, completed in the file ------------------------------------------------------
@@ -311,7 +326,8 @@ check("10 cost typed in the file: known, 150 still expected", (False, 150.0), (n
 # --- summary by service group (S7): the Odoo 17 «Resumen» ------------------------------------------------------------
 rows = dict(file._boss_summary_rows())
 local, inland, total = rows.get(ref(GROUP_XMLIDS["local"]).name), rows.get(ref(GROUP_XMLIDS["inland"]).name), rows["Total"]
-check("11 summary rows: local charges (THC) sale 280 cost 111; inland (TTE) sale 300 cost 150", (280.0, 111.0, 300.0, 150.0),
+check("11 summary rows: local charges (THC) sale 280 cost from the tariff; inland (TTE) sale 300 cost 150",
+      (280.0, MSC_THC, 300.0, 150.0),
       (round(local["sale"], 2), round(local["pending"], 2), round(inland["sale"], 2), round(inland["pending"], 2)))
 check("11 nothing invoiced yet: invoiced 0, to invoice = sale, actual cost 0", (0.0, 580.0, 0.0),
       (round(total["invoiced"], 2), round(total["to_invoice"], 2), round(total["actual"], 2)))
@@ -344,8 +360,8 @@ file.invalidate_recordset()
 file.cost_ids.invalidate_recordset()
 rows = dict(file._boss_summary_rows())
 local, inland, total = rows[ref(GROUP_XMLIDS["local"]).name], rows[ref(GROUP_XMLIDS["inland"]).name], rows["Total"]
-check("11 vendor bill posted (THC 111): actual cost 111 in local charges, nothing still expected there (not counted twice)",
-      (111.0, 0.0, 111.0), (round(local["actual"], 2), round(local["pending"], 2), round(local["forecast"], 2)))
+check("11 vendor bill posted (THC at its tariff): actual cost in local charges, nothing still expected there (not counted twice)",
+      (MSC_THC, 0.0, MSC_THC), (round(local["actual"], 2), round(local["pending"], 2), round(local["forecast"], 2)))
 check("11 inland (TTE) still expected 150, not billed", (150.0, 0.0), (round(inland["pending"], 2), round(inland["actual"], 2)))
 check("11 partial customer invoice (THC 280) less a credit note of 80: invoiced 200, to invoice 80; TTE 300 still to invoice",
       (200.0, 80.0, 0.0, 300.0), (round(local["invoiced"], 2), round(local["to_invoice"], 2), round(inland["invoiced"], 2),
@@ -354,7 +370,8 @@ check("11 totals after the cycle equal the file figures (invoiced, actual, pendi
       all(abs(a - b) < 0.01 for a, b in ((total["invoiced"], file.amount_invoiced), (total["actual"], file.amount_cost_actual),
                                           (total["pending"], file.amount_cost_pending), (total["forecast"], file.amount_cost_forecast),
                                           (total["margin"], file.amount_margin_forecast))))
-check("11 figures: invoiced 200, actual 111, pending 150, forecast 261, margin 319 (580 - 261)", (200.0, 111.0, 150.0, 261.0, 319.0),
+check("11 figures: invoiced 200, actual = THC, pending 150, forecast = THC + 150, margin = 580 - forecast",
+      (200.0, MSC_THC, 150.0, round(MSC_THC + 150.0, 2), round(580.0 - MSC_THC - 150.0, 2)),
       (round(file.amount_invoiced, 2), round(file.amount_cost_actual, 2), round(file.amount_cost_pending, 2),
        round(file.amount_cost_forecast, 2), round(file.amount_margin_forecast, 2)))
 
@@ -369,7 +386,7 @@ o.write({"order_line": [
 thc20 = o.order_line.filtered(lambda l: l.product_id.default_code == "THC" and l.boss_container_size == "20")
 thc40hc = o.order_line.filtered(lambda l: l.product_id.default_code == "THC" and l.boss_container_type_id == hc)
 check("12 rate quotation without containers: 20' DV, 40' DV and 40' HC each priced for one container of its kind",
-      (1.0, 1.0, 1.0, "ok", 111.0, "ok", "ok"), (thc20.product_uom_qty, thc.product_uom_qty, thc40hc.product_uom_qty,
+      (1.0, 1.0, 1.0, "ok", MSC_THC, "ok", "ok"), (thc20.product_uom_qty, thc.product_uom_qty, thc40hc.product_uom_qty,
                                                  thc.boss_cost_status, round(thc.boss_cost_amount, 2), thc20.boss_cost_status, thc40hc.boss_cost_status))
 fmi.write({"boss_manual_cost": 1234.56, "boss_manual_cost_note": "[PRUEBA] nota interna oferta", "price_unit": 2000.0})
 thc.price_unit, thc20.price_unit, thc40hc.price_unit = 300.0, 220.0, 310.0

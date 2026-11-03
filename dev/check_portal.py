@@ -5,6 +5,7 @@ who may sign/pay, booking request, shipments whitelist, published events and doc
 Every record is made here and rolled back (the HTTP pages are checked by dev/check_portal_http.py).
 Prints «CHECK PASS|FAIL|SKIP …» and «RESULT n passed, m failed».
     dev/uat_run.sh check_portal.py boss20"""
+import re
 from datetime import date, timedelta
 
 from odoo import Command, fields
@@ -15,9 +16,23 @@ env = env(context=dict(env.context, tracking_disable=True, lang="en_US", no_rese
 results = []
 
 
+# Real figures never reach the evidence (docs/evidencias, Git): a passing check prints its name, a failing one its
+# values with the amounts hidden; the MSC cost is read from its tariff on boss20, never typed here (03/11/2026).
+MSC_THC = env["boss.tariff.line"].search([  # noqa: F821
+    ("tariff_id.name", "ilike", "MSC gastos locales importación (origen China)"), ("tariff_id.state", "=", "approved"),
+    ("product_id.default_code", "=", "THC")], limit=1).unit_price
+
+
+def _hidden(value):
+    return re.sub(r"\d+\.\d+", "·", repr(value))
+
+
 def check(name, expected, got):
     results.append(expected == got)
-    print(f"CHECK {'PASS' if expected == got else 'FAIL'} {name}: expected {expected!r} got {got!r}")
+    if expected == got:
+        print(f"CHECK PASS {name}")
+    else:
+        print(f"CHECK FAIL {name}: expected {_hidden(expected)} got {_hidden(got)}")
 
 
 def refused(fn):
@@ -74,7 +89,7 @@ so_a.action_quotation_sent() if hasattr(so_a, "action_quotation_sent") else so_a
 # --- part 1: confidentiality at field level (standard portal access to the customer's own quotation) -----------------
 user_a = portal_user("a_comercial", cust_a)
 line = so_a.order_line.filtered(lambda l: l.product_id.default_code == "THC")
-check("1 THC line has a supplier cost (111 from MSC)", ("ok", True), (line.boss_cost_status, line.boss_cost_amount > 0))
+check("1 THC line has a supplier cost (from the MSC tariff)", ("ok", True), (line.boss_cost_status, line.boss_cost_amount > 0))
 if installed:
     user_a.partner_id.write({"boss_portal_role": "commercial", "boss_portal_customer_id": cust_a.id})
 as_a = line.with_user(user_a)
@@ -101,7 +116,7 @@ check("1 no access to snapshots, tariffs, tariff prices, files, cost needs", [Tr
 # a customer that is also a BOSS supplier (an agent): standard Odoo lets its portal users read the purchase orders where
 # it is the vendor (rule portal_purchase_order_user_rule); boss_portal closes it (part 2)
 po_a = env["purchase.order"].create({"partner_id": cust_a.id, "order_line": [Command.create({
-    "product_id": product("THC").id, "product_qty": 1, "price_unit": 111.0, "name": "[PRUEBA] compra"})]})
+    "product_id": product("THC").id, "product_qty": 1, "price_unit": MSC_THC, "name": "[PRUEBA] compra"})]})
 po_seen = bool(env["purchase.order"].with_user(user_a).search_count([("id", "=", po_a.id)]))
 check("1 purchase order where the customer is the vendor: visible only while boss_portal is not installed",
       not installed, po_seen)

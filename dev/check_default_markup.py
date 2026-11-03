@@ -5,6 +5,7 @@ BOSS service keeps its list price, accepted quotations do not move, and 0 remove
 and rolled back; the setting itself is driven through its helpers (the Settings screen is checked in Chrome after
 the deploy). Prints «CHECK PASS|FAIL …» and «RESULT n passed, m failed».
     dev/uat_run.sh check_default_markup.py boss20"""
+import re
 from datetime import date
 
 from odoo import Command
@@ -15,9 +16,23 @@ env = env(context=dict(env.context, tracking_disable=True, lang="en_US"))  # noq
 results = []
 
 
+# Real figures never reach the evidence (docs/evidencias, Git): a passing check prints its name, a failing one its
+# values with the amounts hidden; the MSC cost is read from its tariff on boss20, never typed here (03/11/2026).
+MSC_THC = env["boss.tariff.line"].search([  # noqa: F821
+    ("tariff_id.name", "ilike", "MSC gastos locales importación (origen China)"), ("tariff_id.state", "=", "approved"),
+    ("product_id.default_code", "=", "THC")], limit=1).unit_price
+
+
+def _hidden(value):
+    return re.sub(r"\d+\.\d+", "·", repr(value))
+
+
 def check(name, expected, got):
     results.append(expected == got)
-    print(f"CHECK {'PASS' if expected == got else 'FAIL'} {name}: expected {expected!r} got {got!r}")
+    if expected == got:
+        print(f"CHECK PASS {name}")
+    else:
+        print(f"CHECK FAIL {name}: expected {_hidden(expected)} got {_hidden(got)}")
 
 
 ref = env.ref
@@ -71,11 +86,15 @@ with Form(env["sale.order"]) as form:
 order = form.save()
 check("2 quotation on the default pricelist", default_pricelist, order.pricelist_id)
 line = lambda code: order.order_line.filtered(lambda l: l.product_id.default_code == code)  # noqa: E731
-thc, fmi = line("THC"), line("FMI")
-check("2 THC: cost 111 from MSC -> sale 133.2 (cost + 20 %)", ("ok", 111.0, "cost_based", 133.2),
-      (thc.boss_cost_status, round(thc.purchase_price, 2), thc.boss_sale_status, round(thc.price_unit, 2)))
-check("2 THC explanation names the pricelist rule", True,
-      "20" in (thc.boss_sale_explanation or "") and rule.pricelist_id.name in (thc.boss_sale_explanation or ""))
+thc, fmi, glo = line("THC"), line("FMI"), line("GLO-CCC")[:1]
+# GLO-CCC: a service with a cost in the MSC tariff and no agreed selling price (THC has one in the general pricelist since
+# 03/11/2026, Odoo 17 «Standard»). Amounts compared, never printed (real tariff).
+check("2 GLO-CCC: cost from the MSC tariff -> sale = cost + 20 %", ("ok", True, "cost_based", True),
+      (glo.boss_cost_status, glo.purchase_price > 0, glo.boss_sale_status,
+       abs(glo.price_unit - round(glo.purchase_price * 1.2, 2)) < 0.011))
+check("2 GLO-CCC explanation names the pricelist rule", True,
+      "20" in (glo.boss_sale_explanation or "") and rule.pricelist_id.name in (glo.boss_sale_explanation or ""))
+check("2 THC takes the agreed price of the general pricelist, not cost + 20 %", "agreed", thc.boss_sale_status)
 check("2 FMI: no cost -> no sale price (never built on zero), missing", ("manual", 0.0, "missing"),
       (fmi.boss_cost_status, fmi.price_unit, fmi.boss_sale_status))
 check("2 the quotation still says what is missing", True, "FMI" in (order.boss_pricing_alert or "") or bool(order.boss_pricing_alert))
@@ -121,11 +140,11 @@ ob = env["sale.order"].create({
     "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
     "boss_destination_port_id": port("ESVLC", "sea").id, "boss_eta": date(2026, 12, 10), "boss_duties_amount": 500.0,
     "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_dv").id, "quantity": 1})],
-    "order_line": [Command.create({"product_id": product("THC").id, "product_uom_id": product("THC").uom_id.id,
+    "order_line": [Command.create({"product_id": product("GLO-CCC").id, "product_uom_id": product("GLO-CCC").uom_id.id,
                                    "boss_container_size": "40", "boss_container_type_id": ref("boss_pricing.container_type_dv").id}),
                    Command.create({"product_id": product("ARA").id, "product_uom_id": product("ARA").uom_id.id})]})
 ara = ob.order_line.filtered(lambda l: l.product_id.default_code == "ARA")
-thc_ob = ob.order_line.filtered(lambda l: l.product_id.default_code == "THC")
+thc_ob = ob.order_line.filtered(lambda l: l.product_id.default_code == "GLO-CCC")[:1]
 check("5b duties (ARA) with no amount yet: no price proposed (never 0 taken as a price)", ("missing", 0.0),
       (ara.boss_sale_status, ara.price_unit))
 ara.write({"boss_manual_cost": 500.0})
@@ -136,7 +155,7 @@ ara.boss_manual_cost_note = "[PRUEBA] DUA 26ES0046"
 check("5b with a reference typed: shown as typed and unverified (no longer «estimate», never «documented»)",
       (True, False, True), ("[PRUEBA] DUA 26ES0046" in ara.boss_sale_explanation, "Estimate" in ara.boss_sale_explanation,
                             "does not check" in ara.boss_sale_explanation))
-check("5b THC on the same quotation keeps cost + 20 %", ("cost_based", True),
+check("5b GLO-CCC on the same quotation keeps cost + 20 %", ("cost_based", True),
       (thc_ob.boss_sale_status, abs(thc_ob.price_unit - round(thc_ob.purchase_price * 1.2, 2)) < 0.011))
 ara.price_unit = 510.0
 check("5b a selling price typed by a person is kept", ("manual", 510.0), (ara.boss_sale_status, round(ara.price_unit, 2)))
@@ -162,10 +181,10 @@ other = env["sale.order"].create({
     "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
     "boss_destination_port_id": port("ESVLC", "sea").id, "boss_eta": date(2026, 12, 10),
     "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_dv").id, "quantity": 1})],
-    "order_line": [Command.create({"product_id": product("THC").id, "product_uom_id": product("THC").uom_id.id,
+    "order_line": [Command.create({"product_id": product("GLO-CCC").id, "product_uom_id": product("GLO-CCC").uom_id.id,
                                    "boss_container_size": "40", "boss_container_type_id": ref("boss_pricing.container_type_dv").id})]})
 thc2 = other.order_line
-check("7 off: THC cost known but no sale price proposed", ("ok", "missing", 0.0),
+check("7 off: GLO-CCC cost known but no sale price proposed", ("ok", "missing", 0.0),
       (thc2.boss_cost_status, thc2.boss_sale_status, thc2.price_unit))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
