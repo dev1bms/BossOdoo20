@@ -1,0 +1,22 @@
+# Evidence: dev/check_file_close.py on boss20
+# Date: 2026-11-03 17:54    
+# Commit tested: 03b6173ec8d5 (i18n(expediente): Spanish for ratings and the frozen data; check of the close (setting, form, reopen)
+# Installed on boss20: boss_documents 20.0.1.2.5 boss_expediente 20.0.1.24.2 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.19.0 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 16:54:20,584 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 16:54:20,646 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 16:54:21,475 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 ratings required to close operations by default (Odoo 17 since 01/03/2025): expected True got True
+CHECK PASS 2 the close lists the customer to rate and asks for it, the file stays delivered: expected ('display_notification', 'delivered', [res.partner(27333,)]) got ('display_notification', 'delivered', [res.partner(27333,)])
+CHECK PASS 3 with the setting off, operations close without ratings: expected 'closed' got 'closed'
+CHECK PASS 4 the form makes the shipment data read-only on a closed file: expected (True, True) got (True, True)
+      «E260327: operations are closed, so its shipment data is frozen (Goods). Reopen the file to change it.»
+CHECK PASS 5 the server refuses a change of the shipment data on a closed file: expected 'refused' got 'refused'
+CHECK PASS 6 the responsible and the ratings stay editable after the close: expected ('7', 1) got ('7', 1)
+CHECK PASS 7 reopened, the shipment data can be corrected: expected '[PRUEBA] corregida tras reabrir' got '[PRUEBA] corregida tras reabrir'
+CHECK PASS 8 the customer's average rating is on its contact: expected (7.0, 1) got (7.0, 1)
+RESULT 8 passed, 0 failed
+# Exit status: 0

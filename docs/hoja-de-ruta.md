@@ -150,8 +150,7 @@ con su fuente escrita; ninguna se inventa.
    - informe «Margen por expediente»: venta pactada, margen previsto y final por responsable, comercial, cliente,
      tráfico y mes (Cristina CR-O11); se recalcula al abrirlo y el de un expediente cerrado económicamente queda fijo.
      Visto en Chrome.
-   Pendiente: congelar los datos del envío al cerrar (Odoo 17 congelaba unos 140 campos); las valoraciones de
-   proveedores que Odoo 17 pedía al cerrar.
+   (Congelar los datos al cerrar y las valoraciones: tarea 12.)
 8. **Consolidaciones (un máster, varias casas).** El máster (MBL/MAWB) es el expediente y cada casa (HBL/HAWB) una
    partida (Cristina, «Plan detallado previsiones» › Explicaciones previsiones A120 y A92); reparto de costes del
    máster a mano, como en Odoo 17.
@@ -206,6 +205,26 @@ con su fuente escrita; ninguna se inventa.
    `docs/evidencias/20261103_1732_check_house_documents_boss20_3839d0616caa.txt` (11/0), documentos 19/0.
    Pendiente: el AWB IATA en su formulario preimpreso, las cláusulas del BL, el aviso de texto que no cabe en su casilla
    y bloquear un BL ya emitido.
+12. **Cierre: valoraciones y datos congelados.** *Hecho cuando* el cierre operativo pida valorar al cliente y a los
+   proveedores, como Odoo 17, y después nadie cambie los datos del envío sin reabrir. **Entregado el 03/11**
+   (boss_expediente 20.0.1.24.2, commits `daf84f3`, `500ab66`, `03b6173`):
+   - pestaña «Valoraciones»: el cliente y cada proveedor al que se compró (pedidos confirmados y facturas), de 0 a 10
+     con comentario, la escala de Odoo 17 (`x_entity_ratings`, unas 3 800 valoraciones); se listan al marcar
+     «Entregado» o con «Listar las partes a valorar»;
+   - «Cerrar operaciones» sin valorar no cierra: lista lo que falta y lo dice (F0-C66, Odoo 17 desde el 01/03/2025); el
+     siguiente paso lo anuncia («valore antes: …»); ajuste «Valoraciones obligatorias para el cierre operativo»,
+     activado por defecto;
+   - la media de cada parte en el contacto y en «Servicios a comprar» (Cristina elige proveedores también por
+     puntuación, «Nuevo Odoo» › Contactos);
+   - cerradas las operaciones (o cancelado el expediente), los datos del envío (partes, ruta, carga, referencias,
+     fechas, aduana, documento house) quedan en solo lectura y el servidor rechaza cambiarlos; siguen abiertos los
+     servicios, las facturas de proveedor tardías (se cierra contra previsión, F0-C60), los contenedores (sus fechas dan
+     las demoras), el responsable y las valoraciones; «Reabrir» permite corregir.
+   Defecto encontrado y corregido el mismo día: la primera versión impedía contabilizar facturas de proveedor (un cálculo
+   dependía de un campo no almacenado); corregido en `500ab66` antes de que nadie lo usara. Evidencia:
+   `docs/evidencias/20261103_1754_check_file_close_boss20_03b6173ec8d5.txt` (8/0) y el arnés con valoración y datos
+   congelados `docs/evidencias/20261103_1754_check_file_e2e_boss20_03b6173ec8d5.txt` (89/0, un hueco menos);
+   consolidaciones 22/0, cola 10/0. Pendiente: migrar las valoraciones de Odoo 17 (migración en pausa).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -241,4 +260,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
