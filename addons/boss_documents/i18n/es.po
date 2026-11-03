@@ -1,16 +1,13 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* boss_documents
-#
+# Translation of BOSS module boss_documents: Spanish (es_ES).
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 20.0\n"
-"Report-Msgid-Bugs-To: \n"
-"Language: es\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: boss_documents
+#: model:ir.actions.report,print_report_name:boss_documents.action_report_transport_order
+msgid "'OT %s' % object.name"
+msgstr "'OT %s' % object.name"
 
 #. module: boss_documents
 #. odoo-python
@@ -60,6 +57,11 @@ msgid "Consignee"
 msgstr "Destinatario"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Container"
+msgstr "Contenedor"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Containers"
@@ -68,12 +70,9 @@ msgstr "Contenedores"
 #. module: boss_documents
 #: model:ir.module.module,summary:base.module_boss_documents
 msgid ""
-"Customer and supplier documents of BOSS Continental (invoice, credit note, "
-"quotation, order, purchase order): BOSS layout on the standard Odoo document"
-" template, one shipment block (file, route, transport, cargo) on every "
-"document, charge bases always printed, no shipping-address duplicates "
-"(ADR-011)"
+"Customer and supplier documents of BOSS Continental (invoice, credit note, quotation, order, purchase order): BOSS layout on the standard Odoo document template, one shipment block (file, route, transport, cargo) on every document, charge bases always printed, no shipping-address duplicates (ADR-011)"
 msgstr ""
+"Documentos de cliente y proveedor de BOSS Continental (factura, abono, oferta, pedido, pedido de compra): diseño BOSS sobre la plantilla estándar de Odoo, un bloque del envío (expediente, ruta, transporte, carga) en cada documento, bases de cobro siempre impresas, sin direcciones de envío duplicadas (ADR-011)"
 
 #. module: boss_documents
 #. odoo-python
@@ -90,6 +89,7 @@ msgstr "Entregado"
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "Delivery"
 msgstr "Entrega"
 
@@ -137,6 +137,11 @@ msgid "Goods"
 msgstr "Mercancía"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Gross kg"
+msgstr "Kg brutos"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Gross weight"
@@ -147,6 +152,16 @@ msgstr "Peso bruto"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "HS code"
 msgstr "Código arancelario (HS)"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Haulier"
+msgstr "Transportista"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "House B/L:"
+msgstr "HBL:"
 
 #. module: boss_documents
 #: model:ir.model.fields,field_description:boss_documents.field_account_move__id
@@ -169,6 +184,24 @@ msgstr "Asiento contable"
 
 #. module: boss_documents
 #. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "No transport order for %(file)s yet: %(problems)s."
+msgstr "Todavía no hay orden de transporte para %(file)s: %(problems)s."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Operation"
+msgstr "Operación"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"PDF for the haulier: pickup, delivery, containers and goods. Printed, never sent from Odoo."
+msgstr ""
+"PDF para el transportista: recogida, entrega, contenedores y mercancía. Se imprime, nunca se envía desde Odoo."
+
+#. module: boss_documents
+#. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Packages"
 msgstr "Bultos"
@@ -182,8 +215,18 @@ msgstr "Palés"
 #. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "Pickup"
 msgstr "Recogida"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid ""
+"Please confirm the pickup and the delivery with BOSS Continental and send\n"
+"                            the signed delivery note quoting the file reference."
+msgstr ""
+"Confirme la recogida y la entrega con BOSS Continental y envíe\n"
+"                            el albarán firmado indicando la referencia del expediente."
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_purchase_order
@@ -191,9 +234,19 @@ msgid "Purchase Order"
 msgstr "Pedido de compra"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Return of the empty"
+msgstr "Devolución del vacío"
+
+#. module: boss_documents
 #: model:ir.model,name:boss_documents.model_sale_order
 msgid "Sales Order"
 msgstr "Pedido de venta"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Seal"
+msgstr "Precinto"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
@@ -212,6 +265,11 @@ msgid "Shipper"
 msgstr "Expedidor"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Size / type"
+msgstr "Tamaño / tipo"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "To"
@@ -222,6 +280,13 @@ msgstr "Destino"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Traffic"
 msgstr "Tráfico"
+
+#. module: boss_documents
+#: model:ir.actions.report,name:boss_documents.action_report_transport_order
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
+msgid "Transport order"
+msgstr "Orden de transporte"
 
 #. module: boss_documents
 #. odoo-python
@@ -245,6 +310,12 @@ msgstr "Volumen"
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block
 msgid "Your reference:"
 msgstr "Su referencia:"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "choose the haulier (References and dates › Other parties)"
+msgstr "elija el transportista (Referencias y fechas › Otras partes)"
 
 #. module: boss_documents
 #. odoo-python
@@ -275,6 +346,13 @@ msgstr "transporte principal"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "pickup"
 msgstr "recogida"
+
+#. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid ""
+"the house B/L is not released nor a sea waybill (References and dates)"
+msgstr "el HBL no está liberado ni es un sea waybill (Referencias y fechas)"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.shipment_block

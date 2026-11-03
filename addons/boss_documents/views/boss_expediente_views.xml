@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- «Transport order» on the file (roadmap item 5): the PDF for the haulier, once the haulier is chosen and, on a sea
+         import delivered by BOSS, the house B/L is released or a sea waybill. -->
+    <record id="boss_expediente_view_form_transport_order" model="ir.ui.view">
+        <field name="name">boss.expediente.form.transport.order</field>
+        <field name="model">boss.expediente</field>
+        <field name="inherit_id" ref="boss_expediente.boss_expediente_view_form"/>
+        <field name="arch" type="xml">
+            <button name="action_delivered" position="after">
+                <button name="action_print_transport_order" type="object" string="Transport order"
+                        groups="purchase.group_purchase_user"
+                        invisible="state in ('closed', 'cancel') or not (scope_pickup or scope_delivery)"
+                        help="PDF for the haulier: pickup, delivery, containers and goods. Printed, never sent from Odoo."/>
+            </button>
+        </field>
+    </record>
+</odoo>

@@ -36,6 +36,14 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and dates» and «Customs»."
+msgstr ""
+"%(file)s todavía no puede marcarse como entregado, le falta: %(missing)s. Complételo en «Referencias y fechas» y «Aduana»."
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/account_move.py:0
 msgid ""
 "%(move)s cannot be paid yet:\n"
@@ -269,11 +277,15 @@ msgstr ""
 "Factura de proveedor de un servicio del expediente antes de facturarlo al cliente (requisito de Cristina, aprobado el 23/10: el pago espera; la factura se contabiliza a tiempo)."
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__ata
 msgid "ATA (actual arrival)"
 msgstr "ATA (llegada real)"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__atd
 msgid "ATD (actual departure)"
 msgstr "ATD (salida real)"
@@ -305,8 +317,8 @@ msgstr "Acción necesaria"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_airline_handler__active
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__active
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__active
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__active
 msgid "Active"
 msgstr "Activo"
 
@@ -999,6 +1011,7 @@ msgstr "Crear las solicitudes de presupuesto"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_uid
 msgid "Created by"
@@ -1015,6 +1028,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__create_date
 msgid "Created on"
@@ -1037,10 +1051,10 @@ msgstr "Moneda"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__customer_id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__partner_id
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_is_customer
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_is_customer
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_cost_view_search
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__partner_id
 msgid "Customer"
 msgstr "Cliente"
 
@@ -1063,6 +1077,11 @@ msgid "Customers"
 msgstr "Clientes"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Customs"
+msgstr "Aduana"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_destination_customs
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_destination_customs
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_destination_customs
@@ -1081,6 +1100,7 @@ msgstr "Aduana en origen"
 #. module: boss_expediente
 #: model:boss.partner.role,name:boss_expediente.role_customs_broker
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_broker_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Customs broker"
 msgstr "Agente de aduanas"
 
@@ -1144,6 +1164,11 @@ msgstr "Fechas"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__days
 msgid "Days"
 msgstr "Días"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
+msgid "Declaration"
+msgstr "Declaración"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__delivered
@@ -1228,6 +1253,13 @@ msgstr ""
 "Sentido (I/E), modo (M marítimo, A aéreo, T terrestre) y de quién es el cliente (B BOSS, A agente): IMB, EAB, IMA…"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__traffic_code
+msgid ""
+"Direction, mode and whose client: IMB, IAB, EMB, EAB, IMA… (as on the file)."
+msgstr ""
+"Dirección, modo y de quién es el cliente: IMB, IAB, EMB, EAB, IMA… (como en el expediente)."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_account_move__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_account_move_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_account_payment_register__display_name
@@ -1243,6 +1275,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__display_name
@@ -1785,6 +1818,7 @@ msgstr "Cómo se calcula el coste"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_shipment_container__id
@@ -1854,6 +1888,12 @@ msgstr "En este expediente"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "In transit"
 msgstr "En tránsito"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "In transit without: %s. A warning: complete them when they are known."
+msgstr "En tránsito sin: %s. Es un aviso: complételo cuando se sepa."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__incident
@@ -1963,6 +2003,7 @@ msgstr "LCL (grupaje)"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_uid
 msgid "Last Updated by"
@@ -1979,6 +2020,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__write_date
 msgid "Last Updated on"
@@ -2451,10 +2493,15 @@ msgid "Operations closed, finance open"
 msgstr "Operaciones cerradas, economía abierta"
 
 #. module: boss_expediente
-#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__user_id
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Operator"
 msgstr "Operativo"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_operator_assignment
+msgid "Operator of a customer for a traffic"
+msgstr "Operativo de un cliente para un tráfico"
 
 #. module: boss_expediente
 #: model:ir.actions.act_window,name:boss_expediente.boss_operator_assignment_action
@@ -3543,10 +3590,10 @@ msgstr "Población de la recogida; se rellena con la dirección de recogida."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__traffic_code
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__traffic_code
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_traffic_code
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
-#: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__traffic_code
 msgid "Traffic"
 msgstr "Tráfico"
 
@@ -3759,6 +3806,13 @@ msgstr ""
 "                Si no hay ninguno, el responsable es quien abrió el expediente. Siempre se puede cambiar en el expediente."
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__source
+msgid ""
+"Where the assignment comes from (Odoo 17 «Operative Assign», a manager…)."
+msgstr ""
+"De dónde viene la asignación (Odoo 17 «Operative Assign», un responsable…)."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__profit_explanation
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Where the figures come from"
@@ -3835,6 +3889,12 @@ msgid "billed"
 msgstr "facturado"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "booking"
+msgstr "reserva"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "by"
 msgstr "por"
@@ -3854,6 +3914,12 @@ msgstr "pedido confirmado"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "container numbers"
+msgstr "números de contenedor"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "cost variances to review"
 msgstr "diferencias de coste por revisar"
 
@@ -3865,9 +3931,21 @@ msgstr "cliente %s de España sin NIF ni otra identificación"
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "customs release (levante)"
+msgstr "levante de aduana"
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente_cost.py:0
 msgid "default of the service"
 msgstr "defecto del servicio"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "delivery date and time"
+msgstr "fecha y hora de entrega"
 
 #. module: boss_expediente
 #. odoo-python
@@ -3912,6 +3990,30 @@ msgstr ""
 "el expediente %s está cerrado financieramente: un responsable de contabilidad lo reabre primero"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "first: %s"
+msgstr "antes: %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "house B/L released or sea waybill"
+msgstr "HBL liberado o sea waybill"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "master AWB"
+msgstr "AWB máster"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "master B/L"
+msgstr "BL máster"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_sale_own
 msgid "of which BOSS services"
 msgstr "de ello, servicios BOSS"
@@ -3932,6 +4034,12 @@ msgstr "las operaciones no están cerradas"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "order to review"
 msgstr "pedido a revisar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "pickup date and time"
+msgstr "fecha y hora de recogida"
 
 #. module: boss_expediente
 #. odoo-python
@@ -3960,6 +4068,12 @@ msgstr "servicios sin proveedor"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "still without: %s"
+msgstr "todavía sin: %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "supplier bills paid before their services were invoiced (P30)"
 msgstr "facturas de proveedor pagadas antes de facturar sus servicios (P30)"
 
@@ -3976,21 +4090,117 @@ msgid "tax ID"
 msgstr "NIF"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "vessel discharge"
+msgstr "descarga del buque"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
 msgid "· ETA"
 msgstr "· ETA"
 
 #. module: boss_expediente
-#: model:ir.model,name:boss_expediente.model_boss_operator_assignment
-msgid "Operator of a customer for a traffic"
-msgstr "Operativo de un cliente para un tráfico"
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_channel
+msgid "Customs channel"
+msgstr "Canal de aduana"
 
 #. module: boss_expediente
-#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__traffic_code
-msgid "Direction, mode and whose client: IMB, IAB, EMB, EAB, IMA… (as on the file)."
-msgstr "Dirección, modo y de quién es el cliente: IMB, IAB, EMB, EAB, IMA… (como en el expediente)."
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_channel
+msgid "Channel given by customs to the declaration (DUA)."
+msgstr "Canal que da la aduana a la declaración (DUA)."
 
 #. module: boss_expediente
-#: model:ir.model.fields,help:boss_expediente.field_boss_operator_assignment__source
-msgid "Where the assignment comes from (Odoo 17 «Operative Assign», a manager…)."
-msgstr "De dónde viene la asignación (Odoo 17 «Operative Assign», un responsable…)."
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_channel__green
+msgid "Green (automatic release)"
+msgstr "Verde (levante automático)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_channel__orange
+msgid "Orange (documentary check)"
+msgstr "Naranja (revisión documental)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_channel__red
+msgid "Red (physical inspection)"
+msgstr "Rojo (reconocimiento físico)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_admission_date
+msgid "Admitted by customs"
+msgstr "Admitido por la aduana"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_release_date
+msgid "Customs release (levante)"
+msgstr "Levante de aduana"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_release_date
+msgid "The goods are released by customs. Needed to mark the file delivered when BOSS clears customs (Odoo 17: every partida cleared by BOSS has its release date before delivery)."
+msgstr "La aduana libera la mercancía. Hace falta para marcar el expediente como entregado cuando BOSS despacha (Odoo 17: cada partida despachada por BOSS tiene su fecha de levante antes de la entrega)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_guarantee
+msgid "Duties paid or guaranteed by"
+msgstr "Impuestos pagados o garantizados con"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_guarantee
+msgid "How the duties of the declaration are paid or guaranteed (Cristina, «Nuevo Odoo» › OPS- exptes A33)."
+msgstr "Cómo se pagan o garantizan los impuestos de la declaración (Cristina, «Nuevo Odoo» › OPS- exptes A33)."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_guarantee__boss
+msgid "BOSS guarantee (aval)"
+msgstr "Aval de BOSS"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_guarantee__customer
+msgid "Customer's guarantee"
+msgstr "Aval del cliente"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_guarantee__payment
+msgid "Duties paid (form 031)"
+msgstr "Pago de impuestos (031)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_docs_received_date
+msgid "Customer documents complete"
+msgstr "Documentación del cliente completa"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__customs_docs_received_date
+msgid "Every document of the customer for the declaration received (A35)."
+msgstr "Recibidos todos los documentos del cliente para la declaración (A35)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_docs_sent_date
+msgid "Documents sent to the customs broker"
+msgstr "Documentos enviados al agente de aduanas"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__hbl_release
+msgid "House B/L release"
+msgstr "Liberación del HBL"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__hbl_release
+msgid "Cristina («Nuevo Odoo» › OPS- exptes A39, A73): before the cargo is delivered and its transport order is given, the house B/L is released or is a sea waybill."
+msgstr "Cristina («Nuevo Odoo» › OPS- exptes A39, A73): antes de entregar la mercancía y dar su orden de transporte, el HBL está liberado o es un sea waybill."
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__hbl_release__pending
+msgid "Originals, not released yet"
+msgstr "Originales, sin liberar todavía"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__hbl_release__released
+msgid "Released (telex or originals surrendered)"
+msgstr "Liberado (telex u originales entregados)"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__hbl_release__swb
+msgid "Sea waybill (no originals)"
+msgstr "Sea waybill (sin originales)"

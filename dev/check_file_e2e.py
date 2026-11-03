@@ -242,8 +242,8 @@ bindings = env["ir.actions.actions"].with_user(ops).get_bindings("boss.expedient
 check("2 occasional actions in the «Actions» menu of the form; «Add a service» for sales managers only",
       ["Move services to another file", "Recompute expected cost", "Sell another service"],
       sorted(b["name"] for b in bindings if b.get("binding_view_types") == "form"))
-gap("S1 operator of the file and milestone plan of its traffic", "feature", "F5 (plan per traffic: Cristina)",
-    "the salesman is the responsible, no activities")
+gap("S1 milestone plan of the traffic (an activity per step)", "feature",
+    "F5 (Cristina's list: Nuevo Odoo › Hoja1 A13/A19)", "the next step guides the file; operator from the table")
 gap("S1 documents folder of the file", "feature", "F6", "attachments in the chatter only")
 
 # ---- 3. purchases (operations) -------------------------------------------------------------------------------------------
@@ -269,9 +269,12 @@ check("3 every order confirmed by operations with the supplier's reference", [("
       [(p.state, bool(p.partner_ref)) for p in pos])
 
 # ---- 4. booking and departure (operations) -------------------------------------------------------------------------------
+env.invalidate_all()
+check("4 the next step says what the file still lacks before leaving (departure, booking, B/L, containers)", True,
+      "ATD" in (file.with_user(ops).next_step_detail or ""))
 got, _msg = outcome(file_ops.action_in_transit)
-gap("S1 «In transit» without departure date, booking or container number", "decision",
-    "F5 (conditions: Cristina)", got)
+check("4 «In transit» without those data is accepted with a warning in its history (Odoo 17 practice, package 3)",
+      "accepted", got)
 file_ops.write({"booking_ref": "BK-PRUEBA-1", "mbl_ref": "MBL-PRUEBA-1", "hbl_ref": "HBL-PRUEBA-1",
                 "vessel": "[PRUEBA] VESSEL", "voyage": "001E", "atd": datetime(2026, 11, 5, 18, 0)})
 file_ops.container_ids.write({"number": "PRUU1234565", "seal": "SEAL-1"})
@@ -286,15 +289,25 @@ check("4 operations puts the file in transit", "in_transit", file.state)
 next_step("4", "delivered", ops)
 
 # ---- 5. destination (operations) ------------------------------------------------------------------------------------------
-got, _msg = outcome(file_ops.action_delivered)
-gap("S1 «Delivered» without arrival, customs release or delivery date", "decision", "F7 (conditions: Cristina)", got)
+refused("5 «Delivered» is refused while arrival, discharge, customs release, delivery date or B/L release are missing "
+        "(Cristina OPS- exptes A42/A73; Odoo 17 «Check Update 3-4»)", file_ops.action_delivered)
 file_ops.write({"ata": datetime(2026, 12, 7, 6, 0), "discharge_date": datetime(2026, 12, 7, 14, 0),
-                "customs_ref": "[PRUEBA] 26ES00460010000001"})
-gap("S1 customs status, channel and release (levante) of the DUA", "feature", "F7 (fields: Cristina)",
-    "only the DUA number")
+                "customs_ref": "[PRUEBA] 26ES00460010000001", "customs_guarantee": "boss",
+                "customs_admission_date": datetime(2026, 12, 8, 9, 0)})
 file_ops.container_ids.write({"pickup_date": date(2026, 12, 10), "return_date": date(2026, 12, 12)})
 file_ops.delivery_date = datetime(2026, 12, 10, 11, 0)
-gap("S1 transport order (OT) to the haulier from Odoo", "feature", "F7")
+refused("5 no transport order to the haulier before the house B/L is released or a sea waybill (Cristina A73)",
+        file_ops.action_print_transport_order)
+refused("5 ... nor «Delivered» without the customs release (levante) of a declaration cleared by BOSS",
+        file_ops.action_delivered)
+file_ops.write({"customs_channel": "green", "customs_release_date": datetime(2026, 12, 9, 12, 0),
+                "hbl_release": "released"})
+manual("5 customs: channel, admission and release (levante) typed by operations from the DUA")
+check("5 the transport order is printed for the haulier once the B/L is released",
+      "ir.actions.report", file_ops.action_print_transport_order()["type"])
+html = env["ir.actions.report"]._render_qweb_html("boss_documents.action_report_transport_order", file.ids)[0].decode()
+check("5 the transport order shows the file, the haulier and the container, not the customer's reference",
+      (True, True, True, False), (file.name in html, haulier.name in html, "PRUU1234565" in html, "PO-[PRUEBA]-E2E" in html))
 go(ops)  # «Go» on «Mark the file delivered»
 check("5 operations marks the file delivered", "delivered", file.state)
 

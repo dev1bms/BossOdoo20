@@ -236,8 +236,10 @@ def walk(case, file):
                                 ("hawb_ref" if air else "hbl_ref"): f"[PRUEBA] H-{key}"})
                     file.action_next_step()
                 elif step == "delivered":
-                    file.write({"ata": case["eta"], "delivery_date": case["eta"],
-                                "customs_ref": f"[PRUEBA] DUA-{key}"})
+                    file.write({"ata": case["eta"], "discharge_date": case["eta"], "pickup_date": case["etd"],
+                                "delivery_date": case["eta"], "customs_ref": f"[PRUEBA] DUA-{key}",
+                                "customs_channel": "green", "customs_release_date": case["eta"],
+                                "hbl_release": "released" if file.transport_mode == "sea" else False})
                     file.action_next_step()
                 elif step == "perform":
                     file.cost_ids.filtered(lambda n: n.state == "ordered").action_mark_performed()

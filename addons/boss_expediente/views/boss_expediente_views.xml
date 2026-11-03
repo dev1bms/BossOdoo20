@@ -308,11 +308,11 @@
                                     <field name="booking_ref"/>
                                     <field name="mbl_ref" invisible="transport_mode == 'air'"/>
                                     <field name="hbl_ref" invisible="transport_mode == 'air'"/>
+                                    <field name="hbl_release" invisible="transport_mode != 'sea'"/>
                                     <field name="mawb_ref" invisible="transport_mode != 'air'"/>
                                     <field name="hawb_ref" invisible="transport_mode != 'air'"/>
                                     <field name="vessel"/>
                                     <field name="voyage"/>
-                                    <field name="customs_ref"/>
                                 </group>
                                 <group string="Dates">
                                     <field name="atd"/>
@@ -327,8 +327,26 @@
                                 <group string="Other parties">
                                     <field name="notify_id"/>
                                     <field name="haulier_id"/>
-                                    <field name="customs_broker_id"/>
                                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Customs" name="customs">
+                            <group>
+                                <group string="Declaration">
+                                    <field name="customs_ref"/>
+                                    <field name="customs_broker_id" string="Customs broker"/>
+                                    <field name="customs_guarantee"/>
+                                    <field name="customs_channel" widget="badge"
+                                           decoration-success="customs_channel == 'green'"
+                                           decoration-warning="customs_channel == 'orange'"
+                                           decoration-danger="customs_channel == 'red'"/>
+                                </group>
+                                <group string="Dates">
+                                    <field name="customs_docs_received_date"/>
+                                    <field name="customs_docs_sent_date"/>
+                                    <field name="customs_admission_date"/>
+                                    <field name="customs_release_date"/>
                                 </group>
                             </group>
                         </page>

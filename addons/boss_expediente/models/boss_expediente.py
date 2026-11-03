@@ -239,6 +239,29 @@ class BossExpediente(models.Model):
     vessel = fields.Char("Vessel / flight")
     voyage = fields.Char("Voyage")
     customs_ref = fields.Char("Customs declaration (DUA)")
+    # Customs of the file (the customs unit of Odoo 17 «partida»: channel, admission and release «levante», guarantee;
+    # Cristina, «Nuevo Odoo» › OPS- exptes A32-A36). Roadmap item 5.
+    customs_channel = fields.Selection(
+        [("green", "Green (automatic release)"), ("orange", "Orange (documentary check)"),
+         ("red", "Red (physical inspection)")], "Customs channel", tracking=True,
+        help="Channel given by customs to the declaration (DUA).")
+    customs_admission_date = fields.Datetime("Admitted by customs", tracking=True)
+    customs_release_date = fields.Datetime(
+        "Customs release (levante)", tracking=True,
+        help="The goods are released by customs. Needed to mark the file delivered when BOSS clears customs (Odoo 17: "
+             "every partida cleared by BOSS has its release date before delivery).")
+    customs_guarantee = fields.Selection(
+        [("boss", "BOSS guarantee (aval)"), ("customer", "Customer's guarantee"), ("payment", "Duties paid (form 031)")],
+        "Duties paid or guaranteed by",
+        help="How the duties of the declaration are paid or guaranteed (Cristina, «Nuevo Odoo» › OPS- exptes A33).")
+    customs_docs_received_date = fields.Date("Customer documents complete",
+                                             help="Every document of the customer for the declaration received (A35).")
+    customs_docs_sent_date = fields.Date("Documents sent to the customs broker", help="(A36)")
+    hbl_release = fields.Selection(
+        [("pending", "Originals, not released yet"), ("released", "Released (telex or originals surrendered)"),
+         ("swb", "Sea waybill (no originals)")], "House B/L release", tracking=True,
+        help="Cristina («Nuevo Odoo» › OPS- exptes A39, A73): before the cargo is delivered and its transport order is "
+             "given, the house B/L is released or is a sea waybill.")
     # dates: estimated and actual are separate fields, the actual one never overwrites the estimate
     etd = fields.Date("ETD", tracking=True)
     eta = fields.Date("ETA", tracking=True)
@@ -1028,9 +1051,13 @@ class BossExpediente(models.Model):
             elif draft_rfqs:
                 step, detail = "confirm_rfq", _("%s requests for quotation", len(draft_rfqs))
             elif file.state == "open":
+                transit_missing = file._boss_transit_missing()
                 step = "in_transit"
+                detail = _("still without: %s", ", ".join(transit_missing)) if transit_missing else False
             elif file.state == "in_transit":
+                delivery_missing = file._boss_delivery_missing()
                 step = "delivered"
+                detail = _("first: %s", ", ".join(delivery_missing)) if delivery_missing else False
             elif ordered:
                 step, detail = "perform", _("%s services", len(ordered))
             elif to_invoice:
@@ -1174,10 +1201,62 @@ class BossExpediente(models.Model):
                         "boss_default_file": self.id},
         }
 
+    def _boss_transit_missing(self):
+        """Data a file has when it leaves (Odoo 17 practice, F0-C31 and F0-C38 in docs/decisiones-f0.md): actual
+        departure, booking and master B/L or AWB (sea, air), container numbers of an FCL. A warning, never a condition:
+        package 3 of docs/paquetes-aprobacion-f0.md enforces only what Cristina wrote down."""
+        self.ensure_one()
+        _ = self.env._
+        missing = [] if self.atd else [_("ATD (actual departure)")]
+        if self.transport_mode in ("sea", "air") and not self.booking_ref:
+            missing.append(_("booking"))
+        if self.transport_mode == "air" and not self.mawb_ref:
+            missing.append(_("master AWB"))
+        if self.transport_mode == "sea" and not self.mbl_ref:
+            missing.append(_("master B/L"))
+        if self.load_type == "fcl" and self.container_ids.filtered(lambda c: not c.number):
+            missing.append(_("container numbers"))
+        return missing
+
+    def _boss_delivery_missing(self):
+        """What the file lacks to be marked delivered. Cristina wrote it («Nuevo Odoo» › OPS- exptes A42: the date and
+        time of a pickup or delivery made by BOSS; A73: the house B/L released or a sea waybill before delivering) and
+        Odoo 17 enforced it («Check Update 3-4»: arrival and vessel discharge on an import, the customs release of every
+        declaration cleared by BOSS)."""
+        self.ensure_one()
+        _ = self.env._
+        missing = []
+        importing = self.direction == "import"
+        if importing and not self.ata:
+            missing.append(_("ATA (actual arrival)"))
+        if importing and self.transport_mode == "sea" and not self.discharge_date:
+            missing.append(_("vessel discharge"))
+        if (self.scope_origin_customs or self.scope_destination_customs) and not self.customs_release_date:
+            missing.append(_("customs release (levante)"))
+        if self.scope_pickup and not self.pickup_date:
+            missing.append(_("pickup date and time"))
+        if self.scope_delivery and not self.delivery_date:
+            missing.append(_("delivery date and time"))
+        if (importing and self.transport_mode == "sea" and self.scope_delivery
+                and self.hbl_release not in ("released", "swb")):
+            missing.append(_("house B/L released or sea waybill"))
+        return missing
+
     def action_in_transit(self):
+        for file in self:
+            missing = file._boss_transit_missing()
+            if missing:
+                file.message_post(body=self.env._(
+                    "In transit without: %s. A warning: complete them when they are known.", ", ".join(missing)))
         self.write({"state": "in_transit"})
 
     def action_delivered(self):
+        for file in self:
+            missing = file._boss_delivery_missing()
+            if missing:
+                raise UserError(self.env._(
+                    "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and "
+                    "dates» and «Customs».", file=file.name, missing=", ".join(missing)))
         self.write({"state": "delivered"})
 
     def action_close_operations(self):

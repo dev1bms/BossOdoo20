@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Transport order (OT) to the haulier (roadmap item 5): printed from the file with «Transport order», never sent
+         from Odoo. The shipment block of the supplier documents (no customer price nor reference), then what the haulier
+         needs: who, where and when, the containers and the goods. -->
+    <record id="action_report_transport_order" model="ir.actions.report">
+        <field name="name">Transport order</field>
+        <field name="model">boss.expediente</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">boss_documents.report_transport_order</field>
+        <field name="print_report_name">'OT %s' % object.name</field>
+    </record>
+
+    <template id="report_transport_order">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="o" t-value="doc"/>
+                <t t-call="web.external_layout">
+                    <t t-set="block" t-value="doc._boss_transport_order_block()"/>
+                    <t t-set="for_supplier" t-value="True"/>
+                    <div class="page">
+                        <h2>Transport order <span t-field="doc.name"/></h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="text-muted small">Haulier</div>
+                                <div t-field="doc.haulier_id"
+                                     t-options="{'widget': 'contact', 'fields': ['name', 'address', 'phone'], 'no_marker': True}"/>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Operation</div>
+                                <div t-if="doc.scope_pickup">Pickup <span t-if="doc.pickup_date" t-field="doc.pickup_date"/></div>
+                                <div t-if="doc.scope_delivery">Delivery <span t-if="doc.delivery_date" t-field="doc.delivery_date"/></div>
+                                <div t-if="doc.transport_mode == 'sea' and doc.hbl_release">House B/L: <span t-field="doc.hbl_release"/></div>
+                            </div>
+                        </div>
+                        <t t-call="boss_documents.shipment_block"/>
+                        <table t-if="doc.container_ids" class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Container</th>
+                                    <th>Size / type</th>
+                                    <th>Seal</th>
+                                    <th class="text-end">Gross kg</th>
+                                    <th>Pickup</th>
+                                    <th>Return of the empty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.container_ids" t-as="container">
+                                    <td t-out="container.number or '—'"/>
+                                    <td t-out="(container.size or '') + chr(39) + ' ' + (container.container_type_id.code or '')"/>
+                                    <td t-out="container.seal or '—'"/>
+                                    <td class="text-end"><span t-if="container.gross_kg" t-field="container.gross_kg"/></td>
+                                    <td><span t-if="container.pickup_date" t-field="container.pickup_date"/></td>
+                                    <td><span t-if="container.return_date" t-field="container.return_date"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="small text-muted">Please confirm the pickup and the delivery with BOSS Continental and send
+                            the signed delivery note quoting the file reference.</p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
