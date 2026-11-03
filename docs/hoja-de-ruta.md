@@ -92,6 +92,15 @@ con su fuente escrita; ninguna se inventa.
 4. **Bandeja del operativo.** Operativo propuesto desde la tabla de Odoo 17 (cliente × tráfico), filtros «Mis
    expedientes · necesitan acción» y actividades por hito.
    *Hecho cuando* cada usuario abra Odoo y vea sus expedientes ordenados por lo que tiene que hacer.
+   **Entregado en parte el 03/11** (boss_expediente 20.0.1.18.0, commit `2a2c650`; evidencia
+   `docs/evidencias/20261103_1431_check_work_queue_boss20_2a2c65062fe7.txt`, 10/0; arnés 70/0
+   `20261103_1431_check_file_e2e_boss20_2a2c65062fe7.txt`): menú «Mi trabajo» con el tablero por estado (cada tarjeta con
+   su siguiente paso y su responsable; visto en Chrome), filtros «Necesitan acción», «Pendiente en operaciones» y «Por
+   facturar o cerrar», y la tabla «Operativos por cliente y tráfico»: al abrir un expediente, el operativo de su cliente
+   para su tráfico pasa a ser el responsable (con nota en el historial); sin él, quien lo abrió.
+   Pendiente: cargar las 414 filas de Odoo 17 (`x_operative_assign`) necesita los usuarios de los operativos en boss20
+   (hoy solo hay 4 usuarios internos) y leer Odoo 17 por lotes (la conexión de solo lectura del servidor está vacía);
+   actividades por hito (lista de Cristina en «Nuevo Odoo» › Hoja1 A13/A19).
 5. **Estados con sus condiciones, aduana y entrega.** Avisos de «En tránsito» y «Entregado» y condiciones del cierre
    tal como Cristina las escribió; DUA con canal y levante; orden de transporte al transportista.
    *Hecho cuando* el arnés recorra esos avisos y el DUA y la orden de transporte queden en el expediente.
