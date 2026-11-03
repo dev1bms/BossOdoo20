@@ -307,6 +307,19 @@ msgid "<strong>TOTALS</strong>"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_document_not_here
+msgid ""
+"A master file travels under the carrier's own document:\n"
+"                    print the house B/L or air waybill from each of its houses."
+msgstr ""
+"Un expediente máster viaja con el documento de la propia naviera o aerolínea: imprima el BL o AWB house desde cada una de sus casas."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_document_not_here
+msgid "A sea file has a house bill of lading, not an air waybill."
+msgstr "Un expediente marítimo tiene un BL house, no un AWB."
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
 msgid "AS AGREED"
 msgstr ""
@@ -316,6 +329,11 @@ msgstr ""
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "AWB (master / house)"
 msgstr "AWB (máster / house)"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_document_not_here
+msgid "An air file has a house air waybill, not a bill of lading."
+msgstr "Un expediente aéreo tiene un AWB house, no un BL."
 
 #. module: boss_documents
 #. odoo-python
@@ -340,20 +358,6 @@ msgid "BOSS Documents"
 msgstr "Documentos BOSS"
 
 #. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
-msgid ""
-"BOSS's house air waybill: a DRAFT for the shipper to check until it is issued."
-msgstr ""
-"AWB house de BOSS: BORRADOR para que lo revise el expedidor hasta que se emite."
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
-msgid ""
-"BOSS's house bill of lading (NVOCC): a DRAFT for the shipper to check until it is issued."
-msgstr ""
-"BL house de BOSS (NVOCC): BORRADOR para que lo revise el expedidor hasta que se emite."
-
-#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Booking"
@@ -361,7 +365,6 @@ msgstr "Booking"
 
 #. module: boss_documents
 #: model:ir.actions.report,name:boss_documents.action_report_cargo_manifest
-#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
 msgid "Cargo manifest"
 msgstr "Manifiesto de carga"
 
@@ -376,6 +379,13 @@ msgstr "Transportista"
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Chargeable weight"
 msgstr "Peso tasable"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
+msgid ""
+"Choose the agent abroad on the file before\n"
+"                                        sending this manifest."
+msgstr ""
 
 #. module: boss_documents
 #: model:ir.model.fields.selection,name:boss_documents.selection__boss_expediente__house_doc_freight__collect
@@ -563,16 +573,6 @@ msgid "Haulier"
 msgstr "Transportista"
 
 #. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
-msgid "House AWB"
-msgstr "AWB house"
-
-#. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
-msgid "House B/L"
-msgstr "BL house"
-
-#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "House B/L:"
 msgstr "HBL:"
@@ -613,15 +613,27 @@ msgstr "Incoterm"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
-msgid "Issue house document"
-msgstr "Emitir documento house"
+msgid "Issue HAWB"
+msgstr "Emitir HAWB"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid "Issue HBL"
+msgstr "Emitir HBL"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
 msgid ""
-"Issue the house document? It takes its number and today's date, and stops printing as a draft."
+"Issue the house B/L? It takes its number and today's date, and stops printing as a draft."
 msgstr ""
-"¿Emitir el documento house? Toma su número y la fecha de hoy, y deja de imprimirse como borrador."
+"¿Emitir el BL house? Toma su número y la fecha de hoy, y deja de imprimirse como borrador."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"Issue the house air waybill? It takes its number and today's date, and stops printing as a draft."
+msgstr ""
+"¿Emitir el AWB house? Toma su número y la fecha de hoy, y deja de imprimirse como borrador."
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_account_move
@@ -685,6 +697,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
 msgid "ORIGIN"
 msgstr ""
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_document_not_here
+msgid "Only sea and air files have a house B/L or air waybill."
+msgstr "Solo los expedientes marítimos y aéreos tienen BL o AWB house."
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
@@ -812,11 +829,23 @@ msgid "Tax ID"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_document_not_here
+msgid "The cargo manifest is printed from the master file"
+msgstr "El manifiesto de carga se imprime desde el expediente máster"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
 msgid ""
-"The houses travelling under the master document: shipper, consignee, packages, weight, goods."
+"The draft is printed from ⋮ › Print › House air waybill, for the shipper to check."
 msgstr ""
-"Las casas que viajan bajo el documento máster: expedidor, destinatario, bultos, peso y mercancía."
+"El borrador se imprime desde ⋮ › Imprimir › Conocimiento aéreo house (HAWB), para que lo revise el expedidor."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
+msgid ""
+"The draft is printed from ⋮ › Print › House bill of lading, for the shipper to check."
+msgstr ""
+"El borrador se imprime desde ⋮ › Imprimir › Conocimiento de embarque house (HBL), para que lo revise el expedidor."
 
 #. module: boss_documents
 #. odoo-python
