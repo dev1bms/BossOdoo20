@@ -101,7 +101,9 @@ company = env.company
 belal = env["res.users"].search([("login", "=", "devbms")], limit=1)
 dv = ref("boss_pricing.container_type_dv")
 usd, eur = ref("base.USD"), ref("base.EUR")
-bank = env["account.journal"].search([("type", "=", "bank"), ("company_id", "=", company.id)], limit=1)
+bank = env["account.journal"].search([("type", "=", "bank"), ("company_id", "=", company.id), ("code", "=", "BNK1")],
+                                    limit=1) or env["account.journal"].search([("type", "=", "bank"),
+                                                                              ("company_id", "=", company.id)], limit=1)
 purchase_0 = env["account.tax"].search([("type_tax_use", "=", "purchase"), ("amount", "=", 0),
                                          ("company_id", "=", company.id)], limit=1)
 sale_21 = env["account.tax"].search([("type_tax_use", "=", "sale"), ("amount", "=", 21),
@@ -422,10 +424,15 @@ inv1 = env["account.move"].with_user(acct).browse(
 inv1.invoice_date = date(2026, 12, 14)
 inv1.action_post()
 rest = file.allocation_ids.filtered(lambda a: a.to_invoice_quantity > 0)
-inv2 = env["account.move"].with_user(acct).browse(
-    Invoice.create({"expediente_id": file.id, "allocation_ids": [Command.set(rest.ids)]}).action_create()["res_id"])
+result = Invoice.create({"expediente_id": file.id, "allocation_ids": [Command.set(rest.ids)]}).action_create()
+inv2 = env["account.move"].with_user(acct).browse(result.get("res_id") or result["domain"][0][2])
 inv2.invoice_date = date(2026, 12, 15)
 inv2.action_post()
+duties_inv = inv2.filtered(lambda m: all(l.product_id.boss_paid_on_behalf for l in m.invoice_line_ids))
+check("8 the duties paid on behalf get an invoice of their own, the services another, same series (F0-A21, F0-A22)",
+      (2, 1, {inv1.journal_id}), (len(inv2), len(duties_inv), set(inv2.journal_id)))
+check("8 ... with the mention of art. 78.Tres.3º Ley 37/1992 and the DUA (F0-A15)", (True, True),
+      ("78.Tres" in str(duties_inv.narration or ""), (file.customs_ref or "-") in str(duties_inv.narration or "")))
 env.invalidate_all()
 check("8 everything invoiced (partial THC, then the rest)", (round(file.amount_sale, 2), 0.0),
       (round(file.amount_invoiced, 2), round(file.amount_to_invoice, 2)))
@@ -433,8 +440,6 @@ next_step("8", "close_operations", ops)
 check("8 «Invoice services» hidden (nothing left to invoice)", False, file.has_to_invoice)
 check("8 the customer invoice lines carry the file", True,
       all(l.boss_expediente_id == file for l in (inv1 | inv2).invoice_line_ids))
-gap("S1 duties invoiced apart from the services (separate invoice or section)", "decision", "F0-A21 (Ángel) / F9",
-    "duties are one more line of the invoice")
 gap("S1 legal mention of every 0 % tax, company IBAN and agreed series on the invoice", "decision",
     "F4 (texts, bank, series: Ángel)", "no bank account on the company; legal notes on some 0 % taxes only")
 
@@ -462,12 +467,13 @@ def pay_and_prove(move, label, day=date(2026, 12, 20)):
            st.is_reconciled, round(abs(st.amount), 2)))
 
 
-for move, label in ((inv1, "cobro THC"), (inv2, "cobro resto")):
+for move, label in [(inv1, "cobro THC")] + [(m, f"cobro resto {i}") for i, m in enumerate(inv2, 1)]:
     pay_and_prove(move, label)
 for move in (bill_eur, bill_usd, bills_po[0], bills_po[1], duties_bill):
     pay_and_prove(move, f"pago {move.ref}")
 env.invalidate_all()
-check("9 collected = the customer invoices", round(inv1.amount_total + inv2.amount_total, 2), round(file.amount_collected, 2))
+check("9 collected = the customer invoices", round(inv1.amount_total + sum(inv2.mapped("amount_total")), 2),
+      round(file.amount_collected, 2))
 check("9 paid = the bills less the supplier credit note (company currency)",
       round(-sum((bill_eur | bill_usd | bills_po[0] | bills_po[1] | duties_bill | refund).sudo().mapped("amount_total_signed")), 2),
       round(file.amount_paid, 2))

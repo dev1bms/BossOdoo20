@@ -34,7 +34,21 @@ class BossInvoiceServices(models.TransientModel):
         file = self.expediente_id
         quantities = {a.id: a.to_invoice_quantity for a in allocations}  # before the new invoice lines count
         lines = allocations.sale_line_id
-        moves = lines.order_id.with_context(boss_invoice_line_ids=lines.ids)._create_invoices()
+        # Amounts paid on behalf of the customer (duties, import VAT…) go on an invoice of their own, as in Odoo 17
+        # («NORMAL or TAX, since we don't mix»; F0-A21), in the same series (F0-A22), with the mention of art.
+        # 78.Tres.3º Ley 37/1992 and the declaration that justifies them (F0-A15).
+        on_behalf = lines.filtered("product_id.boss_paid_on_behalf")
+        moves = self.env["account.move"]
+        for group in (lines - on_behalf, on_behalf):
+            if group:
+                moves |= group.order_id.with_context(boss_invoice_line_ids=group.ids)._create_invoices()
+        for move in moves.filtered(lambda m: m.invoice_line_ids.sale_line_ids <= on_behalf):
+            _ = self.with_context(lang=move.partner_id.lang).env._
+            mention = _("Amounts paid in the name and on behalf of the customer, not included in the taxable base "
+                        "(art. 78.Tres.3º Ley 37/1992).")
+            if file.customs_ref:
+                mention += " " + _("Customs declaration (DUA): %s.", file.customs_ref)
+            move.narration = mention
         plan = self.env.ref("boss_expediente.analytic_plan_files")
         for item in moves.invoice_line_ids.filtered(lambda l: l.sale_line_ids & lines):
             allocation = allocations.filtered(lambda a: a.sale_line_id in item.sale_line_ids)[:1]
