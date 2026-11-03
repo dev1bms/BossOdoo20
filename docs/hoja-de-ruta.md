@@ -1,92 +1,108 @@
 # Hoja de ruta — BOSS en Odoo 20 (boss20)
 
-Fecha: 03/11/2026 · Sustituye como guía de trabajo a `docs/plan-expediente-completo.md` (queda como fondo).
+Fecha: 03/11/2026 (revisada el mismo día por indicación de Belal) · Sustituye como guía de trabajo a
+`docs/plan-expediente-completo.md` (queda como fondo).
 Prioridad de Belal (03/11): que Odoo 20 funcione con eficiencia, facilidad y claridad siguiendo el orden de trabajo
 de BOSS. La migración de datos está en pausa: lo cargado se queda (4.213 contactos, ADR-012) y no se migra nada más.
 
-**Cómo leer las tablas.** «Funciona hoy» es solo lo probado en boss20: arnés de extremo a extremo
-`dev/check_file_e2e.py` (evidencia `docs/evidencias/20261103_1135_check_file_e2e_boss20_10335dcc1069.txt`: 53 pasos
-correctos, 0 fallos, 19 huecos declarados), el estado de los 65 puntos de las reuniones con Ángel
-(`docs/angel-meetings-status.html`) y lo visto en Chrome el 03/11. «Falta» indica quién lo pidió. Esfuerzo: **S**
-(menos de un día), **M** (1 a 3 días), **L** (más de 3 días). «Decide» se rellena solo cuando la regla de negocio no
-está aprobada. Las propuestas de `docs/paquetes-aprobacion-f0.md` siguen sin aprobar mientras nadie diga lo contrario.
+**Regla de trabajo (Belal, 03/11).** No se pregunta nada a Cristina ni a Ángel antes de revisar todo el sistema y todas
+las fuentes: casi todo está documentado (Odoo 19, carpeta «NEW ODOO», Odoo 17, las reuniones). Lo que está escrito se
+aplica con su fuente; lo que no está escrito toma la práctica de Odoo 17 o la norma (reversible y documentado); solo
+queda para reunión lo esencial que no está en ninguna parte y cuyo error tendría consecuencias legales o económicas.
+El idioma de la interfaz no es una tarea: Belal y otros usuarios trabajan con formato español sobre la interfaz en
+inglés.
+
+**Cómo leer la tabla.** «Funciona hoy» es solo lo probado en boss20: arnés de extremo a extremo
+`dev/check_file_e2e.py` (última evidencia `docs/evidencias/20261103_1209_check_file_e2e_boss20_2342252c1235.txt`:
+70 pasos correctos, 0 fallos, 19 huecos declarados), los 65 puntos de las reuniones con Ángel
+(`docs/angel-meetings-status.html`) y lo visto en Chrome el 03/11. Esfuerzo: **S** (menos de un día), **M** (1 a 3
+días), **L** (más de 3 días).
 
 ## 1. El ciclo de BOSS, paso a paso
 
-| # | Paso | Funciona hoy en boss20 (prueba) | Falta para el uso diario (quién lo pidió) | Esf. | Decide |
+| # | Paso | Funciona hoy en boss20 (prueba) | Falta para el uso diario | Dónde está ya la regla | Esf. |
 |---|---|---|---|---|---|
-| 1 | **Oferta** | Ruta, fechas ETD/ETA, carga, contenedores, peso tasable, tarifas por versión, flete semanal desde la oferta aprobado al entrar, venta = tarifa del cliente, precio tecleado o coste + 20 %, oferta de tarifas sin total (arnés 0–1; puntos 1–37 y M2 cerrados) | Precios de venta fijos de Cristina (M2-16, M2-17); validar las plantillas IAB/IMB/EAB y crear EMB, LCL y carretera (punto 13); regla ALM (P43); aprobar o rechazar la tarifa WFS (punto 38); IVA de CAU/QBR (P17-NS); zonas de Madrid de IRENEO (punto 4); usuarios en español para ver 2.500,00 (M2-11: hoy solo Cristina está en español) | S (código) | Cristina (precios, plantillas, ALM); Ángel (IVA, WFS); Belal (idioma) |
-| 2 | **Aceptación** | Confirmar crea un expediente, una vez, con su cuenta analítica y una necesidad de compra por servicio; los bloqueos se agrupan por causa (arnés 2; puntos 23, 34) | Validez de la oferta 30 días y oferta caducada no aceptable (P23); oferta de tarifas: abrir el expediente al aceptar o al hacer la reserva (M2-C) | S | Cristina (P23); Ángel (M2-C) |
-| 3 | **Apertura del expediente y responsable** | Expediente con partes, ruta, carga, referencias y «Pendiente» calculado; responsable = el comercial (arnés 2) | **Pantalla**: 10 botones a la vez en la cabecera y un «Pendiente» sin enlaces, no dice cuál es el siguiente paso (visto en E260038, 03/11); operativo por tráfico y plan de hitos (hueco F5; F0-C23 propone la tabla de Odoo 17); carpeta de documentos (hueco F6); 10 de los 25 expedientes activos son restos de la prueba del portal | M | Cristina (operativo por tráfico) |
-| 4 | **Reserva y salida** | Solicitudes de presupuesto por proveedor y moneda, confirmadas con la referencia del proveedor; ATD y recogida real; «En tránsito» (arnés 3–4) | Condiciones de «En tránsito» (MBL/MAWB, reserva, contenedor: hueco S1, F0-C38, F0-C31/C32); hoy se acepta sin datos | M | Cristina |
-| 5 | **Llegada, aduana y entrega** | «Entregado», ATA, NOA, descarga, fechas de contenedor; almacenaje, demoras y ocupación desde los eventos (arnés 5) | Estado del DUA, canal y levante (hueco F7); orden de transporte al transportista desde Odoo (F7); condiciones de «Entregado» (levante si BOSS hace la aduana, fecha de entrega si BOSS transporta: paquete 3); estado «Llegado» (F0-C22) | M | Cristina |
-| 6 | **Facturas de proveedor y coste real** | Factura desde el pedido, derechos sin pedido, factura en USD, abono de proveedor, diferencias a revisar, coste real exacto (arnés 6) | Diferencia en USD separada en precio y tipo de cambio (P03); IVA de compras (A01); pagos de proformas como anticipo (F0-A09) | M | Ángel |
-| 7 | **Factura al cliente (servicios y suplidos)** | Facturar los servicios elegidos, en parcial; suplidos al importe pagado sin margen (F0-A00 aprobado); líneas con el expediente; tabla de IVA de BOSS; NIF exigido (arnés 8; punto 35) | Derechos en factura aparte o sección (F0-A21); menciones legales del 0 %, IBAN de la empresa y series (hueco F4, F0-A13/A14/A15); SII o VERI*FACTU (P45-a); un pedido por pagador, prepagado/debido (F0-C56–C58) | M | Ángel |
-| 8 | **Cobros y pagos** | Cobros y pagos conciliados; el pago al proveedor espera a que el cliente esté facturado (P30); un movimiento ya hecho se registra y se marca; cobrado y pagado por expediente (arnés 7, 9) | Cuentas bancarias y diarios (F0-A28), límites de crédito, plazos 6/60/75 días (Ángel); remesas SEPA (hueco F8, contradice F0-A31 «pagos desde la banca»); reclamación de cobros (F0-A04) | S–M | Ángel |
-| 9 | **Cierre operativo y financiero** | Cierre operativo; el financiero espera a revisar diferencias; solo el administrador contable reabre; nada se contabiliza en un expediente cerrado; margen final exacto (arnés 10) | Condiciones del cierre operativo y congelar datos (hueco F10, F0-C61); bloquear o solo avisar al contabilizar en cerrado (F0-A80); fechas de bloqueo trimestrales (F0-A33); margen por usuario, cliente y tráfico (Cristina CR-O11) | M | Cristina (operativo); Ángel (financiero) |
+| 1 | **Oferta** | Ruta, ETD/ETA, carga, contenedores, peso tasable, tarifas por versión, flete semanal aprobado al entrar, venta = tarifa del cliente, precio tecleado o coste + 20 %, oferta de tarifas sin total (arnés 0–1) | Precios de venta generales y por cliente; plantillas EMB, LCL y carretera; regla ALM; aviso de margen mínimo | Odoo 17: plantilla «Standard» (THC, T3, BL, CSM, FAD; Cristina, 05/03/2026) y 9 plantillas por cliente (`x_quotation_local_line`); servicios «siempre / a veces» R-S1 y F0-C09; ALM: regla de Cristina del 25/09 aprobada por Belal el 23/10; margen: 12 reglas por grupo de Odoo 17 (`x_profit_group_rules`) | M |
+| 2 | **Aceptación** | Confirmar crea un expediente, una vez, con su cuenta analítica y una necesidad de compra por servicio (arnés 2); validez 30 días configurada | Oferta caducada: no se acepta sin prorrogar | Odoo 17: 30 días en la compañía, la oferta caducada pasa a perdida y se puede prorrogar (`x_spot`); apertura del expediente: EXW/FOB/FCA al aceptar, DAP/DDP al recibir documentos (Cristina, «Nuevo Odoo» › procesos A4:A10) | S |
+| 3 | **Apertura del expediente y responsable** | Expediente con «Siguiente paso» e «Ir», cabecera con los botones que sirven, «Pendiente» (entregado el 03/11) | Operativo responsable por cliente y tráfico; plan de hitos por tráfico; carpeta de documentos (F6) | Odoo 17: tabla `x_operative_assign` (414 filas cliente × tráfico → operativo); hitos: Cristina, «Nuevo Odoo» › Hoja1 A13/A19 y subetapas de Odoo 17 | M |
+| 4 | **Reserva y salida** | Solicitudes de presupuesto por proveedor y moneda, confirmadas con la referencia del proveedor; ATD; «En tránsito» (arnés 3–4) | Aviso al pasar a «En tránsito» sin ETD/ATD, MBL/MAWB o contenedor real | Práctica de Odoo 17 (F0-C31, F0-C38): se aplica como aviso, no como bloqueo | S |
+| 5 | **Llegada, aduana y entrega** | «Entregado», ATA, NOA, descarga, fechas de contenedor; almacenaje y demoras desde los eventos (arnés 5) | DUA con canal y levante; orden de transporte al transportista; condiciones de «Entregado» | Cristina por escrito, «Nuevo Odoo» › OPS- exptes A42 (levante si BOSS despacha, fecha y hora de entrega si BOSS transporta) y A73 (HBL liberado o SWB antes de la orden de transporte) | M |
+| 6 | **Facturas de proveedor y coste real** | Factura desde el pedido, derechos sin pedido, factura en USD, abono, diferencias a revisar, coste real exacto (arnés 6) | Diferencia en USD separada en precio y tipo de cambio | Cristina, OPS- exptes A49 (cambio de la naviera); diario de diferencias de cambio de Odoo 17 | S |
+| 7 | **Factura al cliente (servicios y suplidos)** | Facturar los servicios elegidos, en parcial; suplidos al importe pagado (F0-A00); líneas con el expediente; tabla de IVA; NIF exigido (arnés 8) | Suplidos en factura aparte; series; cuenta bancaria en la factura; menciones legales; fecha de factura | IVA: reglas de Ángel del 31/08 (`BossOdoo19/docs/iva_rules.md`), punto 35 «OK»; suplidos aparte: Odoo 17 «NORMAL or TAX, since we don't mix»; series de Odoo 17 (F26 MM-NNNN, rectificativas FR26 NNNN); cuentas: diarios bancarios de Odoo 17; menciones: notas de los impuestos de Odoo 20 (art. 20, 22, 23/24, Directiva art. 196) | M |
+| 8 | **Cobros y pagos** | Cobros y pagos conciliados; el pago al proveedor espera a la factura al cliente (P30, Belal 23/10); cobrado y pagado por expediente (arnés 7, 9) | Diarios bancarios (EUR y USD); plazos 6, 20, 60, 75 y 90 días; límites de crédito; reclamación | Odoo 17: 9 diarios bancarios, 15 plazos de pago, límites de crédito por cliente, un nivel de reclamación a los 7 días; remesas a proveedores con RemesaFiller («Registro automatizaciones» › CONTABILIDAD A3) | S–M |
+| 9 | **Cierre operativo y financiero** | Cierre operativo; el financiero espera a revisar diferencias; solo el administrador contable reabre; margen final exacto (arnés 10) | Condiciones del cierre operativo; informe de margen por usuario, cliente y tráfico | Cristina por escrito: todo facturado, sin aviso de margen, a más tardar una semana después de la entrega (OPS- exptes A65/A69, «Facturacion» A2); margen por usuario, cliente y tráfico (CR-O11) | M |
 
 Otros tráficos sin probar de extremo a extremo (huecos S2–S7): exportación aérea, importación aérea con NOA y handler,
-exportación marítima FCL, grupaje LCL, carretera/nacional, negocio de agente en USD. Se prueban con los expedientes
-[PRUEBA] de la tarea 3.
+exportación marítima FCL, grupaje LCL, carretera/nacional, negocio de agente en USD. Se prueban en la tarea 2.
 
-## 2. Próximas tareas, en orden
+## 2. Tareas, en orden
 
-Primero la eficiencia y la claridad de las pantallas: menos clics, estados claros, textos en español y ninguna
-pantalla sin salida. No se inventa ninguna regla de negocio: lo que no está decidido se muestra como pendiente.
+Primero la eficiencia y la claridad: menos clics, estados claros y ninguna pantalla sin salida. Cada regla se aplica
+con su fuente escrita; ninguna se inventa.
 
-1. **Expediente: siguiente paso claro.** El expediente dice en una línea cuál es el siguiente paso, quién lo hace y
-   cuántas cosas faltan, con un solo botón «Ir» que abre exactamente lo que hay que hacer (servicios sin proveedor,
-   pedidos por confirmar, facturar…). La cabecera solo enseña los botones que sirven en ese momento y la lista de
-   expedientes muestra la columna «Siguiente paso». Es una guía y no bloquea nada.
-   *Hecho cuando* esté instalado en boss20, se vea en Chrome en un expediente [PRUEBA] (en español y en inglés), un
-   script de comprobación recorra todos los pasos de un expediente sin fallos y la evidencia esté en `docs/evidencias/`.
-   **Entregado el 03/11** (boss_expediente 20.0.1.17.0, commit `2342252`): arnés 70/0 con 17 comprobaciones nuevas
-   (cada paso y cada «Ir», de la aceptación a «Nada pendiente»), evidencia
-   `docs/evidencias/20261103_1209_check_file_e2e_boss20_2342252c1235.txt`; visto en Chrome en E260038 (cabecera de 10 a
-   6 botones, «Ir» abre los servicios sin proveedor, menú «Acción», columna en la lista: 25 expedientes en 341 ms);
-   textos en español comprobados en boss20.
-2. **Español para todos y una lista limpia.** Poner en español los usuarios de BOSS (M2-11; Belal lo confirma),
-   cancelar los 10 expedientes que quedan de la prueba del portal y hacer que esa prueba deshaga lo que crea.
-   *Hecho cuando* Ángel y el resto vean 2.500,00 y textos en español, y la lista «En curso» no tenga restos de pruebas.
-3. **Expedientes [PRUEBA] de casos reales.** Importación marítima FCL (modelo E260883 de Odoo 17), importación aérea
-   (E260167), grupaje LCL de importación y exportación marítima, con los contactos reales de boss20, sin importes
-   reales. Cada uno se recorre con el siguiente paso de la tarea 1.
-   *Hecho cuando* los cuatro existan en boss20, cada paso esté hecho o anotado como hueco y los huecos S3–S5 del arnés
-   pasen a comprobaciones.
-4. **Bandeja de trabajo del operativo.** Operativo responsable propuesto por cliente y tráfico (tabla de Odoo 17,
-   F0-C23, que Cristina confirma), filtros «Mis expedientes · necesitan acción» y actividades de Odoo para los hitos.
+1. **Expediente: siguiente paso claro — entregado el 03/11.** Línea «Siguiente paso» con el botón «Ir», cabecera con
+   solo los botones que sirven, acciones ocasionales en el menú «Acción» y columna en la lista (boss_expediente
+   20.0.1.17.0, commit `2342252`). Arnés 70/0 con 17 comprobaciones nuevas
+   (`docs/evidencias/20261103_1209_check_file_e2e_boss20_2342252c1235.txt`); visto en Chrome en E260038 (cabecera de
+   10 a 6 botones, «Ir» abre los servicios sin proveedor; lista de 25 expedientes en 341 ms); español comprobado.
+2. **Expedientes [PRUEBA] de casos reales.** Importación marítima FCL (modelo E260883 de Odoo 17), importación aérea
+   (E260167), grupaje LCL de importación y exportación marítima, con los contactos reales de boss20 y sin importes
+   reales; cada uno se recorre con «Siguiente paso».
+   *Hecho cuando* existan en boss20, cada paso esté hecho o anotado y los huecos S3–S5 del arnés pasen a comprobaciones.
+3. **Oferta rápida con los precios de BOSS.** Precios de venta de la plantilla «Standard» de Odoo 17 en la tarifa
+   general y las 9 plantillas por cliente como tarifas de cliente; plantillas por tráfico (R-S1, F0-C09); aviso de
+   margen mínimo con las 12 reglas de Odoo 17; regla ALM del 25/09.
+   *Hecho cuando* una oferta IMB FCL salga de la plantilla con todos sus precios en menos de 10 clics y el arnés lo
+   compruebe.
+4. **Bandeja del operativo.** Operativo propuesto desde la tabla de Odoo 17 (cliente × tráfico), filtros «Mis
+   expedientes · necesitan acción» y actividades por hito.
    *Hecho cuando* cada usuario abra Odoo y vea sus expedientes ordenados por lo que tiene que hacer.
-5. **Aduana y entrega en el expediente.** Estado del DUA, canal, levante y orden de transporte al transportista
-   (huecos F7), con los campos que proponga Cristina.
-   *Hecho cuando* el DUA y la orden de transporte se registren en el expediente y el arnés lo compruebe.
-6. **Oferta rápida por caso.** Plantillas por tráfico con los precios de venta de Cristina (puntos 13, M2-16, M2-17)
-   y una lista «qué falta para enviar» arriba de la oferta, igual que en la tarifa.
-   *Hecho cuando* una oferta IMB FCL se haga desde la plantilla en menos de 10 clics con todos los precios.
-7. **Datos de factura para Ángel.** IBAN de la empresa, series, menciones legales del 0 % y derechos en sección
-   aparte, en cuanto Ángel conteste F4 y F0-A21.
-   *Hecho cuando* el PDF de la factura de prueba tenga todo lo que pide Ángel y él lo dé por bueno.
-8. **Cierre y margen.** Condiciones del cierre operativo (Cristina) e informe de margen por usuario, cliente y
+5. **Estados con sus condiciones, aduana y entrega.** Avisos de «En tránsito» y «Entregado» y condiciones del cierre
+   tal como Cristina las escribió; DUA con canal y levante; orden de transporte al transportista.
+   *Hecho cuando* el arnés recorra esos avisos y el DUA y la orden de transporte queden en el expediente.
+6. **Factura y cobro como en Odoo 17.** Diarios bancarios EUR y USD con sus cuentas, plazos de pago que faltan, límites
+   de crédito, un nivel de reclamación, series F/FR, suplidos en factura aparte, cuenta bancaria y menciones legales en
+   el PDF, fecha de factura según la norma.
+   *Hecho cuando* la factura [PRUEBA] lleve todo eso y el arnés cobre y pague por los diarios reales.
+7. **Cierre y margen.** Cierre operativo con las condiciones de Cristina e informe de margen por usuario, cliente y
    tráfico.
-   *Hecho cuando* Cristina cierre un expediente en una semana desde la entrega y vea su margen en un informe.
+   *Hecho cuando* un expediente se cierre una semana después de la entrega y su margen salga en el informe.
+8. **Consolidaciones (un máster, varias casas).** El máster (MBL/MAWB) es el expediente y cada casa (HBL/HAWB) una
+   partida (Cristina, «Plan detallado previsiones» › Explicaciones previsiones A120 y A92); reparto de costes del
+   máster a mano, como en Odoo 17.
+   *Hecho cuando* un expediente con tres casas se facture por casa y su margen sume el del máster.
 
-## Decisiones que esperan a los responsables (no bloquean las tareas 1–4)
+Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
+reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
 
-- **Cristina:** precios de venta y plantillas; operativo por tráfico; condiciones de «En tránsito», «Entregado» y del
-  cierre; validez 30 días (P23); usuarios y permisos.
-- **Ángel:** IVA de CAU/QBR; tarifa WFS; derechos en factura aparte; menciones legales, IBAN y series; SII o
-  VERI*FACTU; bancos, plazos de pago y límites de crédito; F0-A80/A81; 360 empresas que Odoo 20 muestra como persona
-  (sin NIF).
-- **Belal:** idioma español para los usuarios de BOSS; capacidad y fecha de arranque por tráfico (F0-B11).
+## 3. Qué dicen las fuentes de lo que se iba a preguntar
+
+**Respondido por escrito (se aplica con su fuente).** Tabla de IVA (Ángel 31/08; punto 35 «OK»); suplidos al importe
+pagado y en factura aparte (F0-A00, Odoo 17); cuentas de suplidos 419xxx (P18, Odoo 17); quién se factura en negocio de
+agente (Ángel 28/10, punto 22); coste a consultar del transporte (Ángel 27/10, M2-19); flete con la última tarifa
+disponible (Ángel, M2-G); condiciones de «Entregado» y del cierre (Cristina, «Nuevo Odoo»); partidas (Cristina 28/09);
+visibilidad por comercial y de costes (Cristina CRM A19, P35); aprobación de tarifas (Belal 09/10).
+
+**No escrito: práctica de Odoo 17 o norma (reversible).** Precios de venta («Standard» y plantillas por cliente);
+operativo por cliente y tráfico; margen mínimo (12 reglas); validez y caducidad de la oferta; series de factura;
+diarios bancarios, plazos, límites de crédito y reclamación; avisos de «En tránsito»; IVA de CAU y QBR a cliente
+español como en Odoo 17 («0 % S»); fecha de factura = fecha de expedición con la fecha de la operación aparte
+(RD 1619/2012, art. 6); dos decimales con cuatro solo en precios por kg; estimación de derechos tecleada (no hay tabla
+TARIC).
+
+**Para una reunión (una sola pregunta).** SII o VERI*FACTU desde el 01/01/2027 (P45-a): obligación legal que no consta
+en ninguna fuente; Odoo 20 trae los dos módulos sin instalar. Mientras tanto no se instala ni se envía nada.
 
 ---
 
 ## English summary
 
-Roadmap of 03/11/2026, ordered by BOSS's operational sequence (quotation → acceptance → file → booking → arrival,
-customs, delivery → supplier bills → customer invoice → collection and payments → close). What works today is taken
-only from checks run on boss20 (end-to-end harness 53/0 with 19 declared gaps, Ángel's 65 meeting points, Chrome on
-03/11). The main gaps are business decisions (Cristina: selling prices, templates, operator per traffic, status
-conditions; Ángel: invoice data, VAT of CAU/QBR, banks) and screen clarity. Next items, in order: (1) guided next step
-on the shipment file, (2) Spanish for every BOSS user and a clean file list, (3) [PRUEBA] files modelled on real
-Odoo 17 cases, (4) operator work queue, (5) customs and delivery on the file, (6) fast quotation per case, (7) invoice
-data for Ángel, (8) close and margin report. Data migration stays paused.
+Roadmap of 03/11/2026, revised the same day on Belal's instruction: nothing is asked of Cristina or Ángel before the
+whole system and every source have been reviewed. The review (Odoo 19 docs, the «NEW ODOO» folder, Odoo 17 production,
+the meeting notes) found the rules already written or practised in Odoo 17: selling prices (Odoo 17 «Standard» and nine
+customer templates), operator per customer and traffic (414 rows), minimum margin (12 group rules), status and close
+conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), suplidos, invoice series, banks, payment terms.
+One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
+delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
+(5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
+(8) consolidations. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
