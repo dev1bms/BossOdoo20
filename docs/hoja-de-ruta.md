@@ -156,6 +156,16 @@ con su fuente escrita; ninguna se inventa.
    partida (Cristina, «Plan detallado previsiones» › Explicaciones previsiones A120 y A92); reparto de costes del
    máster a mano, como en Odoo 17.
    *Hecho cuando* un expediente con tres casas se facture por casa y su margen sume el del máster.
+   **Entregado el 03/11** (boss_expediente 20.0.1.22.1, commits `a8239ee`, `7c0f82c`; ADR-013; explicación con
+   diagramas, pantallas y valoración en `docs/consolidaciones.html`): expediente máster con casas (opción A). Los datos
+   de transporte del máster se copian a las casas; sus compras compartidas se reparten por peso tasable (W/M), peso
+   bruto, volumen, partes iguales o a mano (las partes suman 100); los servicios que el máster compra quedan «comprados
+   en el máster» en las casas; cada casa ve su margen con su parte y el máster el margen consolidado; «En tránsito»
+   conjunto; cierres económicos en orden; «Nueva casa». Evidencia: `docs/evidencias/20261103_1610_check_file_consolidation_boss20_a8239ee5c56a.txt`
+   (22/0), arnés 83/0, cola 10/0; consolidación [PRUEBA] E260231 con dos casas en boss20 (modelo E260468 de Odoo 17).
+   Pendiente: documentos HBL/HAWB y manifiesto (F0-C45), portal de una consolidación, migración de los expedientes de
+   Odoo 17 abiertos con varias partidas (F0-C74); la base del reparto queda como elección registrada en el máster
+   (Cristina nunca eligió peso real o tasable).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
