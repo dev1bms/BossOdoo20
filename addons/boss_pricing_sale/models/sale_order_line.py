@@ -542,8 +542,27 @@ class SaleOrderLine(models.Model):
             return bool(self.boss_tariff_line_id)
         return self.boss_cost_status in ("manual", "not_ready") and bool(self.boss_manual_cost)
 
+    @api.depends("boss_container_size")
+    def _compute_pricelist_item_id(self):
+        super()._compute_pricelist_item_id()
+
+    def _get_pricelist_kwargs(self):
+        """The container size of the line chooses between the rules of one size (THC 20' / THC 40')."""
+        return dict(super()._get_pricelist_kwargs(), boss_container_size=self.boss_container_size or False)
+
+    def _boss_effective_rule(self):
+        """The rule that really prices the line. A customer pricelist ends with «based on the general pricelist» for
+        the services it does not agree (standard chaining): the general pricelist's rule (cost + %) then decides."""
+        self.ensure_one()
+        item, depth = self.pricelist_item_id, 0
+        while item.base == "pricelist" and item.base_pricelist_id and depth < 5 and self.product_id:
+            item = self.env["product.pricelist.item"].browse(item.base_pricelist_id._get_product_rule(
+                self.product_id, **self._get_pricelist_kwargs()))
+            depth += 1
+        return item
+
     def _get_pricelist_price(self):
-        item = self.pricelist_item_id
+        item = self._boss_effective_rule()
         if item.base != BOSS_LINE_COST or not self.product_id.boss_pricing_mode:
             return super()._get_pricelist_price()  # a product that is not a BOSS service: its list price
         if not self._boss_cost_known():
@@ -554,7 +573,7 @@ class SaleOrderLine(models.Model):
             # changes: a price agreed in the customer's pricelist or typed by a person is kept. A BOSS fee for
             # advancing the money is a separate service with its own price.
             return self.purchase_price
-        return item._compute_price(
+        return self.pricelist_item_id._compute_price(  # through the chain: kwargs reach the general rule
             product=self.product_id.with_context(**self._get_product_price_context()),
             boss_unit_cost=self.purchase_price, **self._get_pricelist_kwargs())
 
@@ -570,7 +589,7 @@ class SaleOrderLine(models.Model):
         _ = self.env._
         for line in self:
             currency = line.currency_id or line.company_id.currency_id
-            item = line.pricelist_item_id
+            item = line._boss_effective_rule() if line.product_id else line.pricelist_item_id
             # price_unit first: its pending recompute (cost just typed) rewrites the technical price as well, so
             # reading the technical price before it would compare a stale value and call the price «typed»
             price_unit = line.price_unit

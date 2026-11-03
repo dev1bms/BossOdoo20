@@ -7,6 +7,11 @@
         <field name="model">product.pricelist.item</field>
         <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
         <field name="arch" type="xml">
+            <group name="min_quantity" position="after">
+                <group name="boss_container_size">
+                    <field name="boss_container_size" placeholder="Any size"/>
+                </group>
+            </group>
             <field name="price_round" position="before">
                 <field name="boss_sale_margin" invisible="compute_price != 'markup' or base != 'boss_line_cost'"/>
             </field>

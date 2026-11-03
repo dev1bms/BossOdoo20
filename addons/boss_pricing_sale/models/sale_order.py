@@ -131,23 +131,33 @@ class SaleOrder(models.Model):
         return None
 
     def _boss_assign_container_groups(self):
-        """Per-container services without a size take the containers of the shipment: the first size and type on the
-        existing line, one more line per other size and type, like the template and «Add services» do. Lines already
-        sized, frozen or not priced per container are left alone. Also run when the containers are entered after the
-        services (Ángel's order of steps on 27/10/2026: template first, then 1×40'): otherwise size-dependent prices
-        (T3-PAD, GLO-CCC) stay «missing shipment data»."""
+        """Per-container services take the containers of the shipment: one line per container size and type, like the
+        template and «Add services» do. A line without a size takes the first size and type its service still lacks;
+        every other size and type it lacks gets a new line of the same service and supplier (priced for that size).
+        Lines already sized, frozen or not priced per container are kept. Also run when the containers are entered
+        after the services (Ángel's order of steps on 27/10/2026: template first, then 1×40'): otherwise
+        size-dependent prices (T3-PAD, GLO-CCC) stay «missing shipment data». Containers entered one at a time give
+        each size its lines (a 40' HC entered after a 20' got none before 03/11/2026)."""
         for order in self:
             groups = order._boss_container_groups()
             if not groups:
                 continue
+            lines = order.order_line.filtered(
+                lambda l: l.product_id and not l.display_type and not l.boss_price_frozen
+                and self._boss_per_container(l.product_id, l.product_uom_id))
             added = []
-            for line in order.order_line.filtered(
-                    lambda l: l.product_id and not l.display_type and not l.boss_price_frozen
-                    and not l.boss_container_size and self._boss_per_container(l.product_id, l.product_uom_id)):
-                (line.boss_container_size, line.boss_container_type_id), *rest = groups
-                added += [Command.create({"product_id": line.product_id.id, "product_uom_id": line.product_uom_id.id,
+            for product in lines.product_id:
+                own = lines.filtered(lambda l, p=product: l.product_id == p)
+                have = {(l.boss_container_size, l.boss_container_type_id) for l in own if l.boss_container_size}
+                missing = [group for group in groups if group not in have]
+                for line in own.filtered(lambda l: not l.boss_container_size):
+                    if missing:
+                        line.boss_container_size, line.boss_container_type_id = missing.pop(0)
+                model = own[:1]
+                added += [Command.create({"product_id": product.id, "product_uom_id": model.product_uom_id.id,
                                           "boss_container_size": size, "boss_container_type_id": ctype.id,
-                                          "sequence": line.sequence}) for size, ctype in rest]
+                                          "boss_supplier_id": model.boss_supplier_id.id, "sequence": model.sequence})
+                          for size, ctype in missing]
             if added:
                 order.update({"order_line": added})
 

@@ -3,6 +3,8 @@ from odoo.exceptions import ValidationError
 from odoo.tools import float_round
 from odoo.tools.misc import formatLang
 
+from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
+
 BOSS_LINE_COST = "boss_line_cost"
 
 
@@ -18,6 +20,10 @@ class ProductPricelistItem(models.Model):
         "Margin on sale (%)", digits=(16, 2),
         help="Price so that (price - cost) / price is this percentage: price = cost / (1 - margin). "
         "Use it instead of the surcharge on cost, not both. Only with the expected cost of the quotation line.")
+    boss_container_size = fields.Selection(
+        CONTAINER_SIZES, "Container size",
+        help="Only for quotation lines of this container size (THC 20' and THC 40' have different selling prices). "
+        "Empty: any size.")
 
     @api.model
     def _boss_markup_to_discount(self, vals):
@@ -60,7 +66,13 @@ class ProductPricelistItem(models.Model):
             return self.env._("expected cost of the quotation line")
         return super()._get_price_label_base_str()
 
-    @api.depends("boss_sale_margin", "price_min_margin")
+    def _is_applicable_for(self, product, quantity, *, uom=None, **kwargs):
+        """A rule of one container size prices only the quotation lines of that size (the line passes its size)."""
+        if self.boss_container_size and kwargs.get("boss_container_size") != self.boss_container_size:
+            return False
+        return super()._is_applicable_for(product, quantity, uom=uom, **kwargs)
+
+    @api.depends("boss_sale_margin", "price_min_margin", "boss_container_size")
     def _compute_price_label(self):
         super()._compute_price_label()
         for item in self.filtered(lambda i: i.base == BOSS_LINE_COST and i.compute_price != "fixed"):
@@ -74,6 +86,8 @@ class ProductPricelistItem(models.Model):
                 text += " " + self.env._("(minimum margin %s per unit)", formatLang(
                     self.env, item.price_min_margin, currency_obj=item.currency_id))
             item.price = text
+        for item in self.filtered("boss_container_size"):
+            item.price = self.env._("%(price)s (container %(size)s')", price=item.price, size=item.boss_container_size)
 
     def _compute_base_price(self, product, quantity, uom, *, currency=None, depth=0, base_prices=None, **kwargs):
         if self.base != BOSS_LINE_COST:
@@ -120,7 +134,7 @@ class ProductPricelistItem(models.Model):
     # Standard pricelists hold agreed sale prices of BOSS services, with two guards (spike T2b, T3):
     # a price says its charge basis, and two prices for the same case never overlap silently.
     @api.constrains("product_tmpl_id", "product_id", "uom_id", "pricelist_id", "min_quantity",
-                    "date_start", "date_end")
+                    "date_start", "date_end", "boss_container_size")
     def _check_boss_service_prices(self):
         for item in self:
             template = item.product_id.product_tmpl_id or item.product_tmpl_id
@@ -134,6 +148,7 @@ class ProductPricelistItem(models.Model):
                 ("id", "!=", item.id), ("pricelist_id", "=", item.pricelist_id.id),
                 ("product_tmpl_id", "=", template.id), ("product_id", "=", item.product_id.id),
                 ("uom_id", "=", item.uom_id.id), ("min_quantity", "=", item.min_quantity),
+                ("boss_container_size", "=", item.boss_container_size),
             ])
             for other in same:
                 starts_before_end = not other.date_end or not item.date_start or item.date_start <= other.date_end
