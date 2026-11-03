@@ -1,0 +1,167 @@
+o17_concept_id,codigo,nombre,tipo,iva_defecto,estado,servicios_odoo20,regla
+181,AMS,AMS TRANSMISSION,NORMAL,NR,enlazado,AMS,concept id on the service
+182,ARA,ARANCEL IMPORTACION,TAX,NS,enlazado,ARA,concept id on the service
+184,CAU,CAUCION AVAL,NORMAL,NS,enlazado,CAU,concept id on the service
+185,CES,CESION CONTENEDOR,NORMAL,NR,enlazado,CES,concept id on the service
+186,PROAUX,PROGRAMAS AUXILIARES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+187,COMPRO,GASTOS COMUNIDAD DE PROPIETARIOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+188,CSA,CONSIGNACION AEREA,NORMAL,NR,enlazado,CSA,concept id on the service
+189,CSM,CONSIGNACION MARITIMA,NORMAL,NR,enlazado,CSM,concept id on the service
+190,DAP,DAP,NORMAL,NR,pendiente Cristina,DAP | DAP-CON,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+191,DEM,DEMORAS NAVIERA,NORMAL,NR,enlazado,DEM,concept id on the service
+192,GINT,GASTOS INTERNET,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+193,DEX,DESPACHO EXPORTACION,NORMAL,EX,enlazado,DEX,concept id on the service
+194,DOC,DOCUMENTACION BL,NORMAL,NR,pendiente Cristina,BL | DOC,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+195,ENS,ENS,NORMAL,NR,enlazado,ENS,concept id on the service
+196,EUR1,EMISION EUR 1 / ATR,NORMAL,NR,enlazado,EUR1,concept id on the service
+197,EXW,GASTOS EXWORKS,NORMAL,EX,enlazado (variante),EXW | EXW-AIR | EXW-FCL | EXW-LCL,variante según tipo de carga o modo del expediente (FCL/LCL/aéreo); regla a confirmar por Cristina
+198,FAD,FORFAIT ADUANA,NORMAL,NR,enlazado,FAD,concept id on the service
+199,FAE,FLETE AEREO EXPORTACION,NORMAL,EX,enlazado,FAE,concept id on the service
+200,FAI,FLETE AEREO IMPORTACION,NORMAL,EX,enlazado,FAI,concept id on the service
+201,RELIM,REPARACIONES Y LIMPIEZA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+202,GLO,GASTOS LOCALES,NORMAL,NR,pendiente Cristina,GLO | GLO-CCC | GLO-FUELEU | GLO-LOG,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+203,FME,FLETE MARITIMO EXPORTACION,NORMAL,EX,enlazado (variante),FME | FME-LCL,variante según tipo de carga o modo del expediente (FCL/LCL/aéreo); regla a confirmar por Cristina
+204,FMI,FLETE MARITIMO IMPORTACION,NORMAL,EX,enlazado (variante),FMI | FMI-LCL,variante según tipo de carga o modo del expediente (FCL/LCL/aéreo); regla a confirmar por Cristina
+205,FOB,FORFAIT FOB,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+206,OAL,OPERACIONES ALMACEN,NORMAL,NR,pendiente Cristina,OAL-CON | OAL-PAL,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+207,ALM,ALMACENAJE,NORMAL,NR,enlazado,ALM,concept id on the service
+208,GLL,GASTOS DE LLEGADA,NORMAL,NR,enlazado,GLL,concept id on the service
+209,PROINF,PROGRAMAS INFORMÁTICOS VARIOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+210,HAN,MANIPULACION AEROPUERTO,NORMAL,NR,enlazado,HAN,concept id on the service
+211,IMO,MERCANCÍA PELIGROSA,NORMAL,NR,enlazado,IMO,concept id on the service
+212,INS,INSPECCION,NORMAL,NR,enlazado,INS,concept id on the service
+213,VET,VETERINARIA,NORMAL,NR,enlazado,VET,concept id on the service
+215,IVA,IVA IMPORTACION,TAX,NS,enlazado,IVA,concept id on the service
+218,OCU,OCUPACIONES PUERTO,NORMAL,NR,enlazado,OCU,concept id on the service
+219,PAL,PALETIZACION,NORMAL,NR,enlazado,PAL,concept id on the service
+220,PAR,PARALIZACIONES,NORMAL,NR,enlazado,PAR,concept id on the service
+221,PFT,PROFIT SHARE ON OCEAN FREIGHT,NORMAL,NR,enlazado (variante),PFT-AIR | PFT-FCL | PFT-LCL,variante según tipo de carga o modo del expediente (FCL/LCL/aéreo); regla a confirmar por Cristina
+222,X-R,RAYOS X,NORMAL,NR,enlazado,X-R,concept id on the service
+223,POS,POSICIONADO PIF ESCANER,NORMAL,NR,enlazado,POS,concept id on the service
+224,POT,POSICIONADO TERMINAL,NORMAL,NR,enlazado,POT,concept id on the service
+226,SEG,SEGURO MERCANCIA,NORMAL,EX,enlazado,SEG,concept id on the service
+227,SOI,INSPECCION SOIVRE,NORMAL,NR,enlazado,SOI,concept id on the service
+228,T3,TASA T-3,NORMAL,EX,pendiente Cristina,T3 | T3-PAD,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+229,TCC,(ANTIGUO) TRANSPORTE CAMION CONT,NORMAL,NR,enlazado,TTE-FCL,same code / former code
+230,THC,THC + GASTOS LOCALES,NORMAL,EX,enlazado (variante),THC | THC-LCL,variante según tipo de carga o modo del expediente (FCL/LCL/aéreo); regla a confirmar por Cristina
+231,TRA,TRANSITO ADUANERO,NORMAL,NR,enlazado,TRA,concept id on the service
+232,TRI,(ANTIGUO) TRANSPORTE ENTREGA,NORMAL,NR,enlazado,TTE-CON,same code / former code
+233,TTC,(ANTIGUO) TRANSPORTE TECO CONT,NORMAL,NR,enlazado,TTE-FCL,same code / former code
+234,VAC,VACIADO CNTR / ENTREGA CAMION,NORMAL,NR,enlazado,VAC,concept id on the service
+235,VGM,VGM,NORMAL,NR,enlazado,VGM,concept id on the service
+236,QBR,QUEBRANTO BANCARIO,NORMAL,NS,enlazado,QBR,concept id on the service
+239,GT3,GESTION-T3,NORMAL,NR,enlazado,GT3,concept id on the service
+240,PRE,PRECINTO,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+242,TEL,TELEFONO,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+243,LUZ,LUZ,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+244,ASEMP,ASOCIACIONES EMPRESARIALES,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+245,VCON,VIAJES Y CONGRESOS POR OPERATIVA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+246,ISO,ISO 9001,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+247,VAOF,VARIOS OFICINA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+248,OGASO,OTROS GASTOS SOCIALES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+249,SPROIN,SERVICIOS PROFESIONALES INDEPENDIENTES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+250,GYAS,GESTORÍA Y ASESORÍA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+251,TRMENS,TRANSPORTES Y MENSAJERÍA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+253,MATOF,MATERIAL DE OFICINA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+254,EOFRE,EQUIPOS DE OFICINA EN RENTING,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+255,PINBY,PROGRAMA INFORMÁTICO BYTEMASTER,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+256,EAUX,EQUIPOS AUXILIARES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+257,SRC,SEGUROS R.C,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+258,CONS,CONSULTORÍA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+259,AEMPI,ASOCIACIONES EMORESARIALES INT,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+260,VCOIN,VIAJES Y CONGRESOS INTERNAC.,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+261,OGFC,OTROS GASTOS FINANCIEROS / CONFIRMING,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+262,AGUA,AGUA,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+263,REPRO,REVERSION PROV.INSOLVENCIAS PO,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+264,INEX,INGRESOS EXCEPCIONALES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+265,BENIMA,BENEFICIOS INM.MATERIAL,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+266,OIF,OTROS INGRESOS FINANCIEROS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+267,DIPOCA,DIFERENCIAS POSITIVAS DE CAMBI,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+268,SUBCAM,SUBVENCIONES CAM,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+269,INARRE,INGRESOS POR ARRENDAMIENTOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+271,VETSE,VENTAS TRANSP. Y SERV. / MADRID,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+272,VESEIM,VENTAS SERVICIOS IMPORT/AMAZON,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+273,OGEX,OTROS GASTOS EXTRAORDINARIOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+274,DINECA,DIFERENCIAS NEGATIVAS DE CAMBIO,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+275,INPRE,INTERESES POR PRÉSTAMOS CON BANCOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+276,IDP,INTERESES POR DEUDAS CON ENTIDADES DE CRÉDITO/PRÉSTAMOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+277,ILEAS,INTERESES POR DEUDAS CON ENTIDADES DE CRÉDITO/LEASING,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+278,IMU,IMPUESTOS MUNICIPALES,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+279,OTRI,OTROS TRIBUTOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+280,DICLI,GTOS. DE REP. -  ATENCIONES A CLIENTES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+281,DON,DONATIVOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+282,COM,COMIDAS,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+283,GLOC,GASTOS DE LOCOMOCIÓN,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+284,OBVINA,"OBSEQUIOS VARIOS VIAJES, NAVIDAD",CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+285,REVA,GASTOS DE REPRESENTACIÓN DIETAS VARIAS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+286,RRPP,RELACIONES PÚBLICAS Y GASTOS REPRESENTACION,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+287,SEGUR,SEGUROS VARIOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+288,ABNOT,ABOGADOS Y NOTARIOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+289,SEAUX,SERVICIOS AUXILIARES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+290,CONECO,CONSULTORÍA E.COMERCE,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+292,ATA,CUADERNO ATA,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+293,SAN,CERTIFICADO SANIDAD,NORMAL,NR,enlazado,SAN,concept id on the service
+294,FAR,FARMACIA,NORMAL,NR,enlazado,FAR,concept id on the service
+295,TRE,(ANTIGUO) TRANSPORTE RECOGIDA,NORMAL,EX,enlazado,TTE-CON,same code / former code
+297,AWB,DOCUMENTACIÓN / AWB,NORMAL,NR,enlazado,AWB,concept id on the service
+298,REF,ENCHUFE REEFER,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+299,FLX,FLEXITANT,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+300,FUM,FUMIGACIÓN,NORMAL,NR,enlazado,FUM,concept id on the service
+301,MAN,MANTAS TÉRMICAS,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+302,TRJ,TRINCAJE,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+303,TASAJUD,TASAS JUDICIALES,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+304,CST,CONSIGNACION TERRESTRE,NORMAL,NR,enlazado,CST,concept id on the service
+305,MEN,MENSAJERIA,NORMAL,NR,enlazado,MEN,concept id on the service
+306,PPE,PREPARACIÓN PEDIDOS,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+307,CLA,CLASIFICACION,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+308,MPU,MATERIAL ALMACEN PALLET HOMOLOGADO USADO,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+309,MPN,MATERIAL ALMACEN PALLET HOMOLOGADO NUEVO,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+310,MNH,MATERIAL ALMACEN PALLET NO HOMOLOGADO,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+311,GAV,GASTOS ALMACEN VIGO,NORMAL,EX,enlazado,GAV,concept id on the service
+312,MOB,MOBILIARIO DE OFICINA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+313,MAT,MATERIAL ALMACEN,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+314,EQIN,EQUIPOS INFORMATICOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+315,TASVA,TASAS VARIAS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+316,DVD,DESPACHO DVD,NORMAL,EX,enlazado,DVD,concept id on the service
+317,LEASINGP,CUOTA LEASING POL,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+318,LEASINGEV,CUOTA LEASINGEV,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+319,COR,CORRECTOR,NORMAL,NR,enlazado,COR,concept id on the service
+322,IBI,IMPUESTO DE BIENES INMUEBLES,CREDITOR,NS,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+323,IAE,IMPUESTO DE ACTIVIDADES ECONOMICAS,CREDITOR,NS,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+324,DEP,DEPOSITO ADUANERO,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+325,SUP,SUPLIDOS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+327,EQIN20,EQUIPOS INFORMATICOS 20,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+328,MOB20,MOBILIARIO AD. 2020,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+329,ETX,ENERGY TAX,NORMAL,NR,enlazado,ETX,concept id on the service
+330,SAD,SANCION ADUANA,NORMAL,EX,enlazado,SAD,concept id on the service
+331,CYC,SEGURO DE CREDITO Y CAUCION,CREDITOR,NS,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+332,DES,DESTRUCCION MERCANCIA,NORMAL,NR,enlazado,DES,concept id on the service
+333,LEASKIA,LEASING KIA,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+334,COMBCO,COMISIONES BANCARIAS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+335,IMPCOM,IMPUESTOS COMUNIDAD DE MADRID,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+336,EQUIN21,EQUIPOS PARA PROCESOS INFORMATICOS 21,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+337,SPROINF,SERVICIOS DE PROCESOS INFORMATICOS,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+339,EQUIN22,EQUIPOS PARA PROCESOS INFORMATICOS 22,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+340,SUSC.,SUSCRIPCIONES,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+341,SERAPY,SERVICIOS DE APOYO,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+342,MUL,MULTAS VARIAS,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+343,CURSOS,CURSOS PERSONAL,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+344,MARK,MARKETING,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+345,PUB.,PUBLICIDAD,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+346,DUM,ANTI DUMPING,TAX,NS,enlazado,DUM,concept id on the service
+347,FORBO,FORMACION BONIFICADA,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+348,PLA,IMPUESTO SOBRE PLASTICO NO REUTILIZABLE,TAX,NS,enlazado,PLA,concept id on the service
+349,MUAUX,MUEBLES AUXILIARES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+350,INF,INFORMES COMERCIALES,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+352,ROH,ROHS,NORMAL,NR,enlazado,ROH,concept id on the service
+354,NIF,GESTIÓN NIF,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+355,PINOD,PROGRAMA INFORMÁTICO ODOO,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+356,LEASSPAS,LEASING PASSAT,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+357,EQUIN24,EQUIPOS PARA PROCESOS INFORMATICOS 24,CREDITOR,NR,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+359,PFC,PROFIT COMERCIAL,NORMAL,NR,pendiente Cristina,,sin servicio en Odoo 20: crear servicio o asignar uno existente
+360,RES,RESERVA,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+361,INST,OTRAS INSTALACIONES,CREDITOR,EX,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+363,BMW,BMW SERIE 4,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"
+364,FTT,FLETE TERRESTRE,NORMAL,NR,enlazado,FTT,same code / former code
+365,TTE,TRANSPORTE,NORMAL,NR,pendiente Cristina,TTE-CON | TTE-FCL,varios servicios posibles; Cristina decide cuál o por qué dato del expediente
+367,Golf,Vw Golf,CREDITOR,,pendiente Ángel,,"gasto general de la empresa, no es servicio de expediente: cuenta de gasto a decidir"

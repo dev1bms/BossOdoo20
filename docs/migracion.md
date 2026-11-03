@@ -54,6 +54,22 @@ Comprobación de aceptación (`dev/check_migration_accept.py`, evidencia en `doc
 
 El registro privado con los valores originales está fuera de Git (`.research/f2_exceptions_register.md`).
 
+## Conceptos de Odoo 17 → servicios de Odoo 20 (03/11/2026)
+
+Lista completa en `docs/migracion-conceptos.csv`. Odoo 17 tiene 166 conceptos activos (`x_concept`), leídos en solo
+lectura. El enlace ya existe en el servicio (`boss_o17_concept_id`, `boss_o17_concept_code`): 75 servicios con 59
+conceptos, iguales en el código y en boss20. No se ha inventado ningún enlace.
+
+| Estado | Conceptos | Qué falta |
+|---|---:|---|
+| Enlazado a un servicio | 53 | nada (incluye los 4 impuestos: ARA, IVA, DUM, PLA) |
+| Enlazado a variantes del mismo servicio (EXW, FME, FMI, PFT, THC) | 5 | Cristina confirma la regla: la variante sale del tipo de carga o del modo del expediente |
+| Pendiente de Cristina | 22 | 16 sin servicio en Odoo 20 (FOB, precinto, cuaderno ATA, reefer, flexitank, mantas, trincaje, preparación de pedidos, clasificación, materiales de almacén, depósito aduanero, gestión NIF, profit comercial) y 6 con varios servicios distintos (DOC, DAP, GLO, OAL, T3, TTE) |
+| Pendiente de Ángel | 86 | conceptos «CREDITOR»: gastos generales de la empresa, no servicios de expediente; necesitan cuenta o producto de gasto |
+
+Uso: la migración de expedientes abiertos (F15) busca el servicio por `boss_o17_concept_id`; un concepto pendiente deja
+la línea en «pendiente de decisión», nunca en un servicio supuesto.
+
 ## 1. Números
 
 | Medida (Odoo 17, solo activos) | Valor | Cómo se midió |
