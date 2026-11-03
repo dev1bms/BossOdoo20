@@ -50,14 +50,14 @@ con su fuente escrita; ninguna se inventa.
    reales; cada uno se recorre con «Siguiente paso».
    *Hecho cuando* existan en boss20, cada paso esté hecho o anotado y los huecos S3–S5 del arnés pasen a comprobaciones.
    **Entregado el 03/11** (`dev/sample_real_cases.py`, evidencia
-   `docs/evidencias/20261103_1345_sample_real_cases_boss20_3453cfd01b5e.txt`: 4 pasos correctos, 0 fallos). En boss20,
-   aceptados y con su siguiente paso: E260175 importación FCL (Aguilera, Xingang → Valencia, 20' + 40' HC, MSC), E260176
-   importación aérea (Cofitel, Cantón → Madrid, Qatar Airways, WFS), E260177 exportación LCL (Leroy Merlin, Algeciras →
-   Conakry, MSC), E260178 importación LCL de agente (Publiship, Hong Kong → Valencia). Cada uno se recorre con «Siguiente
-   paso» hasta el cierre financiero dentro de una transacción deshecha. La primera tanda (E260171–E260174) se canceló en
-   Odoo: el precio ficticio se había puesto por unidad (90.000 € de transporte por kg); evidencia
-   `20261103_1343_…_4d872f00eb0e.txt`. Cubre los huecos S3 (sin NOA ni almacenaje) y S5; S4 (exportación FCL) sigue
-   abierto. Lo que aprendimos para la tarea 3:
+   `docs/evidencias/20261103_1421_sample_real_cases_boss20_3481dc1135fd.txt`: 4 pasos correctos, 0 fallos). En boss20,
+   aceptados y con su siguiente paso: E260181 importación FCL (Aguilera, Xingang → Valencia, 20' + 40' HC, MSC), E260182
+   importación aérea (Cofitel, Cantón → Madrid, Qatar Airways, WFS), E260183 exportación LCL (Leroy Merlin, Algeciras →
+   Conakry, MSC), E260184 importación LCL de agente (Publiship, Hong Kong → Valencia). Cada uno se recorre con «Siguiente
+   paso» hasta el cierre financiero dentro de una transacción deshecha. Dos tandas anteriores se cancelaron en Odoo
+   (E260171–E260178): un precio ficticio puesto por unidad y, después, el 40' HC sin líneas (defecto corregido en la
+   tarea 3). Cubre los huecos S3 (sin NOA ni almacenaje) y S5; S4 (exportación FCL) sigue abierto. Lo que aprendimos
+   para la tarea 3:
    - las tarifas de cliente (p. ej. Cofitel) no tienen la regla general «coste + 20 %» de respaldo: el flete con coste
      manual queda sin precio de venta;
    - el precio de venta debe poder variar por tamaño de contenedor (THC 20' y 40' en la plantilla «Standard»);
@@ -70,6 +70,25 @@ con su fuente escrita; ninguna se inventa.
    margen mínimo con las 12 reglas de Odoo 17; regla ALM del 25/09.
    *Hecho cuando* una oferta IMB FCL salga de la plantilla con todos sus precios en menos de 10 clics y el arnés lo
    compruebe.
+   **Entregado en parte el 03/11** (boss_pricing_sale 20.0.1.18.1):
+   - precio de venta por tamaño de contenedor y lista de cliente que cae en la general «coste + 20 %»
+     (`docs/evidencias/20261103_1422_check_pricelist_chain_boss20_123a36db16d7.txt`, 12/0);
+   - precios de venta de Odoo 17 cargados (`dev/load_sale_prices.py`, datos privados en `.research/`): plantilla
+     «Standard» en la tarifa general (THC y T3 por tamaño, BL, CSM, FAD) y 8 plantillas de cliente como listas propias,
+     49 reglas; al repetirlo no cambia nada. Fuera, con su motivo: T3 por fórmula de toneladas, CSM por contenedor, GLO
+     en USD, transporte por expediente, THC de TCP (dos plantillas que no coinciden);
+   - plantillas nuevas: exportación FCL (EMB), grupaje de importación (IMB LCL FOB) y de exportación (EMB LCL),
+     carretera (TTE), según la propuesta F0-C09 sacada de las ofertas reales;
+   - aviso de margen mínimo por grupo de servicios con la regla base de Odoo 17 (10 % del coste, 10 de tolerancia;
+     suplidos exactos); solo avisa;
+   - defectos corregidos al probar: con un 20' y un 40' HC el 40' se quedaba sin líneas; al cambiar 40' DV a 40' HC en
+     pantalla quedaban dos juegos de líneas;
+   - arnés 70/0 (`20261103_1421_check_file_e2e_boss20_3481dc1135fd.txt`), con su cliente [PRUEBA] en una lista
+     [PRUEBA] para que los precios reales no salgan en la evidencia.
+   Pendiente: la regla ALM (Cristina elige entre su correo del 25/09 y la cláusula de las ofertas, en la llamada); las
+   12 reglas de margen por tráfico y las excepciones por cliente de Odoo 17; elegir el puerto no rellena su país y
+   buscar «MSC» no muestra la naviera de grupo; una oferta IMB FCL desde la plantilla lleva hoy unas 12 entradas, no
+   menos de 10 (visto en Chrome).
 4. **Bandeja del operativo.** Operativo propuesto desde la tabla de Odoo 17 (cliente × tráfico), filtros «Mis
    expedientes · necesitan acción» y actividades por hito.
    *Hecho cuando* cada usuario abra Odoo y vea sus expedientes ordenados por lo que tiene que hacer.
