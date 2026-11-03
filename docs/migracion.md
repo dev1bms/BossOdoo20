@@ -9,6 +9,10 @@ No se ha escrito nada en ningún sitio. En Odoo 17 solo he usado lecturas por MC
 
 **Límite de la herramienta:** `search_records` solo admite un filtro de texto parcial sobre un campo. No acepta dominios, `search_count` ni agrupaciones, y `list_contacts` y `list_invoices` dan error. Los totales los he sacado de `ir.model.count` y el resto paginando hasta el último registro. No se pueden cruzar condiciones (tipo y NIF, actividad y año), así que esos cruces quedan abiertos.
 
+> **En pausa por decisión de Belal (03/11/2026).** La migración no es prioridad. Lo ya cargado se queda (4.213 contactos
+> enlazados a Odoo 17 y el mapa de conceptos); no se migra nada más hasta que haya una necesidad real. Para probar el
+> sistema se usan expedientes de prueba [PRUEBA] inspirados en casos reales de Odoo 17.
+
 ## Estado (03/11/2026): carga permanente hecha
 
 **Alcance aprobado por Belal el 03/11/2026: 4.237 registros de Odoo 17**, cargados en boss20 (`dev/load_partners.py`,
