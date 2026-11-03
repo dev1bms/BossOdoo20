@@ -13,3 +13,19 @@
         flex: 0 0 auto;
     }
 }
+
+// Full-width sheet (Belal, 03/11/2026): the standard sheet stops at 1400px and is pinned to the left (made for a chatter
+// on its right). With the chatter below, the sheet and the chatter fill the content area like a fluid container, with
+// the same side padding on both sides, so the form sits in the middle of the page. Main screens only: dialogs and
+// wizards keep the standard width.
+.o_action_manager .o_form_view {
+    .o_form_renderer {
+        max-width: none;
+    }
+
+    .o_form_sheet_bg {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
