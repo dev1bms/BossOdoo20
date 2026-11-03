@@ -16,7 +16,8 @@ by its customer reference, is reused) and accepted, so each file shows its next 
 «Siguiente paso» up to the financial close (RFQs confirmed, in transit, delivered, services performed, customer invoice
 and supplier bills posted) inside a savepoint that is rolled back: the kept file stays where acceptance left it. Payments
 are not repeated here (dev/check_file_e2e.py proves them). Sequence numbers used by the walk are not given back.
-Prints «CASE …», «LINE …», «MANUAL …», «GAP …», «WALK …», «CHECK PASS|FAIL …» and «RESULT …».
+Prints «CASE …», «LINE …», «MANUAL …», «GAP …», «WALK …», «CHECK PASS|FAIL …» and «RESULT …», never an amount of a
+boss20 tariff or pricelist (real prices).
     dev/uat_run.sh sample_real_cases.py boss20"""
 from datetime import date
 
@@ -146,9 +147,10 @@ def build(case):
 def report(case, order):
     key = case["key"]
     for line in order.order_line.filtered("product_id"):
-        print(f"LINE {key} {line.product_id.default_code:8} supplier {(line.boss_supplier_id.name or '-')[:22]:22} "
-              f"cost {line.boss_cost_status:16} {line.boss_cost_amount:9.2f} sale {line.boss_sale_status:10} "
-              f"{line.price_unit:9.2f} vat {line.boss_vat_status}")
+        # statuses only: the amounts are boss20's real tariffs and selling prices (never in the evidence or Git)
+        print(f"LINE {key} {line.product_id.default_code:8} {line.boss_container_size or '-':2} supplier "
+              f"{(line.boss_supplier_id.name or '-')[:22]:22} cost {line.boss_cost_status:16} sale "
+              f"{line.boss_sale_status:10} vat {line.boss_vat_status}")
     on_request = order.order_line.filtered(lambda l: l.boss_cost_status == "no_tariff" and l.boss_supplier_id)
     if on_request:
         on_request.write({"boss_cost_on_request": True})
@@ -262,14 +264,14 @@ def walk(case, file):
                 elif step == "review":
                     to_review = file.cost_ids.filtered("variance_to_review")
                     if not to_review:
-                        gap(key, f"walk: review without a variance: {file.completeness}")
+                        gap(key, "walk: review without a variance")
                         break
                     to_review.write({"variance_reviewed": True, "variance_note": "[PRUEBA] revisado"})
                 else:  # order, close_operations, close_financial
                     file.action_next_step()
                 env.invalidate_all()
                 if file.next_step == step:
-                    gap(key, f"walk: «{step}» did not move on ({file.completeness or ''})")
+                    gap(key, f"walk: «{step}» did not move on")
                     break
             raise _Undo
     except _Undo:

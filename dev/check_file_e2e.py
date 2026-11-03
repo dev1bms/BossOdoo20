@@ -128,8 +128,16 @@ if FORCE_FAIL:
     check("0z deliberate failure (proves the exit status)", True, False)
 
 # ---- 0. parties, users by role, approved supplier prices ([PRUEBA], fictitious figures) ------------------------------
+# The customer gets its own [PRUEBA] pricelist with only «cost + %»: the general pricelist holds BOSS's real selling prices
+# since 03/11/2026 (Odoo 17 «Standard»), which must not drive this check nor appear in its evidence.
+markup = env["res.config.settings"]._boss_get_default_markup() or 20.0
+test_pricelist = env["product.pricelist"].create({
+    "name": "[PRUEBA] E2E tarifa (coste + %)", "currency_id": eur.id,
+    "item_ids": [Command.create({"applied_on": "3_global", "base": "boss_line_cost", "compute_price": "markup",
+                                 "price_markup": markup, "price_round": 0.01})]})
 customer = Partner.create({"name": "[PRUEBA] E2E Importador, S.L.", "is_company": True, "country_id": ref("base.es").id,
-                           "vat": "ESB12345674", "street": "Calle Prueba 2", "city": "Madrid", "state_id": state("M").id})
+                           "vat": "ESB12345674", "street": "Calle Prueba 2", "city": "Madrid", "state_id": state("M").id,
+                           "property_product_pricelist": test_pricelist.id})
 warehouse = Partner.create({"name": "[PRUEBA] E2E Almacén Getafe", "parent_id": customer.id, "type": "delivery",
                             "street": "Polígono Prueba 3", "city": "Getafe", "state_id": state("M").id,
                             "country_id": ref("base.es").id})
