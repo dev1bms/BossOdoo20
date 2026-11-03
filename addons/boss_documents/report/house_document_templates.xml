@@ -20,6 +20,8 @@
 
     <record id="action_report_house_bl" model="ir.actions.report">
         <field name="paperformat_id" ref="paperformat_house_documents"/>
+        <field name="binding_model_id" ref="boss_expediente.model_boss_expediente"/>
+        <field name="binding_type">report</field>
         <field name="name">House bill of lading</field>
         <field name="model">boss.expediente</field>
         <field name="report_type">qweb-pdf</field>
@@ -28,6 +30,8 @@
     </record>
     <record id="action_report_house_awb" model="ir.actions.report">
         <field name="paperformat_id" ref="paperformat_house_documents"/>
+        <field name="binding_model_id" ref="boss_expediente.model_boss_expediente"/>
+        <field name="binding_type">report</field>
         <field name="name">House air waybill</field>
         <field name="model">boss.expediente</field>
         <field name="report_type">qweb-pdf</field>
@@ -36,6 +40,8 @@
     </record>
     <record id="action_report_cargo_manifest" model="ir.actions.report">
         <field name="paperformat_id" ref="paperformat_house_documents"/>
+        <field name="binding_model_id" ref="boss_expediente.model_boss_expediente"/>
+        <field name="binding_type">report</field>
         <field name="name">Cargo manifest</field>
         <field name="model">boss.expediente</field>
         <field name="report_type">qweb-pdf</field>
@@ -65,10 +71,27 @@
         </t>
     </template>
 
+    <!-- Printed instead of a document the file has not (the Print menu offers the three on every file). -->
+    <template id="report_house_document_not_here">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <h3 t-out="doc.name"/>
+                <p t-if="doc.consolidation_role == 'house'">The cargo manifest is printed from the master file
+                    <strong t-out="doc.master_id.name"/>.</p>
+                <p t-elif="doc.consolidation_role == 'master'">A master file travels under the carrier's own document:
+                    print the house B/L or air waybill from each of its houses.</p>
+                <p t-elif="doc.transport_mode == 'sea'">A sea file has a house bill of lading, not an air waybill.</p>
+                <p t-elif="doc.transport_mode == 'air'">An air file has a house air waybill, not a bill of lading.</p>
+                <p t-else="">Only sea and air files have a house B/L or air waybill.</p>
+            </div>
+        </t>
+    </template>
+
     <template id="report_house_bl">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                <t t-call="boss_documents.report_house_bl_document" t-lang="'en_US'"/>
+                <t t-if="doc._boss_house_doc_kind() == 'hbl'" t-call="boss_documents.report_house_bl_document" t-lang="'en_US'"/>
+                <t t-else="" t-call="boss_documents.report_house_document_not_here"/>
             </t>
         </t>
     </template>
@@ -193,7 +216,8 @@
     <template id="report_house_awb">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                <t t-call="boss_documents.report_house_awb_document" t-lang="'en_US'"/>
+                <t t-if="doc._boss_house_doc_kind() == 'hawb'" t-call="boss_documents.report_house_awb_document" t-lang="'en_US'"/>
+                <t t-else="" t-call="boss_documents.report_house_document_not_here"/>
             </t>
         </t>
     </template>
@@ -287,7 +311,8 @@
     <template id="report_cargo_manifest">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                <t t-call="boss_documents.report_cargo_manifest_document" t-lang="'en_US'"/>
+                <t t-if="doc.consolidation_role != 'house'" t-call="boss_documents.report_cargo_manifest_document" t-lang="'en_US'"/>
+                <t t-else="" t-call="boss_documents.report_house_document_not_here"/>
             </t>
         </t>
     </template>
@@ -323,6 +348,8 @@
                                 <td colspan="2">
                                     <span class="box-label">Consignee (agent at destination)</span>
                                     <t t-set="party" t-value="doc.agent_id"/><t t-call="boss_documents.house_document_party"/>
+                                    <div t-if="not doc.agent_id" class="draft">Choose the agent abroad on the file before
+                                        sending this manifest.</div>
                                 </td>
                             </tr>
                         </table>
