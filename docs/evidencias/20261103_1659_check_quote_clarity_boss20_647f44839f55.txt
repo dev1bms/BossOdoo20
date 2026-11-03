@@ -1,0 +1,25 @@
+# Evidence: dev/check_quote_clarity.py on boss20
+# Date: 2026-11-03 16:59    
+# Commit tested: 647f44839f55 (feat(pricing_sale): fewer entries on a quotation: the port fills its country, the delivery address a)
+# Installed on boss20: boss_documents 20.0.1.1.0 boss_expediente 20.0.1.22.2 boss_portal 20.0.1.0.6 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.19.0 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-03 15:59:21,252 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-03 15:59:21,313 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-03 15:59:22,140 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 template IMB: import, sea, FCL, destination Spain, consignee = the customer: expected ('import', 'sea', 'fcl', 'ES', 27180) got ('import', 'sea', 'fcl', 'ES', 27180)
+CHECK PASS 2 delivery address proposed: the customer's only warehouse, and its province: expected (27181, 462) got (27181, 462)
+CHECK PASS 3 Spanish port proposed from the customer's latest sea import: expected 'ESVLC' got 'ESVLC'
+CHECK PASS 4 the origin port fills its country: expected 'CN' got 'CN'
+CHECK PASS 5 container: type DV and 1 unit by default: expected ('DV', 1) got ('DV', 1)
+CHECK PASS 6 after six entries THC is priced from the MSC tariff (status only, no amount): expected (1, 'ok', True) got (1, 'ok', True)
+CHECK PASS 7 the pricing inputs follow: Spanish port, country abroad, tariff date = ETA: expected ('ESVLC', 'CN', datetime.date(2026, 12, 16)) got ('ESVLC', 'CN', datetime.date(2026, 12, 16))
+CHECK PASS 8 new customer: a Spanish sea port is proposed (the one BOSS uses most for sea imports): expected ('ES', 'sea') got ('ES', 'sea')
+CHECK PASS 9 new customer without warehouse: its own address is the delivery address: expected 27182 got 27182
+CHECK PASS 10 a port chosen by the user is kept (proposals only fill empty fields): expected 'ESBCN' got 'ESBCN'
+CHECK PASS 11 changing the origin port corrects the country: expected 'VN' got 'VN'
+CHECK PASS 12 searching «MSC» among companies offers the carrier group and the Spanish entity, no person: expected (True, True, True) got (True, True, True)
+RESULT 12 passed, 0 failed
+# Exit status: 0

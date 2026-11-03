@@ -86,9 +86,8 @@ con su fuente escrita; ninguna se inventa.
    - arnés 70/0 (`20261103_1421_check_file_e2e_boss20_3481dc1135fd.txt`), con su cliente [PRUEBA] en una lista
      [PRUEBA] para que los precios reales no salgan en la evidencia.
    Pendiente: la regla ALM (Cristina elige entre su correo del 25/09 y la cláusula de las ofertas, en la llamada); las
-   12 reglas de margen por tráfico y las excepciones por cliente de Odoo 17; elegir el puerto no rellena su país y
-   buscar «MSC» no muestra la naviera de grupo; una oferta IMB FCL desde la plantilla lleva hoy unas 12 entradas, no
-   menos de 10 (visto en Chrome).
+   12 reglas de margen por tráfico y las excepciones por cliente de Odoo 17. (Puerto → país, «MSC» y número de
+   entradas: resuelto en la tarea 9.)
 4. **Bandeja del operativo.** Operativo propuesto desde la tabla de Odoo 17 (cliente × tráfico), filtros «Mis
    expedientes · necesitan acción» y actividades por hito.
    *Hecho cuando* cada usuario abra Odoo y vea sus expedientes ordenados por lo que tiene que hacer.
@@ -166,6 +165,16 @@ con su fuente escrita; ninguna se inventa.
    Pendiente: documentos HBL/HAWB y manifiesto (F0-C45), portal de una consolidación, migración de los expedientes de
    Odoo 17 abiertos con varias partidas (F0-C74); la base del reparto queda como elección registrada en el máster
    (Cristina nunca eligió peso real o tasable).
+9. **Oferta con menos entradas.** *Hecho cuando* una oferta IMB FCL desde la plantilla se precie con unas 6 entradas en
+   lugar de unas 12. **Entregado el 03/11** (boss_pricing_sale 20.0.1.19.0, commit `647f448`): el puerto rellena (y
+   corrige) su país; la dirección de entrega se propone (el único almacén del cliente, o el propio cliente con dirección
+   en España) y con ella la provincia; el puerto español se propone por la práctica (el de la última oferta del cliente
+   con el mismo tráfico, si no el que BOSS más usa); solo se rellenan campos vacíos. «Transportista principal» ofrece
+   solo empresas: «MSC» muestra el grupo y sus sociedades, sin personas (el grupo pasa a empresa con
+   `dev/fix_carrier_groups.py`; visto en Chrome). Entradas: cliente, plantilla, transportista, puerto de origen, ETA,
+   tamaño del contenedor. Evidencia: `docs/evidencias/20261103_1659_check_quote_clarity_boss20_647f44839f55.txt` (12/0);
+   sin regresión con el código nuevo: cadena de tarifas 12/0, reunión 2 69/0, flujo 39/0, coste + % 30/0, arnés 83/0,
+   matriz 19/0, rutas 53/0.
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -201,4 +210,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
