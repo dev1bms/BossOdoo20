@@ -51,11 +51,12 @@ if closed:
     check("a financially closed file is not in «Needs action»", False, closed in needs)
 mine = Files.with_user(ops).search([("user_id", "=", ops.id), ("next_step", "not in", ["done"]),
                                     ("state", "!=", "cancel")])
-check("«My work» of the operator shows the file assigned to the operator", True, assigned in mine)
-action = ref("boss_expediente.boss_expediente_my_work_action")
-check("«My work» opens the board by status first, with «My files» and «Needs action»",
-      ("kanban", True, True), (action.view_mode.split(",")[0], "search_default_my" in action.context,
-                                "search_default_needs_action" in action.context))
+check("«My files» of the operator shows the file assigned to the operator", True, assigned in mine)
+action = ref("boss_expediente.boss_expediente_action")
+check("«Files» opens on «My files» in progress (no separate «My work» menu, Belal 03/11), the board is one click away",
+      (True, True, True, False), ("search_default_my" in action.context, "search_default_active_files" in action.context,
+                                  "kanban" in action.view_mode, bool(env.ref("boss_expediente.menu_boss_files_my_work",
+                                                                             raise_if_not_found=False))))
 arch = Files.get_view(view_type="kanban")["arch"]
 check("the board shows the next step on each card", True, 'name="next_step"' in arch)
 

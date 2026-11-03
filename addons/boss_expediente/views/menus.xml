@@ -4,8 +4,6 @@
     <menuitem id="menu_boss_files_root" name="Shipment files" sequence="25"
               web_icon="boss_expediente,static/description/icon.svg"
               groups="sales_team.group_sale_salesman,purchase.group_purchase_user,account.group_account_invoice"/>
-    <menuitem id="menu_boss_files_my_work" name="My work" parent="menu_boss_files_root" sequence="5"
-              action="boss_expediente_my_work_action"/>
     <menuitem id="menu_boss_files" name="Files" parent="menu_boss_files_root" sequence="10"
               action="boss_expediente_action"/>
     <menuitem id="menu_boss_files_costs" name="Services to buy" parent="menu_boss_files_root" sequence="20"

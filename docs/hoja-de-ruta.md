@@ -93,7 +93,7 @@ con su fuente escrita; ninguna se inventa.
    *Hecho cuando* cada usuario abra Odoo y vea sus expedientes ordenados por lo que tiene que hacer.
    **Entregado en parte el 03/11** (boss_expediente 20.0.1.18.0, commit `2a2c650`; evidencia
    `docs/evidencias/20261103_1431_check_work_queue_boss20_2a2c65062fe7.txt`, 10/0; arnés 70/0
-   `20261103_1431_check_file_e2e_boss20_2a2c65062fe7.txt`): menú «Mi trabajo» con el tablero por estado (cada tarjeta con
+   `20261103_1431_check_file_e2e_boss20_2a2c65062fe7.txt`): «Expedientes» abre en «Mis expedientes» en curso (el menú «Mi trabajo» se quitó el 03/11 a petición de Belal: estaba repetido) y la vista tablero por estado (cada tarjeta con
    su siguiente paso y su responsable; visto en Chrome), filtros «Necesitan acción», «Pendiente en operaciones» y «Por
    facturar o cerrar», y la tabla «Operativos por cliente y tráfico»: al abrir un expediente, el operativo de su cliente
    para su tráfico pasa a ser el responsable (con nota en el historial); sin él, quien lo abrió.
