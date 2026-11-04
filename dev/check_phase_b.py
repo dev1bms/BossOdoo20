@@ -63,6 +63,19 @@ tariff._workflow_write({"state": "approved"})  # the check's own [PRUEBA] tariff
 thc.invalidate_recordset(["boss_supplier_ids"])
 check("3b the supplier list of a THC line offers the supplier with a valid THC price, not one without a price",
       (True, False), (carrier_a in thc.boss_supplier_ids, coloader in thc.boss_supplier_ids))
+china = env["boss.tariff"].create({
+    "name": "[PRUEBA] THC consolidador origen China", "partner_id": coloader.id, "country_ids": [Command.set(env.ref("base.cn").ids)],
+    "valid_from": date.today() - timedelta(days=1), "valid_to": date.today() + timedelta(days=60),
+    "line_ids": [Command.create({"product_id": product("THC").id, "uom_id": product("THC").uom_id.id, "unit_price": 1.0})]})
+china._workflow_write({"state": "approved"})
+hk = env["sale.order"].create({
+    "partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl",
+    "boss_origin_country_id": env.ref("base.hk").id, "boss_eta": date.today() + timedelta(days=20),
+    "order_line": [line("THC", boss_container_size="20", boss_container_type_id=dv.id, boss_supplier_id=coloader.id)]})
+thc_hk = hk.order_line
+check("3d a price for origin China is not offered for a shipment from Hong Kong, and the line says which price exists",
+      (False, "no_tariff", True), (coloader in thc_hk.boss_supplier_ids - thc_hk.boss_supplier_id, thc_hk.boss_cost_status,
+                                   "[PRUEBA] THC consolidador origen China" in (thc_hk.boss_cost_explanation or "")))
 tariff._workflow_write({"valid_from": date.today() - timedelta(days=10), "valid_to": date.today() - timedelta(days=1)})
 thc.invalidate_recordset(["boss_supplier_ids"])
 check("3c ... and no longer once its price has expired", False, carrier_a in thc.boss_supplier_ids)

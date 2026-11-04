@@ -61,9 +61,9 @@ class SaleOrderLine(models.Model):
         "come from another supplier than the carrier). Empty: any supplier whose tariff fits the shipment.")
     boss_supplier_ids = fields.Many2many(
         "res.partner", compute="_compute_boss_supplier_ids", string="Suppliers with a price",
-        help="Suppliers with an approved price of this service valid on the tariff date of the line: the ones offered "
-        "in «Supplier» (Belal, 04/11/2026). Another supplier gets its price with «Add supplier price», or is chosen "
-        "with «Cost asked case by case».")
+        help="Suppliers whose approved price of this service applies to this shipment on the tariff date of the line "
+        "(route, carrier, container...): the ones offered in «Supplier» (Belal, 04/11/2026). Another supplier gets its "
+        "price with «Add supplier price», or is chosen with «Cost asked case by case».")
     boss_cost_method = fields.Selection(related="product_id.boss_cost_method")
     boss_quantity_source = fields.Selection(related="product_uom_id.boss_quantity_source")
     boss_execution = fields.Selection(
@@ -226,22 +226,19 @@ class SaleOrderLine(models.Model):
         percent._boss_recompute_cost()
         return lines
 
-    @api.depends("product_id", "order_id.boss_etd", "order_id.boss_planned_date", "order_id.date_order",
-                 "order_id.boss_direction", "boss_supplier_id")
+    @api.depends("product_id", "product_uom_id", "boss_container_size", "boss_container_type_id", "boss_supplier_id",
+                 *SHIPMENT_DEPENDS)
     def _compute_boss_supplier_ids(self):
-        TariffLine = self.env["boss.tariff.line"].sudo()
+        Pricing = self.env["boss.pricing"].sudo()
         for line in self:
-            if not line.product_id.boss_pricing_mode:
+            if not line.product_id.boss_pricing_mode or not line.product_uom_id:
                 line.boss_supplier_ids = line.boss_supplier_id
                 continue
-            day = line._boss_tariff_date() or fields.Date.context_today(line)
-            prices = TariffLine.search([
-                ("product_id", "=", line.product_id.id), ("tariff_id.active", "=", True),
-                ("tariff_id.state", "=", "approved"), ("tariff_id.is_demo", "=", False),
-                ("tariff_id.company_id", "=", (line.order_id.company_id or self.env.company).id),
-                ("tariff_id.valid_from", "<=", day),
-                "|", ("tariff_id.valid_to", "=", False), ("tariff_id.valid_to", ">=", day)])
-            line.boss_supplier_ids = prices.tariff_id.partner_id | line.boss_supplier_id
+            inputs = dict(line._boss_inputs(), supplier_id=None)
+            line.boss_supplier_ids = Pricing.fitting_suppliers(
+                line.product_id, line.product_uom_id, inputs,
+                line._boss_tariff_date() or fields.Date.context_today(line),  # date not known yet: today's prices
+                company=line.order_id.company_id) | line.boss_supplier_id
 
     def _boss_check_addition(self, vals_list):
         """A service added to an accepted quotation changes the agreement: only through an explicit action with a

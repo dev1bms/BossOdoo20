@@ -79,6 +79,20 @@ class BossPricing(models.AbstractModel):
                 "storage_end": end.replace(tzinfo=UTC).astimezone(tz)}
 
     @api.model
+    def fitting_suppliers(self, product, uom, inputs, day, company=None):
+        """Suppliers whose approved price of this service and charge basis applies to this shipment on `day` (or could,
+        once the missing shipment data is entered): the ones a quotation line offers (Belal, 04/11/2026)."""
+        Line = self.env["boss.tariff.line"]
+        if not day or product.boss_pricing_mode not in ("tariff", "manual"):
+            return self.env["res.partner"]
+        lines = Line.search([("product_id", "=", product.id), ("uom_id", "=", uom.id), ("tariff_id.active", "=", True),
+                             ("tariff_id.state", "=", "approved"), ("tariff_id.is_demo", "=", False),
+                             ("tariff_id.company_id", "=", (company or self.env.company).id)])
+        fitting = lines.filtered(lambda ln: (rule := ln._to_engine_rule()).valid_on(day)
+                                 and engine.selection.match(rule, inputs)[0] is not engine.Match.NO)
+        return fitting.tariff_id.partner_id
+
+    @api.model
     def price_cost(self, product, uom, inputs, day, company=None, simulate=None):
         """Expected supplier cost of one quotation line.
 
@@ -111,6 +125,11 @@ class BossPricing(models.AbstractModel):
         if (res.status.value == "no_tariff" and inputs.get("tariff_use") != "demo"
                 and lines.filtered("tariff_id.is_demo")):
             res.steps = [("demo_only", {})]  # say why: the prices that exist are demo prices
+        elif res.status.value == "no_tariff" and res.steps and res.steps[0][0] == "no_match":
+            # say which prices exist for other shipments (another origin, port, carrier...): their tariff names
+            others = lines.filtered(lambda ln: ln.tariff_id.state == "approved" and not ln.tariff_id.is_demo
+                                    and ln._to_engine_rule(simulate).valid_on(day)).tariff_id
+            res.steps = [("no_match", {"others": others.mapped("display_name")[:3]})]
         return CostResult(
             status=res.status.value,
             amount=float(res.amount) if res.amount is not None else 0.0,
@@ -276,6 +295,11 @@ class BossPricing(models.AbstractModel):
                          "(expired or not started): ask the supplier for the current document, or check the "
                          "planned date.", service=product.display_name, uom=uom.name,
                          date=format_date(self.env, day) if day else "-")
+            others = steps[0][1].get("others") if steps and steps[0][0] == "no_match" else None
+            if others:
+                return _("No approved supplier price of %(service)s per %(uom)s applies to this shipment. Prices of "
+                         "this service exist for other shipments (another origin, port, carrier or container): "
+                         "%(others)s.", service=product.display_name, uom=uom.name, others="; ".join(others))
             return _("No approved supplier price of %(service)s per %(uom)s applies to this shipment.",
                      service=product.display_name, uom=uom.name)
         if status == "pending_approval":

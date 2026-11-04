@@ -1,0 +1,25 @@
+# Evidence: dev/check_settings_data.py on boss20
+# Date: 2026-11-04 14:08    
+# Commit tested: 38b0ddc0a05a (i18n, docs: Spanish of phase B (main carrier, suppliers with a price, optional services, service sea)
+# Installed on boss20: boss_documents 20.0.1.3.5 boss_expediente 20.0.1.28.3 boss_portal 20.0.1.0.9 boss_pricing 20.0.1.13.3 boss_pricing_sale 20.0.1.22.5 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 13:09:05,855 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 13:09:05,916 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 13:09:06,750 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+INFO 77 active BOSS services, 1 archived
+CHECK PASS 1 every active BOSS service has a code, and each code is used once: expected (0, []) got (0, [])
+CHECK PASS 2 every seeded code still exists as a service: expected [] got []
+CHECK PASS 3 «Bought from» = the seed on the seeded services, «any supplier» on the others: expected [] got []
+CHECK PASS 4 «Counts for the customs value as» = the seed, empty on the others: expected [] got []
+CHECK PASS 5 the default periods are the seeded ones, no line lost or added: expected {('ALM', 'import', 'lcl'): ('emptying', 'pickup'), ('ALM', 'export', 'lcl'): (None, None), ('ALM', 'import', None): ('noa_or_ata', 'pickup'), ('ALM', 'export', None): ('foh', 'departure'), ('DEM', 'import', None): ('ata', 'container_empty_return'), ('DEM', 'export', None): ('container_gate_in', 'departure'), ('OCU', 'import', None): ('ata', 'container_full_out'), ('OCU', 'export', None): ('container_gate_in', 'departure'), ('DET', 'export', None): ('container_empty_out', 'container_gate_in')} got {('ALM', 'import', 'lcl'): ('emptying', 'pickup'), ('ALM', 'import', None): ('noa_or_ata', 'pickup'), ('ALM', 'export', 'lcl'): (None, None), ('ALM', 'export', None): ('foh', 'departure'), ('DEM', 'import', None): ('ata', 'container_empty_return'), ('DEM', 'export', None): ('container_gate_in', 'departure'), ('DET', 'export', None): ('container_empty_out', 'container_gate_in'), ('OCU', 'import', None): ('ata', 'container_full_out'), ('OCU', 'export', None): ('container_gate_in', 'departure')}
+CHECK PASS 6 every time-based service has default periods: expected [] got []
+CHECK PASS 7 the 11 Incoterms 2020 are there and active: expected (11, True) got (11, True)
+CHECK PASS 8 incoterm freight: C and D prepaid, E and F collect: expected [] got []
+CHECK PASS 9 phase 1 values = the constants of before: expected (30, 7, 167, 333, 1000, 7, 'chargeable', True, 3) got (30, 7, 167, 333, 1000, 7, 'chargeable', True, 3)
+CHECK PASS 10 phase 3 levels = the behaviour of before (leaving warns, delivering and closing required): expected ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block') got ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block')
+CHECK PASS 11 Settings are saved by administrators only; the Settings menu is for administrators: expected (['base.group_system'], ['base.group_erp_manager', 'base.group_system']) got (['base.group_system'], ['base.group_erp_manager', 'base.group_system'])
+RESULT 11 passed, 0 failed
+# Exit status: 0
