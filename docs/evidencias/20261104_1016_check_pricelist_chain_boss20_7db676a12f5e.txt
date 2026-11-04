@@ -1,0 +1,26 @@
+# Evidence: dev/check_pricelist_chain.py on boss20
+# Date: 2026-11-04 10:16    
+# Commit tested: 7db676a12f5e (i18n(pricing_sale): Spanish for the minimum margins; guide: the Odoo 17 margin rules (no figures on )
+# Installed on boss20: boss_documents 20.0.1.2.8 boss_expediente 20.0.1.25.2 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.12.0 boss_pricing_sale 20.0.1.20.1 boss_services 20.0.1.4.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 09:16:30,963 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 09:16:31,024 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 09:16:31,853 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+      general pricelist Tarifa general (EUR), default rule cost + 20.0 %
+CHECK PASS THC has one line per container size: expected ['20', '40'] got ['20', '40']
+CHECK PASS THC 20' and 40' take the agreed price of their size: expected [('20', 611.0, 'agreed'), ('40', 622.0, 'agreed')] got [('20', 611.0, 'agreed'), ('40', 622.0, 'agreed')]
+CHECK PASS GLO-CCC, agreed nowhere, falls back to the general rule: cost + % (amounts compared, not printed): expected (True, 'cost_based', True) got (True, 'cost_based', True)
+CHECK PASS BL takes the general pricelist's agreed price (Odoo 17 «Standard»), not cost + %: expected 'agreed' got 'agreed'
+CHECK PASS freight with a manual cost falls back to the general rule too: expected [(1200.0, 'cost_based'), (1200.0, 'cost_based')] got [(1200.0, 'cost_based'), (1200.0, 'cost_based')]
+CHECK PASS a container type changed on screen: one THC line per container, none left for the old type: expected [('20', 'DV'), ('40', 'HC')] got [('20', 'DV'), ('40', 'HC')]
+CHECK PASS no margin warning while every group is above 10 % of its cost: expected False got False
+CHECK PASS a service outside every group sold below its cost is warned by its code, as in Odoo 17 (customs, typed below cost): expected True got True
+CHECK PASS an amount paid on behalf re-invoiced with a margin is warned (must be equal): expected True got True
+CHECK PASS the warning does not block the quotation (nothing about the margin in what stops it): expected False got False
+CHECK PASS without the last rule the freight has no selling price (the behaviour before): expected ['missing', 'missing'] got ['missing', 'missing']
+CHECK PASS ... and THC still takes its agreed price per size: expected [611.0, 622.0] got [611.0, 622.0]
+RESULT 12 passed, 0 failed
+# Exit status: 0

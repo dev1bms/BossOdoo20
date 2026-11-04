@@ -247,6 +247,20 @@ con su fuente escrita; ninguna se inventa.
      contable; la regla definitiva es de Ángel o del asesor.
    Evidencia: `docs/evidencias/20261104_0948_check_file_alerts_boss20_d99c038d56c7.txt` (15/0); arnés 89/0, documentos
    19/0. Días laborables sin calendario de festivos (lunes a viernes).
+15. **Márgenes mínimos de Odoo 17.** *Hecho cuando* la oferta y el cierre avisen con las reglas de Odoo 17 y no con un
+   10 % plano. **Entregado el 04/11** (boss_pricing_sale 20.0.1.20.3, commits `8a422b4`, `7db676a`, `95a3d30`):
+   - el control de margen de Odoo 17 (`summary_utils` con `x_profit_types`, `x_profit_group_rules`,
+     `x_profit_conditions_co`, `x_concept_profits`, `x_profit_exceptions`, leídos el 04/11) como datos en
+     **Ventas → Configuración → Márgenes mínimos** y **Excepciones de margen mínimo** (jefes de ventas): 4 grupos de
+     servicios, 13 reglas por tipo de envío (las fórmulas de Odoo 17 como campos: % del coste, mínimo, por contenedor,
+     por 20' y 40', por kg tasable, tope por contenedor), 4 políticas de servicios sueltos (suplidos exactos, sin margen,
+     puede perder, margen bajo) y 16 excepciones por cliente, naviera o flete prepaid;
+   - un solo control para el aviso de la oferta y el cierre operativo; sin regla, 10 % del coste con 10 de tolerancia;
+     un servicio suelto con pérdida se avisa sin tolerancia, como en Odoo 17; sigue siendo un aviso (P01/P02-a);
+   - los términos comerciales no van a Git: `.research/margin_rules_o17.json` y `dev/load_margin_rules.py`; FTT no existe
+     en Odoo 20 y queda fuera; las líneas por tramos de Odoo 17 no se usaban en su código y no se pasan.
+   Evidencia: `docs/evidencias/20261104_1016_check_margin_rules_boss20_7db676a12f5e.txt` (12/0), cadena de tarifas 12/0,
+   arnés 89/0; reunión 2 69/0, flujo 39/0, cierre 8/0, consolidaciones 22/0, coste + % 30/0.
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -282,4 +296,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. (15) the Odoo 17 minimum margin rules and exceptions as data, one check for quotation and close — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
