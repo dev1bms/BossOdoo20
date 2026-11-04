@@ -761,6 +761,7 @@ msgid "Close"
 msgstr "Cerrar"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__account_incoterms__boss_freight_payment__collect
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_exception__freight_payment__collect
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__freight_payment__collect
 msgid "Collect"
@@ -1139,6 +1140,7 @@ msgstr ""
 "Sentido (I/E), modo (M marítimo, A aéreo, T terrestre) y de quién es el cliente (B BOSS, A agente): IMB, EAB, IMA…"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_account_incoterms__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__display_name
@@ -1420,6 +1422,7 @@ msgid "Free of charge, confirmed by a person."
 msgstr "Sin cargo, confirmado por una persona."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_account_incoterms__boss_freight_payment
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__freight_payment
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__freight_payment
 msgid "Freight"
@@ -1518,6 +1521,7 @@ msgid "How the sale price is set"
 msgstr "Cómo se fija el precio de venta"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_account_incoterms__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__id
@@ -1559,6 +1563,11 @@ msgstr "Importación"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_incoterm_id
 msgid "Incoterm"
 msgstr "Incoterm"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_account_incoterms
+msgid "Incoterms"
+msgstr "Incoterms"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_haulier_id
@@ -2281,6 +2290,7 @@ msgid "Ports, containers and services"
 msgstr "Puertos, contenedores y servicios"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__account_incoterms__boss_freight_payment__prepaid
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_exception__freight_payment__prepaid
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__freight_payment__prepaid
 msgid "Prepaid"
@@ -3465,6 +3475,13 @@ msgid ""
 "Who orders the shipment and is invoiced: a BOSS client, or an agent (a forwarder abroad) for its own client."
 msgstr ""
 "Quién encarga el envío y recibe la factura: un cliente de BOSS, o un agente (un transitario en el extranjero) para su propio cliente."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_account_incoterms__boss_freight_payment
+msgid ""
+"Who pays the main carriage under this term: the seller (prepaid, C and D terms) or the buyer (collect, E and F terms). Printed on the house B/L and used by the minimum margin rules."
+msgstr ""
+"Quién paga el transporte principal con este término: el vendedor (prepaid, términos C y D) o el comprador (collect, términos E y F). Se imprime en el BL house y lo usan las reglas de margen mínimo."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form

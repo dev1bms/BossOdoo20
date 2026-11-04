@@ -68,6 +68,11 @@ msgid "Anti-dumping duty; treatment not decided."
 msgstr "Derecho antidumping; tratamiento sin decidir."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_supplier_role__any
+msgid "Any supplier"
+msgstr "Cualquier proveedor"
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_cor
 msgid "B/L or manifest correction (per correction)"
 msgstr "Corrección de BL / manifiesto (por corrección)"
@@ -140,6 +145,12 @@ msgstr ""
 #: model:uom.uom,name:boss_services.uom_bl
 msgid "Bill of lading"
 msgstr "Conocimiento (BL)"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_supplier_role
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_supplier_role
+msgid "Bought from"
+msgstr "Se compra a"
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__brackets
@@ -250,6 +261,27 @@ msgid "Chargeable weight of the air waybill (entered on the line when empty)"
 msgstr "Peso tasable de la guía aérea (se escribe en la línea si está vacío)"
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_air_kg
+msgid "Chargeable weight, air (higher of gross and volume × 167 kg/m³)"
+msgstr ""
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_road_kg
+msgid "Chargeable weight, road (higher of gross and volume × 333 kg/m³)"
+msgstr ""
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_sea_kg
+msgid "Chargeable weight, sea (higher of gross and volume × 1000 kg/m³)"
+msgstr ""
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_kg
+msgid ""
+"Chargeable weight: higher of gross weight and volume × factor of the shipment's mode (air 167, road 333, sea 1000 kg/m³)"
+msgstr ""
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_dvd
 msgid "Clearance type used by two customers; meaning to confirm."
 msgstr "Tipo de despacho usado por dos clientes; significado por confirmar."
@@ -317,6 +349,12 @@ msgid "Cost source"
 msgstr "Origen del coste"
 
 #. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_customs_value_charge
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_customs_value_charge
+msgid "Counts for the customs value as"
+msgstr "Cuenta para el valor en aduana como"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_men
 msgid "Courier of original documents, per dispatch."
 msgstr "Mensajería de documentos originales, por envío."
@@ -325,6 +363,11 @@ msgstr "Mensajería de documentos originales, por envío."
 #: model:uom.uom,name:boss_services.uom_m3
 msgid "Cubic metre"
 msgstr "Metro cúbico"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_customs
+msgid "Customs"
+msgstr "Aduana"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_dex
@@ -384,6 +427,11 @@ msgstr ""
 "Días que superan el tiempo libre de la naviera, por contenedor y día, entre los eventos de inicio y fin del proveedor."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__etd
+msgid "Departure (ETD); the quotation date while the ETD is unknown"
+msgstr "Salida (ETD); la fecha de la oferta mientras no se conoce la ETD"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_dap
 msgid "Destination agent charges abroad, fixed per shipment."
 msgstr "Gastos del agente en destino, fijos por expediente."
@@ -440,6 +488,11 @@ msgstr "Mensajería de documentos (por envío)"
 #: model_terms:product.template,description:boss_services.service_awb
 msgid "Documentation fee for the air waybill."
 msgstr "Tasa de documentación de la guía aérea."
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_duties
+msgid "Duties and taxes paid on behalf"
+msgstr "Aranceles e impuestos (suplidos)"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_ara
@@ -502,6 +555,12 @@ msgid "Former service kept for history; quote the new one."
 msgstr "Servicio anterior conservado como histórico; cotice el nuevo."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_customs_value_charge__freight
+#: model:product.category,name:boss_services.product_category_freight
+msgid "Freight"
+msgstr "Flete"
+
+#. module: boss_services
 #: model:product.template,name:boss_services.service_fs
 msgid "Fuel surcharge (% of road transport)"
 msgstr "Recargo de combustible (% sobre el transporte terrestre)"
@@ -545,6 +604,14 @@ msgstr "Peso bruto (toneladas)"
 #: model_terms:product.template,description:boss_services.service_han
 msgid "Handler fee per chargeable kg with a minimum."
 msgstr "Tarifa del handler por kg tasable con mínimo."
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_supplier_role
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_supplier_role
+msgid ""
+"Handler: the service follows the handler of the airline at the airport (HAN, ALM, AWB...). Haulier: a road leg whose supplier is the inland carrier of the quotation and the file."
+msgstr ""
+"Handler: el servicio sigue al handler de la aerolínea en el aeropuerto (HAN, ALM, AWB...). Transportista: un tramo terrestre cuyo proveedor es el transportista terrestre de la oferta y del expediente."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc_lcl
@@ -621,6 +688,11 @@ msgid "Import duty (paid on behalf)"
 msgstr "Arancel de importación (suplido)"
 
 #. module: boss_services
+#: model:product.category,name:boss_services.product_category_inland
+msgid "Inland transport"
+msgstr "Transporte terrestre"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_vet
 msgid ""
 "Inspección veterinaria en el PIF, por documento como SAN: coste del veterinario + 20 % de gestión del handler (WFS ítem 54). Propuesta del 07/10/2026 aplicada (P16)."
@@ -630,6 +702,16 @@ msgstr ""
 #: model:product.template,name:boss_services.service_ins
 msgid "Inspection (per document)"
 msgstr "Inspección (por documento)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_customs_value_charge__insurance
+msgid "Insurance"
+msgstr "Seguro"
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_insurance
+msgid "Insurance and courier"
+msgstr "Seguro y mensajería"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_seg
@@ -648,9 +730,22 @@ msgid "Issue of the preferential origin certificate."
 msgstr "Emisión del certificado de origen preferencial."
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__key
+msgid "Key date of the shipment (ETA of an import, ETD otherwise)"
+msgstr "Fecha clave del envío (ETA en importación, ETD en el resto)"
+
+#. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_cost_method__max_of_bases
 msgid "Larger of two bases"
 msgstr "El mayor de dos bases"
+
+#. module: boss_services
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_customs_value_charge
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_customs_value_charge
+msgid ""
+"Listed in the data for the customs broker (Cristina, OPS- exptes A37): freight, THC, T3 and insurance."
+msgstr ""
+"Aparece en los datos para el agente de aduanas (Cristina, OPS- exptes A37): flete, THC, T3 y seguro."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc
@@ -658,6 +753,11 @@ msgid ""
 "Loading or unloading of the container at the sea terminal, charged by the carrier per container."
 msgstr ""
 "Carga o descarga del contenedor en la terminal marítima; la naviera la cobra por contenedor."
+
+#. module: boss_services
+#: model:product.category,name:boss_services.product_category_local
+msgid "Local charges"
+msgstr "Gastos locales"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_fae
@@ -958,6 +1058,11 @@ msgid "Product Unit of Measure"
 msgstr "Unidad de medida del producto"
 
 #. module: boss_services
+#: model:product.category,name:boss_services.product_category_profit_share
+msgid "Profit share"
+msgstr "Profit share"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_vac
 msgid "Rarely used; definition pending."
 msgstr "Uso muy escaso; definición pendiente."
@@ -1066,11 +1171,21 @@ msgid "Shipment"
 msgstr "Expediente"
 
 #. module: boss_services
+#: model:product.category,name:boss_services.product_category_storage
+msgid "Storage and warehouse"
+msgstr "Almacenaje y almacén"
+
+#. module: boss_services
 #: model_terms:product.template,description:boss_services.service_alm
 msgid ""
 "Storage at the airport handler, space x time, with free hours or days."
 msgstr ""
 "Almacenaje en el handler del aeropuerto, espacio x tiempo, con horas o días libres."
+
+#. module: boss_services
+#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
+msgid "Summary group"
+msgstr "Grupo del resumen"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_cor
@@ -1111,6 +1226,11 @@ msgid "T-3 handling"
 msgstr "Gestión T-3"
 
 #. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_customs_value_charge__t3
+msgid "T3"
+msgstr "T3"
+
+#. module: boss_services
 #: model:uom.uom,name:boss_services.uom_teu
 msgid "TEU"
 msgstr "TEU"
@@ -1119,6 +1239,17 @@ msgstr "TEU"
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__teu
 msgid "TEU of the containers"
 msgstr "TEU de los contenedores"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_customs_value_charge__thc
+msgid "THC"
+msgstr "THC"
+
+#. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__boss_tariff_date
+#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_tariff_date
+msgid "Tariff date"
+msgstr "Fecha de tarifa"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_etx
@@ -1136,6 +1267,16 @@ msgstr "Impuesto pagado por cuenta del cliente; importe según el DUA."
 #: model:product.template,name:boss_services.service_thc
 msgid "Terminal handling (FCL, per container)"
 msgstr "Manipulación en terminal marítima (FCL, por contenedor)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_supplier_role__handler
+msgid "The air handler of the file"
+msgstr "El handler aéreo del expediente"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_supplier_role__haulier
+msgid "The haulier (road leg)"
+msgstr "El transportista terrestre (tramo por carretera)"
 
 #. module: boss_services
 #: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
@@ -1231,70 +1372,8 @@ msgstr ""
 "De dónde sale la cantidad de una línea de oferta en esta base de cobro. Vacío: no es una base de cobro BOSS."
 
 #. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_kg
+#: model:ir.model.fields,help:boss_services.field_product_product__boss_tariff_date
+#: model:ir.model.fields,help:boss_services.field_product_template__boss_tariff_date
 msgid ""
-"Chargeable weight: higher of gross weight and volume × factor of the mode "
-"(air 167, road 333, sea 1000 kg/m³)"
+"Which date of the shipment chooses the version of the supplier tariff. Ocean and air freight always take the departure, import or export (Ángel, 27/10/2026); the other services the key date of the shipment (ETA of an import, ETD of an export)."
 msgstr ""
-"Peso tasable: el mayor del peso bruto y el volumen × factor del modo (aéreo "
-"167, terrestre 333, marítimo 1000 kg/m³)"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_freight
-msgid "Freight"
-msgstr "Flete"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_inland
-msgid "Inland transport"
-msgstr "Transporte terrestre"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_local
-msgid "Local charges"
-msgstr "Gastos locales"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_customs
-msgid "Customs"
-msgstr "Aduana"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_storage
-msgid "Storage and warehouse"
-msgstr "Almacenaje y almacén"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_insurance
-msgid "Insurance and courier"
-msgstr "Seguro y mensajería"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_profit_share
-msgid "Profit share"
-msgstr "Profit share"
-
-#. module: boss_services
-#: model:product.category,name:boss_services.product_category_duties
-msgid "Duties and taxes paid on behalf"
-msgstr "Aranceles e impuestos (suplidos)"
-
-#. module: boss_services
-#: model:ir.model.fields,field_description:boss_services.field_product_template__boss_tariff_date
-msgid "Tariff date"
-msgstr "Fecha de tarifa"
-
-#. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__key
-msgid "Key date of the shipment (ETA of an import, ETD otherwise)"
-msgstr "Fecha clave del envío (ETA en importación, ETD en el resto)"
-
-#. module: boss_services
-#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_tariff_date__etd
-msgid "Departure (ETD); the quotation date while the ETD is unknown"
-msgstr "Salida (ETD); la fecha de la oferta mientras no se conoce la ETD"
-
-#. module: boss_services
-#: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view
-msgid "Summary group"
-msgstr "Grupo del resumen"
