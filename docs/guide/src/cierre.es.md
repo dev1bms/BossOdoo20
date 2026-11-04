@@ -44,3 +44,17 @@ demoras), el responsable y las valoraciones. Para corregir: [[Reabrir]].
 **Expedientes → Margen por expediente** (jefes de ventas y contabilidad): venta pactada, coste y margen previstos y el
 margen final, por responsable, comercial, cliente, tráfico y mes, en lista, pivote o gráfico. Se recalcula al abrirlo;
 el de un expediente cerrado económicamente queda fijo.
+
+## Avisos
+
+Son **actividades** de Odoo (campana y «Mis actividades»); no se envía ningún correo.
+
+- **Días libres del contenedor** (F0-C55): cada mañana, para cada contenedor con demora, ocupación o detención que ya
+  corre y aún no se ha devuelto o retirado, el operativo recibe una actividad **3 días laborables antes del último día
+  libre** y otra **ese día**; el **primer día con coste**, una para el comercial. El último día libre sale del precio del
+  proveedor, con el mismo cálculo que el coste. Ajuste: **Aviso de días libres del contenedor** (0 lo desactiva).
+- **Cierre de mes** (F0-A37, como el correo «CIERRE MENSUAL» de Odoo 17): el último día del mes, cada responsable
+  recibe una actividad en cada expediente con servicios por facturar o entregado sin cerrar; la persona del ajuste
+  **Aviso de cierre de mes: copia a** (Ángel) recibe el resumen por responsable.
+- **Fecha de la operación** en la factura (F0-A20 revisada, RD 1619/2012 art. 6): la factura lleva su fecha de emisión
+  y, aparte, la fecha de la operación del expediente (llegada en importación, salida en exportación).

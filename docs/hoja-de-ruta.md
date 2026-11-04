@@ -233,6 +233,20 @@ con su fuente escrita; ninguna se inventa.
    «Oferta y envío» y «Precio de venta e IVA». Hoja «prueba-completa.xlsx» (la genera `dev/build_trial_sheet.py`; los Excel no van a Git) con 30 pasos (dónde, resultado
    esperado, veredicto OK / Not OK / To discuss y notas) y las 7 preguntas. Sin precios ni nombres de clientes (la guía
    es pública).
+14. **Avisos sin correo y fecha de la operación.** *Hecho cuando* el operativo reciba el aviso de los días libres de
+   cada contenedor, cada responsable el de cierre de mes, y la factura lleve la fecha de la operación. **Entregado el
+   04/11** (boss_expediente 20.0.1.25.1, boss_documents 20.0.1.2.7, commits `f6e190c`, `450189d`):
+   - F0-C55: tarea diaria (06:00) que da una actividad al operativo 3 días laborables antes del último día libre de cada
+     contenedor (DEM, OCU, DET) y otra ese día, y al comercial el primer día con coste; el último día libre se pide al
+     mismo motor que calcula el coste (días libres, fines de semana, tramos); ajuste «Aviso de días libres del
+     contenedor» (3; 0 lo apaga);
+   - F0-A37: el último día del mes, una actividad por expediente por facturar o entregado sin cerrar para su
+     responsable, y el resumen para Ángel (ajuste «Aviso de cierre de mes: copia a»);
+   - F0-A20 como se revisó (RD 1619/2012 art. 6): la factura conserva la fecha de emisión y lleva aparte la «Fecha de la
+     operación» del expediente (llegada en importación, salida en exportación), en el campo estándar de Odoo, sin efecto
+     contable; la regla definitiva es de Ángel o del asesor.
+   Evidencia: `docs/evidencias/20261104_0948_check_file_alerts_boss20_d99c038d56c7.txt` (15/0); arnés 89/0, documentos
+   19/0. Días laborables sin calendario de festivos (lunes a viernes).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -268,4 +282,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).

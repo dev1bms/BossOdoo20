@@ -45,3 +45,18 @@ responsible and the ratings. To correct: [[Reopen]].
 **Shipment files → Margin by file** (sales managers and accounting): agreed sale, expected cost and margin and the
 final margin, by responsible, salesperson, customer, traffic and month, in list, pivot or graph. It is refreshed when
 opened; the margin of a financially closed file stays fixed.
+
+## Reminders
+
+They are Odoo **activities** (bell and «My activities»); no e-mail is sent.
+
+- **Container free days** (F0-C55): every morning, for each container whose demurrage, storage or detention is running
+  and which is not returned or picked up yet, the operator gets an activity **3 working days before the last free
+  day** and another **on that day**; on the **first day with a cost**, one for the salesperson. The last free day comes
+  from the supplier price, with the same calculation as the cost. Setting: **Container free-time alert** (0 switches it
+  off).
+- **Month close** (F0-A37, like the Odoo 17 «CIERRE MENSUAL» e-mail): on the last day of the month each responsible
+  gets an activity on every file with services to invoice or delivered and not closed; the person in the setting
+  **Month-close reminder: copy to** (Ángel) gets the summary by responsible.
+- **Operation date** on the invoice (F0-A20 as reviewed, RD 1619/2012 art. 6): the invoice keeps its issue date and,
+  apart, the operation date of the file (arrival of an import, departure of an export).
