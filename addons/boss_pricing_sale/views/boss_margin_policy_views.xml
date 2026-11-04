@@ -5,7 +5,7 @@
         <field name="name">boss.margin.family.list</field>
         <field name="model">boss.margin.family</field>
         <field name="arch" type="xml">
-            <list>
+            <list default_order="kind, sequence, id">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="kind"/>
@@ -47,13 +47,13 @@
                             <field name="business" optional="show"/>
                             <field name="direction" optional="hide"/>
                             <field name="freight_payment" optional="show"/>
-                            <field name="percent"/>
-                            <field name="cap_per_container" optional="show"/>
-                            <field name="min_amount" optional="show"/>
-                            <field name="min_per_container" optional="show"/>
-                            <field name="min_per_container_20" optional="show"/>
-                            <field name="min_per_container_40" optional="show"/>
-                            <field name="min_per_kg" optional="show"/>
+                            <field name="percent" string="% of cost"/>
+                            <field name="cap_per_container" string="Cap / container" optional="show"/>
+                            <field name="min_amount" string="Min." optional="show"/>
+                            <field name="min_per_container" string="Min. / container" optional="show"/>
+                            <field name="min_per_container_20" string="Min. / 20'" optional="show"/>
+                            <field name="min_per_container_40" string="Min. / 40'" optional="show"/>
+                            <field name="min_per_kg" string="Min. / kg" optional="show"/>
                         </list>
                     </field>
                 </sheet>
