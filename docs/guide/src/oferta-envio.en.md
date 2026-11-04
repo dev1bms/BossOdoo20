@@ -65,3 +65,18 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
 
 > When a tariff needs data that is empty, the line says so ("Fill in on the quotation: Main carrier") instead of
 > inventing a value.
+
+## A quotation in a few steps
+
+So that the quotation needs fewer keystrokes, the system proposes what it already knows (it only fills empty fields;
+what you type wins):
+
+- choosing the **port or airport** fills (or corrects) its **country**;
+- the **delivery address** (import) or pickup address (export): the customer's only warehouse, or the customer itself
+  when its address is in Spain; with it, the province;
+- the **Spanish port**: the one of the customer's latest quotation with the same traffic, otherwise the one BOSS uses
+  most;
+- **Main carrier** only offers companies: typing «MSC» shows the MSC group and its companies.
+
+A sea import FCL from the template is priced with about **6 entries**: customer, template, carrier, origin port, ETA
+and container size.

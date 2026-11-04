@@ -31,11 +31,20 @@ Los datos del expediente se copian **una vez** de la oferta aceptada. Después c
 pactado, el expediente lo real. En **Resumen → Diferencias con la oferta** se ve qué cambió (contenedores, pesos,
 transportista, fechas). Nada se sincroniza solo.
 
-## Estados y cierre
+## Siguiente paso, estados y cierre
 
-[[En tránsito]] → [[Entregado]] → [[Cerrar operaciones]]. El cierre **económico** es aparte:
-[[Cerrar económicamente]] solo se permite con todo facturado, todos los costes facturados o cerrados, diferencias
-revisadas y nada en borrador. El aviso amarillo **Pendiente** dice qué falta.
+Arriba del expediente, la línea **Siguiente paso** dice qué toca ahora (elegir proveedores, pedir, poner en tránsito,
+registrar la llegada, entregar, facturar, valorar, cerrar…) y el botón [[Ir]] lo hace o abre exactamente lo que falta.
+**Expedientes** abre en «Mis expedientes» en curso: los de los que usted es responsable o cuya oferta vendió; quite el
+filtro para ver los de todos.
+
+[[En tránsito]] → **Llegado** (al escribir la ATA) → [[Entregado]] → [[Cerrar operaciones]] → [[Cerrar
+económicamente]]. Las condiciones de cada paso, las **valoraciones** y los **datos congelados** tras el cierre están en
+[Cierre del expediente](#/cierre). El aviso amarillo **Pendiente** dice qué falta.
+
+La pestaña **Aduana** guarda el DUA, el agente, la garantía, el canal y las fechas, y los **datos para el agente de
+aduanas** listos para copiar; los BL/AWB house, el manifiesto y la orden de transporte están en
+[Documentos de transporte](#/documentos). Un envío con un máster y varias casas: [Consolidaciones](#/consolidacion).
 
 ## Cuenta analítica
 

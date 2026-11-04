@@ -36,6 +36,17 @@ la regla y el cálculo: «Lista de precios Cliente X, regla «Coste previsto de 
 > reglas de cada cliente las crea un gestor comercial. La venta unificada de ALM y el margen mínimo están pendientes
 > (ver [Decisiones](#/preguntas)).
 
+## Precios de BOSS y plantillas
+
+- La **tarifa general** lleva los precios de la plantilla «Standard» de Odoo 17 (THC y T3 por tamaño de contenedor,
+  BL, CSM, FAD); las plantillas de cliente de Odoo 17 son **listas de precios del cliente**, que para lo que no pactan
+  caen en la general.
+- Lo que no tiene precio fijo se vende a **coste previsto + 20 %** (ajuste; un precio tecleado manda; 0 lo apaga).
+- **7 plantillas de oferta**, una por caso: importación marítima FCL y LCL, exportación marítima FCL y LCL,
+  importación aérea, exportación aérea y transporte por carretera. Cristina las revisa.
+- **Margen mínimo**: si un grupo de servicios queda por debajo del 10 % de su coste (con 10 de tolerancia, regla base
+  de Odoo 17), la oferta lo avisa en amarillo; no bloquea. Los suplidos se refacturan exactos.
+
 ## IVA
 
 El IVA de cada línea sale de las **reglas de IVA de BOSS** (Ángel, 31/08/2026):

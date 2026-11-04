@@ -69,3 +69,17 @@ Todo se puede cambiar después.
 
 > Si falta un dato que una tarifa necesita, la línea lo dice («Complete en la oferta: Transportista principal»), sin
 > inventar el valor.
+
+## Una oferta en pocos pasos
+
+Para que la oferta salga con menos teclas, el sistema propone lo que ya sabe (solo rellena lo vacío; lo que usted
+escriba manda):
+
+- al elegir el **puerto o aeropuerto**, se rellena (o corrige) su **país**;
+- la **dirección de entrega** (importación) o de recogida (exportación): el único almacén del cliente, o el propio
+  cliente si su dirección está en España; con ella, la provincia;
+- el **puerto español**: el de la última oferta del cliente con el mismo tráfico, o si no el que BOSS más usa;
+- **Transportista principal** solo ofrece empresas: escribir «MSC» muestra el grupo MSC y sus sociedades.
+
+Una importación marítima FCL desde la plantilla se valora con unas **6 entradas**: cliente, plantilla, transportista,
+puerto de origen, ETA y tamaño del contenedor.

@@ -34,6 +34,17 @@ Container gives 180.00 €. The minimum margin of 30.00 € per unit applies».
 > Commercial policy: there is no approved general sale rule; prices are agreed per customer (Cristina). A sales manager
 > creates each customer's rules. The unified ALM sale and the minimum margin are pending (see [Decisions](#/preguntas)).
 
+## BOSS prices and templates
+
+- The **general pricelist** holds the prices of the Odoo 17 «Standard» template (THC and T3 by container size, BL,
+  CSM, FAD); the Odoo 17 customer templates are **customer pricelists**, which fall back on the general one for what
+  they do not agree.
+- What has no fixed price is sold at **expected cost + 20 %** (a setting; a typed price wins; 0 switches it off).
+- **7 quotation templates**, one per case: sea import FCL and LCL, sea export FCL and LCL, air import, air export and
+  road transport. Cristina checks them.
+- **Minimum margin**: when a service group is below 10 % of its cost (with 10 of tolerance, the Odoo 17 base rule),
+  the quotation warns in yellow; it does not block. Amounts paid on behalf are re-invoiced exactly.
+
 ## VAT
 
 Each line's VAT comes from the **BOSS VAT rules** (Ángel, 31/08/2026):

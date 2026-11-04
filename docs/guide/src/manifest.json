@@ -157,8 +157,8 @@
    "id": "prueba",
    "section": "inicio",
    "title": {
-    "es": "Prueba guiada en el sistema",
-    "en": "Guided trial on the system"
+    "es": "Prueba completa con Ángel y Cristina",
+    "en": "Full trial with Ángel and Cristina"
    }
   },
   {
@@ -247,6 +247,30 @@
    "title": {
     "es": "Facturas, abonos y costes adicionales",
     "en": "Invoices, credit notes and extra costs"
+   }
+  },
+  {
+   "id": "cierre",
+   "section": "operaciones",
+   "title": {
+    "es": "Cierre del expediente",
+    "en": "Closing the file"
+   }
+  },
+  {
+   "id": "consolidacion",
+   "section": "operaciones",
+   "title": {
+    "es": "Consolidaciones",
+    "en": "Consolidations"
+   }
+  },
+  {
+   "id": "documentos",
+   "section": "operaciones",
+   "title": {
+    "es": "Documentos de transporte",
+    "en": "Transport documents"
    }
   },
   {

@@ -31,11 +31,20 @@ The file data is copied **once** from the accepted quotation. Afterwards each ke
 agreed, the file what really happens. **Summary → Differences with the quotation** shows what changed (containers,
 weights, carrier, dates). Nothing is synchronised automatically.
 
-## States and closing
+## Next step, states and closing
 
-[[In transit]] → [[Delivered]] → [[Close operations]]. The **financial** close is separate:
-[[Close financially]] is only allowed with everything invoiced, every cost billed or closed, variances reviewed and
-nothing in draft. The yellow **To do** notice says what is missing.
+At the top of the file, the **Next step** line says what is due now (choose suppliers, order, put in transit, record
+the arrival, deliver, invoice, rate, close…) and the [[Go]] button does it or opens exactly what is missing.
+**Shipment files** opens on «My files» in progress: those you are responsible for or whose quotation you sold; remove
+the filter to see everybody's.
+
+[[In transit]] → **Arrived** (when the ATA is typed) → [[Delivered]] → [[Close operations]] → [[Close financially]].
+The conditions of each step, the **ratings** and the **frozen data** after the close are in
+[Closing the file](#/cierre). The yellow **To do** notice says what is missing.
+
+The **Customs** tab holds the DUA, broker, guarantee, channel and dates, and the **data for the customs broker** ready
+to copy; the house B/L and AWB, the manifest and the transport order are in [Transport documents](#/documentos). A
+shipment with one master and several houses: [Consolidations](#/consolidacion).
 
 ## Analytic account
 
