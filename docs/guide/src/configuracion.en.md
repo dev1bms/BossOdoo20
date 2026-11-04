@@ -180,7 +180,8 @@ import line to **Vessel discharge** → **Empty container returned**. It applies
 
 ![Accounting › Configuration › Incoterms: column «Freight»](img/50-incoterms-flete.png)
 
-**Accounting → Configuration → Incoterms**, column **Freight**: *Prepaid* when the seller pays the main carriage (C and
+**Accounting → Configuration → Incoterms** (the menu only shows in **developer mode**: Settings → Developer Tools →
+Activate the developer mode), column **Freight**, editable in the list: *Prepaid* when the seller pays the main carriage (C and
 D terms) or *Collect* when the buyer pays it (E and F terms). It is proposed as **Freight payable** on the house B/L of
 the file and used by the minimum margin rules (for example LCL local charges prepaid). Accounting keeps the Incoterms.
 

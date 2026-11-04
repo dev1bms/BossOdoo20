@@ -184,7 +184,8 @@ importación a **Descarga del buque** → **Contenedor vacío devuelto**. Vale p
 
 ![Contabilidad › Configuración › Incoterms: columna «Flete»](img/50-incoterms-flete.png)
 
-**Contabilidad → Configuración → Incoterms**, columna **Flete** (Freight): *Prepaid (en origen)* si el vendedor paga el
+**Contabilidad → Configuración → Incoterms** (el menú solo aparece con el **modo desarrollador** activado: Ajustes →
+Herramientas de desarrollador → Activar modo de desarrollador), columna **Flete** (Freight), editable en la lista: *Prepaid (en origen)* si el vendedor paga el
 transporte principal (términos C y D) o *Collect (en destino)* si lo paga el comprador (términos E y F). Se propone como
 **Flete pagadero** en el BL house del expediente y lo usan las reglas de margen mínimo (por ejemplo, gastos locales de
 grupaje prepaid). Los Incoterms los mantiene contabilidad.
