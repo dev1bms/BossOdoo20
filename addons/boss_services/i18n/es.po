@@ -476,6 +476,7 @@ msgid ""
 msgstr ""
 
 #. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__display_name
 #: model:ir.model.fields,field_description:boss_services.field_product_template__display_name
 #: model:ir.model.fields,field_description:boss_services.field_uom_uom__display_name
 msgid "Display Name"
@@ -616,9 +617,9 @@ msgstr "Tarifa del handler por kg tasable con mínimo."
 #: model:ir.model.fields,help:boss_services.field_product_product__boss_supplier_role
 #: model:ir.model.fields,help:boss_services.field_product_template__boss_supplier_role
 msgid ""
-"Handler: the service follows the handler of the airline at the airport (HAN, ALM, AWB...). Haulier: a road leg whose supplier is the inland carrier of the quotation and the file."
+"Handler: the service follows the handler of the airline at the airport (HAN, ALM, AWB...). Haulier: a road leg whose supplier is the inland carrier of the quotation and the file. Main carrier (FCL ocean freight, Ángel 04/11/2026): the supplier of the file's purchase when no tariff gave one; a freight priced by an agent's tariff keeps that agent."
 msgstr ""
-"Handler: el servicio sigue al handler de la aerolínea en el aeropuerto (HAN, ALM, AWB...). Transportista: un tramo terrestre cuyo proveedor es el transportista terrestre de la oferta y del expediente."
+"Handler: el servicio sigue al handler de la aerolínea en el aeropuerto (HAN, ALM, AWB...). Transportista terrestre: un tramo por carretera cuyo proveedor es el transportista de la oferta y del expediente. Transportista principal (flete marítimo FCL, Ángel 04/11/2026): el proveedor de la compra del expediente cuando ninguna tarifa indicó otro; un flete cotizado con la tarifa de un agente se compra a ese agente."
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_thc_lcl
@@ -661,6 +662,7 @@ msgstr ""
 "Cómo se calculan normalmente los precios de proveedor de este servicio; es el valor por defecto de un precio nuevo. Cada línea de precio usa la forma de cálculo de su propio documento."
 
 #. module: boss_services
+#: model:ir.model.fields,field_description:boss_services.field_product_product__id
 #: model:ir.model.fields,field_description:boss_services.field_product_template__id
 #: model:ir.model.fields,field_description:boss_services.field_uom_uom__id
 msgid "ID"
@@ -1065,6 +1067,11 @@ msgid "Product Unit of Measure"
 msgstr "Unidad de medida del producto"
 
 #. module: boss_services
+#: model:ir.model,name:boss_services.model_product_product
+msgid "Product Variant"
+msgstr ""
+
+#. module: boss_services
 #: model:product.category,name:boss_services.product_category_profit_share
 msgid "Profit share"
 msgstr "Profit share"
@@ -1284,6 +1291,11 @@ msgstr "El handler aéreo del expediente"
 #: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_supplier_role__haulier
 msgid "The haulier (road leg)"
 msgstr "El transportista terrestre (tramo por carretera)"
+
+#. module: boss_services
+#: model:ir.model.fields.selection,name:boss_services.selection__product_template__boss_supplier_role__carrier
+msgid "The main carrier of the shipment"
+msgstr "El transportista principal del envío"
 
 #. module: boss_services
 #: model_terms:ir.ui.view,arch_db:boss_services.product_template_form_view

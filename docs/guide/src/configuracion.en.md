@@ -150,7 +150,8 @@ They apply to the documents printed after the change; a PDF already sent does no
    - **Calculation method**, **Tariff date**, **Summary group**, **VAT class** and **Paid on behalf**.
    - **Bought from**: *Any supplier*; *The air handler of the file* (follows the handler of the airline at the airport,
      such as HAN, ALM or AWB); *The haulier (road leg)*, whose supplier is the inland carrier of the quotation and the
-     file.
+     file; *The main carrier of the shipment* (FCL ocean freight, FMI and FME): in the file it is bought from the main
+     carrier when no tariff names another supplier (a freight priced by an agent's tariff is bought from that agent).
    - **Counts for the customs value as**: Freight, THC, T3 or Insurance. The marked services are listed in **Data for
      the customs broker** on the file.
 4. For a time-based service, add its **Default period** lines (they are not copied by Duplicate).

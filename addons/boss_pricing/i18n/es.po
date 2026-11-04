@@ -2350,10 +2350,14 @@ msgid "Service and source"
 msgstr "Servicio y origen"
 
 #. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Service or code"
 msgstr "Servicio o código"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_service_view_search_ws
+msgid "Service, code or description"
+msgstr "Servicio, código o descripción"
 
 #. module: boss_pricing
 #: model:ir.actions.act_window,name:boss_pricing.boss_service_ws_action

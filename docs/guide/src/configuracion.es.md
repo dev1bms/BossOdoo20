@@ -154,7 +154,9 @@ En **Tarifas y proveedores → Servicios** no hay botón Nuevo: un servicio BOSS
      IVA** (VAT class) y **Suplido** (Paid on behalf).
    - **Se compra a** (Bought from): *Cualquier proveedor*; *El handler aéreo del expediente* (sigue al handler de la
      aerolínea en el aeropuerto, como HAN, ALM o AWB); *El transportista terrestre (tramo por carretera)*, cuyo
-     proveedor es el transportista de la oferta y del expediente.
+     proveedor es el transportista de la oferta y del expediente; *El transportista principal del envío* (flete
+     marítimo FCL, FMI y FME): en el expediente se compra a la naviera principal cuando ninguna tarifa indica otro
+     proveedor (un flete cotizado con la tarifa de un agente se compra a ese agente).
    - **Cuenta para el valor en aduana como** (Counts for the customs value as): Flete, THC, T3 o Seguro. Los servicios
      marcados salen en **Datos para el agente de aduanas** del expediente.
 4. Si es un servicio por tiempo, añada sus líneas de **Periodo por defecto** (no se copian al duplicar).
