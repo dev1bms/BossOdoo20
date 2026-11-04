@@ -51,6 +51,13 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
   and the cost is typed in the file when the supplier answers.
 - **Find a service**: by code, by its Spanish or English name (whatever the user's language) or by a word of its
   description.
+- **One agent cost, several sale lines**: the agent invoices its origin charges as one amount and the client sees them
+  split (pickup, clearance, documents). Add several lines of the same service (e.g. EXW), each with its description and
+  sale price: the first carries the cost; the others are ticked «Cost in another line» by themselves (no cost, nothing
+  to buy). Bought once, margin judged on the group. As in Odoo 17: same code on cost and sale.
+- **Sailings (optional)**, in the Shipment tab: carrier, vessel, via, cut-off, ETD, ETA and transit days of each sailing
+  offered. Printed in the quotation and the portal. The **chosen** sailing gives the quotation its ETD and ETA (and so the
+  date of the freight tariff) and goes to the file with its vessel, voyage and cut-off.
 - **Freight rate from the quotation (⊕)**: valid from today, one week (extendable); if the supplier already has a
   tariff for that route and service, the rate is saved as a **new version** of the same tariff (earlier rates stay as
   history; the newest one valid on the date is used). Rates typed this way are **approved on entry** by whoever types

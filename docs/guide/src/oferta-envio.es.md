@@ -52,6 +52,14 @@ Todo se puede cambiar después.
   coste se escribe en el expediente cuando el proveedor responde.
 - **Buscar un servicio**: por código, por su nombre en español o en inglés (sea cual sea el idioma del usuario) o por
   una palabra de su descripción.
+- **Un coste del agente, varias líneas de venta**: el agente factura los gastos en origen en un solo importe y el
+  cliente los ve separados (recogida, despacho, documentos). Añada varias líneas del mismo servicio (p. ej. EXW), cada
+  una con su descripción y su venta: la primera lleva el coste; las demás se marcan solas «Coste en otra línea» (sin
+  coste y sin compra). Se compra una vez y el margen se juzga en el grupo. Como en Odoo 17: mismo código en coste y
+  venta.
+- **Salidas (opcional)**, en la pestaña Envío: naviera, buque, vía, cut-off, ETD, ETA y días de tránsito de cada salida
+  que se ofrece. Se imprimen en la oferta y en el portal. La salida **elegida** da a la oferta su ETD y ETA (y con ello
+  la fecha de la tarifa de flete) y pasa al expediente con su buque, viaje y cut-off.
 - **Precio del flete desde la oferta (⊕)**: válido desde hoy, una semana (ampliable); si el proveedor ya tiene
   tarifa para esa ruta y servicio, el precio se guarda como **nueva versión** de la misma tarifa (los anteriores quedan
   como historial y se usa el más nuevo vigente en la fecha). Los fletes tecleados así quedan **aprobados al

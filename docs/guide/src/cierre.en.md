@@ -38,7 +38,8 @@ are rated from **0** (very bad) to **10** (excellent), with a comment if wanted.
 Once operations are closed (or the file cancelled), the shipment data is **read-only**: parties, route, cargo,
 references, dates, customs and the house document. If someone tries to change it, Odoo refuses and says the file must
 be reopened. Still open: the services and late supplier bills, the containers (their dates compute demurrage), the
-responsible and the ratings. To correct: [[Reopen]].
+responsible and the ratings. To correct: [[Reopen]], a sales manager only, with a reason kept in the history (as in Odoo
+17); a file closed financially is first reopened financially.
 
 ## Margin by file
 

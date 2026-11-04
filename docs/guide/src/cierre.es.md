@@ -37,7 +37,8 @@ facturas), de **0** (muy malo) a **10** (excelente), con un comentario si se qui
 Con las operaciones cerradas (o el expediente cancelado), los datos del envío quedan **en solo lectura**: partes, ruta,
 carga, referencias, fechas, aduana y documento house. Si alguien intenta cambiarlos, Odoo lo rechaza y dice que hay que
 reabrir. Siguen abiertos: los servicios y las facturas de proveedor tardías, los contenedores (sus fechas calculan
-demoras), el responsable y las valoraciones. Para corregir: [[Reabrir]].
+demoras), el responsable y las valoraciones. Para corregir: [[Reabrir]], solo un jefe de ventas y con un motivo que
+queda en el historial (como en Odoo 17); un expediente cerrado económicamente se reabre antes económicamente.
 
 ## Margen por expediente
 

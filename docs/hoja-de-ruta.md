@@ -335,6 +335,27 @@ con su fuente escrita; ninguna se inventa.
    = naviera principal, servicios opcionales, búsqueda de servicios, coste agrupado del agente, tabla de salidas,
    coeficiente de venta por servicio, oficinas y facturador del transportista, tipos de bulto de Odoo 17, IVA.
 
+18. **Revisión de fuentes antes de preguntar (04/11) y cuatro tareas técnicas.** Las preguntas de la fase C se buscaron
+   en todas las fuentes (este repositorio, proyecto Odoo 19, carpeta NEW ODOO, Odoo 17 de producción en lectura). Con
+   respuesta o práctica clara, sin preguntar: tipos de bulto (Odoo 17: CT, PL, CR, PC, BT, BG, iguales a los de Odoo 20);
+   quién factura el flete (el emisor de la tarifa; en Odoo 17 casi siempre la entidad extranjera de la naviera o un NVOCC
+   español; Cristina: «freight contractor»); cierre (Odoo 17 exige todo facturado y sin aviso de margen salvo desbloqueo
+   con motivo: se queda en «Obligatorio»); reapertura (Odoo 17: solo administradores); factor volumétrico (las
+   actualizaciones nunca revalorizan en silencio). Supuestos documentados: coste agrupado del agente vendido en varias
+   líneas del mismo código (práctica de Odoo 17, CR-C8); sin coeficiente de venta por servicio (Ángel: «no hay regla
+   general»; Odoo 17 solo controla el margen mínimo); salidas opcionales en la oferta (Odoo 17 «Schedules»). **Quedan 4
+   preguntas** en `NEW ODOO/preguntas-pendientes-2026-11-04.xlsx`: plazos a 75 días de unos 33 transportistas frente al
+   límite legal de 60 (Ángel), IVA del tren (Ángel), artículo de exención en la factura (Ángel) y regla de venta del ALM
+   (Cristina). **Entregado** (boss_pricing_sale 20.0.1.22.8, boss_expediente 20.0.1.28.4, boss_portal 20.0.1.0.10;
+   commits `a3ec3b8`, `16ab670`): varias líneas del mismo servicio con un solo coste («Coste en otra línea», una compra);
+   «Reabrir» solo para jefes de ventas y con motivo en el historial; salidas opcionales en la oferta (impresas, la elegida
+   da ETD/ETA y pasa al expediente con buque, viaje y cut-off); navieras agrupadas por entidad (CMA CGM, Maersk, HMM,
+   COSCO, OOCL; `dev/load_carrier_groups.py`); el diálogo de precio de proveedor propone la empresa, no una dirección.
+   Las comprobaciones de flujo y rutas pasan a Ningbo: Ángel introdujo hoy fletes reales de MSC Shanghái → Valencia.
+   Evidencia: `docs/evidencias/20261104_1558_check_source_tasks_boss20_16ab670a5f79.txt` (12/0), flujo 39/0, rutas
+   53/0, cierre 8/0. Pendiente de Belal: tres tarifas de MSC (FMI Hong Kong y Shanghái) tienen como proveedor la
+   dirección de factura de MSC en vez de la empresa.
+
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
 
