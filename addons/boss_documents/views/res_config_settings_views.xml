@@ -32,7 +32,7 @@
                         </setting>
                         <setting id="boss_paid_on_behalf_note" string="Mention of amounts paid on behalf"
                                  help="Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording, in the customer's language.">
-                            <field name="boss_paid_on_behalf_note" nolabel="1" placeholder="Standard wording"/>
+                            <field name="boss_paid_on_behalf_note" placeholder="Standard wording"/>
                         </setting>
                     </block>
                 </app>

@@ -67,16 +67,6 @@ class ProductTemplate(models.Model):
         [("freight", "Freight"), ("THC", "THC"), ("T3", "T3"), ("insurance", "Insurance")],
         "Counts for the customs value as",
         help="Listed in the data for the customs broker (Cristina, OPS- exptes A37): freight, THC, T3 and insurance.")
-    # Settings study of 04/11/2026, phase 2: what the code listed by service code is now said on the service.
-    boss_supplier_role = fields.Selection(
-        [("any", "Any supplier"), ("handler", "The air handler of the file"), ("haulier", "The haulier (road leg)")],
-        "Bought from", default="any", required=True,
-        help="Handler: the service follows the handler of the airline at the airport (HAN, ALM, AWB...). Haulier: a "
-             "road leg whose supplier is the inland carrier of the quotation and the file.")
-    boss_customs_value_charge = fields.Selection(
-        [("freight", "Freight"), ("THC", "THC"), ("T3", "T3"), ("insurance", "Insurance")],
-        "Counts for the customs value as",
-        help="Listed in the data for the customs broker (Cristina, OPS- exptes A37): freight, THC, T3 and insurance.")
     boss_legacy_codes = fields.Char("Former codes", help="Odoo 17 codes now priced as this service.")
     boss_replaced_by_id = fields.Many2one(
         "product.template", "Replaced by", help="Former service kept for history; quote the new one.")
