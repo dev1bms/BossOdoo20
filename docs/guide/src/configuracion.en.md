@@ -28,7 +28,7 @@ top; [[Discard]] undoes what is not saved.
 | **Supplier document required** | On | A tariff is not sent for approval without the supplier's document attached: every price is traceable. |
 | **Freight rates approved on entry** | On | The weekly freight typed from a quotation is approved by whoever enters it: an urgent quotation never waits for an approver. Off: it waits for a tariff approver. |
 | **Validity of a freight rate entered from a quotation** · Days | 7 | Days the weekly freight is valid from its start. |
-| **Warn before a tariff expires** · Days | 30 | A price expiring within those days shows «Expiring» in the lists and the workspace. |
+| **Warn before a tariff expires** · Days | 30 | A price expiring within those days shows «Expires soon» in the lists and in the filter of the same name. |
 | **Supplier cost in another currency** | Odoo exchange rate of the quotation date | What to do when the supplier price is in another currency than the quotation. The other option, «Do not convert», leaves the cost pending. |
 
 Links: **Supplier tariffs** and **Supplier prices**.
@@ -44,7 +44,7 @@ Example: a shipping line changes its freight every two weeks and BOSS wants a ty
 |---|---|
 | **Default sale price of BOSS services** · Cost + % | Proposed sale = expected cost + this %, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 switches it off. |
 | **Minimum margin without a rule** · % of the cost | Minimum margin of a group or service without its own rule (Odoo 17 base rule). |
-| **Minimum margin without a rule** · Tolerance | A margin up to this amount below the minimum is accepted without a warning. |
+| **Minimum margin without a rule** · Tolerance (amount) | A margin up to this **amount** (not a %) below the minimum is accepted without a warning. |
 
 Links: **Pricelists**, **Quotation templates**, **Minimum margins** and **Minimum margin exceptions**. The rules by
 service group, shipment type and customer are in the last two tables (see [Sale price and VAT](#/venta-iva)). On the
@@ -61,8 +61,8 @@ the condition **Low margin explained** (see below).
 
 A supplier document stating its own factor keeps it. Links: **Ports and airports** and **Services**.
 
-> Changing a factor recomputes the chargeable weight of **every** quotation and file with measures, closed ones included
-> (see «What a change affects» below). Only with Ángel's approval.
+> A new factor applies to the quotations and files whose measures or mode are entered or changed afterwards; those
+> already recorded keep their chargeable weight. Changing it is Ángel's decision.
 
 ### VAT
 
@@ -114,7 +114,7 @@ A level change applies to the steps done afterwards: a file that already left or
 | Setting | Current value | What it does |
 |---|---|---|
 | **Ratings required to close operations** | On | The customer and every supplier are rated 0 to 10 before operations close. |
-| **Days to close after the delivery** · Days | 7 | After those days the next step says the file must be closed. |
+| **Days to close after the delivery** · Days | 7 | After those days the next step says the file must be closed and it shows in the filter «Delivered, due to close». |
 | **Supplier bill before the customer invoice** | Block payment (posting allowed) | What happens to a supplier bill of a service not yet invoiced to the customer. |
 
 ### Reminders (Odoo activities, no e-mail)
@@ -185,9 +185,8 @@ Activate the developer mode), column **Freight**, editable in the list: *Prepaid
 D terms) or *Collect* when the buyer pays it (E and F terms). It is proposed as **Freight payable** on the house B/L of
 the file and used by the minimum margin rules (for example LCL local charges prepaid). Accounting keeps the Incoterms.
 
-> Changing the freight of an Incoterm proposes it again on **every** file with that Incoterm, also where someone changed
-> it by hand and on closed files (see «What a change affects» below). The current values follow Incoterms 2020: there is
-> no need to touch them.
+> A change of the freight of an Incoterm is proposed to the files that take that Incoterm afterwards; existing files keep
+> their freight payable. The current values follow Incoterms 2020: there is no need to touch them.
 
 ## Security and good practice
 
@@ -204,14 +203,15 @@ the file and used by the minimum margin rules (for example LCL local charges pre
 
 ### What a change affects
 
-- Most settings apply **from the moment they are saved**, to the steps, calculations and prints done afterwards: they do
-  not change a file that already left, was delivered or closed, nor a posted invoice, nor an accepted quotation (its
-  frozen copy; see [Closing the file](#/cierre)).
-- Two exceptions change data already stored:
-  - **Volume weight factors**: the chargeable weight of every quotation and file is recomputed, closed ones included.
-    Invoiced amounts do not change, but a consolidation split or a document printed afterwards uses the new weight.
-  - **Freight of an Incoterm**: the freight payable is proposed again on every file with that Incoterm.
-- Change these two only with management's approval and write down the previous value.
+- A setting applies **from the moment it is saved**, to the steps, calculations and prints done afterwards: it does not
+  change a file that already left, was delivered or closed, nor a posted invoice, nor an accepted quotation (its frozen
+  copy; see [Closing the file](#/cierre)). Neither a volume factor nor the freight of an Incoterm rewrites data already
+  recorded.
+- Each change of level of a condition is kept in the company's history (Settings → Companies → the company): who, when,
+  previous and new level.
+- A zero or negative value where it makes no sense (factor, validity days, originals) is refused with a message.
+- The status of a file and its financial close change only with its buttons, which check the conditions; neither an
+  import nor another program can skip them.
 
 ### Before switching a condition off
 
@@ -219,9 +219,8 @@ the file and used by the minimum margin rules (for example LCL local charges pre
   checked*, operations can close with services not invoiced or with a low margin without a written reason. The
   **financial close** still requires everything invoiced and the month-close reminder still lists those files, but the
   control comes later. Changing them is a management decision (Cristina, Ángel).
-- **Low margin explained** also covers the check that **amounts paid on behalf** are re-invoiced exactly (art.
-  78.Tres.3º Ley 37/1992): outside *Required*, that check no longer stops the close either. The financial close does not
-  look at the margin again.
+- The check that **amounts paid on behalf** are re-invoiced exactly (art. 78.Tres.3º Ley 37/1992) is always required: the
+  level of **Low margin explained** does not change it. The financial close does not look at the margin again.
 - The **Delivered** conditions Cristina wrote (customs release, house B/L released, dates) prevent goods being marked
   delivered without clearance or without the B/L released: do not switch them off without her approval.
 - Prefer **Warning only** to **Not checked**: the step is done anyway, but the history keeps a record.

@@ -13,7 +13,7 @@ uses the same data as quotations (service products, contacts, supplier tariffs) 
 
 Each row: code and service, supplier, **what it applies to** (direction, mode, load, ports, container size and
 type, customer), **price with its unit** (e.g. «260 EUR / Container», «0.05 EUR / chargeable kg · min. 20 EUR» or
-the bracket summary), «until» and the **status**: Valid, Expires soon (30 days), Expired, Replaced by a newer version,
+the bracket summary), «until» and the **status**: Valid, Expires soon (the days of Settings, today 30), Expired, Replaced by a newer version,
 Draft, Waiting for approval. Row buttons: test, open the document, copy (draft only).
 
 - Search accepts **service or code**, **supplier**, **tariff or document** and **port**.

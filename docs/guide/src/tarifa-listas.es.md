@@ -13,7 +13,7 @@ Usa los mismos datos que las ofertas (productos de servicio, contactos, tarifas 
 
 Cada fila: código y servicio, proveedor, **a qué se aplica** (sentido, modo, carga, puertos, tamaño y tipo de
 contenedor, cliente), **precio con su unidad** (p. ej. «260 EUR / Contenedor», «0,05 EUR / kg tasable · mín. 20 EUR» o
-el resumen de los tramos), «hasta» y el **estado**: Vigente, Vence pronto (30 días), Vencida, Sustituida por una versión
+el resumen de los tramos), «hasta» y el **estado**: Vigente, Vence pronto (los días de Ajustes, hoy 30), Vencida, Sustituida por una versión
 nueva, Borrador, Pendiente de aprobación. Botones de la fila: probar, abrir el documento, copiar (solo en borrador).
 
 - La búsqueda acepta **servicio o código**, **proveedor**, **tarifa o documento** y **puerto**.

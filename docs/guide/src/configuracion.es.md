@@ -30,7 +30,7 @@ arriba; [[Descartar]] (Discard) deshace lo no guardado.
 | **Documento del proveedor obligatorio** (Supplier document required) | Activado | Una tarifa no se envía a aprobar sin el documento del proveedor adjunto: todo precio es trazable. |
 | **Fletes aprobados al introducirlos** (Freight rates approved on entry) | Activado | El flete semanal tecleado desde una oferta queda aprobado por quien lo introduce: una oferta urgente no espera a un aprobador. Desactivado: espera a un aprobador de tarifas. |
 | **Validez de una tarifa de flete introducida desde una oferta** (Validity of a freight rate entered from a quotation) · Días | 7 | Días de validez del flete semanal desde su inicio. |
-| **Avisar antes de que caduque una tarifa** (Warn before a tariff expires) · Días | 30 | Un precio que caduca dentro de esos días sale como «Caduca pronto» en las listas y en el espacio de trabajo. |
+| **Avisar antes de que caduque una tarifa** (Warn before a tariff expires) · Días | 30 | Un precio que caduca dentro de esos días sale como «Vence pronto» en las listas y en el filtro del mismo nombre. |
 | **Coste de proveedor en otra moneda** (Supplier cost in another currency) | Tipo de cambio de Odoo de la fecha de la oferta | Qué hacer si el precio del proveedor está en otra moneda que la oferta. La otra opción, «No convertir», deja el coste pendiente. |
 
 Enlaces: **Tarifas de proveedor** y **Precios de proveedor**.
@@ -46,7 +46,7 @@ Ejemplo: una naviera cambia el flete cada dos semanas y BOSS quiere que la tarif
 |---|---|
 | **Venta por defecto de los servicios BOSS** (Default sale price of BOSS services) · Coste + % | Venta propuesta = coste previsto + este %, como regla de la lista de precios por defecto. Mandan antes el precio pactado del cliente y el precio tecleado en la línea. 0 lo desactiva. |
 | **Margen mínimo sin regla** (Minimum margin without a rule) · % del coste | Margen mínimo de un grupo o servicio sin regla propia (regla base de Odoo 17). |
-| **Margen mínimo sin regla** · Tolerancia | Se acepta sin aviso un margen hasta este importe por debajo del mínimo. |
+| **Margen mínimo sin regla** · Tolerancia (importe) | Se acepta sin aviso un margen hasta este **importe** (no un %) por debajo del mínimo. |
 
 Enlaces: **Listas de precios**, **Plantillas de oferta**, **Márgenes mínimos** y **Excepciones de margen mínimo**. Las
 reglas por grupo de servicios, tipo de envío y cliente están en esas dos últimas tablas (ver
@@ -63,8 +63,8 @@ margen bajo pide un motivo según la condición **Margen bajo justificado** (ver
 
 Un documento de proveedor que indique su propio factor lo conserva. Enlaces: **Puertos y aeropuertos** y **Servicios**.
 
-> Cambiar un factor recalcula el peso tasable de **todas** las ofertas y expedientes con medidas, también los cerrados
-> (ver «A qué afecta un cambio» más abajo). Hágalo solo con el visto bueno de Ángel.
+> Un factor nuevo vale para las ofertas y expedientes cuyas medidas o modo se introduzcan o cambien después; los ya
+> registrados conservan su peso tasable. Cambiarlo es decisión de Ángel.
 
 ### IVA
 
@@ -116,7 +116,7 @@ Un cambio de nivel vale para los pasos que se hagan después: un expediente que 
 | Ajuste | Valor actual | Qué hace |
 |---|---|---|
 | **Valoraciones obligatorias para el cierre operativo** (Ratings required to close operations) | Activado | Hay que valorar de 0 a 10 al cliente y a cada proveedor antes de cerrar operaciones. |
-| **Días para cerrar tras la entrega** (Days to close after the delivery) · Días | 7 | Pasados esos días, el siguiente paso avisa de que el expediente debe cerrarse. |
+| **Días para cerrar tras la entrega** (Days to close after the delivery) · Días | 7 | Pasados esos días, el siguiente paso avisa de que el expediente debe cerrarse y sale en el filtro «Entregados, por cerrar». |
 | **Factura de proveedor antes de la de cliente** (Supplier bill before the customer invoice) | Bloquear el pago (contabilizar permitido) | Qué pasa con una factura de proveedor de un servicio aún no facturado al cliente. |
 
 ### Avisos (actividades de Odoo, sin correo)
@@ -190,9 +190,8 @@ transporte principal (términos C y D) o *Collect (en destino)* si lo paga el co
 **Flete pagadero** en el BL house del expediente y lo usan las reglas de margen mínimo (por ejemplo, gastos locales de
 grupaje prepaid). Los Incoterms los mantiene contabilidad.
 
-> Cambiar el flete de un Incoterm vuelve a proponerlo en **todos** los expedientes con ese Incoterm, también en los que
-> alguien cambió a mano y en los cerrados (ver «A qué afecta un cambio» más abajo). Los valores actuales siguen las
-> reglas Incoterms 2020: no hace falta tocarlos.
+> Un cambio del flete de un Incoterm se propone a los expedientes que tomen ese Incoterm después; los existentes
+> conservan su flete pagadero. Los valores actuales siguen las reglas Incoterms 2020: no hace falta tocarlos.
 
 ## Seguridad y buenas prácticas
 
@@ -209,15 +208,15 @@ grupaje prepaid). Los Incoterms los mantiene contabilidad.
 
 ### A qué afecta un cambio
 
-- La mayoría de los ajustes valen **desde que se guardan**, para los pasos, cálculos e impresiones que se hagan después:
-  no cambian un expediente que ya salió, se entregó o se cerró, ni una factura emitida, ni una oferta aceptada (su copia
-  congelada; ver [Cierre del expediente](#/cierre)).
-- Dos excepciones cambian datos ya guardados:
-  - **Factores de peso volumétrico**: se recalcula el peso tasable de todas las ofertas y expedientes, también los
-    cerrados. Los importes ya facturados no cambian, pero un reparto de consolidación o un documento que se imprima
-    después usará el peso nuevo.
-  - **Flete de un Incoterm**: se vuelve a proponer el flete pagadero en todos los expedientes con ese Incoterm.
-- Cambie estos dos solo con el visto bueno de dirección y anote el valor anterior.
+- Un ajuste vale **desde que se guarda**, para los pasos, cálculos e impresiones que se hagan después: no cambia un
+  expediente que ya salió, se entregó o se cerró, ni una factura emitida, ni una oferta aceptada (su copia congelada;
+  ver [Cierre del expediente](#/cierre)). Tampoco un factor volumétrico ni el flete de un Incoterm rehacen los datos ya
+  registrados.
+- Cada cambio de nivel de una condición queda en el historial de la compañía (Ajustes → Compañías → la compañía): quién,
+  cuándo, nivel anterior y nuevo.
+- Un valor cero o negativo donde no tiene sentido (factor, días de validez, originales) no se acepta: un mensaje lo dice.
+- El estado de un expediente y su cierre económico solo cambian con sus botones, que comprueban las condiciones; ni una
+  importación ni otro programa pueden saltárselas.
 
 ### Antes de desactivar una condición
 
@@ -225,9 +224,8 @@ grupaje prepaid). Los Incoterms los mantiene contabilidad.
   comprueba* se pueden cerrar operaciones con servicios sin facturar o con un margen bajo sin motivo escrito. El **cierre
   económico** sigue exigiendo todo facturado y el aviso de cierre de mes sigue listando esos expedientes, pero el control
   llega más tarde. Cambiarlos es una decisión de dirección (Cristina, Ángel).
-- **Margen bajo justificado** cubre también la comprobación de que los **suplidos** se refacturan exactos (art.
-  78.Tres.3º Ley 37/1992): fuera de *Obligatorio*, esa comprobación tampoco detiene el cierre. El cierre económico no
-  vuelve a mirar el margen.
+- La comprobación de que los **suplidos** se refacturan exactos (art. 78.Tres.3º Ley 37/1992) es siempre obligatoria:
+  el nivel de **Margen bajo justificado** no la cambia. El cierre económico no vuelve a mirar el margen.
 - Las condiciones de **Entregado** que escribió Cristina (levante, BL house liberado, fechas) evitan dar por entregada
   una mercancía sin despacho o sin el BL liberado: no las desactive sin su visto bueno.
 - Prefiera **Solo aviso** a **No se comprueba**: el paso se hace igual, pero queda constancia en el historial.
