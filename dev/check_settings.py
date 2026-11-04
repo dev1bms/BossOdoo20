@@ -53,16 +53,18 @@ check("5 ... 20 % and 2 of tolerance from Settings: warned", (20.0, True), (rows
 company.boss_margin_default_rate, company.boss_margin_tolerance = 10.0, 10.0
 
 # 6. tariff expiring days
-tariff = env["boss.tariff"].search([("state", "=", "approved"), ("valid_to", "!=", False)], limit=1)
-if tariff:
-    tariff.valid_to = date.today() + timedelta(days=20)
-    line = tariff.line_ids[:1]
-    line.invalidate_recordset(["validity_state"])
-    check("6 a price valid 20 more days is «expiring» with the default 30", "expiring", line.validity_state)
-    company.boss_tariff_expiring_days = 10
-    line.invalidate_recordset(["validity_state"])
-    check("7 ... and «current» when the setting is 10 days", "current", line.validity_state)
-    company.boss_tariff_expiring_days = 30
+supplier = env["res.partner"].create({"name": "[PRUEBA] Ajustes Proveedor", "is_company": True, "supplier_rank": 1})
+tariff = env["boss.tariff"].create({
+    "name": "[PRUEBA] Ajustes tarifa", "partner_id": supplier.id, "valid_from": date.today(),
+    "valid_to": date.today() + timedelta(days=20),
+    "line_ids": [Command.create({"product_id": fad.id, "uom_id": fad.uom_id.id, "unit_price": 1.0})]})
+tariff._workflow_write({"state": "approved"})  # the check's own [PRUEBA] tariff, approved without the buttons
+line = tariff.line_ids[:1]
+check("6 a price valid 20 more days is «expiring» with the default 30", "expiring", line.validity_state)
+company.boss_tariff_expiring_days = 10
+line.invalidate_recordset(["validity_state"])
+check("7 ... and «current» when the setting is 10 days", "current", line.validity_state)
+company.boss_tariff_expiring_days = 30
 
 # 8. close days and allocation default
 file = env["boss.expediente"].create({"partner_id": customer.id, "business": "boss", "direction": "import",
@@ -73,6 +75,8 @@ other = env["boss.expediente"].create({"partner_id": customer.id, "business": "b
                                        "transport_mode": "sea", "load_type": "fcl"})
 check("9 ... «equal parts» once the setting changes", "equal", other.allocation_basis)
 company.boss_default_allocation_basis = "chargeable"
+house = env["boss.expediente"].create({"partner_id": customer.id, "business": "boss", "direction": "import",
+                                       "transport_mode": "sea", "load_type": "lcl", "master_id": file.id})  # a master's next step reaches the close
 file.write({"state": "delivered", "delivered_date": date.today() - timedelta(days=5)})
 company.boss_ratings_to_close = False
 file.invalidate_recordset(["next_step_detail"])
@@ -84,7 +88,7 @@ company.boss_close_days_after_delivery, company.boss_ratings_to_close = 7, True
 
 # 12. house documents and invoice
 company.boss_hbl_originals, company.boss_doc_issue_place = 2, "[PRUEBA] VALENCIA"
-html = env["ir.actions.report"]._render_qweb_html("boss_documents.action_report_house_bl", file.ids)[0].decode()
+html = env["ir.actions.report"]._render_qweb_html("boss_documents.action_report_house_bl", house.ids)[0].decode()
 check("12 the house B/L prints the originals and the place of issue of Settings", (True, True),
       ("2 / TWO" in html, "[PRUEBA] VALENCIA" in html))
 company.boss_hbl_originals, company.boss_doc_issue_place = 3, False
