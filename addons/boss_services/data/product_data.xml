@@ -267,7 +267,6 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier per-container port fee that includes the T-3 tax.</field>
-        <field name="boss_open_question">P11</field>
         <field name="boss_vat_class">EX</field>
         <field name="boss_o17_concept_id" eval="228"/>
         <field name="boss_o17_concept_code">T3</field>
@@ -344,7 +343,6 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Carrier charge for the verified gross mass declaration, per container.</field>
-        <field name="boss_open_question">P12</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="235"/>
         <field name="boss_o17_concept_code">VGM</field>
@@ -440,7 +438,6 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">time</field>
         <field name="description">Container detention outside the terminal when the carrier bills it on its own (MSC export: empty pickup to full gate-in); inside DEM when combined (Hapag MHD/DTD). Proposal of 07/10/2026 applied (P09).</field>
-        <field name="boss_open_question">P09</field>
         <field name="boss_vat_class">NR</field>
     </record>
     <record id="service_ocu" model="product.template">
@@ -534,7 +531,6 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Documentation fee for the air waybill.</field>
-        <field name="boss_open_question">P25</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="297"/>
         <field name="boss_o17_concept_code">AWB</field>
