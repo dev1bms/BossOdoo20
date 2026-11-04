@@ -59,14 +59,14 @@
                             </div>
                         </setting>
                         <setting id="boss_margin_default" string="Minimum margin without a rule"
-                                 help="Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance below the minimum is accepted. A warning, never a block.">
+                                 help="Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance (an amount) below the minimum is accepted. On the quotation a warning; at the operational close the condition «Low margin explained» of BOSS · Files decides.">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <label for="boss_margin_default_rate" string="% of the cost" class="col-lg-4 o_light_label"/>
                                     <field name="boss_margin_default_rate" class="col-lg-3"/>
                                 </div>
                                 <div class="row">
-                                    <label for="boss_margin_tolerance" string="Tolerance" class="col-lg-4 o_light_label"/>
+                                    <label for="boss_margin_tolerance" string="Tolerance (amount)" class="col-lg-4 o_light_label"/>
                                     <field name="boss_margin_tolerance" class="col-lg-3"/>
                                 </div>
                             </div>

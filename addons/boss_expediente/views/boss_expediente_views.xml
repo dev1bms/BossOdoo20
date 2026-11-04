@@ -545,8 +545,7 @@
                         domain="[('next_step', 'in', ['invoice', 'bills', 'review', 'close_financial'])]"/>
                 <separator/>
                 <filter name="active_files" string="In progress" domain="[('state', 'in', ('open', 'in_transit', 'arrived', 'delivered'))]"/>
-                <filter name="to_close_ops" string="Delivered over a week ago"
-                        domain="[('state', '=', 'delivered'), ('delivered_date', '&lt;', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter name="to_close_ops" string="Delivered, due to close" domain="[('boss_due_to_close', '=', True)]"/>
                 <filter name="to_close" string="Operations closed, finance open"
                         domain="[('state', '=', 'closed'), ('financial_closed', '=', False)]"/>
                 <separator/>

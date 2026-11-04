@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.fields import Domain
 
 from ..engine import METHODS, Rule
 from .boss_container_type import CONTAINER_SIZES
@@ -85,7 +88,7 @@ class BossTariffLine(models.Model):
     basis = fields.Selection(BASES, "Priced on", default="line", required=True,
                              help="What the supplier document charges on.")
     volumetric_factor = fields.Float(help="kg per m³ stated by the supplier document (e.g. 167 air). Empty: the "
-                                     "factor of the shipment's transport mode (air 167, road 333, sea 1000).")
+                                     "factor of the shipment's transport mode (Settings › BOSS · Pricing).")
     unit_size = fields.Float(default=1.0, help="Size of one priced unit, e.g. 100 for 'per 100 kg'.")
     round_up = fields.Boolean("Or fraction", help="Round up to whole units ('per 100 kg or fraction').")
     round_undecided = fields.Boolean(
@@ -337,6 +340,8 @@ class BossTariffLineWorkspace(models.Model):
     service_code = fields.Char(related="product_id.default_code", string="Code")
     service_name = fields.Char(related="product_id.name", string="Service")
     validity_state = fields.Selection(VALIDITY_STATES, "Validity", compute="_compute_workspace_display")
+    boss_expiring = fields.Boolean("Expires soon", compute="_compute_boss_expiring", search="_search_boss_expiring",
+                                   help="Approved and ending within the days of Settings › BOSS · Pricing.")
     price_display = fields.Char("Price", compute="_compute_workspace_display",
                                 help="Price with its unit (never the total of the service).")
     scope_display = fields.Char("Applies to", compute="_compute_workspace_display")
@@ -519,6 +524,22 @@ class BossTariffLineWorkspace(models.Model):
                 line.validity_state = "expiring"
             else:
                 line.validity_state = "current"
+
+    @api.depends("validity_state")
+    def _compute_boss_expiring(self):
+        for line in self:
+            line.boss_expiring = line.validity_state == "expiring"
+
+    def _search_boss_expiring(self, operator, value):
+        """The «Expires soon» filter with the days of Settings (not a fixed number of days in the view)."""
+        if operator != "in":
+            return NotImplemented
+        today = fields.Date.context_today(self)
+        soon = today + timedelta(days=self.env.company.boss_tariff_expiring_days)
+        expiring = Domain([("tariff_state", "=", "approved"), ("valid_to", ">=", today), ("valid_to", "<=", soon)])
+        if True in value and False in value:
+            return Domain.TRUE
+        return expiring if True in value else ~expiring
 
     def _example_inputs(self):
         """Illustrative shipment: 2 containers of the line's size and type, 500 kg, 2 m³, 10 days, Wednesday."""

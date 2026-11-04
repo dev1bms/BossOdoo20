@@ -130,7 +130,7 @@ class BossShipmentRoute(models.AbstractModel):
                                "the estimated chargeable weight is used.")
     boss_volume_weight_kg = fields.Float(
         "Volume weight (kg)", digits=(12, 2), compute="_compute_boss_chargeable_kg", store=True,
-        help="Volume × factor of the transport mode: air 167, road 333, sea 1000 kg per m³ (Ángel, 27/10/2026).")
+        help="Volume × factor of the transport mode in Settings › BOSS · Pricing when the measures were entered.")
     boss_chargeable_kg = fields.Float(
         "Chargeable weight (kg)", digits=(12, 2), compute="_compute_boss_chargeable_kg", store=True,
         help="The higher of the gross weight and the volume weight; suppliers charge on it and so does BOSS. Needs "
@@ -189,8 +189,9 @@ class BossShipmentRoute(models.AbstractModel):
                              else (record.boss_etd, record.boss_eta))
             record.boss_planned_date = first or second or record.boss_planned_date
 
-    @api.depends("boss_transport_mode", "boss_gross_kg", "boss_volume_m3", "company_id.boss_volumetric_air",
-                 "company_id.boss_volumetric_road", "company_id.boss_volumetric_sea")
+    # The factors of Settings apply when the measures or the mode are entered or changed, never retroactively: a new
+    # factor does not rewrite the quotations already made (accepted ones included).
+    @api.depends("boss_transport_mode", "boss_gross_kg", "boss_volume_m3")
     def _compute_boss_chargeable_kg(self):
         for record in self:
             record.boss_volume_weight_kg, record.boss_chargeable_kg = chargeable_kg(

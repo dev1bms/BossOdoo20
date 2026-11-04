@@ -1,5 +1,5 @@
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 from .shipment_block import scope_sentence, shipment_rows
 
@@ -16,6 +16,16 @@ class ResCompany(models.Model):
                                         help="Printed on the house B/L; a sea waybill prints «express», zero.")
     boss_doc_issue_place = fields.Char("Place of issue of the house documents",
                                        help="Empty: the city of the company.")
+
+    @api.constrains("boss_hbl_originals")
+    def _check_boss_document_values(self):
+        """Settings values that make sense (a zero or negative number would be replaced or printed as such)."""
+        for company in self:
+            for field, minimum in (("boss_hbl_originals", 1),):
+                if company[field] < minimum:
+                    raise ValidationError(self.env._("%(setting)s: enter a value of at least %(minimum)s.",
+                                                     setting=self._fields[field].get_description(self.env)["string"],
+                                                     minimum=minimum))
 
 
 class ResConfigSettings(models.TransientModel):
@@ -43,7 +53,9 @@ class BossExpediente(models.Model):
     def _boss_frozen_fields(self):
         return super()._boss_frozen_fields() + ("house_doc_freight", "house_doc_marks", "house_doc_issue_date")
 
-    @api.depends("incoterm_id.boss_freight_payment")
+    # Proposed when the file's incoterm is set or changed; editing an incoterm does not rewrite the files (closed ones,
+    # issued documents and values chosen by hand stay as they are).
+    @api.depends("incoterm_id")
     def _compute_house_doc_freight(self):
         for file in self:
             file.house_doc_freight = file.incoterm_id.boss_freight_payment or file.house_doc_freight

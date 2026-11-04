@@ -15,8 +15,8 @@
                     <list editable="bottom">
                         <field name="direction"/>
                         <field name="load_type"/>
-                        <field name="start_event"/>
-                        <field name="end_event"/>
+                        <field name="start_event" required="end_event"/>
+                        <field name="end_event" required="start_event"/>
                     </list>
                 </field>
             </xpath>

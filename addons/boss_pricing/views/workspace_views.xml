@@ -48,8 +48,7 @@
                 <field name="tariff_id" string="Port / airport" filter_domain="['|', '|', '|', ('tariff_id.port_ids', 'ilike', self), ('line_port_ids', 'ilike', self), ('tariff_id.foreign_port_ids', 'ilike', self), ('line_foreign_port_ids', 'ilike', self)]"/>
                 <filter string="Valid" name="ws_current"
                         domain="[('tariff_state', '=', 'approved'), ('tariff_active', '=', True), ('valid_from', '&lt;=', context_today().strftime('%Y-%m-%d')), '|', ('valid_to', '=', False), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
-                <filter string="Expiring (30 days)" name="ws_expiring"
-                        domain="[('tariff_state', '=', 'approved'), ('valid_to', '&gt;=', context_today().strftime('%Y-%m-%d')), ('valid_to', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Expires soon" name="ws_expiring" domain="[('boss_expiring', '=', True)]"/>
                 <filter string="Expired" name="ws_expired"
                         domain="[('valid_to', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
                 <!-- same group: the status filters add up (valid OR draft OR waiting...) -->

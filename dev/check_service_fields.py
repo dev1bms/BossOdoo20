@@ -67,8 +67,12 @@ check("9 ... changed on the service (discharge → empty return), no code", ("di
       need._boss_period_events())
 check("10 the house document reads the incoterm: CFR → prepaid", "prepaid", file.house_doc_freight)
 inco("CFR").boss_freight_payment = "collect"
+env.flush_all()
 file.invalidate_recordset(["house_doc_freight"])
-check("11 ... a change on the incoterm changes the proposal", "collect", file.house_doc_freight)
+other = env["boss.expediente"].create({"partner_id": customer.id, "business": "boss", "direction": "import",
+                                       "transport_mode": "sea", "load_type": "fcl", "incoterm_id": inco("CFR").id})
+check("11 a change on the incoterm is proposed to the files that take it afterwards, never rewrites a file",
+      ("prepaid", "collect"), (file.house_doc_freight, other.house_doc_freight))
 
 env.cr.rollback()
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")

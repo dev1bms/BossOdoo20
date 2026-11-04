@@ -1,4 +1,5 @@
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class ResCompany(models.Model):
@@ -22,3 +23,13 @@ class ResCompany(models.Model):
     boss_spot_rate_validity_days = fields.Integer(
         "Validity of a freight rate entered from a quotation (days)", default=7,
         help="A weekly ocean or air freight rate typed from a quotation is valid this many days from its start.")
+
+    @api.constrains("boss_tariff_expiring_days", "boss_spot_rate_validity_days")
+    def _check_boss_tariff_values(self):
+        """Settings values that make sense (a zero or negative number would be replaced or printed as such)."""
+        for company in self:
+            for field, minimum in (("boss_tariff_expiring_days", 0), ("boss_spot_rate_validity_days", 1)):
+                if company[field] < minimum:
+                    raise ValidationError(self.env._("%(setting)s: enter a value of at least %(minimum)s.",
+                                                     setting=self._fields[field].get_description(self.env)["string"],
+                                                     minimum=minimum))

@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 from .product_pricelist_item import BOSS_LINE_COST
 
@@ -32,6 +33,18 @@ class ResCompany(models.Model):
         self.ensure_one()
         return {"air": self.boss_volumetric_air or 167, "road": self.boss_volumetric_road or 333,
                 "sea": self.boss_volumetric_sea or 1000}
+
+    @api.constrains("boss_margin_default_rate", "boss_margin_tolerance", "boss_volumetric_air", "boss_volumetric_road",
+                    "boss_volumetric_sea")
+    def _check_boss_pricing_values(self):
+        """Settings values that make sense (a zero or negative number would be replaced or printed as such)."""
+        for company in self:
+            for field, minimum in (("boss_margin_default_rate", 0), ("boss_margin_tolerance", 0),
+                                   ("boss_volumetric_air", 1), ("boss_volumetric_road", 1), ("boss_volumetric_sea", 1)):
+                if company[field] < minimum:
+                    raise ValidationError(self.env._("%(setting)s: enter a value of at least %(minimum)s.",
+                                                     setting=self._fields[field].get_description(self.env)["string"],
+                                                     minimum=minimum))
 
 
 class ResConfigSettings(models.TransientModel):

@@ -4,6 +4,7 @@ change the behaviour when changed in Settings; the three BOSS tabs exist. Fictit
 from datetime import date, timedelta
 
 from odoo import Command
+from odoo.exceptions import ValidationError
 from odoo.tests import Form
 
 assert env.cr.dbname == "boss20", env.cr.dbname  # noqa: F821
@@ -36,8 +37,14 @@ order = env["sale.order"].create({"partner_id": customer.id, "boss_direction": "
                                   "boss_load_type": "air", "boss_gross_kg": 100.0, "boss_volume_m3": 1.0})
 check("2 air chargeable weight with the default factor 167", 167.0, order.boss_chargeable_kg)
 company.boss_volumetric_air = 200
+env.flush_all()
 order.invalidate_recordset(["boss_chargeable_kg", "boss_volume_weight_kg"])
-check("3 ... follows the setting (200)", 200.0, order.boss_chargeable_kg)
+later = env["sale.order"].create({"partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "air",
+                                  "boss_load_type": "air", "boss_gross_kg": 100.0, "boss_volume_m3": 1.0})
+check("3 a new factor (200) applies to the quotations measured afterwards, not to the existing ones",
+      (167.0, 200.0), (order.boss_chargeable_kg, later.boss_chargeable_kg))
+order.boss_volume_m3 = 1.1
+check("3 ... and to an existing quotation when its measures change", 220.0, order.boss_chargeable_kg)
 company.boss_volumetric_air = 167
 
 # 4. margin default and tolerance
@@ -101,6 +108,28 @@ invoice = env["account.move"].create({
                                          "boss_expediente_id": file.id})]})
 check("13 operation date switched off: the invoice has none", False, bool(invoice.delivery_date))
 company.boss_invoice_operation_date = True
+
+# 14-15. values that make sense; the filters follow the days of Settings
+def refused(fn):
+    try:
+        with env.cr.savepoint():
+            fn()
+            env.flush_all()
+        return False
+    except ValidationError:
+        return True
+
+
+check("14 a zero or negative value is refused (volume factor 0, validity -1, originals 0)", (True, True, True),
+      (refused(lambda: company.write({"boss_volumetric_air": 0})),
+       refused(lambda: company.write({"boss_spot_rate_validity_days": -1})),
+       refused(lambda: company.write({"boss_hbl_originals": 0}))))
+due = lambda: bool(env["boss.expediente"].search([("id", "=", file.id), ("boss_due_to_close", "=", True)]))  # noqa: E731
+company.boss_close_days_after_delivery = 3
+due_3 = due()
+company.boss_close_days_after_delivery = 7
+check("15 the filter «Delivered, due to close» follows the days of Settings (5 days ago: due with 3, not with 7)",
+      (True, False), (due_3, due()))
 
 env.cr.rollback()
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")

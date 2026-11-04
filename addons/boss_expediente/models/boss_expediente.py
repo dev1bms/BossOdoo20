@@ -1,11 +1,14 @@
 from collections import defaultdict
-from datetime import datetime, time
+from contextlib import contextmanager
+from contextvars import ContextVar
+from datetime import datetime, time, timedelta
 
 from markupsafe import Markup
 from psycopg2 import errors as pg_errors
 
 from odoo import Command, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.fields import Domain
 from odoo.tools import float_compare, float_round
 from odoo.tools.misc import formatLang
 
@@ -67,6 +70,24 @@ FROZEN_FIELDS = (
     "customs_docs_received_date", "customs_docs_sent_date", "hbl_release", "master_id",
 )
 FROZEN_STATES = ("closed", "cancel")
+# The status and the financial close of a file change only through its actions (In transit, Delivered, Close
+# operations…), never by a direct write (RPC, import), so the conditions of Settings › BOSS · Files cannot be
+# skipped.
+# Server code running as superuser (migrations, checks) is not concerned.
+ACTION_FIELDS = ("state", "delivered_date", "financial_closed", "financial_closed_date", "financial_closed_by")
+_ACTION_WRITE = ContextVar("boss_file_action_write", default=False)
+
+
+@contextmanager
+def file_action():
+    """Lets the file's own actions write its status: a server-side flag, which a client cannot send."""
+    token = _ACTION_WRITE.set(True)
+    try:
+        yield
+    finally:
+        _ACTION_WRITE.reset(token)
+
+
 # Charges of the customs value (A37) in the order they are listed to the broker; which services count is said on
 # each service («Counts for the customs value as»).
 CUSTOMS_VALUE_CHARGES = ("freight", "THC", "T3", "insurance")
@@ -240,7 +261,8 @@ class BossExpediente(models.Model):
     volume_m3 = fields.Float("Volume (m³)", digits=(12, 3), tracking=True)
     awb_kg = fields.Float("Chargeable weight (AWB, kg)", digits=(12, 2))
     volume_weight_kg = fields.Float("Volume weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg", store=True,
-                                    help="Volume × factor of the mode: air 167, road 333, sea 1000 kg per m³.")
+                                    help="Volume × factor of the mode in Settings › BOSS · Pricing when the measures were "
+                                         "entered.")
     chargeable_kg = fields.Float("Chargeable weight (kg)", digits=(12, 2), compute="_compute_chargeable_kg",
                                  store=True, help="The higher of the gross weight and the volume weight (both needed).")
     pallets = fields.Integer()
@@ -407,6 +429,9 @@ class BossExpediente(models.Model):
         "Delivered on", readonly=True, copy=False, tracking=True,
         help="Day the file was marked delivered. Cristina: every delivered file closes operations within a week («Nuevo "
              "Odoo» › OPS- exptes A69).")
+    boss_due_to_close = fields.Boolean(
+        "Due to close", compute="_compute_boss_due_to_close", search="_search_boss_due_to_close",
+        help="Delivered longer ago than the days of Settings › BOSS · Files › Days to close after the delivery.")
     # Consolidation (roadmap item 8, ADR-013): a master file (the MBL / MAWB and the shared purchases) with house files
     # (one per HBL / HAWB: its own customer, cargo, customs, delivery, sale and invoices). A file with neither is a
     # single shipment, as every file was before.
@@ -454,6 +479,8 @@ class BossExpediente(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if vals.get("state", "open") != "open" or any(vals.get(f) for f in ACTION_FIELDS[1:]):
+                self._boss_check_action_fields(vals)
             if vals.get("name", "/") == "/":
                 vals["name"] = self.env["ir.sequence"].next_by_code("boss.expediente") or "/"
         files = super().create(vals_list)
@@ -641,8 +668,9 @@ class BossExpediente(models.Model):
             spanish = side and address.state_id.country_id.code == "ES"
             file.inland_state_id = address.state_id if spanish else file.inland_state_id
 
-    @api.depends("transport_mode", "gross_kg", "volume_m3", "company_id.boss_volumetric_air",
-                 "company_id.boss_volumetric_road", "company_id.boss_volumetric_sea")
+    # The factors of Settings apply when the measures or the mode are entered or changed, never retroactively: a new
+    # factor does not rewrite the files already recorded (closed ones included).
+    @api.depends("transport_mode", "gross_kg", "volume_m3")
     def _compute_chargeable_kg(self):
         for file in self:
             file.volume_weight_kg, file.chargeable_kg = chargeable_kg(
@@ -726,6 +754,7 @@ class BossExpediente(models.Model):
         return self[FILE_EVENT_FIELDS[event]] or None
 
     def write(self, vals):
+        self._boss_check_action_fields(vals)
         self._boss_check_frozen(vals)
         res = super().write(vals)
         if vals.get("ata") and "state" not in vals:
@@ -1075,9 +1104,41 @@ class BossExpediente(models.Model):
         """Fields that cannot change once operations are closed (extended by the documents module)."""
         return FROZEN_FIELDS
 
+    @api.depends("state", "delivered_date")
+    def _compute_boss_due_to_close(self):
+        today = fields.Date.context_today(self)
+        for file in self:
+            file.boss_due_to_close = bool(file.state == "delivered" and file.delivered_date and (
+                today - file.delivered_date).days > file.company_id.boss_close_days_after_delivery)
+
+    def _search_boss_due_to_close(self, operator, value):
+        """The «Delivered, due to close» filter with the days of Settings (not a fixed week in the view)."""
+        if operator != "in":
+            return NotImplemented
+        limit = fields.Date.context_today(self) - timedelta(days=self.env.company.boss_close_days_after_delivery)
+        due = Domain([("state", "=", "delivered"), ("delivered_date", "<", limit)])
+        if True in value and False in value:
+            return Domain.TRUE
+        return due if True in value else ~due
+
+    def _boss_check_action_fields(self, vals):
+        if any(f in vals for f in ACTION_FIELDS) and not (self.env.su or _ACTION_WRITE.get()):
+            raise UserError(self.env._(
+                "The status and the financial close of a file change only with its buttons (In transit, Delivered, "
+                "Close operations…), which check the conditions of Settings › BOSS · Files."))
+
+    def _boss_check_from(self, states, step):
+        """A step is done only from the statuses where its button is shown (the server checks it too)."""
+        wrong = self.filtered(lambda f: f.state not in states)
+        if wrong:
+            labels = dict(self._fields["state"]._description_selection(self.env))
+            raise UserError(self.env._("%(files)s: «%(step)s» is not possible from the status «%(state)s».",
+                                       files=", ".join(wrong.mapped("name")), step=step,
+                                       state=labels.get(wrong[0].state, wrong[0].state)))
+
     def _boss_check_frozen(self, vals):
         frozen = set(vals) & set(self._boss_frozen_fields())
-        if not frozen or self.env.context.get("boss_unfreeze"):
+        if not frozen or (self.env.su and self.env.context.get("boss_unfreeze")):
             return
         closed = self.filtered(lambda f: f.state in FROZEN_STATES)
         if closed:
@@ -1593,10 +1654,12 @@ class BossExpediente(models.Model):
                                                   missing=", ".join(warnings)))
 
     def action_in_transit(self):
+        self._boss_check_from(("open",), self.env._("In transit"))
         files = self | self.house_ids.filtered(lambda h: h.state == "open")  # the houses leave with their master
         files._boss_check_step("in_transit", self.env._(
             "%(file)s cannot leave yet, it lacks: %(missing)s (required in Settings › BOSS · Files)."))
-        files.write({"state": "in_transit"})
+        with file_action():
+            files.write({"state": "in_transit"})
 
     def action_arrived(self):
         """Arrived (Odoo 17 stage «Llegado», F0-C22): the actual arrival (ATA) is known. Typing the ATA of a file in
@@ -1606,18 +1669,22 @@ class BossExpediente(models.Model):
                 raise UserError(self.env._("%s has no ATA yet: type the actual arrival in «References and dates» and "
                                            "the file is marked arrived.", file.name))
         files = self | self.house_ids.filtered(lambda h: h.state in ("open", "in_transit") and h.ata)
-        files.filtered(lambda f: f.state in ("open", "in_transit")).write({"state": "arrived"})
+        with file_action():
+            files.filtered(lambda f: f.state in ("open", "in_transit")).write({"state": "arrived"})
 
     def action_delivered(self):
+        self._boss_check_from(("open", "in_transit", "arrived"), self.env._("Delivered"))
         self._boss_check_step("delivered", self.env._(
             "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and dates» and "
             "«Customs»."))
-        self.write({"state": "delivered", "delivered_date": fields.Date.context_today(self)})
+        with file_action():
+            self.write({"state": "delivered", "delivered_date": fields.Date.context_today(self)})
         self._boss_sync_ratings()  # the parties to rate before closing are listed in «Ratings»
 
-    def _boss_margin_warnings(self):
+    def _boss_margin_warnings(self, exact_problems=None):
         """Groups and services of the file below the minimum margin, with the rules of Odoo 17 also used on the
-        quotation (boss.margin.policy), on the forecast cost; amounts paid on behalf re-invoiced exactly."""
+        quotation (boss.margin.policy), on the forecast cost; amounts paid on behalf re-invoiced exactly (those
+        problems also go to `exact_problems` when a list is given)."""
         self.ensure_one()
         currency = self.company_id.currency_id
         money = lambda amount: formatLang(self.env, amount, currency_obj=currency)  # noqa: E731
@@ -1627,13 +1694,18 @@ class BossExpediente(models.Model):
         freight = self.house_doc_freight if "house_doc_freight" in self._fields else None
         ctx = Policy._boss_context(self, [(c.size, 1) for c in self.container_ids], self.awb_kg or self.chargeable_kg,
                                    freight_payment=freight)
-        return [problem for *_rest, problem, _exc in Policy._boss_check(by_product, ctx, money) if problem]
+        return [problem for *_rest, problem, _exc in Policy._boss_check(by_product, ctx, money, exact_problems)
+                if problem]
 
     def action_close_operations(self):
         """Operational close as Cristina wrote it and Odoo 17 enforced it (F0-C60; F0-A07, Belal): every service
         invoiced, no margin below the minimum unless a sales manager wrote why. Costs still to be billed do not stop
-        it: the file is closed against its forecast and the late bills are taken without reopening (OPS- exptes A69)."""
+        it: the file is closed against its forecast and the late bills are taken without reopening (OPS- exptes A69).
+        Amounts paid on behalf re-invoiced exactly (art. 78.Tres.3º Ley 37/1992) are always required: the margin
+        condition of Settings does not relax them."""
         _ = self.env._
+        self._boss_check_from(("delivered",), _("Close operations"))
+        notes = []  # (file, warning written in its history once it closes)
         for file in self:
             sudo = file.sudo()
             company = file.company_id
@@ -1643,17 +1715,22 @@ class BossExpediente(models.Model):
                 found.append((_("%s still to invoice: invoice the services first",
                                 formatLang(self.env, sudo.amount_to_invoice, currency_obj=currency)),
                               company.boss_cond_close_invoiced))
-            warnings = file._boss_margin_warnings()
+            exact = []
+            warnings = file._boss_margin_warnings(exact_problems=exact)
             if warnings and not sudo.margin_exception_reason:
-                found.append((_("margin below the minimum (%s): a sales manager writes why in «Closed with a low "
-                                "margin because»", "; ".join(warnings)), company.boss_cond_close_margin))
+                if exact:
+                    found.append((_("amounts paid on behalf must be re-invoiced exactly (%s): correct the sale, or a "
+                                    "sales manager writes why in «Closed with a low margin because»", "; ".join(exact)),
+                                  "block"))
+                low = [w for w in warnings if w not in exact]
+                if low:
+                    found.append((_("margin below the minimum (%s): a sales manager writes why in «Closed with a low "
+                                    "margin because»", "; ".join(low)), company.boss_cond_close_margin))
             problems = [text for text, level in found if level == "block"]
             if problems:
                 raise UserError(_("%(file)s cannot close operations yet: %(problems)s.", file=file.name,
                                   problems="; ".join(problems)))
-            for text, level in found:
-                if level == "warn":
-                    file.message_post(body=_("Operations closed with a warning: %s.", text))
+            notes += [(file, text) for text, level in found if level == "warn"]
         # Ratings (F0-C66, Odoo 17 since 01/03/2025; a setting): the lines to rate are added and kept, and the user is
         # sent to them instead of an error that would undo them.
         to_rate = self.filtered(lambda f: f.company_id.boss_ratings_to_close)
@@ -1665,19 +1742,30 @@ class BossExpediente(models.Model):
                 "message": "; ".join(_("%(file)s: %(parties)s", file=f.name, parties=f.rating_missing) for f in missing)
                 + ". " + _("Give each one a rating from 0 to 10 in the «Ratings» tab, then close operations."),
                 "next": {"type": "ir.actions.client", "tag": "soft_reload"}}}
-        self.write({"state": "closed"})
+        for file, text in notes:  # only when the file really closes
+            file.message_post(body=_("Operations closed with a warning: %s.", text))
+        with file_action():
+            self.write({"state": "closed"})
         return True
 
     def action_reopen(self):
-        self.write({"state": "open"})
+        self._boss_check_from(("closed", "cancel"), self.env._("Reopen"))
+        closed = self.filtered("financial_closed")
+        if closed:
+            raise UserError(self.env._("%s is closed financially: an accounting manager reopens it financially first.",
+                                       ", ".join(closed.mapped("name"))))
+        with file_action():
+            self.write({"state": "open"})
 
     def action_cancel(self):
+        self._boss_check_from(("open", "in_transit", "arrived", "delivered"), self.env._("Cancel file"))
         for file in self:
             if file.purchase_order_ids.filtered(lambda p: p.state == "purchase") or file.invoice_ids.filtered(
                     lambda m: m.state == "posted") or file.bill_ids.filtered(lambda m: m.state == "posted"):
                 raise UserError(self.env._(
                     "%s has confirmed purchases or posted invoices: cancel or credit them first.", file.name))
-        self.write({"state": "cancel"})
+        with file_action():
+            self.write({"state": "cancel"})
 
     def action_close_financial(self):
         """Financial close is separate from the operational close: everything invoiced, every cost billed or
@@ -1696,13 +1784,15 @@ class BossExpediente(models.Model):
             if problems:
                 raise UserError(self.env._("%(file)s cannot be closed financially:\n%(problems)s", file=file.name,
                                            problems="\n".join(problems)))
-        self.write({"financial_closed": True, "financial_closed_date": fields.Date.context_today(self),
-                    "financial_closed_by": self.env.uid})
+        with file_action():
+            self.write({"financial_closed": True, "financial_closed_date": fields.Date.context_today(self),
+                        "financial_closed_by": self.env.uid})
         self.env["boss.margin.report"]._boss_refresh(self)
 
     def action_reopen_financial(self):
         self._boss_check_group("account.group_account_manager")
-        self.write({"financial_closed": False, "financial_closed_date": False, "financial_closed_by": False})
+        with file_action():
+            self.write({"financial_closed": False, "financial_closed_date": False, "financial_closed_by": False})
         self.env["boss.margin.report"]._boss_refresh(self)
 
     def _boss_open_needs(self, needs, name):

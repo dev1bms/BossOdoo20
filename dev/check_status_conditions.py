@@ -1,5 +1,7 @@
 """Check of the settings, phase 3 (boss20, rolled back): each status condition of a file has a level in Settings ›
-BOSS · Files (required, warning only, not checked), today's behaviour by default. Fictitious records only.
+BOSS · Files (required, warning only, not checked), today's behaviour by default; the status and the financial
+close change only through the buttons; the exact re-invoicing of amounts paid on behalf is always required; a change
+of level is kept in the company's history. Fictitious records only.
     dev/uat_run.sh check_status_conditions.py boss20"""
 from datetime import datetime
 
@@ -66,7 +68,7 @@ f4.write({"state": "delivered"})
 company.boss_ratings_to_close = False
 File = type(f4)
 original = File._boss_margin_warnings
-File._boss_margin_warnings = lambda self: ["[PRUEBA] Flete: margen bajo"]  # this transaction only, restored below
+File._boss_margin_warnings = lambda self, exact_problems=None: ["[PRUEBA] Flete: margen bajo"]  # restored below
 try:
     check("7 a low margin without a reason stops the close by default", "refused", outcome(f4.action_close_operations))
     company.boss_cond_close_margin = "warn"
@@ -77,8 +79,48 @@ try:
     company.boss_cond_close_margin = "off"
     check("9 set to «not checked»: the file closes, nothing written", ("accepted", False),
           (outcome(f5.action_close_operations), "margen bajo" in (f5.message_ids[:1].body or "")))
+
+    def paid_on_behalf(self, exact_problems=None):
+        problem = "[PRUEBA] IVA: suplido refacturado distinto"
+        if exact_problems is not None:
+            exact_problems.append(problem)
+        return [problem]
+    File._boss_margin_warnings = paid_on_behalf
+    f6 = new_file()
+    f6.write({"state": "delivered"})
+    check("10 «not checked» on the margin never relaxes the exact re-invoicing of amounts paid on behalf", "refused",
+          outcome(f6.action_close_operations))
+    File._boss_margin_warnings = lambda self, exact_problems=None: ["[PRUEBA] Flete: margen bajo"]
+    company.boss_cond_close_margin = "warn"
+    company.boss_ratings_to_close = True
+    f7 = new_file()
+    f7.write({"state": "delivered"})
+    before = len(f7.message_ids)
+    f7.action_close_operations()
+    check("11 the warning is written only when the file closes (here the ratings stop it)", ("delivered", 0),
+          (f7.state, len(f7.message_ids) - before))
 finally:
     File._boss_margin_warnings = original
+company.boss_ratings_to_close = False
+company.boss_cond_close_margin = "block"
+
+# Status and financial close only through the buttons (RPC cannot skip the conditions); a user, not the superuser.
+user = env["res.users"].browse(181)
+f8 = new_file()
+check("12 a direct write of the status is refused; the button checks the conditions", ("refused", "refused", "open"),
+      (outcome(lambda: f8.with_user(user).write({"state": "delivered"})),
+       outcome(lambda: f8.with_user(user).write({"financial_closed": True})), f8.state))
+f8.write({"state": "closed", "financial_closed": True})
+check("13 a financially closed file is not reopened by «Reopen»; «Close operations» needs a delivered file",
+      ("refused", "refused"), (outcome(f8.with_user(user).action_reopen),
+                               outcome(new_file().with_user(user).action_close_operations)))
+tracked = company.with_context(tracking_disable=False)
+before = len(company.message_ids)
+tracked.boss_cond_close_invoiced = "warn"
+env.flush_all()
+env.cr.precommit.run()
+company.invalidate_recordset(["message_ids"])
+check("14 a change of level is kept in the company's history", True, len(company.message_ids) > before)
 
 env.cr.rollback()
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")

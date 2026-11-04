@@ -406,8 +406,9 @@ class SaleOrderLine(models.Model):
                     and line.boss_cost_status == "ok"):
                 text = self.env._(
                     "No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) "
-                    "and the volume weight (%(volume)s m³ × 167 = %(volume_kg)s kg).", kg=order.boss_chargeable_kg,
-                    gross=order.boss_gross_kg, volume=order.boss_volume_m3,
+                    "and the volume weight (%(volume)s m³ × %(factor)s = %(volume_kg)s kg).",
+                    kg=order.boss_chargeable_kg, gross=order.boss_gross_kg, volume=order.boss_volume_m3,
+                    factor=round(order.boss_volume_weight_kg / order.boss_volume_m3) if order.boss_volume_m3 else "-",
                     volume_kg=order.boss_volume_weight_kg) + "\n" + text
             line.boss_cost_explanation = text
 

@@ -1,4 +1,5 @@
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES
 from odoo.addons.boss_pricing.models.boss_tariff_line import PERIOD_EVENTS
@@ -36,6 +37,24 @@ class BossServicePeriod(models.Model):
     _one_per_case = models.Constraint("UNIQUE(product_tmpl_id, direction, load_type)",
                                       "One default period per service, direction and load type.")
 
+    @api.constrains("start_event", "end_event")
+    def _check_events(self):
+        """Both events or none («no period»): a period with a start and no end cannot be computed."""
+        for line in self:
+            if bool(line.start_event) != bool(line.end_event):
+                raise ValidationError(self.env._(
+                    "%(service)s, %(direction)s: give the period both its start and its end, or leave both empty for "
+                    "«no period».", service=line.product_tmpl_id.display_name,
+                    direction=dict(line._fields["direction"]._description_selection(self.env)).get(line.direction)))
+
+    @api.constrains("product_tmpl_id", "direction", "load_type")
+    def _check_one_any_load_type(self):
+        """The database cannot refuse two «any load type» lines of a direction (empty values are all different)."""
+        for line in self.filtered(lambda p: not p.load_type):
+            if line.product_tmpl_id.boss_period_ids.filtered(
+                    lambda p: p != line and p.direction == line.direction and not p.load_type):
+                raise ValidationError(self.env._("One default period per service, direction and load type."))
+
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -49,7 +68,9 @@ class ProductTemplate(models.Model):
         self.ensure_one()
         lines = self.boss_period_ids.filtered(lambda p: p.direction == direction)
         line = lines.filtered(lambda p: p.load_type == load_type)[:1] or lines.filtered(lambda p: not p.load_type)[:1]
-        return (line.start_event or False, line.end_event or False, bool(line))
+        if not (line.start_event and line.end_event):  # half a period (older data) is no period
+            return (False, False, bool(line))
+        return (line.start_event, line.end_event, True)
 
 
 def seed_service_periods(env):

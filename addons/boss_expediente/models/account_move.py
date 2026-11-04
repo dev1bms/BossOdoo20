@@ -1,7 +1,7 @@
 from markupsafe import Markup
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 BILL_TYPES = ("in_invoice", "in_refund", "in_receipt")
 # How a status condition of a file is checked (settings study of 04/11/2026, phase 3): it stops the step, it only warns
@@ -39,28 +39,32 @@ class ResCompany(models.Model):
     boss_ratings_to_close = fields.Boolean(
         "Ratings required to close operations", default=True,
         help="The customer and every supplier of a file are rated (0-10) before its operations close, as in Odoo 17.")
-    # Status conditions of a file (phase 3 of the settings study): one level each, today's behaviour by default.
-    boss_cond_transit_atd = fields.Selection(CONDITION_LEVELS, "Leaving: actual departure (ATD)", default="warn", required=True)
-    boss_cond_transit_booking = fields.Selection(CONDITION_LEVELS, "Leaving: booking", default="warn", required=True)
-    boss_cond_transit_master = fields.Selection(CONDITION_LEVELS, "Leaving: master B/L or AWB", default="warn", required=True)
+    # Status conditions of a file (phase 3 of the settings study): one level each, today's behaviour by default. Each
+    # change is kept in the company's history (who, when, old and new level).
+    boss_cond_transit_atd = fields.Selection(CONDITION_LEVELS, "Leaving: actual departure (ATD)", default="warn",
+                                             required=True, tracking=True)
+    boss_cond_transit_booking = fields.Selection(CONDITION_LEVELS, "Leaving: booking", default="warn",
+                                                 required=True, tracking=True)
+    boss_cond_transit_master = fields.Selection(CONDITION_LEVELS, "Leaving: master B/L or AWB", default="warn",
+                                                required=True, tracking=True)
     boss_cond_transit_containers = fields.Selection(CONDITION_LEVELS, "Leaving: container numbers", default="warn",
-                                                    required=True)
+                                                    required=True, tracking=True)
     boss_cond_delivered_ata = fields.Selection(CONDITION_LEVELS, "Delivered: ATA of an import", default="block",
-                                               required=True)
+                                               required=True, tracking=True)
     boss_cond_delivered_discharge = fields.Selection(CONDITION_LEVELS, "Delivered: vessel discharge", default="block",
-                                                     required=True)
+                                                     required=True, tracking=True)
     boss_cond_delivered_release = fields.Selection(CONDITION_LEVELS, "Delivered: customs release", default="block",
-                                                   required=True)
+                                                   required=True, tracking=True)
     boss_cond_delivered_pickup = fields.Selection(CONDITION_LEVELS, "Delivered: pickup date and time", default="block",
-                                                  required=True)
+                                                  required=True, tracking=True)
     boss_cond_delivered_delivery = fields.Selection(CONDITION_LEVELS, "Delivered: delivery date and time",
-                                                    default="block", required=True)
+                                                    default="block", required=True, tracking=True)
     boss_cond_delivered_hbl = fields.Selection(CONDITION_LEVELS, "Delivered: house B/L released", default="block",
-                                               required=True)
+                                               required=True, tracking=True)
     boss_cond_close_invoiced = fields.Selection(CONDITION_LEVELS, "Close: every service invoiced", default="block",
-                                                required=True)
+                                                required=True, tracking=True)
     boss_cond_close_margin = fields.Selection(CONDITION_LEVELS, "Close: low margin explained", default="block",
-                                              required=True)
+                                              required=True, tracking=True)
     # Settings study of 04/11/2026 (docs/estudio-ajustes.md): values that change over time leave the code.
     boss_close_days_after_delivery = fields.Integer(
         "Days after the delivery to close operations", default=7,
@@ -77,6 +81,16 @@ class ResCompany(models.Model):
         "Mention on the invoice of amounts paid on behalf", translate=True,
         help="Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's "
              "name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording.")
+
+    @api.constrains("boss_close_days_after_delivery", "boss_free_alert_days")
+    def _check_boss_file_values(self):
+        """Settings values that make sense (a zero or negative number would be replaced or printed as such)."""
+        for company in self:
+            for field, minimum in (("boss_close_days_after_delivery", 0), ("boss_free_alert_days", 0)):
+                if company[field] < minimum:
+                    raise ValidationError(self.env._("%(setting)s: enter a value of at least %(minimum)s.",
+                                                     setting=self._fields[field].get_description(self.env)["string"],
+                                                     minimum=minimum))
 
 
 class ResConfigSettings(models.TransientModel):

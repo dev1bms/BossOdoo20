@@ -130,8 +130,10 @@ class BossMarginPolicy(models.AbstractModel):
     _description = "Minimum margin check"
 
     @api.model
-    def _boss_check(self, by_product, ctx, money):
-        """by_product: {product: (sale, cost)} in one currency; ctx: shipment data; money: formatter."""
+    def _boss_check(self, by_product, ctx, money, exact_problems=None):
+        """by_product: {product: (sale, cost)} in one currency; ctx: shipment data; money: formatter. exact_problems:
+        a list that receives the problems of the amounts paid on behalf not re-invoiced exactly (a VAT rule, kept apart
+        from the margin)."""
         _ = self.env._
         company = ctx.get("company") or self.env.company
         DEFAULT_RATE, TOLERANCE = company.boss_margin_default_rate / 100, company.boss_margin_tolerance
@@ -147,6 +149,8 @@ class BossMarginPolicy(models.AbstractModel):
             if exact and abs(margin) >= 0.01:
                 problem = _("%(group)s: paid on behalf, re-invoiced %(sale)s for %(cost)s paid (must be equal)",
                             group=label, sale=money(sale), cost=money(cost))
+                if exact_problems is not None:
+                    exact_problems.append(problem)
             elif strict_loss and not allow_negative and margin <= -0.01:
                 problem = _("%(group)s: loss of %(loss)s", group=label, loss=money(-margin))
             elif not allow_negative and target != float("-inf") and margin + TOLERANCE < target:
