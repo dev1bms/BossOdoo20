@@ -39,11 +39,6 @@ msgid "/ SEAL"
 msgstr ""
 
 #. module: boss_documents
-#: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
-msgid "3 / THREE"
-msgstr ""
-
-#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_awb_document
 msgid "<span class=\"box-label\">Airport of departure</span>"
 msgstr ""
@@ -363,6 +358,11 @@ msgid "BOSS Documents"
 msgstr "Documentos BOSS"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "BOSS · Documents"
+msgstr "BOSS · Documentos"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Booking"
@@ -398,6 +398,16 @@ msgid "Collect"
 msgstr "Pagadero en destino (collect)"
 
 #. module: boss_documents
+#: model:ir.model,name:boss_documents.model_res_company
+msgid "Company"
+msgstr "Compañía"
+
+#. module: boss_documents
+#: model:ir.model,name:boss_documents.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/shipment_block.py:0
 msgid "Consignee"
@@ -420,6 +430,11 @@ msgid ""
 "Customer and supplier documents of BOSS Continental (invoice, credit note, quotation, order, purchase order): BOSS layout on the standard Odoo document template, one shipment block (file, route, transport, cargo) on every document, charge bases always printed, no shipping-address duplicates (ADR-011)"
 msgstr ""
 "Documentos de cliente y proveedor de BOSS Continental (factura, abono, oferta, pedido, pedido de compra): diseño BOSS sobre la plantilla estándar de Odoo, un bloque del envío (expediente, ruta, transporte, carga) en cada documento, bases de cobro siempre impresas, sin direcciones de envío duplicadas (ADR-011)"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Customer invoice"
+msgstr "Factura al cliente"
 
 #. module: boss_documents
 #. odoo-python
@@ -461,6 +476,8 @@ msgstr "Salida real"
 #: model:ir.model.fields,field_description:boss_documents.field_account_move__display_name
 #: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__display_name
 #: model:ir.model.fields,field_description:boss_documents.field_purchase_order__display_name
+#: model:ir.model.fields,field_description:boss_documents.field_res_company__display_name
+#: model:ir.model.fields,field_description:boss_documents.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:boss_documents.field_sale_order__display_name
 msgid "Display Name"
 msgstr ""
@@ -481,6 +498,12 @@ msgstr "ETD (salida prevista)"
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
 msgid "EXPRESS 0 / ZERO"
 msgstr ""
+
+#. module: boss_documents
+#: model:ir.model.fields,help:boss_documents.field_res_company__boss_doc_issue_place
+#: model:ir.model.fields,help:boss_documents.field_res_config_settings__boss_doc_issue_place
+msgid "Empty: the city of the company."
+msgstr "Vacío: la ciudad de la compañía."
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
@@ -598,9 +621,16 @@ msgid "House document issued on"
 msgstr "Documento house emitido el"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "House documents"
+msgstr "Documentos house"
+
+#. module: boss_documents
 #: model:ir.model.fields,field_description:boss_documents.field_account_move__id
 #: model:ir.model.fields,field_description:boss_documents.field_boss_expediente__id
 #: model:ir.model.fields,field_description:boss_documents.field_purchase_order__id
+#: model:ir.model.fields,field_description:boss_documents.field_res_company__id
+#: model:ir.model.fields,field_description:boss_documents.field_res_config_settings__id
 #: model:ir.model.fields,field_description:boss_documents.field_sale_order__id
 msgid "ID"
 msgstr ""
@@ -677,6 +707,11 @@ msgid "Master air waybill"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Mention of amounts paid on behalf"
+msgstr "Mención de los suplidos"
+
+#. module: boss_documents
 #. odoo-python
 #: code:addons/boss_documents/models/boss_expediente.py:0
 msgid "No cargo manifest for %(file)s yet, it lacks: %(problems)s."
@@ -699,6 +734,13 @@ msgid "Notify / destination agent:"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid ""
+"Number of originals printed on the house B/L; a sea waybill prints «express», zero."
+msgstr ""
+"Número de originales impresos en el BL house; un sea waybill imprime «express», cero."
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_house_bl_document
 msgid "ORIGIN"
 msgstr ""
@@ -712,6 +754,27 @@ msgstr "Solo los expedientes marítimos y aéreos tienen BL o AWB house."
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid "Operation"
 msgstr "Operación"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Operation date on the invoice"
+msgstr "Fecha de la operación en la factura"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Original house B/Ls"
+msgstr "Originales del BL house"
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_res_company__boss_hbl_originals
+#: model:ir.model.fields,field_description:boss_documents.field_res_config_settings__boss_hbl_originals
+msgid "Original house B/Ls issued"
+msgstr "Originales del BL house emitidos"
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Originals"
+msgstr "Originales"
 
 #. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.boss_expediente_view_form_transport_order
@@ -740,6 +803,17 @@ msgid "Pickup"
 msgstr "Recogida"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Place of issue"
+msgstr "Lugar de emisión"
+
+#. module: boss_documents
+#: model:ir.model.fields,field_description:boss_documents.field_res_company__boss_doc_issue_place
+#: model:ir.model.fields,field_description:boss_documents.field_res_config_settings__boss_doc_issue_place
+msgid "Place of issue of the house documents"
+msgstr "Lugar de emisión de los documentos house"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_transport_order
 msgid ""
 "Please confirm the pickup and the delivery with BOSS Continental and send\n"
@@ -754,11 +828,30 @@ msgid "Prepaid"
 msgstr "Pagado en origen (prepaid)"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid ""
+"Printed on the house B/L and air waybill. Empty: the city of the company."
+msgstr "Se imprime en el BL y el AWB house. Vacío: la ciudad de la compañía."
+
+#. module: boss_documents
 #: model:ir.model.fields,help:boss_documents.field_boss_expediente__house_doc_freight
 msgid ""
 "Printed on the house B/L or air waybill and the manifest. Proposed from the incoterm: C and D terms prepaid (the seller pays the main carriage), E and F terms collect (the buyer pays it)."
 msgstr ""
 "Se imprime en el BL o AWB house y en el manifiesto. Propuesto desde el incoterm: términos C y D prepaid (el vendedor paga el transporte principal), términos E y F collect (lo paga el comprador)."
+
+#. module: boss_documents
+#: model:ir.model.fields,help:boss_documents.field_res_company__boss_hbl_originals
+#: model:ir.model.fields,help:boss_documents.field_res_config_settings__boss_hbl_originals
+msgid "Printed on the house B/L; a sea waybill prints «express», zero."
+msgstr "Se imprime en el BL house; un sea waybill imprime «express», cero."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid ""
+"Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording, in the customer's language."
+msgstr ""
+"Se imprime en la factura que refactura aranceles, IVA de importación y otros importes pagados en nombre del cliente (art. 78.Tres.3º Ley 37/1992). Vacío: el texto estándar, en el idioma del cliente."
 
 #. module: boss_documents
 #: model:ir.model,name:boss_documents.model_purchase_order
@@ -829,6 +922,11 @@ msgid "Size / type"
 msgstr "Tamaño / tipo"
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid "Standard wording"
+msgstr "Texto estándar"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.house_document_party
 msgid "Tax ID"
 msgstr ""
@@ -851,6 +949,13 @@ msgid ""
 "The draft is printed from ⋮ › Print › House bill of lading, for the shipper to check."
 msgstr ""
 "El borrador se imprime desde ⋮ › Imprimir › Conocimiento de embarque house (HBL), para que lo revise el expedidor."
+
+#. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.res_config_settings_view_form
+msgid ""
+"The invoice keeps its issue date and prints the operation date of the file apart: arrival of an import, departure otherwise (RD 1619/2012 art. 6). Off: empty unless typed."
+msgstr ""
+"La factura conserva su fecha de emisión e imprime aparte la fecha de la operación del expediente: llegada en importación, salida en el resto (RD 1619/2012 art. 6). Desactivado: vacío salvo que se teclee."
 
 #. module: boss_documents
 #. odoo-python

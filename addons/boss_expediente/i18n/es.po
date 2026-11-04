@@ -84,18 +84,6 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
-#: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "%(group)s margin %(margin)s, minimum %(minimum)s"
-msgstr "%(group)s margen %(margin)s, mínimo %(minimum)s"
-
-#. module: boss_expediente
-#. odoo-python
-#: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "%(group)s re-invoiced %(sale)s for %(cost)s paid"
-msgstr "%(group)s refacturado por %(sale)s con %(cost)s pagados"
-
-#. module: boss_expediente
-#. odoo-python
 #: code:addons/boss_expediente/models/account_move.py:0
 msgid ""
 "%(move)s cannot be paid yet:\n"
@@ -658,6 +646,7 @@ msgstr "Código de aerolínea (prefijo AWB)"
 #. module: boss_expediente
 #: model:ir.actions.act_window,name:boss_expediente.boss_airline_handler_action
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files_handlers
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Airlines and handlers"
 msgstr "Aerolíneas y handlers"
 
@@ -781,6 +770,11 @@ msgstr "Aval de BOSS"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
 msgid "BOSS handles"
 msgstr "BOSS se encarga de"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "BOSS · Files"
+msgstr "BOSS · Expedientes"
 
 #. module: boss_expediente
 #: model:ir.actions.server,name:boss_expediente.cron_container_alerts_ir_actions_server
@@ -982,6 +976,7 @@ msgstr "Peso tasable (AWB, kg)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__allocation_basis__chargeable
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_default_allocation_basis__chargeable
 msgid "Chargeable weight (W/M)"
 msgstr "Peso tasable (W/M)"
 
@@ -1044,6 +1039,11 @@ msgstr "Cerrado"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__margin_exception_reason
 msgid "Closed with a low margin because"
 msgstr "Cerrado con margen bajo porque"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Closing a file"
+msgstr "Cierre del expediente"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_partner_role__code
@@ -1144,6 +1144,11 @@ msgid ""
 "Consolidation (ADR-013): this service is bought once on the master file, not here; this house bears its share of the master's cost instead."
 msgstr ""
 "Consolidación (ADR-013): este servicio se compra una vez en el expediente máster, no aquí; esta casa soporta su parte del coste del máster."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Consolidations: shared costs split by"
+msgstr "Consolidaciones: costes compartidos repartidos por"
 
 #. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_res_partner
@@ -1359,6 +1364,15 @@ msgstr ""
 "Cristina («Nuevo Odoo» › OPS- exptes A39, A73): antes de entregar la mercancía y dar su orden de transporte, el HBL está liberado o es un sea waybill."
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_close_days_after_delivery
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_close_days_after_delivery
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"Cristina: a delivered file closes operations within this many days; afterwards the next step warns."
+msgstr ""
+"Cristina: un expediente entregado cierra operaciones en estos días; después el siguiente paso avisa."
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__direction__cross
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__direction__cross
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
@@ -1530,8 +1544,20 @@ msgstr ""
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__days
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Days"
 msgstr "Días"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_close_days_after_delivery
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_close_days_after_delivery
+msgid "Days after the delivery to close operations"
+msgstr "Días tras la entrega para cerrar operaciones"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Days to close after the delivery"
+msgstr "Días para cerrar tras la entrega"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -1796,6 +1822,7 @@ msgstr "Vaciado (LCL)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__allocation_basis__equal
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_default_allocation_basis__equal
 msgid "Equal parts"
 msgstr "Partes iguales"
 
@@ -2251,6 +2278,7 @@ msgstr "Verde (levante automático)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__allocation_basis__gross
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_default_allocation_basis__gross
 msgid "Gross weight"
 msgstr "Peso bruto"
 
@@ -2685,6 +2713,7 @@ msgstr "Rol logístico de un contacto"
 #: model:ir.model.fields,field_description:boss_expediente.field_res_partner__boss_role_ids
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_role_ids
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files_roles
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Logistic roles"
 msgstr "Roles logísticos"
 
@@ -2716,6 +2745,7 @@ msgstr "Importe manual"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__allocation_basis__manual
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_default_allocation_basis__manual
 msgid "Manual share"
 msgstr "Parte manual"
 
@@ -2796,6 +2826,12 @@ msgstr "Másters (consolidaciones)"
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__activity_type_icon
 msgid "Material Symbols icon e.g. checklist"
 msgstr "Icono de Material Symbols, p. ej. checklist"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_paid_on_behalf_note
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_paid_on_behalf_note
+msgid "Mention on the invoice of amounts paid on behalf"
+msgstr "Mención en la factura de los suplidos"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__message_has_error
@@ -3177,10 +3213,21 @@ msgstr ""
 "Abierto antes de una oferta aceptada (prealerta, documentos recibidos). Vincule la oferta cuando se acepte."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Opening a file"
+msgstr "Apertura del expediente"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_account_bank_statement_line__delivery_date
 #: model:ir.model.fields,field_description:boss_expediente.field_account_move__delivery_date
 msgid "Operation date"
 msgstr "Fecha de la operación"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_invoice_operation_date
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_invoice_operation_date
+msgid "Operation date on the customer invoice"
+msgstr "Fecha de la operación en la factura al cliente"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__operations
@@ -3212,6 +3259,7 @@ msgstr "Operativo de un cliente para un tráfico"
 #. module: boss_expediente
 #: model:ir.actions.act_window,name:boss_expediente.boss_operator_assignment_action
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files_operators
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Operators by customer and traffic"
 msgstr "Operativos por cliente y tráfico"
 
@@ -3555,12 +3603,33 @@ msgid "Priced"
 msgstr "Cotizado"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_paid_on_behalf_note
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_paid_on_behalf_note
+msgid ""
+"Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording."
+msgstr ""
+"Se imprime en la factura que refactura aranceles, IVA de importación y otros importes pagados en nombre del cliente (art. 78.Tres.3º Ley 37/1992). Vacío: el texto estándar."
+
+#. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_product_template
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_allocation__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__product_id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__product_id
 msgid "Product"
 msgstr "Producto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_default_allocation_basis
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_default_allocation_basis
+msgid "Proposed on every new master file (ADR-013)."
+msgstr "Se propone en cada expediente máster nuevo (ADR-013)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"Proposed on every new master file: by chargeable weight (W/M), gross weight, volume, equal parts or a share typed on each house (ADR-013)."
+msgstr ""
+"Se propone en cada expediente máster nuevo: por peso tasable (W/M), peso bruto, volumen, partes iguales o una parte tecleada en cada casa (ADR-013)."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__inland_state_id
@@ -3813,6 +3882,11 @@ msgstr "Referencias y fechas"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__hbl_release__released
 msgid "Released (telex or originals surrendered)"
 msgstr "Liberado (telex u originales entregados)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Reminders (Odoo activities, no e-mail)"
+msgstr "Avisos (actividades de Odoo, sin correo)"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -4154,6 +4228,12 @@ msgid "Shared costs (this master)"
 msgstr "Costes compartidos (este máster)"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_default_allocation_basis
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_default_allocation_basis
+msgid "Shared costs of a consolidation split by"
+msgstr "Costes compartidos de una consolidación repartidos por"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__allocation_basis
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__master_allocation_basis
 msgid "Shared costs split by"
@@ -4421,11 +4501,26 @@ msgstr ""
 "El mayor entre el peso bruto y el peso volumétrico; los proveedores cobran sobre él y BOSS también. Necesita las dos medidas. Aéreo: se usa como peso del AWB hasta conocer el AWB."
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_invoice_operation_date
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_invoice_operation_date
+msgid ""
+"The invoice keeps its issue date and prints the operation date of the file apart (arrival of an import, departure otherwise; RD 1619/2012 art. 6). Off: the field stays empty unless typed."
+msgstr ""
+"La factura conserva su fecha de emisión e imprime aparte la fecha de la operación del expediente (llegada en importación, salida en el resto; RD 1619/2012 art. 6). Desactivado: el campo queda vacío salvo que se teclee."
+
+#. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_crm_lead__boss_planned_date
 msgid ""
 "The key date of the shipment: ETA for an import, ETD for an export, a cross-trade or a national shipment. It chooses the version of each supplier tariff."
 msgstr ""
 "La fecha clave del envío: ETA en una importación, ETD en una exportación, un cross-trade o un envío nacional. Elige la versión de cada tarifa de proveedor."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"The operator proposed by customer and traffic, and the handler of each airline at each airport (both from Odoo 17)."
+msgstr ""
+"El operativo propuesto por cliente y tráfico, y el handler de cada aerolínea en cada aeropuerto (ambos de Odoo 17)."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente_cost__period_manual
@@ -4703,6 +4798,7 @@ msgstr "Descarga del buque"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__allocation_basis__volume
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_default_allocation_basis__volume
 msgid "Volume"
 msgstr "Volumen"
 
@@ -4839,9 +4935,19 @@ msgstr ""
 "Quién encarga el envío y recibe la factura: un cliente de BOSS, o un agente (un transitario en el extranjero) para su propio cliente."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Who works on a file"
+msgstr "Quién trabaja en un expediente"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Working days"
+msgstr "Días laborables"
 
 #. module: boss_expediente
 #. odoo-python
@@ -4911,14 +5017,15 @@ msgstr "defecto del servicio"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "delivered %s days ago"
-msgstr "entregado hace %s días"
+msgid ""
+"delivered %(days)s days ago: Cristina asks to close within %(limit)s days"
+msgstr "entregado hace %(days)s días: Cristina pide cerrar en %(limit)s días"
 
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "delivered %s days ago: Cristina asks to close within a week"
-msgstr "entregado hace %s días: Cristina pide cerrar en una semana"
+msgid "delivered %s days ago"
+msgstr "entregado hace %s días"
 
 #. module: boss_expediente
 #. odoo-python

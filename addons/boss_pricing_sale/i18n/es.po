@@ -12,6 +12,7 @@ msgstr "% del coste"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__percent
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__percent
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "% of the cost"
 msgstr "% del coste"
 
@@ -203,6 +204,20 @@ msgstr ""
 "Un servicio vendido tras la aceptación: una línea nueva con su precio y el motivo. Las líneas aceptadas y su foto no cambian; una foto nueva registra el añadido."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_config_settings__boss_tariff_expiring_days
+msgid ""
+"A supplier price whose validity ends within this many days shows «Expiring» (lists, workspace)."
+msgstr ""
+"Un precio de proveedor cuya validez termina dentro de estos días se muestra «Caduca pronto» en las listas y el espacio de trabajo."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"A supplier price whose validity ends within this many days shows «Expiring» in the lists and the workspace."
+msgstr ""
+"Un precio de proveedor cuya validez termina dentro de estos días se muestra «Caduca pronto» en las listas y el espacio de trabajo."
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid ""
 "A tariff needs the supplier's document attached to be sent for approval (every price traceable to it). Ángel asked Cristina whether it must be compulsory: switch it off to approve without the file."
@@ -229,6 +244,13 @@ msgid ""
 "A weekly ocean or air freight rate typed from a quotation is approved at once by the person who enters it: an urgent quotation never waits for an approver in another time zone (Ángel, 27/10/2026). Off: it waits for a tariff approver."
 msgstr ""
 "Una tarifa semanal de flete marítimo o aéreo tecleada desde una oferta queda aprobada al momento por quien la introduce: una oferta urgente nunca espera a un aprobador en otro huso horario (Ángel, 27/10/2026). Desactivado: espera a un aprobador de tarifas."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_config_settings__boss_spot_rate_validity_days
+msgid ""
+"A weekly ocean or air freight rate typed from a quotation is valid this many days from its start."
+msgstr ""
+"Una tarifa semanal de flete marítimo o aéreo tecleada desde una oferta es válida estos días desde su inicio."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -392,6 +414,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__crm_lead__boss_transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_template__boss_transport_mode__air
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Air"
 msgstr "Aéreo"
 
@@ -546,6 +569,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_quantity_source
 msgid "BOSS quantity"
 msgstr "Cantidad BOSS"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "BOSS · Pricing"
+msgstr "BOSS · Tarifas y precios"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_execution
@@ -972,6 +1000,7 @@ msgstr "Fecha"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__storage_days
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Days"
 msgstr "Días"
@@ -982,11 +1011,23 @@ msgid "Days (line)"
 msgstr "Días (línea)"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"Days a weekly freight rate typed from a quotation is valid from its start (7 = one week)."
+msgstr ""
+"Días que una tarifa semanal de flete tecleada desde una oferta es válida desde su inicio (7 = una semana)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_storage_days
 msgid ""
 "Days assumed for storage, demurrage and port occupancy in the quotation; normally 0 (BOSS does not plan storage unless the customer says the cargo will wait). The actual cost is known when the period ends."
 msgstr ""
 "Días supuestos de almacenaje, demora y ocupación en la oferta; normalmente 0 (BOSS no prevé almacenaje salvo que el cliente diga que la carga esperará). El coste real se conoce cuando termina el periodo."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_tariff_expiring_days
+msgid "Days before a tariff expires to warn"
+msgstr "Días de aviso antes de que caduque una tarifa"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_days_source
@@ -1672,6 +1713,12 @@ msgid "Margin on sale (%)"
 msgstr "Margen sobre la venta (%)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_margin_tolerance
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_margin_tolerance
+msgid "Margin tolerance"
+msgstr "Tolerancia del margen"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_markup
 msgid "Markup on cost"
 msgstr "Recargo sobre coste"
@@ -1750,6 +1797,7 @@ msgstr "Excepción de margen mínimo"
 #. module: boss_pricing_sale
 #: model:ir.actions.act_window,name:boss_pricing_sale.boss_margin_exception_action
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_margin_exceptions
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Minimum margin exceptions"
 msgstr "Excepciones de margen mínimo"
 
@@ -1759,6 +1807,17 @@ msgid "Minimum margin rule"
 msgstr "Regla de margen mínimo"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Minimum margin without a rule"
+msgstr "Margen mínimo sin regla"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_margin_default_rate
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_margin_default_rate
+msgid "Minimum margin without a rule (% of the cost)"
+msgstr "Margen mínimo sin regla (% del coste)"
+
+#. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_boss_margin_family
 msgid "Minimum margin: service group or policy"
 msgstr "Margen mínimo: grupo de servicios o política"
@@ -1766,6 +1825,7 @@ msgstr "Margen mínimo: grupo de servicios o política"
 #. module: boss_pricing_sale
 #: model:ir.actions.act_window,name:boss_pricing_sale.boss_margin_family_action
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_margin_families
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Minimum margins"
 msgstr "Márgenes mínimos"
 
@@ -1879,6 +1939,29 @@ msgstr "No se añade dos veces"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_status__not_ready
 msgid "Not priced automatically"
 msgstr "No se cotiza automáticamente"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_company__boss_margin_default_rate
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_config_settings__boss_margin_default_rate
+msgid ""
+"Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost."
+msgstr ""
+"Regla base de Odoo 17: un grupo o servicio sin regla de margen mínimo debe dejar este % de su coste."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance below the minimum is accepted. A warning, never a block."
+msgstr ""
+"Regla base de Odoo 17: un grupo o servicio sin regla de margen mínimo debe dejar este % de su coste; se acepta un margen hasta la tolerancia por debajo del mínimo. Es un aviso, nunca un bloqueo."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_company__boss_margin_tolerance
+#: model:ir.model.fields,help:boss_pricing_sale.field_res_config_settings__boss_margin_tolerance
+msgid ""
+"Odoo 17: a margin up to this amount below the minimum is accepted without a warning."
+msgstr ""
+"Odoo 17: se acepta sin aviso un margen hasta este importe por debajo del mínimo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__res_company__boss_fx_policy__rate_quotation
@@ -2188,8 +2271,14 @@ msgstr "Puertos / aeropuertos extranjeros"
 
 #. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ports
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Ports and airports"
 msgstr "Puertos y aeropuertos"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Ports, containers and services"
+msgstr "Puertos, contenedores y servicios"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_exception__freight_payment__prepaid
@@ -2252,9 +2341,19 @@ msgid "Pricelist Rule"
 msgstr "Regla de lista de precios"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Pricelists"
+msgstr "Listas de precios"
+
+#. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_prices
 msgid "Prices"
 msgstr "Precios"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Prices and rules"
+msgstr "Precios y reglas"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_pricing_frozen
@@ -2348,6 +2447,11 @@ msgid "Quotation Template Line"
 msgstr "Línea de plantilla de presupuesto"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Quotation templates"
+msgstr "Plantillas de oferta"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_rate_quotation
 msgid "Rate quotation (no quantities)"
 msgstr "Oferta de tarifas (sin cantidades)"
@@ -2400,6 +2504,11 @@ msgid "Recompute cost from tariffs"
 msgstr "Recalcular coste con tarifas"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Reference tables of the shipment data."
+msgstr "Tablas de referencia de los datos del envío."
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid ""
@@ -2427,6 +2536,7 @@ msgstr "Revisar el precio de proveedor"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__crm_lead__boss_transport_mode__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_template__boss_transport_mode__road
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Road"
 msgstr "Terrestre"
 
@@ -2545,6 +2655,7 @@ msgstr "Guardar precio"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__crm_lead__boss_transport_mode__sea
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_transport_mode__sea
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_template__boss_transport_mode__sea
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Sea"
 msgstr "Marítimo"
 
@@ -2552,6 +2663,11 @@ msgstr "Marítimo"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Selling price (unit)"
 msgstr "Precio de venta (unitario)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Selling price and margin"
+msgstr "Precio de venta y margen"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__submit
@@ -2603,6 +2719,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__product_ids
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__service_kind
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_services
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Services"
 msgstr "Servicios"
 
@@ -2636,6 +2753,11 @@ msgstr ""
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_snapshot__data
 msgid "Shipment inputs, policy and every line with its price source."
 msgstr "Datos del envío, política y cada línea con el origen de su precio."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Shipment measures"
+msgstr "Medidas del envío"
 
 #. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_boss_shipment_route
@@ -2773,6 +2895,7 @@ msgstr "Precio de proveedor usado"
 
 #. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_tariff_lines
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Supplier prices"
 msgstr "Precios de proveedor"
 
@@ -2797,6 +2920,7 @@ msgstr ""
 
 #. module: boss_pricing_sale
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_tariffs
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Supplier tariffs"
 msgstr "Tarifas de proveedor"
 
@@ -2851,6 +2975,11 @@ msgid "Tariffs and documents"
 msgstr "Tarifas y documentos"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Tariffs and prices"
+msgstr "Tarifas y precios"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid "Tariffs involved"
@@ -2898,6 +3027,13 @@ msgid ""
 "The accepted prices stay in the pricing history; this change is recorded with its reason."
 msgstr ""
 "Los precios aceptados quedan en el historial; este cambio se registra con su motivo."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"The chargeable weight is the higher of the gross weight and volume × factor of the mode (Ángel, 27/10/2026). A supplier document stating its own factor keeps it."
+msgstr ""
+"El peso tasable es el mayor entre el peso bruto y el volumen × factor del modo (Ángel, 27/10/2026). Un documento de proveedor que indique su propio factor lo conserva."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_rate_quotation
@@ -3008,6 +3144,11 @@ msgid "The supplier price cannot be saved, missing: %s."
 msgstr "No se puede guardar el precio de proveedor; falta: %s."
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "The supplier tariffs with their documents, versions and approval."
+msgstr "Las tarifas de proveedor con sus documentos, versiones y aprobación."
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid ""
 "The template is the case (air import FOB, sea import FCL...): it fills the direction, mode, load type, incoterm, whose client, what BOSS handles and the services."
@@ -3049,6 +3190,11 @@ msgid ""
 "Time-based services: the days of the Shipment tab, an estimate for this line (e.g. port occupancy shorter than demurrage; 0 is a deliberate zero) or the actual period once it has ended."
 msgstr ""
 "Servicios por tiempo: los días de la pestaña Envío, una estimación de esta línea (p. ej. ocupación de puerto más corta que las demoras; 0 es un cero intencionado) o el periodo real cuando ha terminado."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Tolerance"
+msgstr "Tolerancia"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_destination_place
@@ -3149,6 +3295,7 @@ msgstr "Usuario"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_vat_status
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.sale_order_line_view_form_boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "VAT"
@@ -3206,6 +3353,16 @@ msgid "Valid To"
 msgstr "Válida hasta"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Validity of a freight rate entered from a quotation"
+msgstr "Validez de una tarifa de flete introducida desde una oferta"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_spot_rate_validity_days
+msgid "Validity of a freight rate entered from a quotation (days)"
+msgstr "Validez de una tarifa de flete introducida desde una oferta (días)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__volume_m3
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_volume_m3
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_volume_m3
@@ -3219,12 +3376,40 @@ msgid "Volume weight (kg)"
 msgstr "Peso volumen (kg)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_volumetric_air
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_volumetric_air
+msgid "Volume weight factor, air (kg per m³)"
+msgstr "Factor de peso volumétrico, aéreo (kg por m³)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_volumetric_road
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_volumetric_road
+msgid "Volume weight factor, road (kg per m³)"
+msgstr "Factor de peso volumétrico, carretera (kg por m³)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_company__boss_volumetric_sea
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_res_config_settings__boss_volumetric_sea
+msgid "Volume weight factor, sea (kg per m³)"
+msgstr "Factor de peso volumétrico, marítimo (kg por m³)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Volume weight factors (kg per m³)"
+msgstr "Factores de peso volumétrico (kg por m³)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_volume_weight_kg
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_volume_weight_kg
 msgid ""
 "Volume × factor of the transport mode: air 167, road 333, sea 1000 kg per m³ (Ángel, 27/10/2026)."
 msgstr ""
 "Volumen × factor del modo de transporte: aéreo 167, terrestre 333, marítimo 1000 kg por m³ (Ángel, 27/10/2026)."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid "Warn before a tariff expires"
+msgstr "Avisar antes de que caduque una tarifa"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
@@ -3237,6 +3422,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "When the AWB is known"
 msgstr "Cuando se conozca la AWB"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
+msgid ""
+"Where the agreed prices, the templates and the minimum margin rules are kept."
+msgstr ""
+"Dónde están los precios pactados, las plantillas y las reglas de margen mínimo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_pickup_address_id

@@ -205,6 +205,13 @@ msgid "A percentage needs its base."
 msgstr "Un porcentaje necesita su base."
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_company__boss_tariff_expiring_days
+msgid ""
+"A supplier price whose validity ends within this many days shows «Expiring» (lists, workspace)."
+msgstr ""
+"Un precio de proveedor cuya validez termina dentro de estos días se muestra «Caduca pronto» en las listas y el espacio de trabajo."
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 msgid ""
@@ -219,6 +226,20 @@ msgid ""
 "A tariff that was sent for approval cannot change. Set it back to draft, or create a new version if it is approved."
 msgstr ""
 "Una tarifa enviada a aprobación no puede cambiar. Vuelva a borrador o, si está aprobada, cree una nueva versión."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_company__boss_spot_rate_auto_approve
+msgid ""
+"A weekly freight rate typed from the quotation (ocean or air freight, valid for days) is approved at once by the person who enters it, so an urgent quotation never waits for an approver in another time zone (Ángel, 27/10/2026). Off: the rate waits for a tariff approver like any other supplier price."
+msgstr ""
+"Una tarifa semanal de flete tecleada desde la oferta (flete marítimo o aéreo, válida unos días) se aprueba al momento por quien la introduce, para que una oferta urgente nunca espere a un aprobador en otra zona horaria (Ángel, 27/10/2026). Desactivado: la tarifa espera a un aprobador como cualquier otro precio de proveedor."
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_company__boss_spot_rate_validity_days
+msgid ""
+"A weekly ocean or air freight rate typed from a quotation is valid this many days from its start."
+msgstr ""
+"Una tarifa semanal de flete marítimo o aéreo tecleada desde una oferta es válida estos días desde su inicio."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__message_needaction
@@ -336,6 +357,11 @@ msgstr "Cualquier cliente"
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
+msgid "Any direction"
+msgstr "Cualquier sentido"
+
+#. module: boss_pricing
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid "Any load"
 msgstr "Cualquier carga"
 
@@ -410,6 +436,14 @@ msgstr "Aprobada por"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__approved_date
 msgid "Approved Date"
 msgstr "Fecha de aprobación"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid ""
+"Approved on entry: freight rate typed from %s (Sales setting «Freight rates entered from a quotation are approved on entry»)."
+msgstr ""
+"Aprobado al introducirlo: flete tecleado desde %s (ajuste de Ventas «Los fletes introducidos desde una oferta se aprueban al introducirlos»)."
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
@@ -683,6 +717,14 @@ msgid "Code"
 msgstr "Código"
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_partner__boss_carrier_group_id
+#: model:ir.model.fields,help:boss_pricing.field_res_users__boss_carrier_group_id
+msgid ""
+"Commercial carrier this legal entity belongs to (e.g. MSC Spain → Mediterranean Shipping Company). A quotation naming the carrier is priced by the tariffs of all its entities; purchases and bills keep this entity."
+msgstr ""
+"Naviera o aerolínea comercial a la que pertenece esta sociedad (p. ej. MSC España → Mediterranean Shipping Company). Una oferta que nombra al transportista se valora con las tarifas de todas sus sociedades; compras y facturas conservan esta sociedad."
+
+#. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
 msgid ""
 "Common to every price of the tariff. Fill a field only when the supplier document limits\n"
@@ -691,6 +733,7 @@ msgstr ""
 "Común a todos los precios de la tarifa. Rellene un campo solo cuando el documento del proveedor lo limite: un campo vacío significa que los precios valen para cualquier valor."
 
 #. module: boss_pricing
+#: model:ir.model,name:boss_pricing.model_res_company
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__company_id
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__company_id
 msgid "Company"
@@ -811,6 +854,13 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__cross
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__direction__cross
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_direction__cross
+msgid "Cross-trade"
+msgstr "Cruzado"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__currency_id
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__currency_id
 msgid "Currency"
@@ -863,6 +913,11 @@ msgstr "Días (estimación)"
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__relative
 msgid "Days after the free period (\"5 days at X, then Y\")"
 msgstr "Días tras el periodo libre (\"5 días a X, después Y\")"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_tariff_expiring_days
+msgid "Days before a tariff expires to warn"
+msgstr "Días de aviso antes de que caduque una tarifa"
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__period_unit
@@ -933,6 +988,7 @@ msgstr "Descarga del buque"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_bracket__display_name
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__display_name
 #: model:ir.model.fields,field_description:boss_pricing.field_product_template__display_name
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__display_name
 #: model:ir.model.fields,field_description:boss_pricing.field_res_partner__display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
@@ -1001,6 +1057,12 @@ msgid "Empty, so the prices apply to any:"
 msgstr "Vacíos, así que los precios valen para cualquier:"
 
 #. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__direction
+msgid "Empty: any direction (import, export, cross-trade, national)."
+msgstr ""
+"Vacío: cualquier sentido (importación, exportación, cruzado, nacional)."
+
+#. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__load_type
 msgid "Empty: any load type."
 msgstr "Vacío: cualquier forma de carga."
@@ -1014,11 +1076,6 @@ msgstr "Vacío: cualquier modo."
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__port_ids
 msgid "Empty: any port."
 msgstr "Vacío: cualquier puerto."
-
-#. module: boss_pricing
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff__direction
-msgid "Empty: any direction (import, export, cross-trade, national)."
-msgstr "Vacío: cualquier sentido (importación, exportación, cruzado, nacional)."
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__valid_to
@@ -1073,6 +1130,13 @@ msgstr ""
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__tier_mode__whole_stay
 msgid "Every day at the tier reached by the whole stay"
 msgstr "Todos los días al tramo que alcanza la estancia completa"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_res_company__boss_tariff_document_required
+msgid ""
+"Every price is traceable to the supplier's document (ADR-002). Ángel asked whether attaching it must be compulsory (to confirm with Cristina): switch it off to send and approve tariffs without the file."
+msgstr ""
+"Cada precio es trazable al documento del proveedor (ADR-002). Ángel preguntó si adjuntarlo debe ser obligatorio (a confirmar con Cristina): desactívelo para enviar y aprobar tarifas sin el fichero."
 
 #. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__example_text
@@ -1214,6 +1278,17 @@ msgstr ""
 "Libre hasta el lunes siguiente incluido cuando el periodo empieza en sábado, sean cuantas sean las horas. Necesita la fecha real de salida: nunca se supone en una estimación."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+msgid "Freight rates are not approved on entry (Sales settings)."
+msgstr "Los fletes no se aprueban al introducirlos (ajustes de Ventas)."
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_spot_rate_auto_approve
+msgid "Freight rates entered from a quotation are approved on entry"
+msgstr "Los fletes introducidos desde una oferta se aprueban al introducirlos"
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__friday_extra_day
 msgid "Friday +1 free day"
 msgstr "Viernes +1 día libre"
@@ -1293,6 +1368,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_bracket__id
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__id
 #: model:ir.model.fields,field_description:boss_pricing.field_product_template__id
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__id
 #: model:ir.model.fields,field_description:boss_pricing.field_res_partner__id
 msgid "ID"
 msgstr "ID"
@@ -1336,18 +1412,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Import"
 msgstr "Importación"
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
-msgid "Any direction"
-msgstr "Cualquier sentido"
-
-#. module: boss_pricing
-#. odoo-python
-#: code:addons/boss_pricing/models/boss_tariff.py:0
-#: code:addons/boss_pricing/models/boss_tariff_line.py:0
-msgid "any direction"
-msgstr "cualquier sentido"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1542,6 +1606,13 @@ msgstr "NOA, o ATA si no hay NOA"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__name
 msgid "Name"
 msgstr "Nombre"
+
+#. module: boss_pricing
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__national
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__direction__national
+#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__line_direction__national
+msgid "National"
+msgstr "Nacional"
 
 #. module: boss_pricing
 #. odoo-python
@@ -1837,6 +1908,12 @@ msgstr "Página del documento del proveedor donde está este precio."
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__basis__pallets
 msgid "Pallets"
 msgstr "Palés"
+
+#. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_partner__boss_carrier_group_id
+#: model:ir.model.fields,field_description:boss_pricing.field_res_users__boss_carrier_group_id
+msgid "Part of carrier"
+msgstr "Pertenece al transportista"
 
 #. module: boss_pricing
 #. odoo-python
@@ -2386,6 +2463,12 @@ msgid "Supplier document"
 msgstr "Documento del proveedor"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_tariff_document_required
+msgid "Supplier document required to send a tariff for approval"
+msgstr ""
+"Documento del proveedor obligatorio para enviar una tarifa a aprobación"
+
+#. module: boss_pricing
 #: model:ir.model,name:boss_pricing.model_boss_tariff_line
 msgid "Supplier price"
 msgstr "Precio de proveedor"
@@ -2795,6 +2878,11 @@ msgid "Validity"
 msgstr "Vigencia"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_spot_rate_validity_days
+msgid "Validity of a freight rate entered from a quotation (days)"
+msgstr "Validez de una tarifa de flete introducida desde una oferta (días)"
+
+#. module: boss_pricing
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "Values cleared"
@@ -2893,6 +2981,13 @@ msgstr "cualquier cliente"
 #. odoo-python
 #: code:addons/boss_pricing/models/boss_tariff.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
+msgid "any direction"
+msgstr "cualquier sentido"
+
+#. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_tariff.py:0
+#: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "any mode"
 msgstr "cualquier modo"
 
@@ -2944,8 +3039,10 @@ msgstr "vencidos o por vencer"
 
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__volumetric_factor
-msgid "kg per m³ stated by the supplier document (e.g. 167 air)."
-msgstr "kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo)."
+msgid ""
+"kg per m³ stated by the supplier document (e.g. 167 air). Empty: the factor of the shipment's transport mode (air 167, road 333, sea 1000)."
+msgstr ""
+"kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: el factor del modo de transporte del envío (aéreo 167, terrestre 333, marítimo 1000)."
 
 #. module: boss_pricing
 #. odoo-python
@@ -3096,48 +3193,3 @@ msgstr "toda la estancia al tramo alcanzado"
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 msgid "x %(count)s containers = %(amount)s"
 msgstr "x %(count)s contenedores = %(amount)s"
-
-#. module: boss_pricing
-#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__volumetric_factor
-msgid ""
-"kg per m³ stated by the supplier document (e.g. 167 air). Empty: the factor "
-"of the shipment's transport mode (air 167, road 333, sea 1000)."
-msgstr ""
-"kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: "
-"el factor del modo de transporte del envío (aéreo 167, terrestre 333, "
-"marítimo 1000)."
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__cross
-msgid "Cross-trade"
-msgstr "Cruzado"
-
-#. module: boss_pricing
-#: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__national
-msgid "National"
-msgstr "Nacional"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_tariff_document_required
-msgid "Supplier document required to send a tariff for approval"
-msgstr "Documento del proveedor obligatorio para enviar una tarifa a aprobación"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_res_company__boss_spot_rate_auto_approve
-msgid "Freight rates entered from a quotation are approved on entry"
-msgstr "Los fletes introducidos desde una oferta se aprueban al introducirlos"
-
-#. module: boss_pricing
-#: model:ir.model.fields,field_description:boss_pricing.field_res_partner__boss_carrier_group_id
-msgid "Part of carrier"
-msgstr "Pertenece al transportista"
-
-#. module: boss_pricing
-#: code:addons/boss_pricing/models/boss_tariff.py:0
-msgid "Freight rates are not approved on entry (Sales settings)."
-msgstr "Los fletes no se aprueban al introducirlos (ajustes de Ventas)."
-
-#. module: boss_pricing
-#: code:addons/boss_pricing/models/boss_tariff.py:0
-msgid "Approved on entry: freight rate typed from %s (Sales setting «Freight rates entered from a quotation are approved on entry»)."
-msgstr "Aprobado al introducirlo: flete tecleado desde %s (ajuste de Ventas «Los fletes introducidos desde una oferta se aprueban al introducirlos»)."
