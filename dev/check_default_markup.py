@@ -76,7 +76,7 @@ with Form(env["sale.order"]) as form:
     form.sale_order_template_id = template("IMB FOB")
     form.boss_carrier_id = msc
     form.boss_origin_country_id = ref("base.cn")
-    form.boss_origin_port_id = port("CNSHA", "sea")
+    form.boss_origin_port_id = port("CNNGB", "sea")
     form.boss_destination_port_id = port("ESVLC", "sea")
     form.boss_delivery_address_id = warehouse
     form.boss_eta = date(2026, 12, 10)
@@ -137,7 +137,7 @@ check("5b the services re-invoiced at cost are the ones with the explicit flag (
       bool(flagged) and all(env["product.product"].search([("default_code", "=", c)]).boss_paid_on_behalf for c in flagged))
 ob = env["sale.order"].create({
     "partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl",
-    "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
+    "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNNGB", "sea").id,
     "boss_destination_port_id": port("ESVLC", "sea").id, "boss_eta": date(2026, 12, 10), "boss_duties_amount": 500.0,
     "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_dv").id, "quantity": 1})],
     "order_line": [Command.create({"product_id": product("GLO-CCC").id, "product_uom_id": product("GLO-CCC").uom_id.id,
@@ -178,7 +178,7 @@ check("7 off: no rule", 0, len(rules()))
 check("7 setting reads 0", 0.0, Settings._boss_get_default_markup())
 other = env["sale.order"].create({
     "partner_id": customer.id, "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl",
-    "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
+    "boss_carrier_id": msc.id, "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNNGB", "sea").id,
     "boss_destination_port_id": port("ESVLC", "sea").id, "boss_eta": date(2026, 12, 10),
     "boss_container_ids": [Command.create({"size": "40", "container_type_id": ref("boss_pricing.container_type_dv").id, "quantity": 1})],
     "order_line": [Command.create({"product_id": product("GLO-CCC").id, "product_uom_id": product("GLO-CCC").uom_id.id,
