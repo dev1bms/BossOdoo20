@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default periods of a time-based service (settings study of 04/11/2026, phase 2): on the service, no code. -->
+    <record id="product_template_form_view_periods" model="ir.ui.view">
+        <field name="name">product.template.form.boss.periods</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="boss_services.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='boss_pricing']//field[@name='description']" position="before">
+                <separator string="Default period (time-based services)" invisible="boss_cost_method != 'time'"/>
+                <div class="text-muted small mb-1" invisible="boss_cost_method != 'time'">When the supplier price states no
+                    events of its own: where the period starts and ends in each direction (and load type, if it differs).
+                    A line without events means no period: the cost is typed.</div>
+                <field name="boss_period_ids" invisible="boss_cost_method != 'time'">
+                    <list editable="bottom">
+                        <field name="direction"/>
+                        <field name="load_type"/>
+                        <field name="start_event"/>
+                        <field name="end_event"/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -8,8 +8,8 @@ from .boss_shipment_container import shipment_quantity
 from .boss_shipment_route import spanish_side
 
 # Case data a quotation template gives to the quotation (ADR-006): what the template is for.
-# Road transport services (inland leg): their supplier is the haulier, the inland carrier (Ángel, 27/10/2026).
-ROAD_SERVICE_CODES = ("TTE-CON", "TTE-FCL")
+# Road transport services (inland leg): their supplier is the haulier, the inland carrier (Ángel, 27/10/2026); which
+# services are road legs is said on each service («Bought from: the haulier»).
 # Minimum margin: the Odoo 17 rules, groups and exceptions as data (boss_margin_policy.py, roadmap item 15). A warning
 # only (P01/P02, package 2 of docs/paquetes-aprobacion-f0.md: warn, never block).
 TEMPLATE_CASE_FIELDS = {"boss_business": "boss_business", "boss_direction": "boss_direction",
@@ -113,7 +113,7 @@ class SaleOrder(models.Model):
 
     def _boss_road_lines(self):
         """Road transport services of the quotation (inland leg), whatever the main mode of the shipment."""
-        return self.order_line.filtered(lambda l: l.product_id.default_code in ROAD_SERVICE_CODES)
+        return self.order_line.filtered(lambda l: l.product_id.boss_supplier_role == "haulier")
 
     def _boss_container_groups(self):
         return sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},

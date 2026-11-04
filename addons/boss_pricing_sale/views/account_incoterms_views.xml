@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Who pays the freight under each incoterm (settings study of 04/11/2026, phase 2): on the incoterm, no code. -->
+    <record id="view_incoterms_tree_boss" model="ir.ui.view">
+        <field name="name">account.incoterms.list.boss</field>
+        <field name="model">account.incoterms</field>
+        <field name="inherit_id" ref="account.view_incoterms_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="boss_freight_payment"/>
+            </field>
+        </field>
+    </record>
+</odoo>

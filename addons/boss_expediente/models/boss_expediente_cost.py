@@ -7,8 +7,7 @@ from odoo.tools import float_compare
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 from odoo.addons.boss_pricing_sale.models.sale_order_line import COST_KINDS
 
-from .boss_airline_handler import HANDLER_SERVICE_CODES
-from .boss_expediente import COST_GROUPS, DEFAULT_PERIOD_EVENTS, account_share
+from .boss_expediente import COST_GROUPS, account_share
 
 NEED_STATES = [
     ("no_supplier", "Supplier missing"),
@@ -171,7 +170,7 @@ class BossExpedienteCost(models.Model):
             # amounts paid on behalf (duties, import VAT) are paid by the customs broker and billed by it at cost
             "partner_id": (line._boss_purchase_partner() or (
                 expediente.customs_broker_id if line.product_id.boss_paid_on_behalf
-                else expediente.handler_id if line.product_id.default_code in HANDLER_SERVICE_CODES
+                else expediente.handler_id if line.product_id.boss_supplier_role == "handler"
                 else self.env["res.partner"])).id,
             "currency_id": currency.id, "uom_id": uom.id, "quantity": quantity,
             "expected_unit_cost": unit, "accepted_unit_cost": unit, "accepted_amount_company": accepted,
@@ -427,9 +426,7 @@ class BossExpedienteCost(models.Model):
         if line.period_start_event and line.period_end_event:
             return line.period_start_event, line.period_end_event, "tariff"
         file = self.expediente_id
-        code = self.product_id.default_code
-        start, end = DEFAULT_PERIOD_EVENTS.get((code, file.direction, file.load_type), DEFAULT_PERIOD_EVENTS.get(
-            (code, file.direction), (False, False)))
+        start, end, _found = self.product_id.product_tmpl_id._boss_default_period(file.direction, file.load_type)
         return start, end, "default" if start else False
 
     def _boss_containers(self):

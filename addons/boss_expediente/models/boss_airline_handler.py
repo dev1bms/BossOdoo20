@@ -2,7 +2,7 @@ from odoo import api, fields, models
 
 # Air services bought from the handler of the airline at the airport (Hoja1 B9/C9: airline and handler on the file,
 # paired with each other and with the airport).
-HANDLER_SERVICE_CODES = ("HAN", "ALM", "AWB", "ETX", "X-R")
+# The services bought from the handler are marked on each service («Bought from: the air handler of the file»).
 
 
 class BossAirlineHandler(models.Model):

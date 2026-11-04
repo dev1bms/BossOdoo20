@@ -6,7 +6,6 @@ from markupsafe import Markup
 from odoo import api, fields, models
 
 # Roadmap item 14. Reminders are Odoo activities (no e-mail during the tests; F0-C55, F0-A37).
-TIME_CODES_ALERTED = ("DEM", "OCU", "DET")  # services whose cost runs per container after the free days
 FREE_DAYS_SEARCH = 120  # days probed after the start of a period to find the first one with a cost
 
 
@@ -84,7 +83,8 @@ class BossExpediente(models.Model):
         due = []
         if not days_before:
             return due
-        needs = self.cost_ids.filtered(lambda n: not n.closed and n.product_id.default_code in TIME_CODES_ALERTED)
+        # time-based services whose period runs per container (their default or tariff events say so)
+        needs = self.cost_ids.filtered(lambda n: not n.closed and n.product_id.boss_cost_method == "time")
         for need in needs:
             for container, start, end in need._boss_container_periods():
                 if not start or end:

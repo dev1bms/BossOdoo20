@@ -33,6 +33,40 @@ GROUP_BY_CODE = {
 # Odoo 17 keeps PFT (profit share on ocean freight) in its own category; BOSS sells it as a local charge of the
 # freight, so it stays with the local charges until Cristina says otherwise.
 FREIGHT_ETD_CODES = ("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE")
+# Seeds of the service attributes (settings study of 04/11/2026, phase 2); afterwards maintained on the service.
+SUPPLIER_ROLES = {**dict.fromkeys(("HAN", "ALM", "AWB", "ETX", "X-R"), "handler"),
+                  **dict.fromkeys(("TTE-CON", "TTE-FCL"), "haulier")}
+CUSTOMS_VALUE_CHARGES = {**dict.fromkeys(("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE"), "freight"),
+                         **dict.fromkeys(("THC", "THC-LCL"), "THC"), **dict.fromkeys(("T3", "T3-PAD"), "T3"),
+                         "SEG": "insurance"}
+
+
+def seed_service_attributes(env):
+    """Supplier role and customs-value charge of the services that still have none (install or upgrade)."""
+    Template = env["product.template"].with_context(active_test=False)
+    for code, role in SUPPLIER_ROLES.items():
+        Template.search([("default_code", "=", code), ("boss_supplier_role", "in", (False, "any"))]).write(
+            {"boss_supplier_role": role})
+    for code, charge in CUSTOMS_VALUE_CHARGES.items():
+        Template.search([("default_code", "=", code), ("boss_customs_value_charge", "=", False)]).write(
+            {"boss_customs_value_charge": charge})
+# Seeds of the service attributes (settings study of 04/11/2026, phase 2); afterwards maintained on the service.
+SUPPLIER_ROLES = {**dict.fromkeys(("HAN", "ALM", "AWB", "ETX", "X-R"), "handler"),
+                  **dict.fromkeys(("TTE-CON", "TTE-FCL"), "haulier")}
+CUSTOMS_VALUE_CHARGES = {**dict.fromkeys(("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE"), "freight"),
+                         **dict.fromkeys(("THC", "THC-LCL"), "THC"), **dict.fromkeys(("T3", "T3-PAD"), "T3"),
+                         "SEG": "insurance"}
+
+
+def seed_service_attributes(env):
+    """Supplier role and customs-value charge of the services that still have none (install or upgrade)."""
+    Template = env["product.template"].with_context(active_test=False)
+    for code, role in SUPPLIER_ROLES.items():
+        Template.search([("default_code", "=", code), ("boss_supplier_role", "in", (False, "any"))]).write(
+            {"boss_supplier_role": role})
+    for code, charge in CUSTOMS_VALUE_CHARGES.items():
+        Template.search([("default_code", "=", code), ("boss_customs_value_charge", "=", False)]).write(
+            {"boss_customs_value_charge": charge})
 
 
 def assign_service_groups(env):

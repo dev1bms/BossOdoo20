@@ -15,29 +15,12 @@ from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipmen
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import (BUSINESSES, chargeable_by_mode, chargeable_kg,
                                                                       abroad_side, key_date, spanish_side, traffic_code)
 
-from .boss_airline_handler import HANDLER_SERVICE_CODES
 
 FILE_EVENT_FIELDS = {"ata": "ata", "discharge": "discharge_date", "noa": "noa", "foh": "foh", "departure": "atd",
                      "pickup": "pickup_date", "delivery": "delivery_date", "emptying": "emptying_date"}
 CONTAINER_EVENT_FIELDS = {"container_empty_out": "empty_out_date", "container_gate_in": "gate_in_date",
                           "container_full_out": "pickup_date", "container_empty_return": "return_date"}
-# Period of a time-based service when its supplier price states no events (or it has no supplier price yet).
-# Sources: Cristina e-mail 25/09/2026 (ALM: air import NOA -> pickup, air export delivery -> ETD; BossOdoo19
-# DECISIONS.md:139) and the MSC local charges of 01/09/2026 (demurrage p.18 «llegada buque hasta devolución del vacío»,
-# occupancy p.17 «llegada buque hasta fecha entrega», export p.9-10 «entrada lleno», detention «salida vacío ->
-# entrada lleno»). Export storage ends at the ACTUAL departure (Cristina says ETD: the actual one is used once known,
-# the estimate of days until then). DET is only an export charge in the MSC documents (import: inside DEM, Hapag).
-DEFAULT_PERIOD_EVENTS = {
-    ("ALM", "import", "lcl"): ("emptying", "pickup"),  # Cristina 25/09: LCL import emptying -> pickup
-    ("ALM", "export", "lcl"): (False, False),  # Cristina 25/09: LCL export, none
-    ("ALM", "import"): ("noa_or_ata", "pickup"),
-    ("ALM", "export"): ("foh", "departure"),
-    ("DEM", "import"): ("ata", "container_empty_return"),
-    ("DEM", "export"): ("container_gate_in", "departure"),
-    ("OCU", "import"): ("ata", "container_full_out"),
-    ("OCU", "export"): ("container_gate_in", "departure"),
-    ("DET", "export"): ("container_empty_out", "container_gate_in"),
-}
+# The default period of a time-based service is on the service (boss_service_period.py).
 
 STATES = [
     ("open", "Open"),
@@ -84,11 +67,9 @@ FROZEN_FIELDS = (
     "customs_docs_received_date", "customs_docs_sent_date", "hbl_release", "master_id",
 )
 FROZEN_STATES = ("closed", "cancel")
-# Charges Cristina sends to the customs broker for the customs value (A37): freight, THC, T3 and insurance, by
-# service code and its variants (FMI-LCL, THC-LCL, T3-PAD). By code, not by service group: the freight group also
-# holds QBR and the insurance group the courier (MEN).
-CUSTOMS_VALUE_CHARGES = (("freight", ("FMI", "FME", "FAI", "FAE")), ("THC", ("THC",)), ("T3", ("T3",)),
-                         ("insurance", ("SEG",)))
+# Charges of the customs value (A37) in the order they are listed to the broker; which services count is said on
+# each service («Counts for the customs value as»).
+CUSTOMS_VALUE_CHARGES = ("freight", "THC", "T3", "insurance")
 # Transport data of a consolidation that belongs to the master (MBL / MAWB) and is copied to its houses (ADR-013).
 MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd", "ata",
                  "discharge_date")
@@ -725,7 +706,7 @@ class BossExpediente(models.Model):
         """Needs bought from the handler (air handling services) not ordered yet: they follow the handler chosen on
         the file, whichever supplier priced them on the quotation."""
         return self.cost_ids.filtered(
-            lambda n: n.product_id.default_code in HANDLER_SERVICE_CODES
+            lambda n: n.product_id.boss_supplier_role == "handler"
             and not n.purchase_line_ids and n.state not in ("closed", "billed", "performed"))
 
     # Actual period of the time-based services, from the file's and containers' dates (Cristina 26/10/2026: ATA and
@@ -991,12 +972,8 @@ class BossExpediente(models.Model):
 
     @staticmethod
     def _boss_customs_value_charge(product):
-        """Which charge of the customs value (A37) a service is, or None."""
-        code = product.default_code or ""
-        for key, codes in CUSTOMS_VALUE_CHARGES:
-            if any(code == c or code.startswith(c + "-") for c in codes):
-                return key
-        return None
+        """Which charge of the customs value (A37) a service is (said on the service), or None."""
+        return product.boss_customs_value_charge or None
 
     @api.depends("name", "customs_ref", "customs_broker_id.lang", "shipper_id", "consignee_id", "incoterm_id",
                  "origin_country_id", "origin_port_id", "destination_port_id", "vessel", "voyage", "mbl_ref", "hbl_ref",
@@ -1054,7 +1031,7 @@ class BossExpediente(models.Model):
                         sold[key][line.currency_id] += line.price_subtotal
                 lines.append(_("Charges for the customs value (sold to the customer):"))
                 labels = {"freight": _("Freight"), "THC": "THC", "T3": "T3", "insurance": _("Insurance")}
-                for key, _codes in CUSTOMS_VALUE_CHARGES:
+                for key in CUSTOMS_VALUE_CHARGES:
                     amounts = [formatLang(env, amount, currency_obj=currency) for currency, amount in sold[key].items()]
                     lines.append(f"  {labels[key]}: {' + '.join(amounts) or na}")
             if file.customs_guarantee:

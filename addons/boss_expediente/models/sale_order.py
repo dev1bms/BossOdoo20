@@ -1,7 +1,6 @@
 from odoo import Command, api, fields, models
 from odoo.exceptions import ValidationError
 
-from .boss_airline_handler import HANDLER_SERVICE_CODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import key_date
 
 from .boss_expediente import FROM_ORDER, PACKAGE_TYPES, SCOPES, with_accounts
@@ -56,7 +55,7 @@ class SaleOrder(models.Model):
             if len(handlers) != 1:
                 continue
             for line in order.order_line.filtered(
-                    lambda l: l.product_id.default_code in HANDLER_SERVICE_CODES and l.boss_supplier_id != handlers):
+                    lambda l: l.product_id.boss_supplier_role == "handler" and l.boss_supplier_id != handlers):
                 line.boss_supplier_id = handlers
     boss_expediente_ids = fields.Many2many("boss.expediente", string="Files", compute="_compute_boss_expediente_ids",
                                            help="Every file with part of the accepted services of this order.")
@@ -148,7 +147,7 @@ class SaleOrderLine(models.Model):
             if vals.get("boss_supplier_id") or not vals.get("order_id") or not vals.get("product_id"):
                 continue
             product = self.env["product.product"].browse(vals["product_id"])
-            if product.default_code in HANDLER_SERVICE_CODES:
+            if product.boss_supplier_role == "handler":
                 handlers = Order.browse(vals["order_id"])._boss_handler_candidates()
                 if len(handlers) == 1:
                     vals["boss_supplier_id"] = handlers.id

@@ -4,10 +4,8 @@ from odoo.exceptions import UserError
 from .shipment_block import scope_sentence, shipment_rows
 
 
-# Incoterms whose main carriage is paid by the seller (C and D terms): the house document says freight «prepaid»; with
-# the E and F terms the buyer pays it at destination: «collect». The usual reading of the Incoterms 2020, editable on
-# the file (Odoo 17: field «Freight» of the B/L, chosen by hand). One definition, shared with the margin rules.
-from odoo.addons.boss_pricing_sale.models.boss_margin_policy import COLLECT_INCOTERMS, PREPAID_INCOTERMS  # noqa: E402
+# Freight prepaid / collect comes from the incoterm (its field «Freight», shared with the margin rules); editable on the
+# file (Odoo 17: field «Freight» of the B/L, chosen by hand).
 
 
 class ResCompany(models.Model):
@@ -45,12 +43,10 @@ class BossExpediente(models.Model):
     def _boss_frozen_fields(self):
         return super()._boss_frozen_fields() + ("house_doc_freight", "house_doc_marks", "house_doc_issue_date")
 
-    @api.depends("incoterm_id")
+    @api.depends("incoterm_id.boss_freight_payment")
     def _compute_house_doc_freight(self):
         for file in self:
-            code = file.incoterm_id.code
-            file.house_doc_freight = ("prepaid" if code in PREPAID_INCOTERMS else "collect" if code in COLLECT_INCOTERMS
-                                      else file.house_doc_freight)
+            file.house_doc_freight = file.incoterm_id.boss_freight_payment or file.house_doc_freight
 
     def _boss_document_block(self):
         """Data of the shipment block of a document of this file (ADR-011)."""

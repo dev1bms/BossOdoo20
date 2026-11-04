@@ -7,14 +7,7 @@ from .boss_shipment_route import BUSINESSES
 # Minimum margin control of Odoo 17 (summary_utils + x_profit_group_rules, x_profit_types, x_concept_profits,
 # x_profit_exceptions), roadmap item 15. A warning, never a block (P01/P02-a). Margin = sale - expected cost.
 # Odoo 17 BASE_MARGIN_PERC (10 %) and VALUE_ROUND (10): company settings since 04/11/2026 (res.company).
-# Incoterms whose main carriage the seller pays: freight «prepaid» (C and D terms); E and F terms: «collect».
-PREPAID_INCOTERMS = ("CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP")
-COLLECT_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
-FREIGHT_PAYMENTS = [("prepaid", "Prepaid"), ("collect", "Collect")]
-
-
-def freight_payment_of(incoterm_code):
-    return "prepaid" if incoterm_code in PREPAID_INCOTERMS else "collect" if incoterm_code in COLLECT_INCOTERMS else False
+from .account_incoterms import FREIGHT_PAYMENTS  # noqa: E402  (prepaid / collect is said on each incoterm)
 
 
 class BossMarginFamily(models.Model):
@@ -208,7 +201,7 @@ class BossMarginPolicy(models.AbstractModel):
             "company": record.company_id,
             "transport_mode": get("transport_mode"), "load_type": get("load_type"), "business": get("business"),
             "direction": get("direction"),
-            "freight_payment": freight_payment or freight_payment_of(incoterm.code),
+            "freight_payment": freight_payment or incoterm.boss_freight_payment or False,
             "customer": record.partner_id.commercial_partner_id,
             "carrier_ids": set(carrier._boss_carrier_family_ids()) if carrier else set(),
             "containers_20": sum(q for size, q in containers if size == "20"),
