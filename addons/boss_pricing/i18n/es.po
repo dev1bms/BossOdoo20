@@ -2970,8 +2970,10 @@ msgstr "Sobre qué cobra el documento del proveedor."
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff__partner_id
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__partner_id
-msgid "Who invoices BOSS for these services."
-msgstr "Quién factura a BOSS estos servicios."
+msgid ""
+"Who invoices BOSS for these services: the company, not one of its addresses."
+msgstr ""
+"Quien factura a BOSS estos servicios: la empresa, no una de sus direcciones."
 
 #. module: boss_pricing
 #: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_view_form
