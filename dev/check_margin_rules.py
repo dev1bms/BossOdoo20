@@ -78,7 +78,7 @@ order = env["sale.order"].create({
                                                                     "container_type_id": ref("boss_pricing.container_type_dv").id})],
     "order_line": [Command.create({"product_id": fmi.id, "product_uom_qty": 1, "price_unit": 1100.0,
                                    "boss_manual_cost": 1000.0, "boss_manual_cost_note": "[PRUEBA]"})]})
-order.order_line.purchase_price = 1000.0
+order.order_line.price_unit = 1100.0  # typed by the salesperson (otherwise cost + 20 % = 1200, above the minimum)
 order.invalidate_recordset(["boss_margin_alert"])
 check("11 the quotation warns with the rule (150 per 40', not 10 %)", (True, True),
       ("Flete" in (order.boss_margin_alert or ""), "150" in (order.boss_margin_alert or "")))
