@@ -28,7 +28,7 @@
                         <field name="document_page"/>
                     </group>
                     <group string="Supplier tariff">
-                        <field name="partner_id" required="1"/>
+                        <field name="partner_id" required="1" domain="[('parent_id', '=', False)]" options="{'no_create': True}"/>
                         <field name="tariff_id" options="{'no_create': True}"/>
                         <field name="tariff_scope" invisible="not tariff_id"/>
                         <field name="tariff_scope_confirmed" invisible="not tariff_id"/>

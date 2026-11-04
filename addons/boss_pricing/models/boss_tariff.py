@@ -28,8 +28,10 @@ class BossTariff(models.Model):
     _order = "partner_id, lineage_id, version desc"
 
     name = fields.Char(required=True, tracking=True, help="E.g. MSC local charges import 2026.")
+    # the company (legal entity), never one of its invoice addresses or contacts: the lines of a quotation name it
     partner_id = fields.Many2one("res.partner", "Supplier", required=True, tracking=True,
-                                 help="Who invoices BOSS for these services.")
+                                 domain="[('parent_id', '=', False)]",
+                                 help="Who invoices BOSS for these services: the company, not one of its addresses.")
     state = fields.Selection(
         [("draft", "Draft"), ("to_approve", "Waiting for approval"), ("approved", "Approved")],
         default="draft", required=True, readonly=True, copy=False, tracking=True,

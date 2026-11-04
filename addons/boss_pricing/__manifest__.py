@@ -1,7 +1,7 @@
 {
     "name": "BOSS Pricing",
     "summary": "Supplier tariffs with document, validity and approval; one engine to price a service",
-    "version": "20.0.1.13.4",
+    "version": "20.0.1.13.5",
     "category": "Sales/Sales",
     "author": "BiDATiA",
     "license": "LGPL-3",
