@@ -36,6 +36,35 @@
                             <field name="boss_default_allocation_basis"/>
                         </setting>
                     </block>
+                    <block title="Status conditions" name="boss_file_conditions">
+                        <setting id="boss_cond_transit" string="To leave («In transit»)"
+                                 help="Odoo 17 practice (F0-C31, F0-C38): a warning in the history, the file leaves anyway. Required: the file cannot leave without it.">
+                            <div class="content-group">
+                                <div class="row mt16"><label for="boss_cond_transit_atd" string="ATD" class="col-lg-5 o_light_label"/><field name="boss_cond_transit_atd" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_transit_booking" string="Booking" class="col-lg-5 o_light_label"/><field name="boss_cond_transit_booking" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_transit_master" string="Master B/L or AWB" class="col-lg-5 o_light_label"/><field name="boss_cond_transit_master" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_transit_containers" string="Container numbers" class="col-lg-5 o_light_label"/><field name="boss_cond_transit_containers" class="col-lg-6"/></div>
+                            </div>
+                        </setting>
+                        <setting id="boss_cond_delivered" string="To deliver («Delivered»)"
+                                 help="What Cristina wrote (OPS- exptes A42, A73) and Odoo 17 enforced (Check Update 3-4). Each one applies only where it makes sense (an import, a sea shipment, a service BOSS performs).">
+                            <div class="content-group">
+                                <div class="row mt16"><label for="boss_cond_delivered_ata" string="ATA (import)" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_ata" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_delivered_discharge" string="Vessel discharge" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_discharge" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_delivered_release" string="Customs release" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_release" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_delivered_pickup" string="Pickup date and time" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_pickup" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_delivered_delivery" string="Delivery date and time" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_delivery" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_delivered_hbl" string="House B/L released" class="col-lg-5 o_light_label"/><field name="boss_cond_delivered_hbl" class="col-lg-6"/></div>
+                            </div>
+                        </setting>
+                        <setting id="boss_cond_close" string="To close operations"
+                                 help="What Cristina wrote (F0-C60) and Belal decided (F0-A07). The ratings have their own setting below.">
+                            <div class="content-group">
+                                <div class="row mt16"><label for="boss_cond_close_invoiced" string="Every service invoiced" class="col-lg-5 o_light_label"/><field name="boss_cond_close_invoiced" class="col-lg-6"/></div>
+                                <div class="row"><label for="boss_cond_close_margin" string="Low margin explained" class="col-lg-5 o_light_label"/><field name="boss_cond_close_margin" class="col-lg-6"/></div>
+                            </div>
+                        </setting>
+                    </block>
                     <block title="Closing a file" name="boss_file_closing">
                         <setting id="boss_ratings_to_close" string="Ratings required to close operations"
                                  help="The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025).">

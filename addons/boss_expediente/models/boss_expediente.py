@@ -1537,54 +1537,65 @@ class BossExpediente(models.Model):
                         "boss_default_file": self.id},
         }
 
-    def _boss_transit_missing(self):
-        """Data a file has when it leaves (Odoo 17 practice, F0-C31 and F0-C38 in docs/decisiones-f0.md): actual
-        departure, booking and master B/L or AWB (sea, air), container numbers of an FCL. A warning, never a condition:
-        package 3 of docs/paquetes-aprobacion-f0.md enforces only what Cristina wrote down."""
+    def _boss_conditions_missing(self, step):
+        """[(label, level)] of the conditions of a step this file does not meet, each at the level set in Settings ›
+        BOSS · Files (required, warning only; «not checked» ones are left out). Steps: in_transit (Odoo 17 practice,
+        F0-C31, F0-C38), delivered (Cristina, OPS- exptes A42 and A73; Odoo 17 «Check Update 3-4»)."""
         self.ensure_one()
         _ = self.env._
-        missing = [] if self.atd else [_("ATD (actual departure)")]
-        if self.transport_mode in ("sea", "air") and not self.booking_ref:
-            missing.append(_("booking"))
-        if self.transport_mode == "air" and not self.mawb_ref:
-            missing.append(_("master AWB"))
-        if self.transport_mode == "sea" and not self.mbl_ref:
-            missing.append(_("master B/L"))
-        if self.load_type == "fcl" and self.container_ids.filtered(lambda c: not c.number):
-            missing.append(_("container numbers"))
-        return missing
+        company = self.company_id
+        importing, sea = self.direction == "import", self.transport_mode == "sea"
+        checks = []
+        if step == "in_transit":
+            checks = [
+                ("boss_cond_transit_atd", not self.atd, _("ATD (actual departure)")),
+                ("boss_cond_transit_booking", self.transport_mode in ("sea", "air") and not self.booking_ref,
+                 _("booking")),
+                ("boss_cond_transit_master", self.transport_mode == "air" and not self.mawb_ref, _("master AWB")),
+                ("boss_cond_transit_master", sea and not self.mbl_ref, _("master B/L")),
+                ("boss_cond_transit_containers", self.load_type == "fcl" and bool(
+                    self.container_ids.filtered(lambda c: not c.number)), _("container numbers")),
+            ]
+        elif step == "delivered":
+            checks = [
+                ("boss_cond_delivered_ata", importing and not self.ata, _("ATA (actual arrival)")),
+                ("boss_cond_delivered_discharge", importing and sea and not self.discharge_date, _("vessel discharge")),
+                ("boss_cond_delivered_release", (self.scope_origin_customs or self.scope_destination_customs)
+                 and not self.customs_release_date, _("customs release (levante)")),
+                ("boss_cond_delivered_pickup", self.scope_pickup and not self.pickup_date, _("pickup date and time")),
+                ("boss_cond_delivered_delivery", self.scope_delivery and not self.delivery_date,
+                 _("delivery date and time")),
+                ("boss_cond_delivered_hbl", importing and sea and self.scope_delivery
+                 and self.hbl_release not in ("released", "swb"), _("house B/L released or sea waybill")),
+            ]
+        return [(label, company[field]) for field, failing, label in checks
+                if failing and company[field] != "off"]
+
+    def _boss_transit_missing(self):
+        """Labels of what the file lacks to leave (warnings and requirements)."""
+        return [label for label, _level in self._boss_conditions_missing("in_transit")]
 
     def _boss_delivery_missing(self):
-        """What the file lacks to be marked delivered. Cristina wrote it («Nuevo Odoo» › OPS- exptes A42: the date and
-        time of a pickup or delivery made by BOSS; A73: the house B/L released or a sea waybill before delivering) and
-        Odoo 17 enforced it («Check Update 3-4»: arrival and vessel discharge on an import, the customs release of every
-        declaration cleared by BOSS)."""
-        self.ensure_one()
-        _ = self.env._
-        missing = []
-        importing = self.direction == "import"
-        if importing and not self.ata:
-            missing.append(_("ATA (actual arrival)"))
-        if importing and self.transport_mode == "sea" and not self.discharge_date:
-            missing.append(_("vessel discharge"))
-        if (self.scope_origin_customs or self.scope_destination_customs) and not self.customs_release_date:
-            missing.append(_("customs release (levante)"))
-        if self.scope_pickup and not self.pickup_date:
-            missing.append(_("pickup date and time"))
-        if self.scope_delivery and not self.delivery_date:
-            missing.append(_("delivery date and time"))
-        if (importing and self.transport_mode == "sea" and self.scope_delivery
-                and self.hbl_release not in ("released", "swb")):
-            missing.append(_("house B/L released or sea waybill"))
-        return missing
+        """Labels of what the file lacks to be marked delivered (requirements and warnings)."""
+        return [label for label, _level in self._boss_conditions_missing("delivered")]
+
+    def _boss_check_step(self, step, message):
+        """Stop on the required conditions of a step; leave the warnings in the history."""
+        for file in self:
+            missing = file._boss_conditions_missing(step)
+            blocking = [label for label, level in missing if level == "block"]
+            if blocking:
+                raise UserError(message % {"file": file.name, "missing": ", ".join(blocking)})
+            warnings = [label for label, level in missing if level == "warn"]
+            if warnings:
+                file.message_post(body=self.env._("%(step)s without: %(missing)s. A warning: complete them when they "
+                                                  "are known.", step=dict(file._fields["state"]._description_selection(self.env)).get(step, step),
+                                                  missing=", ".join(warnings)))
 
     def action_in_transit(self):
         files = self | self.house_ids.filtered(lambda h: h.state == "open")  # the houses leave with their master
-        for file in files:
-            missing = file._boss_transit_missing()
-            if missing:
-                file.message_post(body=self.env._(
-                    "In transit without: %s. A warning: complete them when they are known.", ", ".join(missing)))
+        files._boss_check_step("in_transit", self.env._(
+            "%(file)s cannot leave yet, it lacks: %(missing)s (required in Settings › BOSS · Files)."))
         files.write({"state": "in_transit"})
 
     def action_arrived(self):
@@ -1598,12 +1609,9 @@ class BossExpediente(models.Model):
         files.filtered(lambda f: f.state in ("open", "in_transit")).write({"state": "arrived"})
 
     def action_delivered(self):
-        for file in self:
-            missing = file._boss_delivery_missing()
-            if missing:
-                raise UserError(self.env._(
-                    "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and "
-                    "dates» and «Customs».", file=file.name, missing=", ".join(missing)))
+        self._boss_check_step("delivered", self.env._(
+            "%(file)s cannot be marked delivered yet, it lacks: %(missing)s. Fill them in «References and dates» and "
+            "«Customs»."))
         self.write({"state": "delivered", "delivered_date": fields.Date.context_today(self)})
         self._boss_sync_ratings()  # the parties to rate before closing are listed in «Ratings»
 
@@ -1628,18 +1636,24 @@ class BossExpediente(models.Model):
         _ = self.env._
         for file in self:
             sudo = file.sudo()
-            currency = file.company_id.currency_id
-            problems = []
+            company = file.company_id
+            currency = company.currency_id
+            found = []  # (problem, level of its condition in Settings › BOSS · Files)
             if float_compare(sudo.amount_to_invoice, 0.0, precision_rounding=currency.rounding) > 0:
-                problems.append(_("%s still to invoice: invoice the services first",
-                                  formatLang(self.env, sudo.amount_to_invoice, currency_obj=currency)))
+                found.append((_("%s still to invoice: invoice the services first",
+                                formatLang(self.env, sudo.amount_to_invoice, currency_obj=currency)),
+                              company.boss_cond_close_invoiced))
             warnings = file._boss_margin_warnings()
             if warnings and not sudo.margin_exception_reason:
-                problems.append(_("margin below the minimum (%s): a sales manager writes why in «Closed with a low "
-                                  "margin because»", "; ".join(warnings)))
+                found.append((_("margin below the minimum (%s): a sales manager writes why in «Closed with a low "
+                                "margin because»", "; ".join(warnings)), company.boss_cond_close_margin))
+            problems = [text for text, level in found if level == "block"]
             if problems:
                 raise UserError(_("%(file)s cannot close operations yet: %(problems)s.", file=file.name,
                                   problems="; ".join(problems)))
+            for text, level in found:
+                if level == "warn":
+                    file.message_post(body=_("Operations closed with a warning: %s.", text))
         # Ratings (F0-C66, Odoo 17 since 01/03/2025; a setting): the lines to rate are added and kept, and the user is
         # sent to them instead of an error that would undo them.
         to_rate = self.filtered(lambda f: f.company_id.boss_ratings_to_close)

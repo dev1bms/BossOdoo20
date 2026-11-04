@@ -4,6 +4,25 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 BILL_TYPES = ("in_invoice", "in_refund", "in_receipt")
+# How a status condition of a file is checked (settings study of 04/11/2026, phase 3): it stops the step, it only warns
+# (and the warning stays in the history), or it is not checked at all.
+CONDITION_LEVELS = [("block", "Required (stops the step)"), ("warn", "Warning only"), ("off", "Not checked")]
+# (field, step, label, default): the conditions of the steps of a file. Defaults are today's behaviour: Odoo 17
+# practice warns when the file leaves; what Cristina wrote stops «Delivered» and the operational close.
+FILE_CONDITIONS = [
+    ("boss_cond_transit_atd", "in_transit", "Actual departure (ATD)", "warn"),
+    ("boss_cond_transit_booking", "in_transit", "Booking (sea and air)", "warn"),
+    ("boss_cond_transit_master", "in_transit", "Master B/L or AWB (sea and air)", "warn"),
+    ("boss_cond_transit_containers", "in_transit", "Container numbers (FCL)", "warn"),
+    ("boss_cond_delivered_ata", "delivered", "Actual arrival (ATA) of an import", "block"),
+    ("boss_cond_delivered_discharge", "delivered", "Vessel discharge of a sea import", "block"),
+    ("boss_cond_delivered_release", "delivered", "Customs release when BOSS clears", "block"),
+    ("boss_cond_delivered_pickup", "delivered", "Pickup date and time when BOSS picks up", "block"),
+    ("boss_cond_delivered_delivery", "delivered", "Delivery date and time when BOSS delivers", "block"),
+    ("boss_cond_delivered_hbl", "delivered", "House B/L released or sea waybill (sea import delivered by BOSS)", "block"),
+    ("boss_cond_close_invoiced", "close", "Every service invoiced", "block"),
+    ("boss_cond_close_margin", "close", "Low margin explained by a sales manager", "block"),
+]
 
 
 class ResCompany(models.Model):
@@ -20,6 +39,28 @@ class ResCompany(models.Model):
     boss_ratings_to_close = fields.Boolean(
         "Ratings required to close operations", default=True,
         help="The customer and every supplier of a file are rated (0-10) before its operations close, as in Odoo 17.")
+    # Status conditions of a file (phase 3 of the settings study): one level each, today's behaviour by default.
+    boss_cond_transit_atd = fields.Selection(CONDITION_LEVELS, "Leaving: actual departure (ATD)", default="warn", required=True)
+    boss_cond_transit_booking = fields.Selection(CONDITION_LEVELS, "Leaving: booking", default="warn", required=True)
+    boss_cond_transit_master = fields.Selection(CONDITION_LEVELS, "Leaving: master B/L or AWB", default="warn", required=True)
+    boss_cond_transit_containers = fields.Selection(CONDITION_LEVELS, "Leaving: container numbers", default="warn",
+                                                    required=True)
+    boss_cond_delivered_ata = fields.Selection(CONDITION_LEVELS, "Delivered: ATA of an import", default="block",
+                                               required=True)
+    boss_cond_delivered_discharge = fields.Selection(CONDITION_LEVELS, "Delivered: vessel discharge", default="block",
+                                                     required=True)
+    boss_cond_delivered_release = fields.Selection(CONDITION_LEVELS, "Delivered: customs release", default="block",
+                                                   required=True)
+    boss_cond_delivered_pickup = fields.Selection(CONDITION_LEVELS, "Delivered: pickup date and time", default="block",
+                                                  required=True)
+    boss_cond_delivered_delivery = fields.Selection(CONDITION_LEVELS, "Delivered: delivery date and time",
+                                                    default="block", required=True)
+    boss_cond_delivered_hbl = fields.Selection(CONDITION_LEVELS, "Delivered: house B/L released", default="block",
+                                               required=True)
+    boss_cond_close_invoiced = fields.Selection(CONDITION_LEVELS, "Close: every service invoiced", default="block",
+                                                required=True)
+    boss_cond_close_margin = fields.Selection(CONDITION_LEVELS, "Close: low margin explained", default="block",
+                                              required=True)
     # Settings study of 04/11/2026 (docs/estudio-ajustes.md): values that change over time leave the code.
     boss_close_days_after_delivery = fields.Integer(
         "Days after the delivery to close operations", default=7,
@@ -44,6 +85,18 @@ class ResConfigSettings(models.TransientModel):
     boss_bill_before_invoice = fields.Selection(related="company_id.boss_bill_before_invoice", readonly=False)
     boss_ratings_to_close = fields.Boolean(related="company_id.boss_ratings_to_close", readonly=False)
     boss_close_days_after_delivery = fields.Integer(related="company_id.boss_close_days_after_delivery", readonly=False)
+    boss_cond_transit_atd = fields.Selection(related="company_id.boss_cond_transit_atd", readonly=False)
+    boss_cond_transit_booking = fields.Selection(related="company_id.boss_cond_transit_booking", readonly=False)
+    boss_cond_transit_master = fields.Selection(related="company_id.boss_cond_transit_master", readonly=False)
+    boss_cond_transit_containers = fields.Selection(related="company_id.boss_cond_transit_containers", readonly=False)
+    boss_cond_delivered_ata = fields.Selection(related="company_id.boss_cond_delivered_ata", readonly=False)
+    boss_cond_delivered_discharge = fields.Selection(related="company_id.boss_cond_delivered_discharge", readonly=False)
+    boss_cond_delivered_release = fields.Selection(related="company_id.boss_cond_delivered_release", readonly=False)
+    boss_cond_delivered_pickup = fields.Selection(related="company_id.boss_cond_delivered_pickup", readonly=False)
+    boss_cond_delivered_delivery = fields.Selection(related="company_id.boss_cond_delivered_delivery", readonly=False)
+    boss_cond_delivered_hbl = fields.Selection(related="company_id.boss_cond_delivered_hbl", readonly=False)
+    boss_cond_close_invoiced = fields.Selection(related="company_id.boss_cond_close_invoiced", readonly=False)
+    boss_cond_close_margin = fields.Selection(related="company_id.boss_cond_close_margin", readonly=False)
     boss_default_allocation_basis = fields.Selection(related="company_id.boss_default_allocation_basis", readonly=False)
     boss_invoice_operation_date = fields.Boolean(related="company_id.boss_invoice_operation_date", readonly=False)
     boss_paid_on_behalf_note = fields.Text(related="company_id.boss_paid_on_behalf_note", readonly=False)
