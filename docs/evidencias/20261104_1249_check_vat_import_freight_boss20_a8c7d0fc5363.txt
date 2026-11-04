@@ -1,0 +1,23 @@
+# Evidence: dev/check_vat_import_freight.py on boss20
+# Date: 2026-11-04 12:49    
+# Commit tested: a8c7d0fc5363 (fix(vat): international road freight (FTT) exempt on a TER->PRO import (Art. 64 LIVA): an NR service)
+# Installed on boss20: boss_documents 20.0.1.3.4 boss_expediente 20.0.1.28.2 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.13.2 boss_pricing_sale 20.0.1.22.3 boss_services 20.0.1.5.3 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 11:49:14,877 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 11:49:14,938 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 11:49:15,768 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 NR in the customs value, China -> Spain, Spanish customer: EX: expected 'EX' got 'EX'
+CHECK PASS 2 same service, national, Spain -> Spain: NR: expected 'NR' got 'NR'
+CHECK PASS 3 same service, EU -> Spain and China -> EU: NR (unchanged): expected ('NR', 'NR') got ('NR', 'NR')
+CHECK PASS 4 NR outside the customs value (TTE-CON), China -> Spain: NR (unchanged): expected 'NR' got 'NR'
+CHECK PASS 5 the trace names the exemption: expected True got True
+CHECK PASS 6 FTT: base NR, counts for the customs value as freight: expected ('NR', 'freight') got ('NR', 'freight')
+CHECK PASS 7 NR services in the customs value: expected ['FTT'] got ['FTT']
+CHECK PASS 8 TTE-CON, TTE-FCL outside the customs value: expected (False, False) got (False, False)
+CHECK PASS 9 quotation China -> Valencia: FTT EX, TTE-CON NR: expected ('EX', 'NR') got ('EX', 'NR')
+CHECK PASS 10 export Valencia -> France: FTT EX by the route, as before: expected 'EX' got 'EX'
+RESULT 10 passed, 0 failed
+# Exit status: 0
