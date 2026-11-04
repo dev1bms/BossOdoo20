@@ -1,0 +1,59 @@
+# Evidence: dev/sample_real_cases.py on boss20
+# Date: 2026-11-04 17:25    
+# Commit tested: cd7262d7e660 (feat(dev): roadmap item 20, FCL sea export case S4 (model E260901, Barcelona → Tunis) walked to th)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.5 boss_portal 20.0.1.0.10 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.8 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 16:25:40,662 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 16:25:40,723 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 16:25:41,557 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CASE IMB-FCL: quotation S00917 reused
+CASE IMB-FCL: S00917 sale file E260181 next step type_cost (2 services)
+WALK IMB-FCL: type_cost → order → confirm_rfq → in_transit → arrived → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IMB-FCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE IAB: quotation S00918 reused
+CASE IAB: S00918 sale file E260182 next step type_cost (5 services)
+CHECK PASS IAB operations do not close with a margin below the minimum until a manager writes why: expected True got True
+MANUAL IAB: walk: a sales manager writes why it closes with a low margin
+WALK IAB: type_cost → order → confirm_rfq → in_transit → arrived → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IAB walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE EMB-LCL: quotation S00919 reused
+CASE EMB-LCL: S00919 sale file E260183 next step type_cost (1 services)
+WALK EMB-LCL: type_cost → order → confirm_rfq → in_transit → arrived → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS EMB-LCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+CASE IMA-LCL: quotation S00920 reused
+CASE IMA-LCL: S00920 sale file E260184 next step choose_supplier (1 services)
+MANUAL IMA-LCL: walk: operations chooses the supplier of THC-LCL as in the real file (TRANSGLORY, S.A.)
+CHECK PASS IMA-LCL operations do not close with a margin below the minimum until a manager writes why: expected True got True
+MANUAL IMA-LCL: walk: a sales manager writes why it closes with a low margin
+WALK IMA-LCL: choose_supplier → type_cost → order → confirm_rfq → in_transit → arrived → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS IMA-LCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+MANUAL EMB-FCL: FME: fictitious freight cost typed (no freight rate for this route on boss20)
+CASE EMB-FCL: quotation S01867 created for SPACIO REPOS, S.L. (PIKOLIN HOME) (EMB)
+LINE EMB-FCL THC      40 supplier ROMEU & CIA., S.A.     cost no_tariff        sale agreed     vat ok
+LINE EMB-FCL BL       -  supplier ROMEU & CIA., S.A.     cost no_tariff        sale agreed     vat ok
+LINE EMB-FCL CSM      -  supplier -                      cost ok               sale agreed     vat ok
+LINE EMB-FCL DEX      -  supplier ADUCEX, S.L.           cost no_tariff        sale missing    vat ok
+LINE EMB-FCL FME      40 supplier ROMEU & CIA., S.A.     cost manual           sale cost_based vat ok
+LINE EMB-FCL TTE-CON  -  supplier TRANSPORTES ENGUIX S.L cost no_tariff        sale missing    vat ok
+LINE EMB-FCL OAL-PAL  -  supplier Addoc Logistics        cost no_tariff        sale missing    vat ok
+LINE EMB-FCL OAL-CON  -  supplier Addoc Logistics        cost no_tariff        sale missing    vat ok
+LINE EMB-FCL TTE-FCL  -  supplier TRANSPORTES ENGUIX S.L cost no_tariff        sale missing    vat ok
+LINE EMB-FCL EUR1     -  supplier ADUCEX, S.L.           cost no_tariff        sale missing    vat ok
+LINE EMB-FCL GLO-LOG  -  supplier ROMEU & CIA., S.A.     cost no_tariff        sale missing    vat ok
+MANUAL EMB-FCL: cost on request (supplier named, no price on boss20): THC, BL, DEX, TTE-CON, OAL-PAL, OAL-CON, TTE-FCL, EUR1, GLO-LOG
+MANUAL EMB-FCL: selling price typed, fictitious 100 EUR per service (no price list for it yet: item 3): DEX, TTE-CON, OAL-PAL, OAL-CON, TTE-FCL, EUR1, GLO-LOG
+CASE EMB-FCL: S01867 sale file E260766 next step type_cost (8 services)
+GAP EMB-FCL: ALM storage at the warehouse of NORD SUD (Loeches) is not quoted: there is no service for regular warehouse storage (ALM is airport storage); its code, VAT and unit are owner decisions (Cristina wants a separate code; VAT Ángel, pallet or m³ Cristina: DEC:177, 181, 656)
+CHECK PASS EMB-FCL the chosen sailing gives the file its vessel, voyage and cut-off: expected ('[PRUEBA] ELYSSA', '[PRUEBA] 2647E', datetime.date(2026, 11, 22)) got ('[PRUEBA] ELYSSA', '[PRUEBA] 2647E', datetime.date(2026, 11, 22))
+MANUAL EMB-FCL: walk: the agent's later charge (BL) entered as an extra cost and re-invoiced
+CHECK PASS EMB-FCL operations do not close with a margin below the minimum until a manager writes why: expected True got True
+MANUAL EMB-FCL: walk: a sales manager writes why it closes with a low margin
+CHECK PASS EMB-FCL the house B/L is issued before departure and its PDF kept on the file: expected (1, 1) got (1, 1)
+CHECK PASS EMB-FCL the agent's later charge is ordered, billed and re-invoiced to the customer: expected (1, 'rebill', 1.0, 1.0) got (1, 'rebill', 1.0, 1.0)
+WALK EMB-FCL: type_cost → order → confirm_rfq → in_transit → order → confirm_rfq → arrived → delivered → perform → invoice → close_operations → bills → close_financial → done
+CHECK PASS EMB-FCL walked with «Siguiente paso» from acceptance to the financial close: expected 'done' got 'done'
+RESULT 11 passed, 0 failed, 1 gaps, 8 manual steps | mode commit | IMB-FCL S00917 sale E260181 type_cost | IAB S00918 sale E260182 type_cost | EMB-LCL S00919 sale E260183 type_cost | IMA-LCL S00920 sale E260184 choose_supplier | EMB-FCL S01867 sale E260766 type_cost
+# Exit status: 0

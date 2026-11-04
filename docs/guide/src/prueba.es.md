@@ -23,6 +23,7 @@ miedo. Odoo no envía nada fuera (correo desactivado durante las pruebas). Las o
 | 6 | Consolidación | **E260231** con **E260232** y **E260233** | Reparto de costes, margen de cada casa y consolidado, manifiesto del máster, HBL de cada casa |
 | 7 | Grupaje de un agente | **E260184** | En negocio de agente se factura al agente (el ordenante) |
 | 8 | Mis expedientes | Expedientes | Abre en «Mis expedientes» y «En curso»; filtros «Necesitan acción», «Pendiente en operaciones», «Por facturar o cerrar»; vista tablero |
+| 9 | Exportación FCL con almacén | **E260766** (Pikolin, Barcelona → Túnez, 40' DV) | La salida elegida en la oferta da buque, viaje y cut-off al expediente; número de contenedor y precinto; [[Emitir HBL]] antes de la salida; un cargo posterior del agente (modificación del BL) como coste extra → [[Refacturar al cliente]] → sale en la factura |
 
 Las páginas [Cierre](#/cierre), [Consolidaciones](#/consolidacion) y [Documentos de transporte](#/documentos)
 explican cada parte.
@@ -37,4 +38,5 @@ explican cada parte.
 | Ángel | Plazos de 75 y 90 días de Odoo 17: ¿se siguen usando? (la ley permite 60 días entre empresas) |
 | Ángel y Cristina | Expedientes DAP/DDP: ¿se abren al aceptar o al llegar los documentos? |
 | Cristina | Almacenaje (ALM): ¿su correo del 25/09 o la cláusula de las ofertas? |
+| Ángel y Cristina | Almacenaje en un almacén (no aeropuerto), p. ej. antes de cargar un contenedor de exportación: código propio, IVA (Ángel) y unidad, palé o m³ por día (Cristina) |
 | Cristina | Revisar las 7 plantillas de oferta y sus precios |

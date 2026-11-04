@@ -56,7 +56,7 @@ con su fuente escrita; ninguna se inventa.
    Conakry, MSC), E260184 importación LCL de agente (Publiship, Hong Kong → Valencia). Cada uno se recorre con «Siguiente
    paso» hasta el cierre financiero dentro de una transacción deshecha. Dos tandas anteriores se cancelaron en Odoo
    (E260171–E260178): un precio ficticio puesto por unidad y, después, el 40' HC sin líneas (defecto corregido en la
-   tarea 3). Cubre los huecos S3 (sin NOA ni almacenaje) y S5; S4 (exportación FCL) sigue abierto. Lo que aprendimos
+   tarea 3). Cubre los huecos S3 (sin NOA ni almacenaje) y S5; S4 (exportación FCL), en la tarea 20. Lo que aprendimos
    para la tarea 3:
    - las tarifas de cliente (p. ej. Cofitel) no tienen la regla general «coste + 20 %» de respaldo: el flete con coste
      manual queda sin precio de venta;
@@ -368,6 +368,23 @@ con su fuente escrita; ninguna se inventa.
    reimpresión sigue mostrando el anterior); documentos house 11/0, documentos 19/0, consolidaciones 22/0. Muestra en
    boss20: E260761 «[PRUEBA] MUESTRA AWB» emitido (`dev/sample_air_house.py`).
 
+20. **Exportación FCL real de punta a punta (hueco S4).** *Hecho cuando* una exportación FCL copiada de Odoo 17 llegue
+   con «Siguiente paso» al cierre financiero y cada falta quede corregida o anotada con su fuente. **Entregado el 04/11**
+   (commit `cd7262d`, boss_expediente 20.0.1.28.5): caso EMB-FCL de `dev/sample_real_cases.py` sobre E260901 de Odoo 17
+   (Pikolin, Barcelona → Túnez, 1×40' DV, flete pagado en origen): plantilla EMB sin los cargos que cubre el «forfait
+   gastos locales» del agente de la naviera (Romeu), recogida a almacén, descarga y carga del contenedor, arrastre al
+   puerto, despacho de exportación y EUR.1; salida elegida con su cut-off, número de contenedor y precinto, HBL emitido
+   antes de la salida y la modificación de BL que el agente cobró después como coste extra refacturado al cliente. En
+   boss20 queda **E260766** (oferta S01867) aceptado. Corregido: faltaba en boss20 Addoc Logistics, que carga y
+   descarga en el almacén (alta en Odoo 17 el 10/08 sin factura de proveedor, por eso no entró en la carga de contactos;
+   `dev/setup_real_suppliers.py`); el control de margen del cierre dejaba ocho avisos en el registro en cada cierre (el
+   resultado era correcto). **Anotado, decisión de los responsables:** el almacenaje en el almacén de Nord Sud (Loeches)
+   no se oferta: no hay servicio de almacenaje normal (ALM es el del aeropuerto); Cristina quiere un código propio, el
+   IVA es de Ángel y la unidad (palé o m³ por día) de Cristina (DEC:177, 181, 656; pregunta en la hoja de la prueba).
+   Sin tarifas en boss20 de Romeu, Enguix, Addoc ni ADUCEX para exportación: esas líneas salen «a consultar» y el
+   operativo teclea el coste. Evidencia `docs/evidencias/20261104_1725_sample_real_cases_boss20_cd7262d7e660.txt`
+   (11/0, los cinco casos hasta el cierre financiero).
+
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
 
@@ -402,4 +419,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. (15) the Odoo 17 minimum margin rules and exceptions as data, one check for quotation and close — delivered 04/11. (16) settings, phase 1: three BOSS tabs in Settings and 11 values moved out of the code — delivered 04/11. Phase 2: the service lists of the code are fields of the service and the incoterm — delivered 04/11. Phase 3: every status condition with its level (required, warning, not checked) — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. (15) the Odoo 17 minimum margin rules and exceptions as data, one check for quotation and close — delivered 04/11. (16) settings, phase 1: three BOSS tabs in Settings and 11 values moved out of the code — delivered 04/11. Phase 2: the service lists of the code are fields of the service and the incoterm — delivered 04/11. Phase 3: every status condition with its level (required, warning, not checked) — delivered 04/11. (17) rate quotation as the sales team sends it: prices by container size, supplier list, optional services, sailings — delivered 04/11. (18) source review before asking: four questions left; four technical tasks — delivered 04/11. (19) house documents: an issued B/L or air waybill does not change (re-issue with a reason), B/L clauses, IATA set — delivered 04/11. (20) a real FCL export (Odoo 17 E260901) walked to the financial close; warehouse storage left to the owners (its own code, VAT and unit) — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).

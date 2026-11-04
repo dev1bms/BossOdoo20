@@ -23,6 +23,7 @@ safe. Odoo sends nothing outside (mail is switched off during the tests). Remark
 | 6 | Consolidation | **E260231** with **E260232** and **E260233** | Cost split, margin of each house and consolidated, master's manifest, HBL of each house |
 | 7 | LCL for an agent | **E260184** | In agent business the agent (the orderer) is invoiced |
 | 8 | My files | Shipment files | Opens on «My files» and «In progress»; filters «Needs action», «To do in operations», «To invoice or close»; board view |
+| 9 | FCL export through a warehouse | **E260766** (Pikolin, Barcelona → Tunis, 40' DV) | The sailing chosen on the quotation gives the file its vessel, voyage and cut-off; container number and seal; [[Issue HBL]] before departure; a later charge of the agent (B/L modification) as an extra cost → [[Re-invoice to the customer]] → on the invoice |
 
 The pages [Closing](#/cierre), [Consolidations](#/consolidacion) and [Transport documents](#/documentos) explain each
 part.
@@ -37,4 +38,5 @@ part.
 | Ángel | Payment terms of 75 and 90 days from Odoo 17: still used? (the law allows 60 days between companies) |
 | Ángel and Cristina | DAP/DDP files: opened at acceptance or when the documents arrive? |
 | Cristina | Storage (ALM): her e-mail of 25/09 or the clause in the quotations? |
+| Ángel and Cristina | Storage in a warehouse (not an airport), e.g. before an export container is loaded: its own code, VAT (Ángel) and unit, pallet or m³ per day (Cristina) |
 | Cristina | Check the 7 quotation templates and their prices |
