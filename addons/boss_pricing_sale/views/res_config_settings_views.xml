@@ -23,7 +23,7 @@
                                  help="Days a weekly freight rate typed from a quotation is valid from its start (7 = one week).">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_spot_rate_validity_days" class="col-lg-4 o_light_label">Days</label>
+                                    <label for="boss_spot_rate_validity_days" string="Days" class="col-lg-4 o_light_label"/>
                                     <field name="boss_spot_rate_validity_days" class="col-lg-3"/>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                                  help="A supplier price whose validity ends within this many days shows «Expiring» in the lists and the workspace.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_tariff_expiring_days" class="col-lg-4 o_light_label">Days</label>
+                                    <label for="boss_tariff_expiring_days" string="Days" class="col-lg-4 o_light_label"/>
                                     <field name="boss_tariff_expiring_days" class="col-lg-3"/>
                                 </div>
                             </div>
@@ -53,7 +53,7 @@
                                  help="Expected cost of the line + this percentage, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 = off.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_default_markup" class="col-lg-4 o_light_label">Cost +</label>
+                                    <label for="boss_default_markup" string="Cost +" class="col-lg-4 o_light_label"/>
                                     <field name="boss_default_markup" class="col-lg-3"/> %
                                 </div>
                             </div>
@@ -62,11 +62,11 @@
                                  help="Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance below the minimum is accepted. A warning, never a block.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_margin_default_rate" class="col-lg-4 o_light_label">% of the cost</label>
+                                    <label for="boss_margin_default_rate" string="% of the cost" class="col-lg-4 o_light_label"/>
                                     <field name="boss_margin_default_rate" class="col-lg-3"/>
                                 </div>
                                 <div class="row">
-                                    <label for="boss_margin_tolerance" class="col-lg-4 o_light_label">Tolerance</label>
+                                    <label for="boss_margin_tolerance" string="Tolerance" class="col-lg-4 o_light_label"/>
                                     <field name="boss_margin_tolerance" class="col-lg-3"/>
                                 </div>
                             </div>
@@ -85,15 +85,15 @@
                                  help="The chargeable weight is the higher of the gross weight and volume × factor of the mode (Ángel, 27/10/2026). A supplier document stating its own factor keeps it.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_volumetric_air" class="col-lg-4 o_light_label">Air</label>
+                                    <label for="boss_volumetric_air" string="Air" class="col-lg-4 o_light_label"/>
                                     <field name="boss_volumetric_air" class="col-lg-3"/>
                                 </div>
                                 <div class="row">
-                                    <label for="boss_volumetric_road" class="col-lg-4 o_light_label">Road</label>
+                                    <label for="boss_volumetric_road" string="Road" class="col-lg-4 o_light_label"/>
                                     <field name="boss_volumetric_road" class="col-lg-3"/>
                                 </div>
                                 <div class="row">
-                                    <label for="boss_volumetric_sea" class="col-lg-4 o_light_label">Sea</label>
+                                    <label for="boss_volumetric_sea" string="Sea" class="col-lg-4 o_light_label"/>
                                     <field name="boss_volumetric_sea" class="col-lg-3"/>
                                 </div>
                             </div>

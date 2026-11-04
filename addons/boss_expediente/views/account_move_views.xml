@@ -45,7 +45,7 @@
                                  help="Cristina: a delivered file closes operations within this many days; afterwards the next step warns.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_close_days_after_delivery" class="col-lg-4 o_light_label">Days</label>
+                                    <label for="boss_close_days_after_delivery" string="Days" class="col-lg-4 o_light_label"/>
                                     <field name="boss_close_days_after_delivery" class="col-lg-3"/>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                  help="Activity to the operator this many working days before the last free day of each container, another on that day, and one to the salesperson on the first day with a cost (F0-C55). 0 switches it off.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label for="boss_free_alert_days" class="col-lg-4 o_light_label">Working days</label>
+                                    <label for="boss_free_alert_days" string="Working days" class="col-lg-4 o_light_label"/>
                                     <field name="boss_free_alert_days" class="col-lg-3"/>
                                 </div>
                             </div>
