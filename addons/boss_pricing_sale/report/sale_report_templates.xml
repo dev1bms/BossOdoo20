@@ -1,26 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Rate quotation (Ángel, 27/10/2026): the customer receives unit rates (per container of a size, per B/L...)
-         and makes the calculation; no quantities and no total are printed. Buying prices are never printed (the
-         standard document has no cost column). -->
+    <!-- Rate quotation (Ángel, 27/10 and 04/11/2026): the customer receives the rates as the commercial team sends them
+         today (sheet «SEA FCL»): one row per service, one column per container size and type, the basis of each price,
+         and the total of ONE container of each size in one shipment. Never quantities, never a total of a shipment not
+         yet known, never buying prices (the standard document has no cost column). Shared by the PDF and the portal. -->
+    <template id="boss_rate_matrix" name="BOSS rate quotation: rates by container size">
+        <t t-set="matrix" t-value="order._boss_rate_matrix()"/>
+        <t t-set="money" t-value="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+        <table class="table table-sm o_boss_rate_matrix" name="boss_rate_matrix">
+            <thead>
+                <tr>
+                    <th class="text-start">Service</th>
+                    <th t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap" t-out="column['label']"/>
+                    <th class="text-start">Basis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="matrix['rows']" t-as="row">
+                    <tr t-if="row['kind'] == 'line_section'" class="fw-bold" style="background-color: #e9ecef;">
+                        <td t-att-colspan="len(matrix['columns']) + 2" t-out="row['name']"/>
+                    </tr>
+                    <tr t-elif="row['kind'] == 'line_note'" class="fst-italic">
+                        <td t-att-colspan="len(matrix['columns']) + 2" t-out="row['name']"/>
+                    </tr>
+                    <tr t-else="">
+                        <td t-out="row['name']"/>
+                        <td t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap">
+                            <t t-if="column['key'] in row['cells']" t-out="row['cells'][column['key']]" t-options="money"/>
+                            <t t-else="">—</t>
+                        </td>
+                        <td class="text-nowrap" t-out="row['basis']"/>
+                    </tr>
+                </t>
+            </tbody>
+            <tfoot>
+                <tr class="fw-bold" name="boss_rate_total">
+                    <td>Total for one container (VAT excluded)</td>
+                    <td t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap">
+                        <t t-out="matrix['totals'][column['key']]" t-options="money"/>
+                    </td>
+                    <td/>
+                </tr>
+                <t t-foreach="matrix['others']" t-as="other">
+                    <tr class="fw-bold" name="boss_rate_total_other">
+                        <td>Total in <t t-out="other['currency'].name"/></td>
+                        <td t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap">
+                            <t t-out="other['totals'][column['key']]"
+                               t-options="{'widget': 'monetary', 'display_currency': other['currency']}"/>
+                        </td>
+                        <td/>
+                    </tr>
+                    <tr class="text-muted small" name="boss_rate_exchange">
+                        <td t-att-colspan="len(matrix['columns']) + 2">
+                            Exchange rate: 1 <t t-out="order.currency_id.name"/> = <t t-out="'%.4f' % other['rate']"/>
+                            <t t-out="other['currency'].name"/> (Odoo rate of
+                            <t t-out="other['date']" t-options="{'widget': 'date'}"/>).
+                        </td>
+                    </tr>
+                </t>
+            </tfoot>
+        </table>
+        <p class="small text-muted">Each total is for one container of its size in one shipment, with the services
+            priced per B/L, shipment or clearance counted once. The amount of the shipment depends on the containers you
+            book.</p>
+    </template>
+
     <template id="report_saleorder_document_boss" inherit_id="sale.report_saleorder_document">
-        <xpath expr="//th[@name='th_quantity']" position="inside">
-            <span t-if="doc.boss_rate_quotation">Per</span>
-        </xpath>
-        <xpath expr="//th[@name='th_subtotal']" position="attributes">
+        <xpath expr="//table[hasclass('o_main_table')]" position="attributes">
             <attribute name="t-if">not doc.boss_rate_quotation</attribute>
         </xpath>
-        <xpath expr="//td[@name='td_product_quantity']" position="attributes">
-            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
-        </xpath>
-        <xpath expr="//td[@name='td_product_quantity']" position="after">
-            <td t-if="doc.boss_rate_quotation" name="td_boss_rate_basis" class="text-end text-nowrap">
-                <span t-field="line.product_uom_id"/>
-                <span t-if="line.boss_container_size"><t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></span>
-            </td>
-        </xpath>
-        <xpath expr="//td[@name='td_product_subtotal']" position="attributes">
-            <attribute name="t-if">not doc.boss_rate_quotation</attribute>
+        <xpath expr="//table[hasclass('o_main_table')]" position="after">
+            <t t-if="doc.boss_rate_quotation">
+                <t t-call="boss_pricing_sale.boss_rate_matrix" order="doc"/>
+            </t>
         </xpath>
         <xpath expr="//div[@name='so_total_summary']" position="attributes">
             <attribute name="t-if">not doc.boss_rate_quotation</attribute>

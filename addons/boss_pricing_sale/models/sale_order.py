@@ -119,6 +119,49 @@ class SaleOrder(models.Model):
         return sorted({(c.size, c.container_type_id) for c in self.boss_container_ids},
                       key=lambda g: (g[0], g[1].sequence))
 
+    def _boss_rate_matrix(self):
+        """A rate quotation as the commercial team sends it (Ángel's sheet «SEA FCL», 04/11/2026): one row per
+        service, one column per container size and type, the basis beside each price, and under each column the total
+        of ONE container of that size in one shipment (VAT excluded), never a total of a shipment not yet known.
+        Services priced per B/L, shipment or clearance count once in every column. When supplier prices are in another
+        currency, the exchange rate used and the totals in that currency are given too."""
+        self.ensure_one()
+        sized = self.order_line.filtered(lambda l: not l.display_type and l.boss_container_size)
+        groups = sorted({(l.boss_container_size, l.boss_container_type_id) for l in sized},
+                        key=lambda g: (g[0], g[1].sequence))
+        columns = [{"key": f"{size}-{ctype.id}", "label": f"{size}' {ctype.code or ''}".strip()}
+                   for size, ctype in groups] or [{"key": "all", "label": self.env._("Rate")}]
+        keys = [c["key"] for c in columns]
+        rows, by_service, section = [], {}, 0
+        for line in self.order_line.sorted("sequence"):
+            if line.display_type in ("line_section", "line_note"):
+                section += 1
+                rows.append({"kind": line.display_type, "name": line.name})
+                continue
+            if line.display_type or not line.product_id:
+                continue
+            key = (section, line.product_id.id, line.product_uom_id.id)
+            row = by_service.get(key)
+            if not row:
+                row = by_service[key] = {"kind": "line", "name": (line.label or line.name or "").split("\n")[0],
+                                         "basis": line.product_uom_id.name, "cells": {}}
+                rows.append(row)
+            unit = (line.price_subtotal / line.product_uom_qty if line.product_uom_qty
+                    else line.price_unit * (1 - (line.discount or 0.0) / 100))
+            targets = [f"{line.boss_container_size}-{line.boss_container_type_id.id}"] if line.boss_container_size \
+                else keys
+            for target in targets:
+                if target in keys:
+                    row["cells"][target] = row["cells"].get(target, 0.0) + unit
+        totals = {k: sum(r["cells"].get(k, 0.0) for r in rows if r["kind"] == "line") for k in keys}
+        date = fields.Date.to_date(self.date_order) or fields.Date.context_today(self)
+        others = []
+        for currency in (self.order_line.boss_cost_currency_id - self.currency_id).sorted("name"):
+            rate = self.currency_id._convert(1.0, currency, self.company_id, date, round=False)
+            others.append({"currency": currency, "rate": rate, "date": date,
+                           "totals": {k: totals[k] * rate for k in keys}})
+        return {"columns": columns, "rows": rows, "totals": totals, "others": others}
+
     @staticmethod
     def _boss_per_container(product, uom):
         return bool(product.boss_pricing_mode) and uom.boss_quantity_source in ("container", "teu")

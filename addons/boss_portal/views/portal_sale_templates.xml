@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Rate quotation in the portal (ADR-010): unit rates with their basis, no quantities, no amount per line, no total
-         (not even in the page's data attributes); no signature or payment. A shipment quotation keeps the standard page. -->
+    <!-- Rate quotation in the portal (ADR-010): the rates by container size of the PDF (one container of each size, never
+         a total of a shipment not yet known, not even in the page's data attributes); no signature or payment. A shipment quotation keeps the standard page. -->
     <template id="sale_order_portal_template_boss" inherit_id="sale.sale_order_portal_template">
         <xpath expr="//div[hasclass('o_portal_sale_sidebar')]" position="attributes">
             <attribute name="t-att-data-order-amount-total">0 if sale_order.boss_rate_quotation else sale_order.amount_total</attribute>
@@ -55,38 +55,12 @@
                     <span><t t-out="sale_order.boss_origin_port_id.code or '?'"/> → <t t-out="sale_order.boss_destination_port_id.code or '?'"/></span>
                 </t>
             </div>
-            <p class="mt-2 mb-0 small">Each price applies per unit of its basis (per container of the size and type shown, per B/L...). The total depends on the containers you ship: no total is given here.</p>
+            <p class="mt-2 mb-0 small">Each price applies per unit of its basis (per container of the size and type shown, per B/L...). The totals are for one container of each size; the amount of the shipment depends on the containers you book.</p>
         </div>
         <section id="details" class="p-0 p-lg-3 pt-lg-0 border-start border-end border-bottom rounded-bottom">
-            <table class="table table-sm mb-0" id="boss_rate_table">
-                <thead>
-                    <tr>
-                        <th class="text-start">Service</th>
-                        <th class="text-start">Basis</th>
-                        <th class="text-end">Unit price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <t t-foreach="sale_order.order_line" t-as="line">
-                        <tr t-if="line.display_type == 'line_section'" class="bg-200 fw-bold">
-                            <td colspan="3" t-out="line.name"/>
-                        </tr>
-                        <tr t-elif="line.display_type == 'line_note'" class="fst-italic">
-                            <td colspan="3" t-out="line.name"/>
-                        </tr>
-                        <tr t-elif="not line.display_type">
-                            <td t-out="line.label"/>
-                            <td class="text-nowrap">
-                                <span t-out="line.product_uom_id.name"/>
-                                <span t-if="line.boss_container_size"> <t t-out="line.boss_container_size"/>'<t t-if="line.boss_container_type_id"> <t t-out="line.boss_container_type_id.code"/></t></span>
-                            </td>
-                            <td class="text-end text-nowrap">
-                                <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
-                            </td>
-                        </tr>
-                    </t>
-                </tbody>
-            </table>
+            <div id="boss_rate_table" class="table-responsive">
+                <t t-call="boss_pricing_sale.boss_rate_matrix" order="sale_order"/>
+            </div>
             <div t-if="not is_html_empty(sale_order.note)" class="p-3 small" t-field="sale_order.note"/>
         </section>
 
