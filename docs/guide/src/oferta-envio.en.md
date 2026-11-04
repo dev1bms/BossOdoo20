@@ -42,8 +42,10 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
   the Odoo exchange rate and the totals in USD. Never a total of the shipment, still unknown. The conditions of the
   offer come from the template (IMB FOB, EMB) in the client's language. Before accepting, enter the actual containers:
   the file needs them.
-- **Supplier of the line**: the list offers only the suppliers with an **approved and valid** price of that service on
-  the date of the line. For another supplier, add its price with ⊕ or tick «Cost on request».
+- **Supplier of the line**: the list offers only the suppliers whose **approved and valid** price of that service
+  **applies to this shipment** (route, carrier, container, date). When nobody has a price, the cost explanation names
+  the prices that exist for other shipments (e.g. a shipping line's THC only for origin China on a shipment from Hong
+  Kong). For another supplier, add its price with ⊕ or tick «Cost on request».
 - **Cost on request**: a trucker quoting case by case has no tariff. Tick «Cost on request» on the line (optional
   column), choose the supplier (here the list offers all of them) and type the selling price: the quotation is accepted
   and the cost is typed in the file when the supplier answers.

@@ -2978,16 +2978,16 @@ msgid "Suppliers"
 msgstr "Proveedores"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_supplier_ids
+msgid ""
+"Suppliers whose approved price of this service applies to this shipment on the tariff date of the line (route, carrier, container...): the ones offered in «Supplier» (Belal, 04/11/2026). Another supplier gets its price with «Add supplier price», or is chosen with «Cost asked case by case»."
+msgstr ""
+"Proveedores cuyo precio aprobado de este servicio aplica a este envío en la fecha de tarifa de la línea (ruta, naviera, contenedor...): los que se ofrecen en «Proveedor» (Belal, 04/11/2026). Otro proveedor recibe su precio con «Añadir precio de proveedor» o se elige con «Coste a petición»."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_supplier_ids
 msgid "Suppliers with a price"
 msgstr "Proveedores con precio"
-
-#. module: boss_pricing_sale
-#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_supplier_ids
-msgid ""
-"Suppliers with an approved price of this service valid on the tariff date of the line: the ones offered in «Supplier» (Belal, 04/11/2026). Another supplier gets its price with «Add supplier price», or is chosen with «Cost asked case by case»."
-msgstr ""
-"Proveedores con un precio aprobado de este servicio vigente en la fecha de tarifa de la línea: los que se ofrecen en «Proveedor» (Belal, 04/11/2026). Otro proveedor recibe su precio con «Añadir precio de proveedor» o se elige con «Coste a petición»."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_vat_tax__customer_zone__ter

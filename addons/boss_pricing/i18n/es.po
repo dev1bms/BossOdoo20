@@ -1670,6 +1670,14 @@ msgstr ""
 "Ningún precio aprobado de %(service)s por %(uom)s aplica a este envío."
 
 #. module: boss_pricing
+#. odoo-python
+#: code:addons/boss_pricing/models/boss_pricing.py:0
+msgid ""
+"No approved supplier price of %(service)s per %(uom)s applies to this shipment. Prices of this service exist for other shipments (another origin, port, carrier or container): %(others)s."
+msgstr ""
+"Ningún precio aprobado de %(service)s por %(uom)s aplica a este envío. Hay precios de este servicio para otros envíos (otro origen, puerto, naviera o contenedor): %(others)s."
+
+#. module: boss_pricing
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__free_of_charge
 msgid "No cost (confirmed zero)"
 msgstr "Sin coste (cero confirmado)"

@@ -43,8 +43,10 @@ Todo se puede cambiar después.
   proveedor en dólares, también el tipo de cambio de Odoo y los totales en USD. Nunca un total del embarque, que aún
   no se conoce. Las condiciones de la oferta salen de la plantilla (IMB FOB, EMB) en el idioma del cliente. Antes de
   aceptar, introduzca los contenedores reales: el expediente los necesita.
-- **Proveedor de la línea**: la lista solo ofrece los proveedores con un precio **aprobado y vigente** de ese servicio
-  en la fecha de la línea. Para otro proveedor, añada su precio con ⊕ o marque «Coste a petición».
+- **Proveedor de la línea**: la lista solo ofrece los proveedores cuyo precio **aprobado y vigente** de ese servicio
+  **aplica a este envío** (ruta, naviera, contenedor, fecha). Si nadie tiene precio, la explicación del coste dice qué
+  precios existen para otros envíos (p. ej. THC de una naviera solo para origen China en un envío desde Hong Kong).
+  Para otro proveedor, añada su precio con ⊕ o marque «Coste a petición».
 - **Coste a petición**: un camionero que cotiza caso por caso no tiene tarifa. Marque «Coste a petición» en la línea
   (columna opcional), elija el proveedor (aquí la lista ofrece todos) y teclee la venta: la oferta se acepta y el
   coste se escribe en el expediente cuando el proveedor responde.
