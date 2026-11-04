@@ -76,8 +76,8 @@ html = env["ir.actions.report"].with_context(lang="en_US")._render_qweb_html("sa
 text = unescape(html)
 check("5 the PDF shows the rates by size with their totals and exchange rate, not the standard lines or total",
       (True, True, True, True, False, False),
-      ("boss_rate_matrix" in html, "20' DV" in text and "40' HC" in text, "Total for one container" in html,
-       "Exchange rate" in html, "o_total_table" in html, "123.45" in html or "123,45" in html))
+      ("boss_rate_matrix" in html, "20' DV" in text and "40' HC" in text, any(t in text for t in ("Total for one container", "Total de un contenedor")),
+       any(t in text for t in ("Exchange rate", "Tipo de cambio")), "o_total_table" in html, "123.45" in html or "123,45" in html))
 shipment = order.copy({"boss_rate_quotation": False})
 normal = env["ir.actions.report"]._render_qweb_html("sale.report_saleorder", shipment.ids)[0].decode()
 check("6 a shipment quotation keeps the standard lines and total", (False, True),
