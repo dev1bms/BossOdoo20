@@ -89,7 +89,7 @@ def shipment_rows(src, prefix="", file=None):
         route.append((_("Delivery"), _address(g("delivery_address_id"))))
     incoterm = src["incoterm_id"] if "incoterm_id" in src._fields else (src["incoterm"] if "incoterm" in src._fields else False)
     if incoterm:
-        location = src["incoterm_location"] if "incoterm_location" in src._fields else ""
+        location = (src["incoterm_location"] or "") if "incoterm_location" in src._fields else ""
         route.append((_("Incoterm"), f"{incoterm.code} {location}".strip()))
     shipper, consignee = g("shipper_id"), g("consignee_id")
     if shipper:
