@@ -129,8 +129,8 @@ class SaleOrder(models.Model):
         sized = self.order_line.filtered(lambda l: not l.display_type and l.boss_container_size)
         groups = sorted({(l.boss_container_size, l.boss_container_type_id) for l in sized},
                         key=lambda g: (g[0], g[1].sequence))
-        columns = [{"key": f"{size}-{ctype.id}", "label": f"{size}' {ctype.code or ''}".strip()}
-                   for size, ctype in groups] or [{"key": "all", "label": self.env._("Rate")}]
+        columns = [{"key": f"{size}-{ctype.id}", "label": f"{size}' {ctype.code or ''}".strip(), "size": size,
+                    "code": ctype.code or ""} for size, ctype in groups]             or [{"key": "all", "label": self.env._("Rate"), "size": False, "code": ""}]
         keys = [c["key"] for c in columns]
         rows, by_service, section = [], {}, 0
         for line in self.order_line.sorted("sequence"):

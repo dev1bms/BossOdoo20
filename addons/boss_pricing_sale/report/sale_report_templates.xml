@@ -11,7 +11,10 @@
             <thead>
                 <tr>
                     <th class="text-start">Service</th>
-                    <th t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap" t-out="column['label']"/>
+                    <th t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap">
+                        <t t-if="column['size']"><t t-out="column['size']"/>' <t t-out="column['code']"/></t>
+                        <t t-else="">Rate</t>
+                    </th>
                     <th class="text-start">Basis</th>
                 </tr>
             </thead>
