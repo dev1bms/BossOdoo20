@@ -1,0 +1,26 @@
+# Evidence: dev/check_house_documents.py on boss20
+# Date: 2026-11-04 17:04    
+# Commit tested: 16bebf34218c (i18n(documents): Spanish of the re-issue of house documents (the documents stay in English))
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.4 boss_portal 20.0.1.0.10 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.8 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 16:04:59,193 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 16:04:59,254 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 16:05:00,080 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 house document: none on the master, a house B/L on each sea house: expected (False, 'hbl', 'hbl') got (False, 'hbl', 'hbl')
+CHECK PASS 2 freight proposed from the incoterm: FOB collect, CIF prepaid: expected ('collect', 'prepaid') got ('collect', 'prepaid')
+CHECK PASS 3 the houses carry the master's vessel and voyage (ADR-013): expected ('[PRUEBA] VESSEL', '012W') got ('[PRUEBA] VESSEL', '012W')
+CHECK PASS 4 before issuing, the house B/L prints as a DRAFT with the boxes of Odoo 17: expected (True, True, True, True) got (True, True, True, True)
+      «E260753 cannot issue its house document yet, it lacks: number of packages.»
+CHECK PASS 5 house B and its missing data: issuing is refused and says what is missing: expected ('refused', True) got ('refused', True)
+CHECK PASS 6 issuing gives the B/L the file's number and today's date, and prints it: expected ('E260752', datetime.date(2026, 11, 4), 'ir.actions.report') got ('E260752', datetime.date(2026, 11, 4), 'ir.actions.report')
+CHECK PASS 7 the issued B/L: no DRAFT, its number, the master's container and seal, freight payable at destination: expected (False, True, True, True) got (False, True, True, True)
+CHECK PASS 8 printed by a Spanish user, the B/L stays in English (an international document): expected True got True
+      «No cargo manifest for E260751 yet, it lacks: the agent abroad (Who).»
+CHECK PASS 9 no cargo manifest without the agent abroad (Odoo 17 action 1543): expected ('refused', True) got ('refused', True)
+CHECK PASS 10 the manifest lists both houses with their shipper and consignee, and the totals: expected (True, True, True, True, True) got (True, True, True, True, True)
+CHECK PASS 11 an air house issues its house air waybill under the master's number: expected ('hawb', 'E260755', True, True) got ('hawb', 'E260755', True, True)
+RESULT 11 passed, 0 failed
+# Exit status: 0

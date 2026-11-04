@@ -356,6 +356,18 @@ con su fuente escrita; ninguna se inventa.
    53/0, cierre 8/0. Las tres tarifas de MSC (FMI Hong Kong y Shanghái) con la dirección de factura como proveedor
    nombran ya la empresa (Belal, 04/11; `dev/fix_tariff_supplier.py`, nota en su historial).
 
+19. **Documentos house completos.** *Hecho cuando* un BL o AWB emitido no cambie, el BL lleve sus cláusulas y el AWB sea
+   el juego IATA de Odoo 17. **Entregado el 04/11** (boss_documents 20.0.1.4.0, commits `707f66e`, `16bebf3`): al emitir
+   se guarda el PDF en el expediente y cada reimpresión da esa copia (adjunto del informe); [[Reemitir documento house]]
+   con motivo numera una nueva emisión y guarda las anteriores; el BL lleva la cláusula «RECEIVED by the Carrier…» y la
+   declaración de exceso de valor del BL de Odoo 17 (informe 1387; erratas corregidas) y una hoja aparte si las marcas o
+   la mercancía no caben; el AWB emitido son las 10 copias de Odoo 17 (informe 1143: originales verde, rojo y azul y siete
+   copias), con la certificación del expedidor, la declaración de seguridad y el aviso y las condiciones de contrato IATA
+   al dorso de cada copia (20 páginas; el borrador, una). Evidencia
+   `docs/evidencias/20261104_1704_check_house_doc_lock_boss20_16bebf34218c.txt` (8/0: tras cambiar el destinatario la
+   reimpresión sigue mostrando el anterior); documentos house 11/0, documentos 19/0, consolidaciones 22/0. Muestra en
+   boss20: E260761 «[PRUEBA] MUESTRA AWB» emitido (`dev/sample_air_house.py`).
+
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
 

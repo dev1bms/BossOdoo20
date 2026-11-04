@@ -24,6 +24,14 @@ and where to print it. They are printed **in English** for every user: they are 
   and dates**, next to **Marks and numbers**.
 - Originals: 3; when the B/L is a **sea waybill**, «express», zero originals.
 - On an LCL house, the containers and seals printed are its master's.
+- **An issued document does not change**: on issue its PDF is kept on the file and every reprint gives that copy, even
+  if the data changes afterwards. To correct it: [[Re-issue house document]] with the reason; a new one is issued
+  (issue 2, 3…) with today's date, the earlier copies stay in the attachments and the reason in the history.
+- The B/L prints the clause «RECEIVED by the Carrier…» and the excess value declaration of the Odoo 17 B/L. When the
+  marks or the goods do not fit their box, it prints «AS PER ATTACHED SHEET» and an extra sheet with the text.
+- The **issued air waybill** is the IATA set of Odoo 17: three originals (green for the carrier, red for the consignee,
+  blue for the shipper) and seven copies, each with the notice and conditions of contract on its reverse (20 pages).
+  The draft is one page.
 
 ## Transport order
 

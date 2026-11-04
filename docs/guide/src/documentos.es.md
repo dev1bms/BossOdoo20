@@ -26,6 +26,14 @@ internacionales.
   y fechas**, junto con **Marcas y números**.
 - Originales: 3; si el BL es **sea waybill**, «express», cero originales.
 - En una casa LCL, los contenedores y precintos que imprime son los de su máster.
+- **Un documento emitido no cambia**: al emitir se guarda su PDF en el expediente y cada reimpresión da esa copia,
+  aunque después cambien los datos. Para corregirlo: [[Reemitir documento house]] con el motivo; se emite uno nuevo
+  (emisión 2, 3…) con la fecha de hoy, las copias anteriores quedan en los adjuntos y el motivo en el historial.
+- El BL lleva la cláusula «RECEIVED by the Carrier…» y la declaración de exceso de valor del BL de Odoo 17. Si las
+  marcas o la mercancía no caben en su casilla, se imprime «AS PER ATTACHED SHEET» y una hoja aparte con el texto.
+- El **AWB emitido** es el juego IATA de Odoo 17: tres originales (verde para el transportista, rojo para el
+  destinatario, azul para el expedidor) y siete copias, cada una con el aviso y las condiciones de contrato al dorso
+  (20 páginas). El borrador es una sola página.
 
 ## Orden de transporte
 
