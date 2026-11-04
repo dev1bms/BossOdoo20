@@ -87,6 +87,12 @@ msgstr ""
 
 #. module: boss_pricing
 #. odoo-python
+#: code:addons/boss_pricing/models/res_company.py:0
+msgid "%(setting)s: enter a value of at least %(minimum)s."
+msgstr "%(setting)s: indique un valor de al menos %(minimum)s."
+
+#. module: boss_pricing
+#. odoo-python
 #: code:addons/boss_pricing/models/boss_pricing.py:0
 #: code:addons/boss_pricing/models/boss_tariff_line.py:0
 msgid "%s days free"
@@ -436,6 +442,12 @@ msgstr "Aprobada por"
 #: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff__approved_date
 msgid "Approved Date"
 msgstr "Fecha de aprobación"
+
+#. module: boss_pricing
+#: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__boss_expiring
+msgid "Approved and ending within the days of Settings › BOSS · Pricing."
+msgstr ""
+"Aprobada y con fin dentro de los días de Ajustes › BOSS · Tarifas y precios."
 
 #. module: boss_pricing
 #. odoo-python
@@ -1167,14 +1179,11 @@ msgid "Expired or expiring"
 msgstr "Vencidos o por vencer"
 
 #. module: boss_pricing
+#: model:ir.model.fields,field_description:boss_pricing.field_boss_tariff_line__boss_expiring
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff_line__validity_state__expiring
+#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
 msgid "Expires soon"
 msgstr "Vence pronto"
-
-#. module: boss_pricing
-#: model_terms:ir.ui.view,arch_db:boss_pricing.boss_tariff_line_view_search_ws
-msgid "Expiring (30 days)"
-msgstr "Vencen pronto (30 días)"
 
 #. module: boss_pricing
 #: model:ir.model.fields.selection,name:boss_pricing.selection__boss_tariff__direction__export
@@ -3040,9 +3049,9 @@ msgstr "vencidos o por vencer"
 #. module: boss_pricing
 #: model:ir.model.fields,help:boss_pricing.field_boss_tariff_line__volumetric_factor
 msgid ""
-"kg per m³ stated by the supplier document (e.g. 167 air). Empty: the factor of the shipment's transport mode (air 167, road 333, sea 1000)."
+"kg per m³ stated by the supplier document (e.g. 167 air). Empty: the factor of the shipment's transport mode (Settings › BOSS · Pricing)."
 msgstr ""
-"kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: el factor del modo de transporte del envío (aéreo 167, terrestre 333, marítimo 1000)."
+"kg por m³ que indica el documento del proveedor (p. ej. 167 aéreo). Vacío: el factor del modo de transporte del envío (Ajustes › BOSS · Tarifas y precios)."
 
 #. module: boss_pricing
 #. odoo-python

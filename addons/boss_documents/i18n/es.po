@@ -12,6 +12,12 @@ msgstr ""
 "%(file)s aún no puede emitir su documento house, le falta: %(problems)s."
 
 #. module: boss_documents
+#. odoo-python
+#: code:addons/boss_documents/models/boss_expediente.py:0
+msgid "%(setting)s: enter a value of at least %(minimum)s."
+msgstr "%(setting)s: indique un valor de al menos %(minimum)s."
+
+#. module: boss_documents
 #: model:ir.actions.report,print_report_name:boss_documents.action_report_cargo_manifest
 msgid "'%s CARGO MANIFEST' % object.name"
 msgstr ""

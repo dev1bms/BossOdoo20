@@ -89,6 +89,12 @@ msgstr "%(price)s · %(tariff)s v%(version)s · %(state)s"
 
 #. module: boss_pricing_sale
 #. odoo-python
+#: code:addons/boss_pricing_sale/models/res_company.py:0
+msgid "%(setting)s: enter a value of at least %(minimum)s."
+msgstr "%(setting)s: indique un valor de al menos %(minimum)s."
+
+#. module: boss_pricing_sale
+#. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid ""
 "%(supplier)s has no supplier price for %(service)s (no tariff at all). The line will show «no supplier price» until one is entered: choose the supplier that performs this service, or add its price."
@@ -1902,9 +1908,9 @@ msgstr "Nueva versión de"
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid ""
-"No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) and the volume weight (%(volume)s m³ × 167 = %(volume_kg)s kg)."
+"No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) and the volume weight (%(volume)s m³ × %(factor)s = %(volume_kg)s kg)."
 msgstr ""
-"Aún sin AWB: peso tasable ESTIMADO en %(kg)s kg, el mayor del peso bruto (%(gross)s kg) y el peso volumen (%(volume)s m³ × 167 = %(volume_kg)s kg)."
+"Aún sin AWB: peso tasable ESTIMADO en %(kg)s kg, el mayor del peso bruto (%(gross)s kg) y el peso volumen (%(volume)s m³ × %(factor)s = %(volume_kg)s kg)."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.actions.act_window,help:boss_pricing_sale.boss_margin_family_action
@@ -1960,9 +1966,9 @@ msgstr ""
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid ""
-"Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance below the minimum is accepted. A warning, never a block."
+"Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance (an amount) below the minimum is accepted. On the quotation a warning; at the operational close the condition «Low margin explained» of BOSS · Files decides."
 msgstr ""
-"Regla base de Odoo 17: un grupo o servicio sin regla de margen mínimo debe dejar este % de su coste; se acepta un margen hasta la tolerancia por debajo del mínimo. Es un aviso, nunca un bloqueo."
+"Regla base de Odoo 17: un grupo o servicio sin regla de margen mínimo debe dejar este % de su coste; se acepta un margen hasta la tolerancia (un importe) por debajo del mínimo. En la oferta, un aviso; en el cierre operativo decide la condición «Margen bajo justificado» de BOSS · Expedientes."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_res_company__boss_margin_tolerance
@@ -3203,8 +3209,8 @@ msgstr ""
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
-msgid "Tolerance"
-msgstr "Tolerancia"
+msgid "Tolerance (amount)"
+msgstr "Tolerancia (importe)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_destination_place
@@ -3412,9 +3418,9 @@ msgstr "Factores de peso volumétrico (kg por m³)"
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_volume_weight_kg
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_volume_weight_kg
 msgid ""
-"Volume × factor of the transport mode: air 167, road 333, sea 1000 kg per m³ (Ángel, 27/10/2026)."
+"Volume × factor of the transport mode in Settings › BOSS · Pricing when the measures were entered."
 msgstr ""
-"Volumen × factor del modo de transporte: aéreo 167, terrestre 333, marítimo 1000 kg por m³ (Ángel, 27/10/2026)."
+"Volumen × factor del modo de transporte en Ajustes › BOSS · Tarifas y precios cuando se introdujeron las medidas."
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form

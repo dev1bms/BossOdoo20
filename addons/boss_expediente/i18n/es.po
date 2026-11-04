@@ -92,6 +92,12 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "%(files)s: «%(step)s» is not possible from the status «%(state)s»."
+msgstr "%(files)s: «%(step)s» no es posible desde el estado «%(state)s»."
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/account_move.py:0
 msgid ""
 "%(move)s cannot be paid yet:\n"
@@ -134,6 +140,14 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_service_period.py:0
+msgid ""
+"%(service)s, %(direction)s: give the period both its start and its end, or leave both empty for «no period»."
+msgstr ""
+"%(service)s, %(direction)s: indique el inicio y el fin del periodo, o deje ambos vacíos para «sin periodo»."
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/account_move.py:0
 msgid "%(service)s: extra cost still '%(cls)s'"
 msgstr "%(service)s: coste adicional aún «%(cls)s»"
@@ -143,6 +157,12 @@ msgstr "%(service)s: coste adicional aún «%(cls)s»"
 #: code:addons/boss_expediente/wizard/boss_expediente_split.py:0
 msgid "%(service)s: only %(qty)s in %(file)s."
 msgstr "%(service)s: solo %(qty)s en %(file)s."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/account_move.py:0
+msgid "%(setting)s: enter a value of at least %(minimum)s."
+msgstr "%(setting)s: indique un valor de al menos %(minimum)s."
 
 #. module: boss_expediente
 #. odoo-python
@@ -207,6 +227,14 @@ msgstr "%s ya está refacturado."
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%s is cancelled."
 msgstr "%s está cancelado."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%s is closed financially: an accounting manager reopens it financially first."
+msgstr ""
+"%s está cerrado económicamente: primero un jefe de contabilidad lo reabre económicamente."
 
 #. module: boss_expediente
 #. odoo-python
@@ -968,6 +996,8 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Cancel file"
 msgstr "Cancelar expediente"
@@ -1071,6 +1101,8 @@ msgid "Close financially"
 msgstr "Cerrar económicamente"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__close_operations
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Close operations"
@@ -1658,11 +1690,20 @@ msgid "Default periods"
 msgstr "Periodos por defecto"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__delivered
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__delivered
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Delivered"
 msgstr "Entregado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__boss_due_to_close
+msgid ""
+"Delivered longer ago than the days of Settings › BOSS · Files › Days to close after the delivery."
+msgstr ""
+"Entregado hace más días de los de Ajustes › BOSS · Expedientes › Días para cerrar tras la entrega."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__delivered_date
@@ -1671,8 +1712,8 @@ msgstr "Entregado el"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
-msgid "Delivered over a week ago"
-msgstr "Entregados hace más de una semana"
+msgid "Delivered, due to close"
+msgstr "Entregados, por cerrar"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_ata
@@ -1893,6 +1934,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_draft_bills
 msgid "Draft vendor bills (not counted)"
 msgstr "Facturas de proveedor en borrador (no cuentan)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__boss_due_to_close
+msgid "Due to close"
+msgstr "Por cerrar"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__customs_guarantee__payment
@@ -2706,6 +2752,8 @@ msgid "In this file"
 msgstr "En este expediente"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__state__in_transit
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__in_transit
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -3435,6 +3483,8 @@ msgstr ""
 "Una oferta aceptada puede repartirse entre varios expedientes (p. ej. contenedores en buques distintos). Escriba la cantidad de cada servicio que pasa al otro expediente: los totales aceptados y los precios de venta no cambian, y un servicio ya pedido se reduce antes."
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_service_period.py:0
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_service_period_one_per_case
 msgid "One default period per service, direction and load type."
 msgstr "Un periodo por defecto por servicio, sentido y tipo de carga."
@@ -4178,6 +4228,8 @@ msgid "Reminders (Odoo activities, no e-mail)"
 msgstr "Avisos (actividades de Odoo, sin correo)"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Reopen"
 msgstr "Reabrir"
@@ -4865,6 +4917,14 @@ msgstr ""
 "Los servicios que las casas venden y este máster compra no se piden otra vez en las casas: cada una toma su parte del coste del máster."
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"The status and the financial close of a file change only with its buttons (In transit, Delivered, Close operations…), which check the conditions of Settings › BOSS · Files."
+msgstr ""
+"El estado y el cierre económico de un expediente solo cambian con sus botones (En tránsito, Entregado, Cerrar operaciones…), que comprueban las condiciones de Ajustes › BOSS · Expedientes."
+
+#. module: boss_expediente
 #: model:ir.model.constraint,message:boss_expediente.constraint_boss_operator_assignment_unique
 msgid "This customer already has an operator for this traffic."
 msgstr "Este cliente ya tiene un operativo para este tráfico."
@@ -5154,16 +5214,17 @@ msgstr "Peso volumen (kg)"
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__volume_weight_kg
-msgid "Volume × factor of the mode: air 167, road 333, sea 1000 kg per m³."
+msgid ""
+"Volume × factor of the mode in Settings › BOSS · Pricing when the measures were entered."
 msgstr ""
-"Volumen × factor del modo: aéreo 167, terrestre 333, marítimo 1000 kg por m³."
+"Volumen × factor del modo en Ajustes › BOSS · Tarifas y precios cuando se introdujeron las medidas."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_crm_lead__boss_volume_weight_kg
 msgid ""
-"Volume × factor of the transport mode: air 167, road 333, sea 1000 kg per m³ (Ángel, 27/10/2026)."
+"Volume × factor of the transport mode in Settings › BOSS · Pricing when the measures were entered."
 msgstr ""
-"Volumen × factor del modo de transporte: aéreo 167, carretera 333, marítimo 1000 kg por m³ (Ángel, 27/10/2026)."
+"Volumen × factor del modo de transporte en Ajustes › BOSS · Tarifas y precios cuando se introdujeron las medidas."
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__voyage
@@ -5331,6 +5392,14 @@ msgstr "Días laborables"
 #: code:addons/boss_expediente/models/res_partner.py:0
 msgid "address (street, city, country)"
 msgstr "dirección (calle, ciudad, país)"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"amounts paid on behalf must be re-invoiced exactly (%s): correct the sale, or a sales manager writes why in «Closed with a low margin because»"
+msgstr ""
+"los suplidos deben refacturarse exactos (%s): corrija la venta, o un jefe de ventas escribe el motivo en «Cerrado con margen bajo porque»"
 
 #. module: boss_expediente
 #. odoo-python

@@ -262,24 +262,31 @@ msgstr "Peso tasable de la guía aérea (se escribe en la línea si está vacío
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_air_kg
-msgid "Chargeable weight, air (higher of gross and volume × 167 kg/m³)"
+msgid ""
+"Chargeable weight, air (higher of gross weight and volume × air factor)"
 msgstr ""
+"Peso tasable, aéreo (el mayor del peso bruto y el volumen × factor aéreo)"
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_road_kg
-msgid "Chargeable weight, road (higher of gross and volume × 333 kg/m³)"
+msgid ""
+"Chargeable weight, road (higher of gross weight and volume × road factor)"
 msgstr ""
+"Peso tasable, terrestre (el mayor del peso bruto y el volumen × factor terrestre)"
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_sea_kg
-msgid "Chargeable weight, sea (higher of gross and volume × 1000 kg/m³)"
+msgid ""
+"Chargeable weight, sea (higher of gross weight and volume × sea factor)"
 msgstr ""
+"Peso tasable, marítimo (el mayor del peso bruto y el volumen × factor marítimo)"
 
 #. module: boss_services
 #: model:ir.model.fields.selection,name:boss_services.selection__uom_uom__boss_quantity_source__chargeable_kg
 msgid ""
-"Chargeable weight: higher of gross weight and volume × factor of the shipment's mode (air 167, road 333, sea 1000 kg/m³)"
+"Chargeable weight: higher of gross weight and volume × factor of the shipment's mode"
 msgstr ""
+"Peso tasable: el mayor del peso bruto y el volumen × factor del modo del envío"
 
 #. module: boss_services
 #: model_terms:product.template,description:boss_services.service_dvd
