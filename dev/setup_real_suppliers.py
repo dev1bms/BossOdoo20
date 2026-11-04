@@ -30,6 +30,10 @@ SUPPLIERS = [
      False, "Shenzhen", env.ref("base.cn"), ["boss_expediente.role_agent"]),
     (None, 23007, "BARBICAN LOGISTIC S.L.", "ESB78297637", "Pinar de Somosaguas 89 BOS Of. 1-8", "28223",
      "Pozuelo de Alarcón", es, ["boss_expediente.role_haulier"]),
+    # warehouse loading and unloading of the FCL export E260901 (roadmap item 20): created in Odoo 17 on 10/08/2026 and
+    # never billed there by a vendor bill, so the contact load left it out (read on 04/11/2026)
+    (None, 57640, "Addoc Logistics", "ESB61869145", "Carrer Comerç 9", "08740", "Sant Andreu de la Barca", es,
+     ["boss_expediente.role_warehouse"]),
 ]
 for sample, o17, name, vat, street, zip_code, city, country, roles in SUPPLIERS:
     partner = (Partner.search([("ref", "=", f"O17:{o17}")], limit=1) or Partner.search([("name", "=", sample or name)], limit=1))

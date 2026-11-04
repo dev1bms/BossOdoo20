@@ -10,6 +10,12 @@ typed price of 100 for the whole service. Every such step is printed as MANUAL.
     IAB      air import, model E260167 (Guangzhou → Madrid, Qatar Airways, handler WFS)
     EMB-LCL  sea export LCL, model E260769 (Algeciras → Conakry, MSC)
     IMA-LCL  sea import LCL for an agent, model E250834 (Hong Kong → Valencia)
+    EMB-FCL  sea export FCL, model E260901 (Barcelona → Tunis, 1×40' DV, freight prepaid; roadmap item 20, case S4):
+             pickup to the warehouse, unloading, loading of the container, haulage to the port, export customs and
+             EUR.1, the shipping line's local charges through its agent (Romeu); a chosen sailing with its cut-off,
+             container number and seal, the house B/L issued before departure and the B/L modification the agent
+             billed later, re-invoiced to the customer. Not copied: the warehouse storage line (no service for regular
+             warehouse storage yet, printed as GAP) and a haulage line without description (STAR LOGISGROUP).
 
 MODE «dry»: everything rolled back. MODE «commit»: the quotations are kept (idempotent: a case whose quotation exists,
 by its customer reference, is reused) and accepted, so each file shows its next step. Then each file is walked with
@@ -19,7 +25,7 @@ are not repeated here (dev/check_file_e2e.py proves them). Sequence numbers used
 Prints «CASE …», «LINE …», «MANUAL …», «GAP …», «WALK …», «CHECK PASS|FAIL …» and «RESULT …», never an amount of a
 boss20 tariff or pricelist (real prices).
     dev/uat_run.sh sample_real_cases.py boss20"""
-from datetime import date
+from datetime import date, timedelta
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -30,7 +36,8 @@ MODE = "commit"
 belal = env["res.users"].search([("login", "=", "devbms")], limit=1)  # noqa: F821
 env = env(user=belal, context=dict(env.context, tracking_disable=True, lang="en_US"))  # noqa: F821
 ref = env.ref
-o17 = lambda i: ref(f"o17_partner.res_partner_{i}")  # noqa: E731
+o17 = lambda i: (ref(f"o17_partner.res_partner_{i}", raise_if_not_found=False)  # noqa: E731
+                 or env["res.partner"].search([("ref", "=", f"O17:{i}")], limit=1))  # dev/setup_real_suppliers.py
 port = lambda code, kind: env["boss.port"].search([("code", "=", code), ("kind", "=", kind)], limit=1)  # noqa: E731
 product = lambda code: env["product.product"].search([("default_code", "=", code)], limit=1)  # noqa: E731
 template = lambda code: env["sale.order.template"].search([("name", "=like", f"{code} · %")], limit=1)  # noqa: E731
@@ -85,6 +92,26 @@ CASES = [
      "suppliers": {"FAD": ADUCEX, "TTE-CON": BARBICAN},
      "walk_suppliers": {"THC-LCL": 23073},  # the CFS that handled E250834 in Odoo 17 (TRANSGLORY), chosen on the file
      "manual_cost": {}},
+    {"key": "EMB-FCL", "model": "E260901", "customer": o17(23617), "template": "EMB", "carrier": False,
+     "origin": ("ES", "ESBCN", "sea"), "destination": ("TN", "TNTUN", "sea"),
+     "etd": date(2026, 11, 24), "eta": date(2026, 11, 27), "containers": [("40", "dv")],
+     "cargo": {"boss_goods_description": "[PRUEBA] Colchones y bases", "boss_packages": 17,
+               "boss_package_type": "PL", "boss_gross_kg": 2040.0, "boss_volume_m3": 45.0},
+     # the agent's «forfait gastos locales» covers these template charges in the real file
+     "remove": ["GLO-CCC", "VGM", "T3-PAD"],
+     "lines": ["TTE-CON", "OAL-PAL", "OAL-CON", "TTE-FCL", "EUR1", "GLO-LOG"],
+     "suppliers": {"FME": o17(23775), "THC": o17(23775), "BL": o17(23775), "GLO-LOG": o17(23775), "DEX": ADUCEX,
+                   "EUR1": ADUCEX, "TTE-CON": o17(23239), "TTE-FCL": o17(23239), "OAL-PAL": o17(57640),
+                   "OAL-CON": o17(57640)},
+     "manual_cost": {"FME": 900.0},
+     "sailing": {"vessel": "[PRUEBA] ELYSSA", "voyage": "[PRUEBA] 2647E", "cutoff": date(2026, 11, 22)},
+     "house_doc": {"consignee": "[PRUEBA] Destinatario Túnez (caso E260901)", "country": "tn", "freight": "prepaid"},
+     # billed by the agent after the booking (Odoo 17 «MODIFICACIÓN DE BL»), re-invoiced to the customer
+     "extra": {"code": "BL", "supplier": o17(23775), "name": "[PRUEBA] Modificación de BL (naviera)", "cost": 40.0,
+               "price": 60.0},
+     "gaps": ["ALM storage at the warehouse of NORD SUD (Loeches) is not quoted: there is no service for regular "
+              "warehouse storage (ALM is airport storage); its code, VAT and unit are owner decisions (Cristina wants "
+              "a separate code; VAT Ángel, pallet or m³ Cristina: DEC:177, 181, 656)"]},
 ]
 
 
@@ -130,6 +157,10 @@ def build(case):
                 container.container_type_id = ref(f"boss_pricing.container_type_{ctype}")
     order = form.save()
     order.write(case["cargo"])
+    order.order_line.filtered(lambda l: l.product_id.default_code in case.get("remove", [])).unlink()
+    if case.get("sailing"):  # the sailing the customer books: ETD and ETA, and vessel, voyage and cut-off on the file
+        order.write({"boss_sailing_ids": [Command.create(dict(case["sailing"], etd=case["etd"], eta=case["eta"],
+                                                              chosen=True))]})
     for code in case.get("lines", []):
         order.write({"order_line": [Command.create({"product_id": product(code).id,
                                                     "product_uom_id": product(code).uom_id.id})]})
@@ -201,6 +232,41 @@ def accept(case, order):
         gap(key, "not accepted: " + " ".join(str(exc).split())[:300])
 
 
+def container_number(serial):
+    """A fictitious container number with a valid ISO 6346 check digit (owner code PRB, «prueba»)."""
+    code = f"PRBU{serial % 1000000:06d}"
+    letters = [n for n in range(10, 39) if n % 11]  # A=10 … Z=38, the multiples of 11 skipped
+    total = sum((int(c) if c.isdigit() else letters[ord(c) - 65]) << i for i, c in enumerate(code))
+    return code + str(total % 11 % 10)
+
+
+def before_departure(case, file):
+    """What operations does before the vessel leaves, once each: issue the house B/L, and enter the charge the
+    shipping line's agent billed after the booking as an extra cost re-invoiced to the customer (sales manager)."""
+    key, house = case["key"], case.get("house_doc")
+    if house and not file.house_doc_issue_date:
+        consignee = env["res.partner"].create({
+            "name": house["consignee"], "is_company": True, "country_id": ref(f"base.{house['country']}").id,
+            "street": "[PRUEBA] Rue 1", "city": "[PRUEBA] Tunis"})
+        file.write({"shipper_id": file.partner_id.id, "consignee_id": consignee.id,
+                    "house_doc_freight": house["freight"]})
+        missing = file._boss_house_doc_problems()
+        if missing:
+            gap(key, f"walk: the house B/L cannot be issued, it lacks: {', '.join(missing)}")
+        else:
+            file.action_issue_house_document()
+    extra = case.get("extra")
+    if extra and not file.cost_ids.filtered(lambda n: n.kind == "extra"):
+        service = product(extra["code"])
+        need = env["boss.expediente.cost"].create({
+            "expediente_id": file.id, "kind": "extra", "product_id": service.id, "uom_id": service.uom_id.id,
+            "quantity": 1.0, "partner_id": extra["supplier"].id, "name": extra["name"],
+            "expected_unit_cost": extra["cost"], "reason": "[PRUEBA] el cliente pidió cambiar el B/L"})
+        env["boss.rebill.wizard"].with_context(default_cost_id=need.id).create({  # proposes the file's order, as on screen
+            "price_unit": extra["price"], "reason": "[PRUEBA] modificación pedida por el cliente"}).action_apply()
+        manual(key, f"walk: the agent's later charge ({extra['code']}) entered as an extra cost and re-invoiced")
+
+
 def walk(case, file):
     """Every next step of the file, pressed with «Go» or done the way a person does it, up to the financial close;
     rolled back (the committed file stays where acceptance left it)."""
@@ -234,6 +300,12 @@ def walk(case, file):
                     file.write({"booking_ref": f"[PRUEBA] BK-{key}", "atd": case["etd"],
                                 ("mawb_ref" if air else "mbl_ref"): f"[PRUEBA] M-{key}",
                                 ("hawb_ref" if air else "hbl_ref"): f"[PRUEBA] H-{key}"})
+                    for n, container in enumerate(file.container_ids.filtered(lambda c: not c.number), 1):
+                        container.write(dict({"number": container_number(file.id * 10 + n), "seal": f"[PRUEBA] {n}"},
+                                             **({"empty_out_date": case["etd"] - timedelta(days=6),
+                                                 "gate_in_date": file.cutoff or case["etd"]}
+                                                if file.direction == "export" else {})))
+                    before_departure(case, file)
                     file.action_next_step()
                 elif step == "arrived":
                     file.ata = case["eta"]  # typing the ATA marks the file arrived (F0-C22)
@@ -292,6 +364,16 @@ def walk(case, file):
                 if file.next_step == step:
                     gap(key, f"walk: «{step}» did not move on")
                     break
+            if case.get("house_doc"):
+                kept = env["ir.attachment"].search_count([("res_model", "=", "boss.expediente"),
+                                                          ("res_id", "=", file.id), ("name", "=like", "HBL %")])
+                check(f"{key} the house B/L is issued before departure and its PDF kept on the file", (1, 1),
+                      (file.house_doc_issue_count, kept))
+            if case.get("extra"):
+                extra = file.cost_ids.filtered(lambda n: n.kind == "extra")
+                check(f"{key} the agent's later charge is ordered, billed and re-invoiced to the customer",
+                      (1, "rebill", 1.0, 1.0),
+                      (len(extra), extra[:1].extra_class, extra[:1].rebill_line_id.qty_invoiced, extra[:1].qty_billed))
             raise _Undo
     except _Undo:
         env.invalidate_all()
@@ -312,6 +394,12 @@ for case in CASES:
     file = order.boss_expediente_id
     print(f"CASE {case['key']}: {order.name} {order.state} file {file.name or '-'} next step {file.next_step or '-'} "
           f"({file.next_step_detail or ''})")
+    for text in case.get("gaps", []):
+        gap(case["key"], text)
+    if case.get("sailing") and file:
+        sailing = case["sailing"]
+        check(f"{case['key']} the chosen sailing gives the file its vessel, voyage and cut-off",
+              (sailing["vessel"], sailing["voyage"], sailing["cutoff"]), (file.vessel, file.voyage, file.cutoff))
     if file:
         walk(case, file)
         env.invalidate_all()

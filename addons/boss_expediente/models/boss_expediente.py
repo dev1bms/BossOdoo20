@@ -1209,9 +1209,10 @@ class BossExpediente(models.Model):
             "boss_services.product_category_local", "boss_services.product_category_customs",
             "boss_services.product_category_storage", "boss_services.product_category_insurance",
             "boss_services.product_category_profit_share", "boss_services.product_category_duties")]
-        ordered_rows = sorted(rows.items(), key=lambda kv: (order.index(kv[0]) if kv[0] in order else len(order),
-                                                            str(kv[0].display_name if hasattr(kv[0], "display_name")
-                                                                else kv[0])))
+        # group names follow the order above; other keys (e.g. services, for the margin check) are never one
+        ordered_rows = sorted(rows.items(), key=lambda kv: (
+            order.index(kv[0]) if isinstance(kv[0], str) and kv[0] in order else len(order),
+            str(kv[0].display_name if hasattr(kv[0], "display_name") else kv[0])))
         total = {"sale": 0.0, "invoiced": 0.0, "pending": 0.0, "actual": 0.0}
         result = []
         for group, figures in ordered_rows:
