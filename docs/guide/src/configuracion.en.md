@@ -219,6 +219,9 @@ the file and used by the minimum margin rules (for example LCL local charges pre
   checked*, operations can close with services not invoiced or with a low margin without a written reason. The
   **financial close** still requires everything invoiced and the month-close reminder still lists those files, but the
   control comes later. Changing them is a management decision (Cristina, Ángel).
+- **Low margin explained** also covers the check that **amounts paid on behalf** are re-invoiced exactly (art.
+  78.Tres.3º Ley 37/1992): outside *Required*, that check no longer stops the close either. The financial close does not
+  look at the margin again.
 - The **Delivered** conditions Cristina wrote (customs release, house B/L released, dates) prevent goods being marked
   delivered without clearance or without the B/L released: do not switch them off without her approval.
 - Prefer **Warning only** to **Not checked**: the step is done anyway, but the history keeps a record.

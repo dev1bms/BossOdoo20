@@ -264,7 +264,7 @@ con su fuente escrita; ninguna se inventa.
 16. **Ajustes de BOSS (fase 1 del estudio `docs/estudio-ajustes.md`).** *Hecho cuando* la dirección cambie los valores
    del sistema desde Ajustes sin tocar código. **Entregado el 04/11** (boss_pricing 20.0.1.13.1, boss_pricing_sale
    20.0.1.21.2, boss_expediente 20.0.1.26.2, boss_documents 20.0.1.3.2; commits `c82f783`, `7d6d39b`, `135c88e`):
-   - tres pestañas en Ajustes (jefes de ventas): **BOSS · Tarifas y precios** (tarifas de proveedor, precio de venta y
+   - tres pestañas en Ajustes (administradores): **BOSS · Tarifas y precios** (tarifas de proveedor, precio de venta y
      margen, medidas del envío, IVA), **BOSS · Expedientes** (apertura, cierre, avisos) y **BOSS · Documentos**
      (documentos house, factura al cliente), con enlaces a las tablas (tarifas, listas de precios, plantillas, márgenes,
      operativos, handlers, roles, puertos, servicios, IVA); los 8 ajustes anteriores salen de la pestaña Ventas;
@@ -290,7 +290,22 @@ con su fuente escrita; ninguna se inventa.
    operaciones (todo facturado, margen bajo justificado: obligatorio). Un aviso queda en el historial del expediente.
    Es lo que pedía el paquete 3 de `docs/paquetes-aprobacion-f0.md` (condiciones que Cristina activa). Evidencia en
    boss20: `check_status_conditions` 9/0; arnés 89/0, cierre 8/0, consolidaciones 22/0, llegada 11/0, ajustes 14/0.
-   Fase 4 pendiente (página «Ajustes» en la guía).
+   **Fase 4 entregada el 04/11** (commits `c0851ce`, `e868183`): página «Configuración de BOSS» de la guía (es/en):
+   las tres pestañas con cada ajuste, su valor actual y su efecto, los tres niveles de las condiciones con ejemplos, crear
+   un servicio, periodos por defecto, flete del incoterm, quién cambia los ajustes y cómo probar un cambio. Ajustes:
+   33 valores (11 en Tarifas y precios, 18 en Expedientes, 4 en Documentos); solo los administradores los guardan.
+   **Revisión de las fases 1-3 (04/11):** 54 hallazgos de 6 revisores, agrupados por asunto y comprobados en boss20 con
+   transacciones deshechas; detalle en `.research/review_verdicts_by_key.json` (no versionado). Confirmados, sin cambio
+   de regla de negocio: el estado y el cierre económico se escriben por RPC sin pasar por las condiciones (anterior al
+   proyecto); un factor volumétrico o el flete de un incoterm recalculan datos de expedientes cerrados; una línea de
+   periodo con inicio y sin fin rompe el expediente y el cron; el ajuste «Margen bajo justificado» también desactiva la
+   comprobación de suplidos exactos; los niveles de las condiciones no dejan historial; el aviso de cierre se escribe
+   aunque las valoraciones detengan el cierre; textos con 167, 30 y 7 fijos; valores 0 o negativos aceptados. Arreglados
+   y subidos, sin desplegar: el título de «Mención de los suplidos» y dos bloques duplicados (`3a7ac6c`, `b2db6ad`).
+   Pendiente de decisión de Belal (despliegue sin copia de seguridad reciente) y de Cristina/Ángel (si los dos
+   ajustes del cierre admiten «No se comprueba»). Evidencia en boss20 (código = `84aee57`): 24 comprobaciones, 23 en
+   verde (ajustes 14/0, campos de servicio 11/0, condiciones 9/0, datos de ajustes 11/0, arnés 89/0, portal 46/0 tras
+   corregir un caso aleatorio de la propia comprobación); `check_portal_qweb` no aplica (cargaba código sin desplegar).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.

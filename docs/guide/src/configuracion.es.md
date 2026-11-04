@@ -225,6 +225,9 @@ grupaje prepaid). Los Incoterms los mantiene contabilidad.
   comprueba* se pueden cerrar operaciones con servicios sin facturar o con un margen bajo sin motivo escrito. El **cierre
   económico** sigue exigiendo todo facturado y el aviso de cierre de mes sigue listando esos expedientes, pero el control
   llega más tarde. Cambiarlos es una decisión de dirección (Cristina, Ángel).
+- **Margen bajo justificado** cubre también la comprobación de que los **suplidos** se refacturan exactos (art.
+  78.Tres.3º Ley 37/1992): fuera de *Obligatorio*, esa comprobación tampoco detiene el cierre. El cierre económico no
+  vuelve a mirar el margen.
 - Las condiciones de **Entregado** que escribió Cristina (levante, BL house liberado, fechas) evitan dar por entregada
   una mercancía sin despacho o sin el BL liberado: no las desactive sin su visto bueno.
 - Prefiera **Solo aviso** a **No se comprueba**: el paso se hace igual, pero queda constancia en el historial.
