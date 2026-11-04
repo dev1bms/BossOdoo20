@@ -318,8 +318,8 @@ con su fuente escrita; ninguna se inventa.
    desplegar. Evidencia en boss20 (`737e3a2`): condiciones 14/0, ajustes 17/0, campos de servicio 11/0, datos 11/0
    (`docs/evidencias/20261104_1239_*`); 19 comprobaciones más en verde (arnés 89/0, cierre 8/0, consolidaciones 22/0,
    llegada 11/0, avisos 15/0, documentos house 11/0, márgenes 12/0, flujo 39/0, reunión 2 69/0, portal 46/0…).
-   Siguen pendientes de decisión (Cristina/Ángel): si los dos ajustes del cierre admiten «No se comprueba», quién
-   reabre un expediente cerrado y si un factor nuevo debe aplicarse a ofertas abiertas.
+   Resuelto el 04/11 con las fuentes (tarea 18): el cierre se queda en «Obligatorio» como en Odoo 17, reabren los jefes
+   de ventas con motivo, y un factor nuevo no revaloriza ofertas ya hechas.
 
 17. **Oferta de tarifas como la envía el equipo comercial (reunión con Ángel del 04/11, fase A).** *Hecho cuando* el PDF
    y el portal de una oferta de tarifas se parezcan a la hoja «SEA FCL» de Ángel (`NEW ODOO/SEA - FCL import cliente y
@@ -331,9 +331,9 @@ con su fuente escrita; ninguna se inventa.
    Arreglados al verlo en Chrome: error de la página del portal (faltaba la tabla que espera Odoo) e «Incoterm FOB
    False». Evidencia `docs/evidencias/20261104_1338_check_rate_matrix_boss20_16cb0055fdca.txt` (7/0, incluye un máximo
    por embarque: 2 × 60 = 90); reunión 2 69/0, portal 46/0 y 27/0, documentos 19/0, flujo 39/0. Muestra en boss20:
-   S01457 «[PRUEBA] Oferta de tarifas SEA FCL» (precios inventados). Pendiente (fases B y C del plan): proveedor del flete
-   = naviera principal, servicios opcionales, búsqueda de servicios, coste agrupado del agente, tabla de salidas,
-   coeficiente de venta por servicio, oficinas y facturador del transportista, tipos de bulto de Odoo 17, IVA.
+   S01457 «[PRUEBA] Oferta de tarifas SEA FCL» (precios inventados). Fase B entregada el 04/11 (proveedores con precio
+   que aplica, flete comprado a la naviera principal en el expediente, servicios opcionales, búsqueda de servicios,
+   fechas día/mes/año); fase C resuelta con las fuentes en la tarea 18.
 
 18. **Revisión de fuentes antes de preguntar (04/11) y cuatro tareas técnicas.** Las preguntas de la fase C se buscaron
    en todas las fuentes (este repositorio, proyecto Odoo 19, carpeta NEW ODOO, Odoo 17 de producción en lectura). Con
@@ -353,8 +353,8 @@ con su fuente escrita; ninguna se inventa.
    COSCO, OOCL; `dev/load_carrier_groups.py`); el diálogo de precio de proveedor propone la empresa, no una dirección.
    Las comprobaciones de flujo y rutas pasan a Ningbo: Ángel introdujo hoy fletes reales de MSC Shanghái → Valencia.
    Evidencia: `docs/evidencias/20261104_1558_check_source_tasks_boss20_16ab670a5f79.txt` (12/0), flujo 39/0, rutas
-   53/0, cierre 8/0. Pendiente de Belal: tres tarifas de MSC (FMI Hong Kong y Shanghái) tienen como proveedor la
-   dirección de factura de MSC en vez de la empresa.
+   53/0, cierre 8/0. Las tres tarifas de MSC (FMI Hong Kong y Shanghái) con la dirección de factura como proveedor
+   nombran ya la empresa (Belal, 04/11; `dev/fix_tariff_supplier.py`, nota en su historial).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
