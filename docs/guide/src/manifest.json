@@ -362,6 +362,14 @@
    }
   },
   {
+   "id": "configuracion",
+   "section": "config",
+   "title": {
+    "es": "Configuración de BOSS",
+    "en": "BOSS settings"
+   }
+  },
+  {
    "id": "iva-moneda",
    "section": "config",
    "title": {
