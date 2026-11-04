@@ -34,6 +34,18 @@ msgstr ""
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "%(code)s %(container)s: costs since %(day)s"
+msgstr "%(code)s %(container)s: con coste desde el %(day)s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "%(code)s %(container)s: last free day %(day)s"
+msgstr "%(code)s %(container)s: último día libre %(day)s"
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid ""
 "%(file)s cannot be closed financially:\n"
@@ -477,6 +489,13 @@ msgid "Activity Type Icon"
 msgstr "Icono del tipo de actividad"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"Activity to the operator this many working days before the last free day of each container, another on that day, and one to the salesperson on the first day with a cost (F0-C55). 0 switches it off."
+msgstr ""
+"Actividad al operativo tantos días laborables antes del último día libre de cada contenedor, otra ese día y una al comercial el primer día con coste (F0-C55). 0 lo desactiva."
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_cost_actual
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_margin_report__amount_cost_actual
 msgid "Actual cost"
@@ -762,6 +781,17 @@ msgstr "Aval de BOSS"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.view_order_form
 msgid "BOSS handles"
 msgstr "BOSS se encarga de"
+
+#. module: boss_expediente
+#: model:ir.actions.server,name:boss_expediente.cron_container_alerts_ir_actions_server
+msgid "BOSS: containers close to their last free day (F0-C55)"
+msgstr "BOSS: contenedores cerca de su último día libre (F0-C55)"
+
+#. module: boss_expediente
+#: model:ir.actions.server,name:boss_expediente.cron_month_close_ir_actions_server
+msgid "BOSS: month-close reminder of the files to invoice or close (F0-A37)"
+msgstr ""
+"BOSS: aviso de cierre de mes de los expedientes por facturar o cerrar (F0-A37)"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__package_type__bg
@@ -1125,6 +1155,22 @@ msgstr "Contacto"
 #: model:ir.model.fields,field_description:boss_expediente.field_res_users__boss_contact_purpose
 msgid "Contact for"
 msgstr "Contacto para"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_free_alert_days
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_free_alert_days
+msgid "Container alert: working days before the last free day"
+msgstr "Aviso de contenedor: días laborables antes del último día libre"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_container__free_alerts_done
+msgid "Container alerts already given (service and stage)."
+msgstr "Avisos de contenedor ya dados (servicio y fase)."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Container free-time alert"
+msgstr "Aviso de días libres del contenedor"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__number
@@ -1936,6 +1982,22 @@ msgid "Extra costs"
 msgstr "Costes adicionales"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_month_close_copy_user_id
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_month_close_copy_user_id
+msgid ""
+"F0-A37: on the last day of the month every responsible gets an activity on each file still to invoice or to close; this person gets the summary (Odoo 17 «CIERRE MENSUAL»). Empty: no summary."
+msgstr ""
+"F0-A37: el último día del mes cada responsable recibe una actividad en cada expediente pendiente de facturar o de cerrar; esta persona recibe el resumen (Odoo 17 «CIERRE MENSUAL»). Vacío: sin resumen."
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_res_company__boss_free_alert_days
+#: model:ir.model.fields,help:boss_expediente.field_res_config_settings__boss_free_alert_days
+msgid ""
+"F0-C55: the operator gets an activity this many working days before the last free day of each container (demurrage, storage, detention), another on the last free day, and the salesperson one on the first day with a cost. 0 switches the alerts off."
+msgstr ""
+"F0-C55: el operativo recibe una actividad tantos días laborables antes del último día libre de cada contenedor (demora, ocupación, detención), otra el último día libre, y el comercial una el primer día con coste. 0 desactiva los avisos."
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__load_type__fcl
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__load_type__fcl
 msgid "FCL (full container)"
@@ -2097,6 +2159,11 @@ msgstr "Margen previsto %(margin)s = %(sale)s - %(cost)s. NO DEFINITIVO:"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__amount_margin_forecast
 msgid "Forecast margin after external costs"
 msgstr "Margen previsto tras costes externos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_container__free_alerts_done
+msgid "Free Alerts Done"
+msgstr "Avisos dados"
 
 #. module: boss_expediente
 #. odoo-python
@@ -2776,6 +2843,29 @@ msgid "Month"
 msgstr "Mes"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "Month close %s: files to invoice or close"
+msgstr "Cierre de mes %s: expedientes por facturar o cerrar"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "Month close %s: invoice or close this file"
+msgstr "Cierre de mes %s: facture o cierre este expediente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Month-close reminder"
+msgstr "Aviso de cierre de mes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_month_close_copy_user_id
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_month_close_copy_user_id
+msgid "Month-close reminder: copy to"
+msgstr "Aviso de cierre de mes: copia a"
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_split_view_form
 msgid "Move"
 msgstr "Mover"
@@ -3026,6 +3116,13 @@ msgid "On request"
 msgstr "A consultar"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"On the last day of the month each responsible gets an activity on every file still to invoice or to close; this person gets the summary (F0-A37, Odoo 17 «CIERRE MENSUAL»)."
+msgstr ""
+"El último día del mes cada responsable recibe una actividad en cada expediente pendiente de facturar o de cerrar; esta persona recibe el resumen (F0-A37, Odoo 17 «CIERRE MENSUAL»)."
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_split_view_form
 msgid ""
 "One accepted quotation can feed several files (e.g. containers shipped on\n"
@@ -3078,6 +3175,12 @@ msgid ""
 "Opened before an accepted quotation (pre-alert, documents received). Link the quotation when it is accepted."
 msgstr ""
 "Abierto antes de una oferta aceptada (prealerta, documentos recibidos). Vincule la oferta cuando se acepte."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_account_bank_statement_line__delivery_date
+#: model:ir.model.fields,field_description:boss_expediente.field_account_move__delivery_date
+msgid "Operation date"
+msgstr "Fecha de la operación"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_partner__boss_contact_purpose__operations
@@ -3764,6 +3867,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__status
 msgid "Result"
 msgstr "Resultado"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid ""
+"Return or pick up the container before its free days end (supplier %(supplier)s). The date comes from the supplier price, as the cost does."
+msgstr ""
+"Devuelva o retire el contenedor antes de que terminen sus días libres (proveedor %(supplier)s). La fecha sale del precio del proveedor, como el coste."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__review
@@ -4811,6 +4922,12 @@ msgstr "entregado hace %s días: Cristina pide cerrar en una semana"
 
 #. module: boss_expediente
 #. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "delivered, operations not closed"
+msgstr "entregado, operaciones sin cerrar"
+
+#. module: boss_expediente
+#. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "delivery date and time"
 msgstr "fecha y hora de entrega"
@@ -4945,6 +5062,12 @@ msgstr "valore antes: %s"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "seal %s"
 msgstr "precinto %s"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente_alerts.py:0
+msgid "services still to invoice"
+msgstr "servicios pendientes de facturar"
 
 #. module: boss_expediente
 #. odoo-python

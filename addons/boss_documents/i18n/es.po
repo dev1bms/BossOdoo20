@@ -302,6 +302,11 @@ msgid "<span class=\"box-label\">Weight (kg)</span>"
 msgstr ""
 
 #. module: boss_documents
+#: model_terms:ir.ui.view,arch_db:boss_documents.report_invoice_document_boss
+msgid "<strong>Operation date</strong>"
+msgstr "<strong>Fecha de la operación</strong>"
+
+#. module: boss_documents
 #: model_terms:ir.ui.view,arch_db:boss_documents.report_cargo_manifest_document
 msgid "<strong>TOTALS</strong>"
 msgstr ""
