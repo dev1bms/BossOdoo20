@@ -306,6 +306,20 @@ con su fuente escrita; ninguna se inventa.
    ajustes del cierre admiten «No se comprueba»). Evidencia en boss20 (código = `84aee57`): 24 comprobaciones, 23 en
    verde (ajustes 14/0, campos de servicio 11/0, condiciones 9/0, datos de ajustes 11/0, arnés 89/0, portal 46/0 tras
    corregir un caso aleatorio de la propia comprobación); `check_portal_qweb` no aplica (cargaba código sin desplegar).
+   **Paquete de arreglos técnicos desplegado el 04/11** (aprobado por Belal; sin cambio de regla de negocio; commits
+   `cd1d107`, `42e3ac0`, `737e3a2`; boss_pricing 20.0.1.13.2, boss_pricing_sale 20.0.1.22.2, boss_expediente
+   20.0.1.28.2, boss_documents 20.0.1.3.4, boss_services 20.0.1.5.2): el estado y el cierre económico solo cambian con
+   los botones (RPC e importación rechazados; el servidor comprueba el estado de partida como la pantalla; «Reabrir» no
+   reabre un expediente cerrado económicamente); un factor volumétrico o el flete de un incoterm ya no rehacen
+   expedientes existentes; líneas de periodo con los dos eventos o ninguno; niveles de las condiciones en el historial
+   de la compañía; suplidos exactos siempre obligatorios en el cierre; el aviso del cierre solo se escribe si se cierra;
+   filtros «Vence pronto» y «Entregados, por cerrar» con los días de Ajustes; valores 0 o negativos rechazados en 10
+   ajustes; textos sin 167/30/7 fijos. Sin copia de seguridad (regla de Belal); vuelta atrás: revertir los commits y
+   desplegar. Evidencia en boss20 (`737e3a2`): condiciones 14/0, ajustes 17/0, campos de servicio 11/0, datos 11/0
+   (`docs/evidencias/20261104_1239_*`); 19 comprobaciones más en verde (arnés 89/0, cierre 8/0, consolidaciones 22/0,
+   llegada 11/0, avisos 15/0, documentos house 11/0, márgenes 12/0, flujo 39/0, reunión 2 69/0, portal 46/0…).
+   Siguen pendientes de decisión (Cristina/Ángel): si los dos ajustes del cierre admiten «No se comprueba», quién
+   reabre un expediente cerrado y si un factor nuevo debe aplicarse a ofertas abiertas.
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
