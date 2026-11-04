@@ -1,0 +1,25 @@
+# Evidence: dev/check_status_conditions.py on boss20
+# Date: 2026-11-04 11:02    
+# Commit tested: d207baea9202 (docs: roadmap item 16, settings phase 3 delivered (status conditions))
+# Installed on boss20: boss_documents 20.0.1.3.3 boss_expediente 20.0.1.28.1 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.13.1 boss_pricing_sale 20.0.1.22.1 boss_services 20.0.1.5.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 10:02:41,445 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 10:02:41,506 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 10:02:42,327 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 defaults = today: leaving warns, delivering and closing are required: expected ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block') got ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block')
+CHECK PASS 2 by default a file leaves without ATD, with the warning in its history: expected ('accepted', True) got ('accepted', True)
+      «E260417 cannot leave yet, it lacks: ATD (actual departure) (required in Settings › BOSS · Files).»
+CHECK PASS 3 ATD set to «required»: the file cannot leave without it: expected 'refused' got 'refused'
+      «E260418 cannot be marked delivered yet, it lacks: vessel discharge, delivery date and time, house B/L released or sea waybill. Fill them in «Reference»
+CHECK PASS 4 by default «Delivered» needs the discharge, the delivery date and the B/L released: expected 'refused' got 'refused'
+CHECK PASS 5 discharge and delivery date not checked, B/L a warning: delivered, with the warning in the history: expected ('accepted', True) got ('accepted', True)
+CHECK PASS 6 the next step no longer lists what is not checked: expected False got False
+      «E260419 cannot close operations yet: margin below the minimum ([PRUEBA] Flete: margen bajo): a sales manager writes why in «Closed with a low margin b»
+CHECK PASS 7 a low margin without a reason stops the close by default: expected 'refused' got 'refused'
+CHECK PASS 8 set to «warning only»: the file closes, the warning stays in its history: expected ('accepted', True) got ('accepted', True)
+CHECK PASS 9 set to «not checked»: the file closes, nothing written: expected ('accepted', False) got ('accepted', False)
+RESULT 9 passed, 0 failed
+# Exit status: 0

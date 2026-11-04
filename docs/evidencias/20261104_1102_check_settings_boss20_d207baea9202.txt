@@ -1,0 +1,27 @@
+# Evidence: dev/check_settings.py on boss20
+# Date: 2026-11-04 11:02    
+# Commit tested: d207baea9202 (docs: roadmap item 16, settings phase 3 delivered (status conditions))
+# Installed on boss20: boss_documents 20.0.1.3.3 boss_expediente 20.0.1.28.1 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.13.1 boss_pricing_sale 20.0.1.22.1 boss_services 20.0.1.5.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 10:02:16,690 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 10:02:16,751 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 10:02:17,581 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 Settings has the three BOSS tabs and the Sales tab no longer holds BOSS settings: expected (True, True, True, False) got (True, True, True, False)
+CHECK PASS 1 the defaults equal the former code values: expected (30, 7, 10.0, 10.0, 167, 333, 1000, 7, 'chargeable', 3, True) got (30, 7, 10.0, 10.0, 167, 333, 1000, 7, 'chargeable', 3, True)
+CHECK PASS 2 air chargeable weight with the default factor 167: expected 167.0 got 167.0
+CHECK PASS 3 ... follows the setting (200): expected 200.0 got 200.0
+CHECK PASS 4 a service without a rule: 10 % minimum, within the tolerance: expected (10.0, False) got (10.0, False)
+CHECK PASS 5 ... 20 % and 2 of tolerance from Settings: warned: expected (20.0, True) got (20.0, True)
+CHECK PASS 6 a price valid 20 more days is «expiring» with the default 30: expected 'expiring' got 'expiring'
+CHECK PASS 7 ... and «current» when the setting is 10 days: expected 'current' got 'current'
+CHECK PASS 8 a new master proposes the split of Settings: expected 'chargeable' got 'chargeable'
+CHECK PASS 9 ... «equal parts» once the setting changes: expected 'equal' got 'equal'
+CHECK PASS 10 delivered 5 days ago: no warning with 7 days to close: expected False got False
+CHECK PASS 11 ... warns with 3 days in Settings: expected True got True
+CHECK PASS 12 the house B/L prints the originals and the place of issue of Settings: expected (True, True) got (True, True)
+CHECK PASS 13 operation date switched off: the invoice has none: expected False got False
+RESULT 14 passed, 0 failed
+# Exit status: 0

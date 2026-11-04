@@ -1,0 +1,24 @@
+# Evidence: dev/check_service_fields.py on boss20
+# Date: 2026-11-04 11:02    
+# Commit tested: d207baea9202 (docs: roadmap item 16, settings phase 3 delivered (status conditions))
+# Installed on boss20: boss_documents 20.0.1.3.3 boss_expediente 20.0.1.28.1 boss_portal 20.0.1.0.7 boss_pricing 20.0.1.13.1 boss_pricing_sale 20.0.1.22.1 boss_services 20.0.1.5.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-04 10:02:29,477 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-04 10:02:29,537 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-04 10:02:30,365 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 bought from the handler: HAN, ALM, AWB, ETX; from the haulier: TTE-CON, TTE-FCL; FAD from anyone: expected ('handler', 'handler', 'handler', 'handler', 'haulier', 'haulier', 'any') got ('handler', 'handler', 'handler', 'handler', 'haulier', 'haulier', 'any')
+CHECK PASS 2 customs value charges: FMI freight, THC-LCL THC, T3-PAD T3, SEG insurance, FAD none: expected ('freight', 'THC', 'T3', 'insurance', False) got ('freight', 'THC', 'T3', 'insurance', False)
+CHECK PASS 3 DEM default periods on the service: import ATA → empty return, export gate-in → departure: expected {('import', 'ata', 'container_empty_return'), ('export', 'container_gate_in', 'departure')} got {('import', 'ata', 'container_empty_return'), ('export', 'container_gate_in', 'departure')}
+CHECK PASS 4 ALM: the LCL import line (emptying → pickup) and the LCL export line without period: expected {('import', False, 'noa_or_ata', 'pickup'), ('export', 'lcl', False, False), ('import', 'lcl', 'emptying', 'pickup'), ('export', False, 'foh', 'departure')} got {('import', False, 'noa_or_ata', 'pickup'), ('export', 'lcl', False, False), ('import', 'lcl', 'emptying', 'pickup'), ('export', False, 'foh', 'departure')}
+CHECK PASS 5 incoterms: CFR, CIF, DAP prepaid; EXW, FOB collect: expected ('prepaid', 'prepaid', 'prepaid', 'collect', 'collect') got ('prepaid', 'prepaid', 'prepaid', 'collect', 'collect')
+CHECK PASS 6 a new service marked «bought from the haulier» is a road line: its supplier is the quotation's haulier: expected res.partner(27501,) got res.partner(27501,)
+CHECK PASS 7 ... and counts as T3 for the customs broker text: expected 'T3' got 'T3'
+CHECK PASS 8 a DEM need takes its period from the service: ATA → empty return (default): expected ('ata', 'container_empty_return', 'default') got ('ata', 'container_empty_return', 'default')
+CHECK PASS 9 ... changed on the service (discharge → empty return), no code: expected ('discharge', 'container_empty_return', 'default') got ('discharge', 'container_empty_return', 'default')
+CHECK PASS 10 the house document reads the incoterm: CFR → prepaid: expected 'prepaid' got 'prepaid'
+CHECK PASS 11 ... a change on the incoterm changes the proposal: expected 'collect' got 'collect'
+RESULT 11 passed, 0 failed
+# Exit status: 0
