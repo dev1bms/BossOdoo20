@@ -78,6 +78,9 @@ class SaleOrder(models.Model):
             values[file_field] = value.id if isinstance(value, models.BaseModel) else value
         if not (self.boss_etd or self.boss_eta) and self.boss_planned_date:
             values[key_date(self.boss_direction)] = self.boss_planned_date
+        sailing = self.boss_sailing_ids.filtered("chosen")[:1]  # the sailing the customer booked
+        if sailing:
+            values.update({"vessel": sailing.vessel, "voyage": sailing.voyage, "cutoff": sailing.cutoff})
         company_currency = self.company_id.currency_id
         for file_field, order_field in (("goods_value", "boss_goods_value"), ("duties_amount", "boss_duties_amount")):
             values[file_field] = self.currency_id._convert(self[order_field], company_currency, self.company_id,

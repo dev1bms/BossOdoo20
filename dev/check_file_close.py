@@ -56,9 +56,15 @@ file.write({"user_id": env.uid})
 file.rating_ids.write({"rating": "7", "note": "[PRUEBA]"})
 check("6 the responsible and the ratings stay editable after the close", ("7", env.uid),
       (file.rating_ids.rating, file.user_id.id))
-file.action_reopen()
+action = file.action_reopen()
+reopen = env[action["res_model"]].create({"expediente_ids": [(6, 0, file.ids)],
+                                          "reason": "[PRUEBA] corregir la descripción"})
+reopen.action_confirm()
 file.write({"goods_description": "[PRUEBA] corregida tras reabrir"})
-check("7 reopened, the shipment data can be corrected", "[PRUEBA] corregida tras reabrir", file.goods_description)
+check("7 reopened with a reason in the history, the shipment data can be corrected",
+      ("open", True, "[PRUEBA] corregida tras reabrir"),
+      (file.state, "corregir la descripción" in (file.message_ids[:1].body or "")
+       or any("corregir la descripción" in (m.body or "") for m in file.message_ids), file.goods_description))
 check("8 the customer's average rating is on its contact", (7.0, 1), (customer.boss_rating_avg, customer.boss_rating_count))
 
 env.cr.rollback()

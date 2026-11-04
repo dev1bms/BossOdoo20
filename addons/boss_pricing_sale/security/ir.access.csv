@@ -20,3 +20,5 @@ boss_margin_rule_user,Minimum margin rules: read,boss.margin.rule,base.group_use
 boss_margin_rule_manager,Minimum margin rules: maintain,boss.margin.rule,sales_team.group_sale_manager,crud,
 boss_margin_exception_user,Minimum margin exceptions: read,boss.margin.exception,base.group_user,r,
 boss_margin_exception_manager,Minimum margin exceptions: maintain,boss.margin.exception,sales_team.group_sale_manager,crud,
+boss_sale_sailing_salesman,Sailings of a quotation,boss.sale.sailing,sales_team.group_sale_salesman,crud,
+boss_sale_sailing_user,Sailings of a quotation: read,boss.sale.sailing,base.group_user,r,

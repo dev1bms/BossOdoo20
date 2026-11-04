@@ -9,6 +9,7 @@ from . import boss_tariff
 from . import product_pricelist_item
 from . import sale_order
 from . import sale_order_line
+from . import boss_sale_sailing
 from . import sale_confidential
 from . import sale_order_template
 from . import sale_order_template_line

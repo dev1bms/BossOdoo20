@@ -66,7 +66,7 @@ with Form(env["sale.order"]) as form:
     check("1 shipper stays empty (it is the foreign supplier of the customer)", False, bool(form.boss_shipper_id))
     form.boss_carrier_id = msc
     form.boss_origin_country_id = ref("base.cn")
-    form.boss_origin_port_id = port("CNSHA", "sea")
+    form.boss_origin_port_id = port("CNNGB", "sea")
     form.boss_destination_port_id = port("ESVLC", "sea")
     form.boss_delivery_address_id = warehouse
     form.boss_eta = date(2026, 12, 10)
@@ -107,10 +107,10 @@ check("7 WFS on an ocean freight: warning", True, bool(warning and warning.get("
 check("7 WFS on an ocean freight: still a manual amount (no rate of WFS)", "manual", fmi.boss_cost_status)
 fmi.boss_supplier_id = msc
 
-# 5. weekly freight rate from the quotation: Shanghai -> Valencia, MSC, one week, then approved
+# 5. weekly freight rate from the quotation: Ningbo -> Valencia, MSC, one week, then approved
 Wizard = env["boss.supplier.price.wizard"]
 wiz = Wizard.with_context(default_sale_line_id=fmi.id).create({})
-check("5 wizard pre-filled: MSC, ESVLC, Shanghai abroad, valid one week", (msc, "ESVLC", "CNSHA", 6),
+check("5 wizard pre-filled: MSC, ESVLC, Ningbo abroad, valid one week", (msc, "ESVLC", "CNNGB", 6),
       (wiz.partner_id, wiz.port_ids.mapped("code")[0], wiz.foreign_port_ids.mapped("code")[0],
        (wiz.valid_to - wiz.valid_from).days))
 imb.boss_etd = date(2026, 12, 10)  # freight rates take the departure (ADR-009)
@@ -123,14 +123,14 @@ wiz.action_save()
 rate = env["boss.tariff"].search([("name", "=", "[PRUEBA] MSC flete Shanghái-Valencia semana")], limit=1)
 # since the meeting of 27/10 (part 2) a freight rate typed from the quotation is approved on entry by its author
 # (Sales setting), so an urgent quotation never waits for an approver in another time zone
-check("5 tariff with the route and validity, approved on entry", ("approved", env.user, "CNSHA", "ESVLC", date(2026, 12, 13)),
+check("5 tariff with the route and validity, approved on entry", ("approved", env.user, "CNNGB", "ESVLC", date(2026, 12, 13)),
       (rate.state, rate.approved_by_id, rate.foreign_port_ids.mapped("code")[0], rate.port_ids.mapped("code")[0], rate.valid_to))
 check("5 priced at once: the freight comes from the rate, 2 x 1500", ("ok", 3000.0), (fmi.boss_cost_status, round(fmi.boss_cost_amount, 2)))
-check("5 source names the rate and its week", True, "[PRUEBA] MSC flete" in fmi.boss_cost_explanation and "CNSHA" in fmi.boss_cost_explanation)
+check("5 source names the rate and its week", True, "[PRUEBA] MSC flete" in fmi.boss_cost_explanation and "CNNGB" in fmi.boss_cost_explanation)
 # another route is not priced by it
-other = imb.copy({"boss_origin_port_id": port("CNNGB", "sea").id})
+other = imb.copy({"boss_origin_port_id": port("CNTAO", "sea").id})
 fmi_other = other.order_line.filtered(lambda l: l.product_id.default_code == "FMI")
-check("5 another origin port (Ningbo) is not priced by the Shanghai rate", "manual", fmi_other.boss_cost_status)
+check("5 another origin port (Qingdao) is not priced by the Ningbo rate", "manual", fmi_other.boss_cost_status)
 # outside the week neither (the departure chooses the freight rate)
 imb.boss_etd = date(2026, 12, 20)
 fmi._boss_recompute_cost()
@@ -174,7 +174,7 @@ try:
 except UserError:
     pass
 check("8 still one file after a second Confirm", (1, file), (len(imb.boss_expediente_ids), imb.boss_expediente_id))
-check("8 file receives orderer, consignee, route, containers", (susaeta, susaeta, "CNSHA", "ESVLC", 2),
+check("8 file receives orderer, consignee, route, containers", (susaeta, susaeta, "CNNGB", "ESVLC", 2),
       (file.partner_id, file.consignee_id, file.origin_port_id.code, file.destination_port_id.code, len(file.container_ids)))
 check("8 no purchase order created by the acceptance", 0, len(file.purchase_order_ids))
 check("8 no invoice created by the acceptance", 0, len(file.invoice_ids))
@@ -203,7 +203,7 @@ with Form(env["sale.order"]) as form:
     form.sale_order_template_id = template("IMB FOB")
     form.boss_carrier_id = msc
     form.boss_origin_country_id = ref("base.cn")
-    form.boss_origin_port_id = port("CNSHA", "sea")
+    form.boss_origin_port_id = port("CNNGB", "sea")
     form.boss_destination_port_id = port("ESVLC", "sea")
     form.boss_eta = date(2026, 12, 10)
 demo = form.save()

@@ -92,8 +92,8 @@ def file_action():
 # each service («Counts for the customs value as»).
 CUSTOMS_VALUE_CHARGES = ("freight", "THC", "T3", "insurance")
 # Transport data of a consolidation that belongs to the master (MBL / MAWB) and is copied to its houses (ADR-013).
-MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd", "ata",
-                 "discharge_date")
+MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "cutoff", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd",
+                 "ata", "discharge_date")
 # Case and route copied from a master to a new house (the house keeps its own parties, cargo and customs).
 HOUSE_FROM_MASTER = ("business", "direction", "transport_mode", "load_type", "incoterm_id", "origin_country_id",
                      "origin_port_id", "origin_place", "destination_country_id", "destination_port_id",
@@ -278,6 +278,8 @@ class BossExpediente(models.Model):
     hawb_ref = fields.Char("House AWB", tracking=True)
     vessel = fields.Char("Vessel / flight")
     voyage = fields.Char("Voyage")
+    cutoff = fields.Date("Cut-off", tracking=True,
+                         help="Last day to deliver the cargo at the terminal for the booked sailing (Cristina, F0-C36).")
     customs_ref = fields.Char("Customs declaration (DUA)")
     # Customs of the file (the customs unit of Odoo 17 «partida»: channel, admission and release «levante», guarantee;
     # Cristina, «Nuevo Odoo» › OPS- exptes A32-A36). Roadmap item 5.
@@ -553,7 +555,7 @@ class BossExpediente(models.Model):
         known = self.cost_ids.sale_line_id | self.cost_ids.rebill_line_id
         bought = self.allocation_ids.filtered(
             lambda a: a.sale_line_id in lines and a.sale_line_id.boss_execution == "supplier"
-            and a.sale_line_id not in known)
+            and not a.sale_line_id.boss_cost_included and a.sale_line_id not in known)
         if bought:
             Cost = self.env["boss.expediente.cost"]
             Cost.create([Cost._values_from_sale_line(a.sale_line_id, self, a.quantity) for a in bought])
@@ -1749,11 +1751,24 @@ class BossExpediente(models.Model):
         return True
 
     def action_reopen(self):
+        """Reopen operations as in Odoo 17 (action «Open (Operative Close)», managers only): a sales manager, never on a
+        file closed financially, with the reason written in the file history."""
+        self._boss_check_reopen()
+        return {"type": "ir.actions.act_window", "name": self.env._("Reopen"), "res_model": "boss.expediente.reopen",
+                "view_mode": "form", "target": "new", "context": {"default_expediente_ids": self.ids}}
+
+    def _boss_check_reopen(self):
+        self._boss_check_group("sales_team.group_sale_manager")
         self._boss_check_from(("closed", "cancel"), self.env._("Reopen"))
         closed = self.filtered("financial_closed")
         if closed:
             raise UserError(self.env._("%s is closed financially: an accounting manager reopens it financially first.",
                                        ", ".join(closed.mapped("name"))))
+
+    def _boss_reopen(self, reason):
+        self._boss_check_reopen()
+        for file in self:
+            file.message_post(body=self.env._("Operations reopened: %s", reason))
         with file_action():
             self.write({"state": "open"})
 

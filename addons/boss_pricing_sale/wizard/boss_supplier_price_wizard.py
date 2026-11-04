@@ -74,7 +74,9 @@ class BossSupplierPriceWizard(models.TransientModel):
     @api.depends("sale_line_id")
     def _compute_partner_id(self):
         for wiz in self:
-            wiz.partner_id = wiz.sale_line_id.boss_supplier_id or wiz.sale_line_id.order_id.boss_carrier_id
+            # the company, never one of its invoice addresses or contacts (a tariff names the legal entity)
+            wiz.partner_id = (wiz.sale_line_id.boss_supplier_id
+                              or wiz.sale_line_id.order_id.boss_carrier_id).commercial_partner_id
 
     @api.depends("sale_line_id", "partner_id", "valid_from", "direction", "port_ids", "foreign_port_ids")
     def _compute_tariff_name(self):

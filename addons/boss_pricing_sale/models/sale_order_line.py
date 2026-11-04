@@ -24,11 +24,12 @@ COST_KINDS = [
     ("zero", "Approved zero"),
     ("unknown", "Unknown"),
     ("on_request", "Asked to the supplier (case by case)"),
+    ("included", "Included in another line of the service"),
 ]
 # Changing these on an accepted line is a re-pricing: only through the Re-price wizard (ADR-003).
 FROZEN_FIELDS = {"product_id", "product_uom_id", "product_uom_qty", "price_unit", "discount", "purchase_price",
                  "boss_manual_cost", "boss_sale_free", "tax_ids", "boss_container_size", "boss_container_type_id",
-                 "boss_execution"}
+                 "boss_execution", "boss_cost_included"}
 COST_FIELDS = ("boss_cost_status", "boss_cost_amount", "boss_cost_currency_id", "boss_tariff_line_id",
                "boss_cost_candidate_ids", "boss_cost_missing", "boss_cost_steps", "boss_cost_is_estimate")
 SHIPMENT_DEPENDS = (
@@ -86,6 +87,13 @@ class SaleOrderLine(models.Model):
         "quotes each shipment on request: the service stays on the quotation with its sale price, the quotation can "
         "be accepted, and the cost is typed in the file when the supplier answers (Ángel, 27/10/2026). Only when no "
         "supplier price exists: missing shipment data, a price waiting for approval or a conflict keep their path.")
+    # An agent invoices its origin charges as one amount and BOSS sells them as several lines of the same service
+    # (pickup, export clearance, documents...): Odoo 17 practice, same code on cost and sale (Cristina, CR-C8).
+    boss_cost_included = fields.Boolean(
+        "Cost in another line", copy=True,
+        help="Sold as its own line, bought together with another line of the same service (an agent's lump-sum "
+        "origin charges): no cost here and nothing to buy; the margin is judged on the whole service group. Ticked by "
+        "itself on a second line of the same service, unit and container; untick it to price the line on its own.")
     # Amounts shown with 2 decimals unless more are needed (0,3779 €/kg keeps its 4): «Spanish way, two decimals,
     # everywhere» (Ángel, 27/10/2026). Stored precision unchanged (Product Price).
     price_unit = fields.Float(digits="Product Price", min_display_digits=2)
@@ -160,7 +168,7 @@ class SaleOrderLine(models.Model):
                 line.boss_execution = "boss" if line.product_id.boss_pricing_mode == "own" else "supplier"
 
     @api.depends("boss_execution", "boss_cost_status", "boss_cost_amount", "boss_tariff_line_id",
-                 "boss_cost_is_estimate", "boss_manual_cost")
+                 "boss_cost_is_estimate", "boss_manual_cost", "boss_cost_included")
     def _compute_boss_cost_kind(self):
         for line in self:
             currency = line.boss_cost_currency_id or line.currency_id or line.company_id.currency_id
@@ -168,6 +176,8 @@ class SaleOrderLine(models.Model):
                 kind = False
             elif line.boss_execution == "boss":
                 kind = "boss"
+            elif line.boss_cost_included:
+                kind = "included"
             elif line.boss_cost_status == "ok" and line.boss_tariff_line_id:
                 kind = ("zero" if currency.is_zero(line.boss_cost_amount)
                         else "estimate" if line.boss_cost_is_estimate else "known")
@@ -209,6 +219,7 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         self._boss_check_addition(vals_list)
+        self._boss_mark_cost_included(vals_list)
         # The field default (1.0) wins over the compute on create: count the shipment explicitly.
         counted = [i for i, vals in enumerate(vals_list) if "product_uom_qty" not in vals]
         lines = super().create(vals_list)
@@ -239,6 +250,37 @@ class SaleOrderLine(models.Model):
                 line.product_id, line.product_uom_id, inputs,
                 line._boss_tariff_date() or fields.Date.context_today(line),  # date not known yet: today's prices
                 company=line.order_id.company_id) | line.boss_supplier_id
+
+    def _boss_mark_cost_included(self, vals_list):
+        """A second line of the same service, unit, container and supplier on a quotation is a split of the same
+        purchase (an agent's lump-sum origin charges sold as pickup, clearance, documents...): its cost is in the first
+        line. Ticked here, visible and changeable on the line. The lines created in the same call count too."""
+        Order, Product = self.env["sale.order"], self.env["product.product"]
+
+        def key(order_id, product_id, uom_id, size, ctype_id):
+            return (order_id, product_id, uom_id or False, size or False, ctype_id or False)
+
+        bought = {}  # key -> suppliers of the lines that carry the cost
+        for vals in vals_list:
+            if vals.get("display_type") or not vals.get("order_id") or not vals.get("product_id"):
+                continue
+            product = Product.browse(vals["product_id"])
+            if not product.boss_pricing_mode or vals.get("boss_execution") == "boss":
+                continue
+            uom_id = vals.get("product_uom_id") or product.uom_id.id
+            this = key(vals["order_id"], product.id, uom_id, vals.get("boss_container_size"),
+                       vals.get("boss_container_type_id"))
+            if this not in bought:
+                bought[this] = {
+                    l.boss_supplier_id.id for l in Order.browse(vals["order_id"]).order_line
+                    if not l.display_type and not l.boss_cost_included and l.boss_execution == "supplier"
+                    and key(l.order_id.id, l.product_id.id, l.product_uom_id.id, l.boss_container_size,
+                            l.boss_container_type_id.id) == this}
+            supplier = vals.get("boss_supplier_id") or False
+            if "boss_cost_included" not in vals and bought[this] and (not supplier or supplier in bought[this]):
+                vals["boss_cost_included"] = True
+            elif not vals.get("boss_cost_included"):
+                bought[this].add(supplier)
 
     def _boss_check_addition(self, vals_list):
         """A service added to an accepted quotation changes the agreement: only through an explicit action with a
@@ -325,7 +367,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends("product_id", "product_id.boss_tariff_date", "product_uom_id", "product_uom_qty", "currency_id",
                  "boss_container_size", "boss_container_type_id", "boss_supplier_id", "boss_days", "boss_days_source",
-                 "boss_execution", "boss_cost_on_request", *SHIPMENT_DEPENDS)
+                 "boss_execution", "boss_cost_on_request", "boss_cost_included", *SHIPMENT_DEPENDS)
     def _compute_boss_cost(self):
         frozen = self._boss_skip()
         frozen._boss_keep(*COST_FIELDS)
@@ -337,8 +379,9 @@ class SaleOrderLine(models.Model):
                 line.update(empty)
                 continue
             own = line.product_id.boss_pricing_mode == "own"
-            if line.boss_execution == "boss" and not own:
-                # a bought service done by BOSS this time (own truck, own customs agent): no supplier cost
+            if (line.boss_execution == "boss" and not own) or line.boss_cost_included:
+                # a bought service done by BOSS this time (own truck, own customs agent), or a line whose cost is in
+                # another line of the same service (agent's lump sum): no supplier cost
                 line.update(dict(empty, boss_cost_status="ok", boss_cost_currency_id=line.currency_id.id))
                 continue
             if line.boss_execution == "supplier" and own:

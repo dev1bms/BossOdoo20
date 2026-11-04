@@ -60,6 +60,7 @@
         <section id="details" class="p-0 p-lg-3 pt-lg-0 border-start border-end border-bottom rounded-bottom">
             <div id="boss_rate_table" class="table-responsive">
                 <t t-call="boss_pricing_sale.boss_rate_matrix" order="sale_order"/>
+                <t t-call="boss_pricing_sale.boss_sailings" order="sale_order"/>
                 <!-- the line-update script of Odoo (sale_management) reads this table on every quotation page -->
                 <table id="sales_order_table" class="d-none" t-att-data-order-id="sale_order.id"
                        t-att-data-token="sale_order.access_token"/>

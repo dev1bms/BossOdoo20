@@ -59,7 +59,7 @@ with Form(env["sale.order"]) as form:
     check("E1 Spanish side is Spain (destination of an import)", "ES", form.boss_destination_country_id.code)
     form.boss_carrier_id = msc
     form.boss_origin_country_id = ref("base.cn")
-    form.boss_origin_port_id = port("CNSHA", "sea")
+    form.boss_origin_port_id = port("CNNGB", "sea")
     form.boss_destination_port_id = port("ESVLC", "sea")
     form.boss_delivery_address_id = warehouse
     form.boss_etd = date(2026, 11, 10)
@@ -149,7 +149,7 @@ check("E4 traffic code of an agent's client", "IMA", imb.boss_traffic_code)
 # E5 file: receives the route, dates and business, derives the same pricing inputs
 values = imb._boss_file_values()
 file = env["boss.expediente"].create(values)
-check("E5 file route", ("CNSHA", "ESVLC", warehouse, "agent", "IMA"),
+check("E5 file route", ("CNNGB", "ESVLC", warehouse, "agent", "IMA"),
       (file.origin_port_id.code, file.destination_port_id.code, file.delivery_address_id, file.business,
        file.traffic_code))
 check("E5 file dates", (date(2026, 11, 10), date(2026, 12, 10)), (file.etd, file.eta))

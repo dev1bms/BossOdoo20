@@ -21,7 +21,7 @@
                             invisible="state not in ('open', 'in_transit', 'arrived')"/>
                     <button name="action_close_operations" type="object" string="Close operations"
                             invisible="state != 'delivered'"/>
-                    <button name="action_reopen" type="object" string="Reopen"
+                    <button name="action_reopen" type="object" string="Reopen" groups="sales_team.group_sale_manager"
                             invisible="state not in ('closed', 'cancel') or financial_closed"/>
                     <button name="action_close_financial" type="object" string="Close financially"
                             groups="account.group_account_invoice" invisible="state != 'closed' or financial_closed"/>
@@ -379,6 +379,7 @@
                                     <field name="hawb_ref" invisible="transport_mode != 'air'"/>
                                     <field name="vessel" readonly="master_id"/>
                                     <field name="voyage" readonly="master_id"/>
+                                    <field name="cutoff" invisible="transport_mode != 'sea'" readonly="master_id"/>
                                 </group>
                                 <group string="Dates">
                                     <field name="atd" readonly="master_id"/>

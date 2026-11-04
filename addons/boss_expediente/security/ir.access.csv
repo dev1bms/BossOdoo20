@@ -46,3 +46,4 @@ boss_expediente_rating_account,File ratings (accounting read),boss.expediente.ra
 boss_expediente_rating_comp_rule,File ratings multi-company,boss.expediente.rating,,crud,"[('company_id', 'in', company_ids)]"
 boss_service_period_user,Default periods of services: read,boss.service.period,base.group_user,r,
 boss_service_period_manager,Default periods of services: maintain,boss.service.period,sales_team.group_sale_manager,crud,
+boss_expediente_reopen_manager,Reopen a file,boss.expediente.reopen,sales_team.group_sale_manager,crud,

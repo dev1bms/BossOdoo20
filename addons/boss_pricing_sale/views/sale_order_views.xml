@@ -138,6 +138,23 @@
                             <field name="quantity"/>
                         </list>
                     </field>
+                    <!-- Optional, as the Schedules of Odoo 17 quotations: printed for the customer; the chosen one gives
+                         the ETD/ETA of the quotation and goes to the file. -->
+                    <separator string="Sailings (optional)"/>
+                    <field name="boss_sailing_ids" readonly="state in ('sale', 'cancel')">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="carrier_id" options="{'no_create': True}"/>
+                            <field name="vessel"/>
+                            <field name="voyage" optional="hide"/>
+                            <field name="via"/>
+                            <field name="cutoff"/>
+                            <field name="etd"/>
+                            <field name="eta"/>
+                            <field name="transit_days"/>
+                            <field name="chosen" widget="boolean_toggle"/>
+                        </list>
+                    </field>
                 </page>
             </xpath>
             <xpath expr="//field[@name='order_line']//list//column[@name='sol_qty']" position="before">
@@ -188,6 +205,8 @@
                 <field name="boss_unknown_cost_reason" optional="hide" groups="sales_team.group_sale_manager"
                        invisible="boss_cost_kind != 'unknown'" readonly="boss_price_frozen"/>
                 <field name="boss_cost_on_request" optional="hide" string="Cost on request" readonly="boss_price_frozen"
+                       invisible="boss_execution == 'boss' or not boss_pricing_mode"/>
+                <field name="boss_cost_included" optional="show" string="Cost in another line" readonly="boss_price_frozen"
                        invisible="boss_execution == 'boss' or not boss_pricing_mode"/>
                 <field name="boss_vat_status" string="VAT" widget="badge" optional="hide"
                        decoration-success="boss_vat_status == 'ok'" decoration-danger="boss_vat_status == 'pending'"/>

@@ -16,6 +16,7 @@ class SaleOrderLine(models.Model):
     boss_cost_kind = fields.Selection(groups=INTERNAL)
     boss_unknown_cost_reason = fields.Char(groups=INTERNAL)
     boss_cost_on_request = fields.Boolean(groups=INTERNAL)
+    boss_cost_included = fields.Boolean(groups=INTERNAL)
     boss_cost_status = fields.Selection(groups=INTERNAL)
     boss_cost_amount = fields.Monetary(groups=INTERNAL)
     boss_cost_currency_id = fields.Many2one(groups=INTERNAL)
