@@ -470,9 +470,10 @@ class SaleOrderLine(models.Model):
             return spain, abroad, cust_zone
         return None, None, cust_zone
 
-    @api.depends("product_id", "product_id.boss_paid_on_behalf", "boss_manual_cost_note", "order_id.partner_id",
-                 "order_id.partner_id.vat", "order_id.boss_direction", "order_id.boss_port_id", "order_id.boss_country_id",
-                 "order_id.boss_origin_port_id", "order_id.boss_origin_country_id", "order_id.boss_destination_port_id",
+    @api.depends("product_id", "product_id.boss_paid_on_behalf", "product_id.boss_customs_value_charge",
+                 "boss_manual_cost_note", "order_id.partner_id", "order_id.partner_id.vat", "order_id.boss_direction",
+                 "order_id.boss_port_id", "order_id.boss_country_id", "order_id.boss_origin_port_id",
+                 "order_id.boss_origin_country_id", "order_id.boss_destination_port_id",
                  "order_id.boss_destination_country_id")
     def _compute_boss_vat(self):
         frozen = self._boss_skip()
@@ -484,7 +485,8 @@ class SaleOrderLine(models.Model):
                              "boss_vat_tax_id": False})
                 continue
             origin, destination, customer = line._boss_zones()
-            vat_class, trace = vat_rules.vat_class(line.product_id.boss_vat_class, origin, destination, customer)
+            vat_class, trace = vat_rules.vat_class(line.product_id.boss_vat_class, origin, destination, customer,
+                                                   bool(line.product_id.boss_customs_value_charge))
             # Paid on behalf only with its document in the customer's name (customs declaration, invoice): the
             # product flag alone does not prove it.
             on_behalf = line.product_id.boss_paid_on_behalf and bool(line.boss_manual_cost_note)

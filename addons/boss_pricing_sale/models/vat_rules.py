@@ -3,6 +3,8 @@
 1. Base class NS (not subject) or EX (exempt) is final.
 2. NR, layer 1 (origin -> destination zones): stays NR only for PRO->PRO, CAN->PRO, COM->PRO,
    COM->COM, TER->PRO, TER->COM; any other pair -> EX.
+   Except TER->PRO for a service that counts for the customs value (international freight): its price is in the
+   import VAT base (Art. 83.Dos LIVA), so the service is exempt (Art. 64 LIVA) -> EX (Cristina, 04/11/2026).
 3. NR, layer 2 (customer zone): PRO keeps NR; CAN, COM, TER -> EX.
 4. A missing zone is pending, never guessed.
 Zones: PRO = mainland Spain + Balearics, CAN = Canary Islands, Ceuta and Melilla (approved by Belal 23/10/2026, P17),
@@ -28,7 +30,7 @@ def zone(country_code, state_code=None, eu_codes=frozenset(), canary=False):
     return "COM" if country_code in eu_codes else "TER"
 
 
-def vat_class(base_class, origin, destination, customer):
+def vat_class(base_class, origin, destination, customer, in_customs_value=False):
     """Return (class or None, trace list). None = pending (a zone is missing)."""
     if base_class in ("NS", "EX"):
         return base_class, [f"base {base_class}"]
@@ -38,6 +40,8 @@ def vat_class(base_class, origin, destination, customer):
         return None, ["origin or destination zone missing"]
     if (origin, destination) not in NR_PAIRS:
         return "EX", [f"base NR", f"{origin}->{destination}: EX"]
+    if in_customs_value and (origin, destination) == ("TER", "PRO"):
+        return "EX", ["base NR", "TER->PRO in the import VAT base (Art. 64 LIVA): EX"]
     if not customer:
         return None, ["base NR", f"{origin}->{destination}: NR", "customer zone missing"]
     if customer != "PRO":

@@ -36,7 +36,7 @@ FREIGHT_ETD_CODES = ("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE")
 # Seeds of the service attributes (settings study of 04/11/2026, phase 2); afterwards maintained on the service.
 SUPPLIER_ROLES = {**dict.fromkeys(("HAN", "ALM", "AWB", "ETX", "X-R"), "handler"),
                   **dict.fromkeys(("TTE-CON", "TTE-FCL"), "haulier")}
-CUSTOMS_VALUE_CHARGES = {**dict.fromkeys(("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE"), "freight"),
+CUSTOMS_VALUE_CHARGES = {**dict.fromkeys(("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE", "FTT"), "freight"),
                          **dict.fromkeys(("THC", "THC-LCL"), "THC"), **dict.fromkeys(("T3", "T3-PAD"), "T3"),
                          "SEG": "insurance"}
 
