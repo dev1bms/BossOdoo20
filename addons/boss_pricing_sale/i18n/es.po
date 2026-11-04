@@ -5,6 +5,11 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "% of cost"
+msgstr "% del coste"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__percent
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__percent
 msgid "% of the cost"
@@ -634,6 +639,11 @@ msgstr "Pasos del cálculo"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Cap / container"
+msgstr "Tope / contenedor"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
@@ -1681,6 +1691,31 @@ msgstr "Puede perder"
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
 msgid "Measures"
 msgstr "Medidas"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Min."
+msgstr "Mín."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Min. / 20'"
+msgstr "Mín. / 20'"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Min. / 40'"
+msgstr "Mín. / 40'"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Min. / container"
+msgstr "Mín. / contenedor"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid "Min. / kg"
+msgstr "Mín. / kg"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__min_amount
