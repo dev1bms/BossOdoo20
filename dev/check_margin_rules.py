@@ -53,11 +53,12 @@ check("4 air, BOSS customer, 400 kg: max(50, 0.30 × 400) = 120 (above 10 %)", (
 tte = P("TTE-FCL")
 r = row({tte: (3100.0, 3000.0)}, ctx("road", n40=1), "Transporte")
 check("5 road: 10 % of the cost, at most 200 per container", (200.0, True), (r[3], bool(r[4])))
-cofitel = ref("o17_partner.res_partner_23012", raise_if_not_found=False)
-if cofitel:
-    r = row({fmi: (1100.0, 1000.0)}, ctx("sea", "fcl", n20=1, n40=1, customer_=cofitel), "Flete")
-    check("6 customer exception (Odoo 17): freight at 7 % instead of 250", (70.0, False, True),
-          (r[3], bool(r[4]), bool(r[5])))
+exception = env["boss.margin.exception"].search([("customer_id", "!=", False), ("family_id.name", "=", "Flete"),
+                                                ("force_percent", "=", True)], limit=1)
+if exception:  # its customer and percentage stay private (loaded from .research/), never printed
+    r = row({fmi: (1100.0, 1000.0)}, ctx("sea", "fcl", n20=1, n40=1, customer_=exception.customer_id), "Flete")
+    check("6 a customer exception of Odoo 17 replaces the rule for that customer (its own % of the cost)",
+          (True, True), (round(r[3], 2) == round(exception.percent / 100 * 1000.0, 2), r[5] == exception.name))
 dem = P("DEM")
 r = row({dem: (100.0, 105.0)}, ctx("sea", "fcl", n40=1), "DEM")
 check("7 «no margin» service at a loss is flagged (no tolerance), as in Odoo 17", True, bool(r[4]))
