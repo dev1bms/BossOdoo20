@@ -15,3 +15,10 @@ class ResCompany(models.Model):
         help="A weekly freight rate typed from the quotation (ocean or air freight, valid for days) is approved at "
         "once by the person who enters it, so an urgent quotation never waits for an approver in another time zone "
         "(Ángel, 27/10/2026). Off: the rate waits for a tariff approver like any other supplier price.")
+    # Settings study of 04/11/2026 (docs/estudio-ajustes.md): values that change over time leave the code.
+    boss_tariff_expiring_days = fields.Integer(
+        "Days before a tariff expires to warn", default=30,
+        help="A supplier price whose validity ends within this many days shows «Expiring» (lists, workspace).")
+    boss_spot_rate_validity_days = fields.Integer(
+        "Validity of a freight rate entered from a quotation (days)", default=7,
+        help="A weekly ocean or air freight rate typed from a quotation is valid this many days from its start.")

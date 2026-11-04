@@ -154,7 +154,8 @@
                                     <t t-elif="doc.house_doc_freight == 'collect'">DESTINATION</t>
                                 </td>
                                 <td><span class="box-label">Number of original B/L</span>
-                                    <t t-if="express">EXPRESS 0 / ZERO</t><t t-else="">3 / THREE</t>
+                                    <t t-if="express">EXPRESS 0 / ZERO</t>
+                                    <t t-else="" t-out="'%s / %s' % (company.boss_hbl_originals, {1: 'ONE', 2: 'TWO', 3: 'THREE', 4: 'FOUR', 5: 'FIVE'}.get(company.boss_hbl_originals, company.boss_hbl_originals))"/>
                                 </td>
                             </tr>
                         </table>
@@ -199,7 +200,7 @@
                                 </td>
                                 <td style="width: 25%;">
                                     <span class="box-label">Place and date of issue</span>
-                                    <t t-out="(company.city or '').upper()"/>,
+                                    <t t-out="(company.boss_doc_issue_place or company.city or '').upper()"/>,
                                     <t t-if="doc.house_doc_issue_date" t-out="doc.house_doc_issue_date.strftime('%d/%m/%Y')"/>
                                     <t t-else="">—</t>
                                 </td>
@@ -296,7 +297,7 @@
                                 <td style="width: 50%;">
                                     <span class="box-label">Executed on (date) at (place)</span>
                                     <t t-if="doc.house_doc_issue_date" t-out="doc.house_doc_issue_date.strftime('%d/%m/%Y')"/>
-                                    <t t-else="">—</t> at <t t-out="(company.city or '').upper()"/>
+                                    <t t-else="">—</t> at <t t-out="(company.boss_doc_issue_place or company.city or '').upper()"/>
                                 </td>
                                 <td style="width: 50%; height: 60px;">
                                     <span class="box-label">Signature of issuing carrier or its agent</span>

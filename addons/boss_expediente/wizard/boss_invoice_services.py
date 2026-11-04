@@ -44,8 +44,9 @@ class BossInvoiceServices(models.TransientModel):
                 moves |= group.order_id.with_context(boss_invoice_line_ids=group.ids)._create_invoices()
         for move in moves.filtered(lambda m: m.invoice_line_ids.sale_line_ids <= on_behalf):
             _ = self.with_context(lang=move.partner_id.lang).env._
-            mention = _("Amounts paid in the name and on behalf of the customer, not included in the taxable base "
-                        "(art. 78.Tres.3º Ley 37/1992).")
+            mention = (move.company_id.with_context(lang=move.partner_id.lang).boss_paid_on_behalf_note
+                       or _("Amounts paid in the name and on behalf of the customer, not included in the taxable "
+                            "base (art. 78.Tres.3º Ley 37/1992)."))
             if file.customs_ref:
                 mention += " " + _("Customs declaration (DUA): %s.", file.customs_ref)
             move.narration = mention

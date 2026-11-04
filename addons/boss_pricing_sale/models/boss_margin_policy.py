@@ -6,8 +6,7 @@ from .boss_shipment_route import BUSINESSES
 
 # Minimum margin control of Odoo 17 (summary_utils + x_profit_group_rules, x_profit_types, x_concept_profits,
 # x_profit_exceptions), roadmap item 15. A warning, never a block (P01/P02-a). Margin = sale - expected cost.
-DEFAULT_RATE = 0.10  # Odoo 17 BASE_MARGIN_PERC: a group or service without a rule
-TOLERANCE = 10.0  # Odoo 17 VALUE_ROUND: a margin this far below the minimum is accepted
+# Odoo 17 BASE_MARGIN_PERC (10 %) and VALUE_ROUND (10): company settings since 04/11/2026 (res.company).
 # Incoterms whose main carriage the seller pays: freight «prepaid» (C and D terms); E and F terms: «collect».
 PREPAID_INCOTERMS = ("CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP")
 COLLECT_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
@@ -141,6 +140,8 @@ class BossMarginPolicy(models.AbstractModel):
     def _boss_check(self, by_product, ctx, money):
         """by_product: {product: (sale, cost)} in one currency; ctx: shipment data; money: formatter."""
         _ = self.env._
+        company = ctx.get("company") or self.env.company
+        DEFAULT_RATE, TOLERANCE = company.boss_margin_default_rate / 100, company.boss_margin_tolerance
         families = self.env["boss.margin.family"].search([])
         groups = families.filtered(lambda f: f.kind == "group")
         policies = families - groups
@@ -204,6 +205,7 @@ class BossMarginPolicy(models.AbstractModel):
         incoterm = record.incoterm if "incoterm" in record._fields else record.incoterm_id
         carrier = get("carrier_id")
         return {
+            "company": record.company_id,
             "transport_mode": get("transport_mode"), "load_type": get("load_type"), "business": get("business"),
             "direction": get("direction"),
             "freight_payment": freight_payment or freight_payment_of(incoterm.code),

@@ -1,38 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Settings › BOSS · Pricing (settings study of 04/11/2026, docs/estudio-ajustes.md): every value of the supplier
+         tariffs, the selling price and the shipment measures that changes over time, and the links to the tables. -->
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.form.boss.pricing</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <setting id="pricelist_configuration" position="after">
-                <setting id="boss_default_markup" string="Default sale price of BOSS services"
-                         help="Expected cost of the line + this percentage, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 = off.">
-                    <div class="content-group">
-                        <div class="row mt16">
-                            <label for="boss_default_markup" class="col-lg-4 o_light_label">Cost +</label>
-                            <field name="boss_default_markup" class="col-lg-3"/> %
-                        </div>
-                    </div>
-                </setting>
-                <setting id="boss_spot_rate_auto_approve" string="Freight rates approved on entry"
-                         help="A weekly ocean or air freight rate typed from a quotation is approved at once by the person who enters it: an urgent quotation never waits for an approver in another time zone (Ángel, 27/10/2026). Off: it waits for a tariff approver.">
-                    <field name="boss_spot_rate_auto_approve"/>
-                </setting>
-                <setting id="boss_tariff_document_required" string="Supplier document required"
-                         help="A tariff needs the supplier's document attached to be sent for approval (every price traceable to it). Ángel asked Cristina whether it must be compulsory: switch it off to approve without the file.">
-                    <field name="boss_tariff_document_required"/>
-                </setting>
-                <setting id="boss_fx_policy" string="Supplier cost in another currency"
-                         help="What to do when a supplier price is in another currency than the quotation.">
-                    <field name="boss_fx_policy"/>
-                </setting>
-                <setting id="boss_vat_mapping" string="VAT of BOSS services"
-                         help="Odoo tax of each VAT case (class given by the VAT rules and customer zone). A case without a tax keeps the VAT pending: the quotation cannot be sent or confirmed.">
-                    <button name="%(boss_pricing_sale.boss_vat_tax_action)d" type="action" string="BOSS VAT table"
-                            icon="oi-arrow-right" class="btn-link"/>
-                </setting>
-            </setting>
+            <xpath expr="//form" position="inside">
+                <app data-string="BOSS · Pricing" string="BOSS · Pricing" name="boss_pricing_sale"
+                     logo="/boss_pricing_sale/static/description/icon.svg" groups="sales_team.group_sale_manager">
+                    <block title="Supplier tariffs" name="boss_supplier_tariffs">
+                        <setting id="boss_tariff_document_required" string="Supplier document required"
+                                 help="A tariff needs the supplier's document attached to be sent for approval (every price traceable to it). Ángel asked Cristina whether it must be compulsory: switch it off to approve without the file.">
+                            <field name="boss_tariff_document_required"/>
+                        </setting>
+                        <setting id="boss_spot_rate_auto_approve" string="Freight rates approved on entry"
+                                 help="A weekly ocean or air freight rate typed from a quotation is approved at once by the person who enters it: an urgent quotation never waits for an approver in another time zone (Ángel, 27/10/2026). Off: it waits for a tariff approver.">
+                            <field name="boss_spot_rate_auto_approve"/>
+                        </setting>
+                        <setting id="boss_spot_rate_validity_days" string="Validity of a freight rate entered from a quotation"
+                                 help="Days a weekly freight rate typed from a quotation is valid from its start (7 = one week).">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_spot_rate_validity_days" class="col-lg-4 o_light_label">Days</label>
+                                    <field name="boss_spot_rate_validity_days" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_tariff_expiring_days" string="Warn before a tariff expires"
+                                 help="A supplier price whose validity ends within this many days shows «Expiring» in the lists and the workspace.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_tariff_expiring_days" class="col-lg-4 o_light_label">Days</label>
+                                    <field name="boss_tariff_expiring_days" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_fx_policy" string="Supplier cost in another currency"
+                                 help="What to do when a supplier price is in another currency than the quotation.">
+                            <field name="boss_fx_policy"/>
+                        </setting>
+                        <setting id="boss_tariff_links" string="Tariffs and prices" help="The supplier tariffs with their documents, versions and approval.">
+                            <div class="mt8">
+                                <button name="%(boss_pricing.boss_tariff_action)d" type="action" string="Supplier tariffs" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_pricing.boss_tariff_line_action)d" type="action" string="Supplier prices" icon="oi-arrow-right" class="btn-link"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Selling price and margin" name="boss_selling_price">
+                        <setting id="boss_default_markup" string="Default sale price of BOSS services"
+                                 help="Expected cost of the line + this percentage, as a rule of the default pricelist. A customer's agreed price and a price typed on the line come first. 0 = off.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_default_markup" class="col-lg-4 o_light_label">Cost +</label>
+                                    <field name="boss_default_markup" class="col-lg-3"/> %
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_margin_default" string="Minimum margin without a rule"
+                                 help="Odoo 17 base rule: a group or service with no minimum margin rule must leave this % of its cost; a margin up to the tolerance below the minimum is accepted. A warning, never a block.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_margin_default_rate" class="col-lg-4 o_light_label">% of the cost</label>
+                                    <field name="boss_margin_default_rate" class="col-lg-3"/>
+                                </div>
+                                <div class="row">
+                                    <label for="boss_margin_tolerance" class="col-lg-4 o_light_label">Tolerance</label>
+                                    <field name="boss_margin_tolerance" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_price_links" string="Prices and rules" help="Where the agreed prices, the templates and the minimum margin rules are kept.">
+                            <div class="mt8">
+                                <button name="%(product.product_pricelist_action2)d" type="action" string="Pricelists" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(sale_management.sale_order_template_action)d" type="action" string="Quotation templates" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_pricing_sale.boss_margin_family_action)d" type="action" string="Minimum margins" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_pricing_sale.boss_margin_exception_action)d" type="action" string="Minimum margin exceptions" icon="oi-arrow-right" class="btn-link"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Shipment measures" name="boss_measures">
+                        <setting id="boss_volumetric" string="Volume weight factors (kg per m³)"
+                                 help="The chargeable weight is the higher of the gross weight and volume × factor of the mode (Ángel, 27/10/2026). A supplier document stating its own factor keeps it.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_volumetric_air" class="col-lg-4 o_light_label">Air</label>
+                                    <field name="boss_volumetric_air" class="col-lg-3"/>
+                                </div>
+                                <div class="row">
+                                    <label for="boss_volumetric_road" class="col-lg-4 o_light_label">Road</label>
+                                    <field name="boss_volumetric_road" class="col-lg-3"/>
+                                </div>
+                                <div class="row">
+                                    <label for="boss_volumetric_sea" class="col-lg-4 o_light_label">Sea</label>
+                                    <field name="boss_volumetric_sea" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_measure_links" string="Ports, containers and services" help="Reference tables of the shipment data.">
+                            <div class="mt8">
+                                <button name="%(boss_pricing.boss_port_action)d" type="action" string="Ports and airports" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_pricing.boss_service_ws_action)d" type="action" string="Services" icon="oi-arrow-right" class="btn-link"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="VAT" name="boss_vat">
+                        <setting id="boss_vat_mapping" string="VAT of BOSS services"
+                                 help="Odoo tax of each VAT case (class given by the VAT rules and customer zone). A case without a tax keeps the VAT pending: the quotation cannot be sent or confirmed.">
+                            <button name="%(boss_pricing_sale.boss_vat_tax_action)d" type="action" string="BOSS VAT table"
+                                    icon="oi-arrow-right" class="btn-link"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
         </field>
     </record>
 </odoo>

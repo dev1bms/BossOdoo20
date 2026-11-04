@@ -440,7 +440,8 @@ class BossExpediente(models.Model):
         [("single", "Single shipment"), ("master", "Master"), ("house", "House")], "Consolidation",
         compute="_compute_consolidation")
     allocation_basis = fields.Selection(
-        ALLOCATION_BASES, "Shared costs split by", default="chargeable", tracking=True,
+        ALLOCATION_BASES, "Shared costs split by", tracking=True,
+        default=lambda self: self.env.company.boss_default_allocation_basis or "chargeable",
         help="How the costs of this master are shared among its houses: by chargeable weight (W/M: the higher of "
              "weight and volume, the basis the carriers charge on), gross weight, volume, equal parts, or a share "
              "typed on each house. Odoo 19 offered the same choices; the industry splits by weight or volume.")
@@ -590,7 +591,8 @@ class BossExpediente(models.Model):
         return shipment_quantity(source, [(c.size, c.container_type_id, 1) for c in self.container_ids],
                                  self.gross_kg, self.volume_m3, self.pallets, self.awb_kg or self.chargeable_kg,
                                  size, ctype, chargeable_kg=self.chargeable_kg,
-                                 chargeable_by_mode=chargeable_by_mode(self.gross_kg, self.volume_m3))
+                                 chargeable_by_mode=chargeable_by_mode(self.gross_kg, self.volume_m3,
+                                                                       self.company_id._boss_volumetric_factors()))
 
     def _boss_inputs(self):
         """Shipment inputs of boss.pricing taken from the file (what really happens), like
@@ -614,7 +616,8 @@ class BossExpediente(models.Model):
                            for (size, type_id), quantity in containers.items()],
             "gross_kg": self.gross_kg or None, "awb_kg": self.awb_kg or self.chargeable_kg or None,
             "chargeable_kg": self.chargeable_kg or None,
-            "chargeable_kg_by_mode": {m: kg or None for m, kg in chargeable_by_mode(self.gross_kg, self.volume_m3).items()},
+            "chargeable_kg_by_mode": {m: kg or None for m, kg in chargeable_by_mode(
+                self.gross_kg, self.volume_m3, self.company_id._boss_volumetric_factors()).items()},
             "volume_m3": self.volume_m3 or None, "pallets": self.pallets or None,
             "goods_value": self.goods_value or order.boss_goods_value or None,
             "duties_amount": self.duties_amount or order.boss_duties_amount or None, "storage_days": None,
@@ -657,11 +660,12 @@ class BossExpediente(models.Model):
             spanish = side and address.state_id.country_id.code == "ES"
             file.inland_state_id = address.state_id if spanish else file.inland_state_id
 
-    @api.depends("transport_mode", "gross_kg", "volume_m3")
+    @api.depends("transport_mode", "gross_kg", "volume_m3", "company_id.boss_volumetric_air",
+                 "company_id.boss_volumetric_road", "company_id.boss_volumetric_sea")
     def _compute_chargeable_kg(self):
         for file in self:
-            file.volume_weight_kg, file.chargeable_kg = chargeable_kg(file.transport_mode, file.gross_kg,
-                                                                      file.volume_m3)
+            file.volume_weight_kg, file.chargeable_kg = chargeable_kg(
+                file.transport_mode, file.gross_kg, file.volume_m3, file.company_id._boss_volumetric_factors())
 
     @api.onchange("partner_id", "direction", "business")
     def _onchange_orderer_party(self):
@@ -1416,8 +1420,9 @@ class BossExpediente(models.Model):
                     detail = _("rate first: %s", file.rating_missing)
                 elif file.delivered_date:
                     days = (today - file.delivered_date).days
-                    detail = (_("delivered %s days ago: Cristina asks to close within a week", days) if days > 7
-                              else _("delivered %s days ago", days))
+                    limit = file.company_id.boss_close_days_after_delivery
+                    detail = (_("delivered %(days)s days ago: Cristina asks to close within %(limit)s days", days=days,
+                                limit=limit) if days > limit else _("delivered %s days ago", days))
             elif not currency.is_zero(pending):
                 step, detail = "bills", money(pending) if sees_cost else False
             elif review:

@@ -10,6 +10,23 @@ from .shipment_block import scope_sentence, shipment_rows
 from odoo.addons.boss_pricing_sale.models.boss_margin_policy import COLLECT_INCOTERMS, PREPAID_INCOTERMS  # noqa: E402
 
 
+class ResCompany(models.Model):
+    _inherit = "res.company"
+
+    # Settings study of 04/11/2026: what the house documents print, as values (docs/estudio-ajustes.md).
+    boss_hbl_originals = fields.Integer("Original house B/Ls issued", default=3,
+                                        help="Printed on the house B/L; a sea waybill prints «express», zero.")
+    boss_doc_issue_place = fields.Char("Place of issue of the house documents",
+                                       help="Empty: the city of the company.")
+
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = "res.config.settings"
+
+    boss_hbl_originals = fields.Integer(related="company_id.boss_hbl_originals", readonly=False)
+    boss_doc_issue_place = fields.Char(related="company_id.boss_doc_issue_place", readonly=False)
+
+
 class BossExpediente(models.Model):
     _inherit = "boss.expediente"
 

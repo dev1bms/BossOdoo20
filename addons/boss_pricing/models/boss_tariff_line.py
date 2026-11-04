@@ -304,7 +304,6 @@ assert set(dict(METHOD_SELECTION)) == set(METHODS), "every engine method has a l
 VALIDITY_STATES = [("draft", "Draft"), ("to_approve", "Waiting for approval"), ("future", "Not valid yet"),
                    ("current", "Valid"), ("expiring", "Expires soon"), ("expired", "Expired"),
                    ("replaced", "Replaced by a newer version")]
-EXPIRING_DAYS = 30
 # Parameters that only mean something for one method: cleared when the method changes, so that a hidden value
 # never takes part in the calculation or the matching.
 METHOD_FIELDS = {
@@ -516,7 +515,7 @@ class BossTariffLineWorkspace(models.Model):
                 line.validity_state = "expired"
             elif tariff.version < newest.get(tariff.lineage_id.id, 0):
                 line.validity_state = "replaced"
-            elif tariff.valid_to and (tariff.valid_to - today).days <= EXPIRING_DAYS:
+            elif tariff.valid_to and (tariff.valid_to - today).days <= tariff.company_id.boss_tariff_expiring_days:
                 line.validity_state = "expiring"
             else:
                 line.validity_state = "current"

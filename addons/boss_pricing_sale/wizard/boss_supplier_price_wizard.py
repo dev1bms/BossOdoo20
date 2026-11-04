@@ -138,7 +138,10 @@ class BossSupplierPriceWizard(models.TransientModel):
     @api.depends("valid_from", "spot_rate")
     def _compute_valid_to(self):
         for wiz in self:
-            wiz.valid_to = (wiz.valid_from + timedelta(days=6)) if wiz.spot_rate and wiz.valid_from else wiz.valid_to
+            company = wiz.sale_line_id.company_id or self.env.company
+            days = max(company.boss_spot_rate_validity_days, 1)
+            wiz.valid_to = (wiz.valid_from + timedelta(days=days - 1)) if wiz.spot_rate and wiz.valid_from \
+                else wiz.valid_to
 
     @api.depends("sale_line_id")
     def _compute_foreign_port_ids(self):

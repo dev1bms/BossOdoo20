@@ -42,16 +42,16 @@ def key_date(direction):
     return "eta" if direction == "import" else "etd"
 
 
-def chargeable_by_mode(gross_kg, volume_m3):
+def chargeable_by_mode(gross_kg, volume_m3, factors=None):
     """Chargeable weight for each transport mode (a road leg of a sea shipment is charged with the road factor):
-    {mode: kg or 0.0 when a measure is unknown}."""
-    return {mode: chargeable_kg(mode, gross_kg, volume_m3)[1] for mode in MODE_VOLUMETRIC_FACTORS}
+    {mode: kg or 0.0 when a measure is unknown}. factors: the company's kg per m³ (default: Ángel's)."""
+    return {mode: chargeable_kg(mode, gross_kg, volume_m3, factors)[1] for mode in MODE_VOLUMETRIC_FACTORS}
 
 
-def chargeable_kg(mode, gross_kg, volume_m3):
+def chargeable_kg(mode, gross_kg, volume_m3, factors=None):
     """(volume weight, chargeable weight) of a shipment: volume × factor of the mode, and the higher of gross and
     volume weight. Both measures are needed: with one of them unknown nothing is assumed (0, 0 = not known)."""
-    factor = MODE_VOLUMETRIC_FACTORS.get(mode)
+    factor = (factors or MODE_VOLUMETRIC_FACTORS).get(mode)
     if not factor or not gross_kg or not volume_m3:
         return 0.0, 0.0
     volume_kg = volume_m3 * factor
@@ -189,11 +189,13 @@ class BossShipmentRoute(models.AbstractModel):
                              else (record.boss_etd, record.boss_eta))
             record.boss_planned_date = first or second or record.boss_planned_date
 
-    @api.depends("boss_transport_mode", "boss_gross_kg", "boss_volume_m3")
+    @api.depends("boss_transport_mode", "boss_gross_kg", "boss_volume_m3", "company_id.boss_volumetric_air",
+                 "company_id.boss_volumetric_road", "company_id.boss_volumetric_sea")
     def _compute_boss_chargeable_kg(self):
         for record in self:
             record.boss_volume_weight_kg, record.boss_chargeable_kg = chargeable_kg(
-                record.boss_transport_mode, record.boss_gross_kg, record.boss_volume_m3)
+                record.boss_transport_mode, record.boss_gross_kg, record.boss_volume_m3,
+                record._boss_volumetric_factors())
 
     def _boss_foreign_port(self):
         """Port or airport abroad for pricing: the origin of an import, the destination of an export."""
@@ -227,10 +229,16 @@ class BossShipmentRoute(models.AbstractModel):
         elif self.boss_direction == "export" and not self.boss_shipper_id:
             self.boss_shipper_id = party
 
+    def _boss_volumetric_factors(self):
+        """The company's kg per m³ per mode (Settings › BOSS · Pricing), the defaults while the record has none."""
+        company = self.company_id if "company_id" in self._fields and self.company_id else self.env.company
+        return company._boss_volumetric_factors()
+
     def _boss_chargeable_by_mode(self):
         """Engine input: chargeable weight per mode (None where a measure is unknown)."""
         self.ensure_one()
-        return {mode: kg or None for mode, kg in chargeable_by_mode(self.boss_gross_kg, self.boss_volume_m3).items()}
+        return {mode: kg or None for mode, kg in chargeable_by_mode(
+            self.boss_gross_kg, self.boss_volume_m3, self._boss_volumetric_factors()).items()}
 
     def _boss_awb_weight(self):
         """AWB weight for pricing: the one written on the AWB, else the estimated chargeable weight (air)."""

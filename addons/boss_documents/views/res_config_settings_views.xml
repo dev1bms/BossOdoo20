@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Settings › BOSS · Documents (settings study of 04/11/2026): what the house documents and the customer invoice
+         print, as values. -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.boss.documents</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="BOSS · Documents" string="BOSS · Documents" name="boss_documents"
+                     logo="/boss_documents/static/description/icon.svg" groups="sales_team.group_sale_manager">
+                    <block title="House documents" name="boss_house_documents">
+                        <setting id="boss_hbl_originals" string="Original house B/Ls"
+                                 help="Number of originals printed on the house B/L; a sea waybill prints «express», zero.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_hbl_originals" class="col-lg-4 o_light_label">Originals</label>
+                                    <field name="boss_hbl_originals" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_doc_issue_place" string="Place of issue"
+                                 help="Printed on the house B/L and air waybill. Empty: the city of the company.">
+                            <field name="boss_doc_issue_place"/>
+                        </setting>
+                    </block>
+                    <block title="Customer invoice" name="boss_customer_invoice">
+                        <setting id="boss_invoice_operation_date" string="Operation date on the invoice"
+                                 help="The invoice keeps its issue date and prints the operation date of the file apart: arrival of an import, departure otherwise (RD 1619/2012 art. 6). Off: empty unless typed.">
+                            <field name="boss_invoice_operation_date"/>
+                        </setting>
+                        <setting id="boss_paid_on_behalf_note" string="Mention of amounts paid on behalf"
+                                 help="Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording, in the customer's language.">
+                            <field name="boss_paid_on_behalf_note" nolabel="1" placeholder="Standard wording"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

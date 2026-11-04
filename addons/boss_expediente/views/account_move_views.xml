@@ -13,29 +13,65 @@
         </field>
     </record>
 
+    <!-- Settings › BOSS · Files (settings study of 04/11/2026, docs/estudio-ajustes.md): the values of the operations
+         that change over time, grouped by step of the file, and the links to the tables. -->
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.form.boss.expediente</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="boss_pricing_sale.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <setting id="boss_vat_mapping" position="after">
-                <setting id="boss_bill_before_invoice" string="Supplier bill before the customer invoice"
-                         help="A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time).">
-                    <field name="boss_bill_before_invoice"/>
-                </setting>
-                <setting id="boss_free_alert_days" string="Container free-time alert"
-                         help="Activity to the operator this many working days before the last free day of each container, another on that day, and one to the salesperson on the first day with a cost (F0-C55). 0 switches it off.">
-                    <field name="boss_free_alert_days"/>
-                </setting>
-                <setting id="boss_month_close_copy" string="Month-close reminder"
-                         help="On the last day of the month each responsible gets an activity on every file still to invoice or to close; this person gets the summary (F0-A37, Odoo 17 «CIERRE MENSUAL»).">
-                    <field name="boss_month_close_copy_user_id" options="{'no_create': True}"/>
-                </setting>
-                <setting id="boss_ratings_to_close" string="Ratings required to close operations"
-                         help="The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025).">
-                    <field name="boss_ratings_to_close"/>
-                </setting>
-            </setting>
+            <xpath expr="//form" position="inside">
+                <app data-string="BOSS · Files" string="BOSS · Files" name="boss_expediente"
+                     logo="/boss_expediente/static/description/icon.svg" groups="sales_team.group_sale_manager">
+                    <block title="Opening a file" name="boss_file_opening">
+                        <setting id="boss_opening_links" string="Who works on a file" help="The operator proposed by customer and traffic, and the handler of each airline at each airport (both from Odoo 17).">
+                            <div class="mt8">
+                                <button name="%(boss_expediente.boss_operator_assignment_action)d" type="action" string="Operators by customer and traffic" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_expediente.boss_airline_handler_action)d" type="action" string="Airlines and handlers" icon="oi-arrow-right" class="btn-link"/>
+                                <button name="%(boss_expediente.boss_partner_role_action)d" type="action" string="Logistic roles" icon="oi-arrow-right" class="btn-link"/>
+                            </div>
+                        </setting>
+                        <setting id="boss_default_allocation_basis" string="Consolidations: shared costs split by"
+                                 help="Proposed on every new master file: by chargeable weight (W/M), gross weight, volume, equal parts or a share typed on each house (ADR-013).">
+                            <field name="boss_default_allocation_basis"/>
+                        </setting>
+                    </block>
+                    <block title="Closing a file" name="boss_file_closing">
+                        <setting id="boss_ratings_to_close" string="Ratings required to close operations"
+                                 help="The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025).">
+                            <field name="boss_ratings_to_close"/>
+                        </setting>
+                        <setting id="boss_close_days_after_delivery" string="Days to close after the delivery"
+                                 help="Cristina: a delivered file closes operations within this many days; afterwards the next step warns.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_close_days_after_delivery" class="col-lg-4 o_light_label">Days</label>
+                                    <field name="boss_close_days_after_delivery" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_bill_before_invoice" string="Supplier bill before the customer invoice"
+                                 help="A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time).">
+                            <field name="boss_bill_before_invoice"/>
+                        </setting>
+                    </block>
+                    <block title="Reminders (Odoo activities, no e-mail)" name="boss_file_reminders">
+                        <setting id="boss_free_alert_days" string="Container free-time alert"
+                                 help="Activity to the operator this many working days before the last free day of each container, another on that day, and one to the salesperson on the first day with a cost (F0-C55). 0 switches it off.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_free_alert_days" class="col-lg-4 o_light_label">Working days</label>
+                                    <field name="boss_free_alert_days" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="boss_month_close_copy" string="Month-close reminder"
+                                 help="On the last day of the month each responsible gets an activity on every file still to invoice or to close; this person gets the summary (F0-A37, Odoo 17 «CIERRE MENSUAL»).">
+                            <field name="boss_month_close_copy_user_id" options="{'no_create': True}"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
         </field>
     </record>
 </odoo>

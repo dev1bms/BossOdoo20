@@ -6,7 +6,6 @@ from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
 
 from . import vat_rules
-from .boss_shipment_route import MODE_VOLUMETRIC_FACTORS
 from .product_pricelist_item import BOSS_LINE_COST
 
 SALE_STATUSES = [
@@ -400,7 +399,7 @@ class SaleOrderLine(models.Model):
                     "Chargeable weight %(kg)s kg: the higher of the gross weight (%(gross)s kg) and the volume weight "
                     "(%(volume)s m³ × %(factor)s kg/m³, factor of %(mode)s).", kg=order.boss_chargeable_kg,
                     gross=order.boss_gross_kg, volume=order.boss_volume_m3,
-                    factor=MODE_VOLUMETRIC_FACTORS.get(order.boss_transport_mode),
+                    factor=order._boss_volumetric_factors().get(order.boss_transport_mode),
                     mode=dict(order._fields["boss_transport_mode"]._description_selection(self.env)).get(
                         order.boss_transport_mode)) + "\n" + text
             if (rule.basis == "awb_kg" and not order.boss_awb_kg and order.boss_chargeable_kg

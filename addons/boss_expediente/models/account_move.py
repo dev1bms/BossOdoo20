@@ -20,6 +20,22 @@ class ResCompany(models.Model):
     boss_ratings_to_close = fields.Boolean(
         "Ratings required to close operations", default=True,
         help="The customer and every supplier of a file are rated (0-10) before its operations close, as in Odoo 17.")
+    # Settings study of 04/11/2026 (docs/estudio-ajustes.md): values that change over time leave the code.
+    boss_close_days_after_delivery = fields.Integer(
+        "Days after the delivery to close operations", default=7,
+        help="Cristina: a delivered file closes operations within this many days; afterwards the next step warns.")
+    boss_default_allocation_basis = fields.Selection(
+        [("chargeable", "Chargeable weight (W/M)"), ("gross", "Gross weight"), ("volume", "Volume"),
+         ("equal", "Equal parts"), ("manual", "Manual share")], "Shared costs of a consolidation split by",
+        default="chargeable", required=True, help="Proposed on every new master file (ADR-013).")
+    boss_invoice_operation_date = fields.Boolean(
+        "Operation date on the customer invoice", default=True,
+        help="The invoice keeps its issue date and prints the operation date of the file apart (arrival of an "
+             "import, departure otherwise; RD 1619/2012 art. 6). Off: the field stays empty unless typed.")
+    boss_paid_on_behalf_note = fields.Text(
+        "Mention on the invoice of amounts paid on behalf", translate=True,
+        help="Printed on the invoice that re-invoices duties, import VAT and other amounts paid in the customer's "
+             "name (art. 78.Tres.3º Ley 37/1992). Empty: the standard wording.")
 
 
 class ResConfigSettings(models.TransientModel):
@@ -27,6 +43,10 @@ class ResConfigSettings(models.TransientModel):
 
     boss_bill_before_invoice = fields.Selection(related="company_id.boss_bill_before_invoice", readonly=False)
     boss_ratings_to_close = fields.Boolean(related="company_id.boss_ratings_to_close", readonly=False)
+    boss_close_days_after_delivery = fields.Integer(related="company_id.boss_close_days_after_delivery", readonly=False)
+    boss_default_allocation_basis = fields.Selection(related="company_id.boss_default_allocation_basis", readonly=False)
+    boss_invoice_operation_date = fields.Boolean(related="company_id.boss_invoice_operation_date", readonly=False)
+    boss_paid_on_behalf_note = fields.Text(related="company_id.boss_paid_on_behalf_note", readonly=False)
 
 
 class AccountMove(models.Model):
@@ -39,7 +59,8 @@ class AccountMove(models.Model):
     @api.depends("invoice_line_ids.boss_expediente_id")
     def _compute_delivery_date(self):
         super()._compute_delivery_date()
-        for move in self.filtered(lambda m: m.is_sale_document(include_receipts=True) and not m.delivery_date):
+        for move in self.filtered(lambda m: m.is_sale_document(include_receipts=True) and not m.delivery_date
+                                  and m.company_id.boss_invoice_operation_date):
             dates = [d for d in (f._boss_operation_date() for f in move.invoice_line_ids.boss_expediente_id) if d]
             move.delivery_date = max(dates) if dates else False
 
