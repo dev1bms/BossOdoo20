@@ -123,8 +123,9 @@ class SaleOrder(models.Model):
         """A rate quotation as the commercial team sends it (Ángel's sheet «SEA FCL», 04/11/2026): one row per
         service, one column per container size and type, the basis beside each price, and under each column the total
         of ONE container of that size in one shipment (VAT excluded), never a total of a shipment not yet known.
-        Services priced per B/L, shipment or clearance count once in every column. When supplier prices are in another
-        currency, the exchange rate used and the totals in that currency are given too."""
+        Services priced per B/L, shipment or clearance count once in every column. Services in an optional section
+        (insurance on request...) are shown and marked optional, never added to the totals. When supplier prices are in
+        another currency, the exchange rate used and the totals in that currency are given too."""
         self.ensure_one()
         sized = self.order_line.filtered(lambda l: not l.display_type and l.boss_container_size)
         groups = sorted({(l.boss_container_size, l.boss_container_type_id) for l in sized},
@@ -143,8 +144,9 @@ class SaleOrder(models.Model):
             key = (section, line.product_id.id, line.product_uom_id.id)
             row = by_service.get(key)
             if not row:
+                optional = hasattr(line, "_is_line_optional") and line._is_line_optional()
                 row = by_service[key] = {"kind": "line", "name": (line.label or line.name or "").split("\n")[0],
-                                         "basis": line.product_uom_id.name, "cells": {}}
+                                         "basis": line.product_uom_id.name, "cells": {}, "optional": optional}
                 rows.append(row)
             unit = (line.price_subtotal / line.product_uom_qty if line.product_uom_qty
                     else line.price_unit * (1 - (line.discount or 0.0) / 100))
@@ -153,7 +155,8 @@ class SaleOrder(models.Model):
             for target in targets:
                 if target in keys:
                     row["cells"][target] = row["cells"].get(target, 0.0) + unit
-        totals = {k: sum(r["cells"].get(k, 0.0) for r in rows if r["kind"] == "line") for k in keys}
+        totals = {k: sum(r["cells"].get(k, 0.0) for r in rows if r["kind"] == "line" and not r["optional"])
+                  for k in keys}
         date = fields.Date.to_date(self.date_order) or fields.Date.context_today(self)
         others = []
         for currency in (self.order_line.boss_cost_currency_id - self.currency_id).sorted("name"):

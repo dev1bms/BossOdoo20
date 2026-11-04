@@ -171,6 +171,7 @@ class BossExpedienteCost(models.Model):
             "partner_id": (line._boss_purchase_partner() or (
                 expediente.customs_broker_id if line.product_id.boss_paid_on_behalf
                 else expediente.handler_id if line.product_id.boss_supplier_role == "handler"
+                else expediente.carrier_id if line.product_id.boss_supplier_role == "carrier"
                 else self.env["res.partner"])).id,
             "currency_id": currency.id, "uom_id": uom.id, "quantity": quantity,
             "expected_unit_cost": unit, "accepted_unit_cost": unit, "accepted_amount_company": accepted,

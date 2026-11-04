@@ -24,8 +24,10 @@ codes = active.mapped("default_code")
 print(f"INFO {len(active)} active BOSS services, {len(services) - len(active)} archived")
 check("1 every active BOSS service has a code, and each code is used once", (0, []),
       (len(active.filtered(lambda s: not s.default_code)), sorted({c for c in codes if c and codes.count(c) > 1})))
-check("2 every seeded code still exists as an active service", [],
-      sorted(c for c in {*SUPPLIER_ROLES, *CUSTOMS_VALUE_CHARGES, *(k[0] for k in DEFAULT_PERIOD_EVENTS)} if c not in codes))
+all_codes = services.mapped("default_code")  # an archived service may keep its seed (FTT, replaced by TTE-CON)
+check("2 every seeded code still exists as a service", [],
+      sorted(c for c in {*SUPPLIER_ROLES, *CUSTOMS_VALUE_CHARGES, *(k[0] for k in DEFAULT_PERIOD_EVENTS)}
+             if c not in all_codes))
 check("3 «Bought from» = the seed on the seeded services, «any supplier» on the others", [],
       sorted(s.default_code for s in active if s.boss_supplier_role != SUPPLIER_ROLES.get(s.default_code, "any")))
 check("4 «Counts for the customs value as» = the seed, empty on the others", [],

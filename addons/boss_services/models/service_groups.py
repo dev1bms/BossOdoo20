@@ -35,7 +35,10 @@ GROUP_BY_CODE = {
 FREIGHT_ETD_CODES = ("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE")
 # Seeds of the service attributes (settings study of 04/11/2026, phase 2); afterwards maintained on the service.
 SUPPLIER_ROLES = {**dict.fromkeys(("HAN", "ALM", "AWB", "ETX", "X-R"), "handler"),
-                  **dict.fromkeys(("TTE-CON", "TTE-FCL"), "haulier")}
+                  **dict.fromkeys(("TTE-CON", "TTE-FCL"), "haulier"),
+                  # «Main carrier in sea shipments is the freight supplier» (Ángel, meeting of 04/11/2026): FCL ocean
+                  # freight; LCL freight is bought from a co-loader, not from the shipping line.
+                  **dict.fromkeys(("FMI", "FME"), "carrier")}
 CUSTOMS_VALUE_CHARGES = {**dict.fromkeys(("FMI", "FMI-LCL", "FME", "FME-LCL", "FAI", "FAE", "FTT"), "freight"),
                          **dict.fromkeys(("THC", "THC-LCL"), "THC"), **dict.fromkeys(("T3", "T3-PAD"), "T3"),
                          "SEG": "insurance"}

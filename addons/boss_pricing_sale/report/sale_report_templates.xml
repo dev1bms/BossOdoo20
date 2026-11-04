@@ -27,7 +27,10 @@
                         <td t-att-colspan="len(matrix['columns']) + 2" t-out="row['name']"/>
                     </tr>
                     <tr t-else="">
-                        <td t-out="row['name']"/>
+                        <td>
+                            <t t-out="row['name']"/>
+                            <span t-if="row['optional']" class="text-muted fst-italic"> (optional, not in the total)</span>
+                        </td>
                         <td t-foreach="matrix['columns']" t-as="column" class="text-end text-nowrap">
                             <t t-if="column['key'] in row['cells']" t-out="row['cells'][column['key']]" t-options="money"/>
                             <t t-else="">—</t>

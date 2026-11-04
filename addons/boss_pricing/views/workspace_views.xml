@@ -126,7 +126,7 @@
         <field name="priority">40</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Service or code" filter_domain="['|', ('name', 'ilike', self), ('default_code', 'ilike', self)]"/>
+                <field name="name" string="Service, code or description" filter_domain="['|', ('display_name', 'ilike', self), ('default_code', 'ilike', self)]"/>
                 <filter string="Priced" name="ws_ready" domain="[('boss_ws_readiness', '=', 'ready')]"/>
                 <filter string="No supplier price" name="ws_no_price" domain="[('boss_ws_readiness', '=', 'no_price')]"/>
                 <filter string="Prices waiting for approval" name="ws_pending" domain="[('boss_ws_readiness', '=', 'pending')]"/>

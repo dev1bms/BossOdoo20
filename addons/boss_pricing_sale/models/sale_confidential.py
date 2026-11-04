@@ -11,6 +11,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     boss_supplier_id = fields.Many2one(groups=INTERNAL)
+    boss_supplier_ids = fields.Many2many(groups=INTERNAL)
     boss_execution = fields.Selection(groups=INTERNAL)
     boss_cost_kind = fields.Selection(groups=INTERNAL)
     boss_unknown_cost_reason = fields.Char(groups=INTERNAL)

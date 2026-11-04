@@ -1,4 +1,5 @@
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.fields import Domain
 
 
 class ProductTemplate(models.Model):
@@ -59,10 +60,13 @@ class ProductTemplate(models.Model):
         "concepts are of type TAX and go on a separate tax invoice; it decides the Odoo tax of their NS class.")
     # Settings study of 04/11/2026, phase 2: what the code listed by service code is now said on the service.
     boss_supplier_role = fields.Selection(
-        [("any", "Any supplier"), ("handler", "The air handler of the file"), ("haulier", "The haulier (road leg)")],
+        [("any", "Any supplier"), ("handler", "The air handler of the file"), ("haulier", "The haulier (road leg)"),
+         ("carrier", "The main carrier of the shipment")],
         "Bought from", default="any", required=True,
         help="Handler: the service follows the handler of the airline at the airport (HAN, ALM, AWB...). Haulier: a "
-             "road leg whose supplier is the inland carrier of the quotation and the file.")
+             "road leg whose supplier is the inland carrier of the quotation and the file. Main carrier (FCL ocean "
+             "freight, Ángel 04/11/2026): the supplier of the file's purchase when no tariff gave one; a freight priced "
+             "by an agent's tariff keeps that agent.")
     boss_customs_value_charge = fields.Selection(
         [("freight", "Freight"), ("THC", "THC"), ("T3", "T3"), ("insurance", "Insurance")],
         "Counts for the customs value as",
@@ -80,3 +84,47 @@ class ProductTemplate(models.Model):
         """Units a BOSS service can be priced and sold in: its unit and its other units."""
         self.ensure_one()
         return self.uom_id | self.uom_ids
+
+    @api.model
+    def _boss_service_search(self, operator, value):
+        """BOSS services found by their name in any installed language (Spanish or English, whatever the language of
+        the user) or by their description, as the team searches them (meeting with Ángel, 04/11/2026). None when the
+        search is not a positive text search."""
+        if operator not in ("ilike", "like", "=ilike") or not isinstance(value, str) or not value.strip():
+            return None
+        services = self.with_context(active_test=False)
+        found = services.search([("boss_pricing_mode", "!=", False), ("description", operator, value)])
+        for code, _name in self.env["res.lang"].get_installed():
+            found |= services.with_context(lang=code).search([("boss_pricing_mode", "!=", False),
+                                                              ("name", operator, value)])
+        return found.ids
+
+    @api.model
+    def _search_display_name(self, operator, value):
+        domain = super()._search_display_name(operator, value)
+        ids = self._boss_service_search(operator, value)
+        return Domain.OR([domain, [("id", "in", ids)]]) if ids else domain
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    @api.model
+    def _search_display_name(self, operator, value):
+        domain = super()._search_display_name(operator, value)
+        ids = self.env["product.template"]._boss_service_search(operator, value)
+        return Domain.OR([domain, [("product_tmpl_id", "in", ids)]]) if ids else domain
+
+    @api.model
+    def name_search(self, name="", domain=None, operator="ilike", limit=100):
+        """Odoo searches products by code and by name in the user's language only: the BOSS services found by their
+        other name or their description come after them."""
+        found = super().name_search(name, domain, operator, limit)
+        ids = self.env["product.template"]._boss_service_search(operator, name)
+        if ids and (not limit or len(found) < limit):
+            known = [product_id for product_id, _name in found]
+            extra = self.search_fetch(Domain(domain or Domain.TRUE) & Domain("product_tmpl_id", "in", ids)
+                                      & Domain("id", "not in", known), ["display_name"],
+                                      limit=limit and limit - len(found))
+            found += [(product.id, product.display_name) for product in extra.sudo()]
+        return found

@@ -150,8 +150,11 @@
                        options="{'no_create': True}" invisible="boss_quantity_source not in ('container', 'teu')"/>
                 <field name="boss_execution" optional="show" string="By" readonly="boss_price_frozen" width="80px"
                        invisible="not boss_pricing_mode"/>
+                <field name="boss_supplier_ids" column_invisible="1"/>
+                <!-- only the suppliers with a valid price of the service; any supplier for a cost asked case by case -->
                 <field name="boss_supplier_id" optional="show" readonly="boss_price_frozen" width="95px"
-                       options="{'no_create': True}" invisible="boss_execution == 'boss'"/>
+                       options="{'no_create': True}" invisible="boss_execution == 'boss'"
+                       domain="[('id', 'in', boss_supplier_ids)] if not boss_cost_on_request else [('supplier_rank', '&gt;', 0), ('parent_id', '=', False)]"/>
                 <field name="boss_cost_method" column_invisible="1"/>
                 <field name="boss_days_source" optional="hide" string="Days from" readonly="boss_price_frozen"
                        invisible="boss_cost_method != 'time'"/>
