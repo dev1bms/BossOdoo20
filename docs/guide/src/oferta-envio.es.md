@@ -37,8 +37,12 @@ Todo se puede cambiar después.
   mercancía (HS)**, que pasa al expediente; los aranceles siguen siendo una estimación tecleada.
 - **Oferta de tarifas** (casilla en el grupo Caso): el cliente pide precios de 20', 40' y 40'HC sin decir cuántos
   contenedores embarca. Deje los contenedores vacíos: cada línea por contenedor se valora para **un** contenedor del
-  tamaño de la línea, el PDF muestra «por Contenedor 40'» y ningún total, y el cliente calcula. Antes de aceptar,
-  introduzca los contenedores reales: el expediente los necesita.
+  tamaño de la línea. El PDF y el portal muestran las tarifas como las envía el equipo comercial: un servicio por
+  fila, una **columna por tamaño y tipo** (20' DV, 40' HC…), la base de cada precio y, debajo, el **total de un
+  contenedor de cada tamaño** en un embarque (los servicios por BL o por embarque cuentan una vez). Si hay precios de
+  proveedor en dólares, también el tipo de cambio de Odoo y los totales en USD. Nunca un total del embarque, que aún
+  no se conoce. Las condiciones de la oferta salen de la plantilla (IMB FOB, EMB) en el idioma del cliente. Antes de
+  aceptar, introduzca los contenedores reales: el expediente los necesita.
 - **Coste a petición**: un camionero que cotiza caso por caso no tiene tarifa. Elija el proveedor, marque «Coste a
   petición» en la línea (columna opcional) y teclee la venta: la oferta se acepta y el coste se escribe en el
   expediente cuando el proveedor responde.

@@ -36,8 +36,12 @@ load type, incoterm, whose client, what BOSS handles and the services. Everythin
   **goods code (HS)**, carried to the file; the duties stay a typed estimate.
 - **Rate quotation** (box in the Case group): the client asks for 20', 40' and 40'HC rates without saying how many
   containers ship. Leave the containers empty: each per-container line is priced for **one** container of the size
-  on the line, the PDF shows «per Container 40'» and no total, and the client calculates. Before accepting, enter the
-  actual containers: the file needs them.
+  on the line. The PDF and the portal show the rates as the commercial team sends them: one service per row, one
+  **column per size and type** (20' DV, 40' HC…), the basis of each price and, below, the **total of one container of
+  each size** in one shipment (services per B/L or shipment count once). When supplier prices are in dollars, also
+  the Odoo exchange rate and the totals in USD. Never a total of the shipment, still unknown. The conditions of the
+  offer come from the template (IMB FOB, EMB) in the client's language. Before accepting, enter the actual containers:
+  the file needs them.
 - **Cost on request**: a trucker quoting case by case has no tariff. Choose the supplier, tick «Cost on request» on
   the line (optional column) and type the selling price: the quotation is accepted and the cost is typed in the file
   when the supplier answers.

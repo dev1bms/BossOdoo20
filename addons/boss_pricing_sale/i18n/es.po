@@ -124,6 +124,11 @@ msgid "%s is not an accepted order: add the service to the quotation."
 msgstr "%s no es un pedido aceptado: añada el servicio a la oferta."
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "(Odoo rate of"
+msgstr "(tipo de Odoo del"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_markup
 msgid ""
 "(Sale - cost) / cost. The margin shown by Odoo is (sale - cost) / sale."
@@ -606,6 +611,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__base
 msgid "Based on"
 msgstr "Basado en"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "Basis"
+msgstr "Base"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_currency_id
@@ -1250,6 +1260,15 @@ msgid "EX - exempt"
 msgstr "EX - exento"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid ""
+"Each total is for one container of its size in one shipment, with the services\n"
+"            priced per B/L, shipment or clearance counted once. The amount of the shipment depends on the containers you\n"
+"            book."
+msgstr ""
+"Cada total es de un contenedor de su tamaño en un embarque, con los servicios por BL, por embarque o por despacho contados una vez. El importe del embarque depende de los contenedores que reserve."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_id
 msgid "Empty: a new tariff is created with the data below."
 msgstr "Vacío: se crea una tarifa nueva con los datos de abajo."
@@ -1312,6 +1331,11 @@ msgid ""
 "Every price is traceable to the supplier's document (ADR-002). Ángel asked whether attaching it must be compulsory (to confirm with Cristina): switch it off to send and approve tariffs without the file."
 msgstr ""
 "Cada precio es trazable al documento del proveedor (ADR-002). Ángel preguntó si adjuntarlo debe ser obligatorio (a confirmar con Cristina): desactívelo para enviar y aprobar tarifas sin el archivo."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "Exchange rate: 1"
+msgstr "Tipo de cambio: 1"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__execution
@@ -2190,11 +2214,6 @@ msgid "Pending"
 msgstr "Pendiente"
 
 #. module: boss_pricing_sale
-#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.report_saleorder_document_boss
-msgid "Per"
-msgstr "Por"
-
-#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__storage_end
 msgid "Period end"
 msgstr "Fin del periodo"
@@ -2468,6 +2487,13 @@ msgid "Quotation templates"
 msgstr "Plantillas de oferta"
 
 #. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/sale_order.py:0
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "Rate"
+msgstr "Tarifa"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_rate_quotation
 msgid "Rate quotation (no quantities)"
 msgstr "Oferta de tarifas (sin cantidades)"
@@ -2701,6 +2727,7 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__product_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__product_id
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
 msgid "Service"
 msgstr "Servicio"
 
@@ -3211,6 +3238,16 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
 msgid "Tolerance (amount)"
 msgstr "Tolerancia (importe)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "Total for one container (VAT excluded)"
+msgstr "Total de un contenedor (IVA no incluido)"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_rate_matrix
+msgid "Total in"
+msgstr "Total en"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_shipment_route__boss_destination_place

@@ -165,11 +165,6 @@ msgid "BOSS: Send rate quotation"
 msgstr "BOSS: enviar oferta de tarifas"
 
 #. module: boss_portal
-#: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
-msgid "Basis"
-msgstr "Base"
-
-#. module: boss_portal
 #. odoo-python
 #: code:addons/boss_portal/models/boss_expediente.py:0
 msgid "Booked"
@@ -319,9 +314,9 @@ msgstr "Documentos publicados al cliente"
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
 msgid ""
-"Each price applies per unit of its basis (per container of the size and type shown, per B/L...). The total depends on the containers you ship: no total is given here."
+"Each price applies per unit of its basis (per container of the size and type shown, per B/L...). The totals are for one container of each size; the amount of the shipment depends on the containers you book."
 msgstr ""
-"Cada precio se aplica por unidad de su base (por contenedor del tamaño y tipo indicados, por B/L...). El total depende de los contenedores que embarque: aquí no se da ningún total."
+"Cada precio se aplica por unidad de su base (por contenedor del tamaño y tipo indicados, por BL...). Los totales son de un contenedor de cada tamaño; el importe del embarque depende de los contenedores que reserve."
 
 #. module: boss_portal
 #. odoo-python
@@ -551,11 +546,6 @@ msgid "Sales Order"
 msgstr "Pedido de venta"
 
 #. module: boss_portal
-#: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
-msgid "Service"
-msgstr "Servicio"
-
-#. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.portal_my_shipments
 msgid "Shipment"
 msgstr "Envío"
@@ -699,11 +689,6 @@ msgstr "Enlace de seguimiento revocado."
 #: model:ir.model.fields,field_description:boss_portal.field_boss_expediente__portal_tracking_token
 msgid "Tracking link token"
 msgstr "Token del enlace de seguimiento"
-
-#. module: boss_portal
-#: model_terms:ir.ui.view,arch_db:boss_portal.sale_order_portal_content_rate
-msgid "Unit price"
-msgstr "Precio unitario"
 
 #. module: boss_portal
 #: model_terms:ir.ui.view,arch_db:boss_portal.boss_shipment_events
