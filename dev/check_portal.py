@@ -236,7 +236,7 @@ else:
     file.action_boss_share_tracking()
     token = file.portal_tracking_token
     check("8 the link finds its shipment; a wrong or short token does not", (file, File, File),
-          (File._boss_find_by_tracking_token(token), File._boss_find_by_tracking_token(token[:-1] + "x"), File._boss_find_by_tracking_token("abc")))
+          (File._boss_find_by_tracking_token(token), File._boss_find_by_tracking_token(token[:-1] + ("y" if token.endswith("x") else "x")), File._boss_find_by_tracking_token("abc")))
     file.action_boss_share_tracking()
     check("8 a new link stops the earlier one", (File, file), (File._boss_find_by_tracking_token(token), File._boss_find_by_tracking_token(file.portal_tracking_token)))
     file.action_boss_revoke_tracking()
