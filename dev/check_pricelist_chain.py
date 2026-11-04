@@ -110,8 +110,8 @@ order.action_boss_update_costs()
 ara = order.order_line.filtered(lambda l: l.product_id.default_code == "ARA")
 ara.price_unit = 520.0  # typed with a margin: an amount paid on behalf is re-invoiced at the amount paid
 alert = order.boss_margin_alert or ""
-check("a service group sold below 10 % of its cost is warned (customs, typed below cost)", True,
-      fad.product_id.categ_id.name in alert and "minimum" in alert)
+check("a service outside every group sold below its cost is warned by its code, as in Odoo 17 (customs, typed below cost)",
+      True, "FAD" in alert and "loss" in alert)
 check("an amount paid on behalf re-invoiced with a margin is warned (must be equal)", True, "paid on behalf" in alert)
 check("the warning does not block the quotation (nothing about the margin in what stops it)", False,
       any("margin" in issue.lower() for issue in order._boss_readiness_issues()))

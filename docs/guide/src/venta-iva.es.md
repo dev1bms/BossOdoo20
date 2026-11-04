@@ -44,8 +44,12 @@ la regla y el cálculo: «Lista de precios Cliente X, regla «Coste previsto de 
 - Lo que no tiene precio fijo se vende a **coste previsto + 20 %** (ajuste; un precio tecleado manda; 0 lo apaga).
 - **7 plantillas de oferta**, una por caso: importación marítima FCL y LCL, exportación marítima FCL y LCL,
   importación aérea, exportación aérea y transporte por carretera. Cristina las revisa.
-- **Margen mínimo**: si un grupo de servicios queda por debajo del 10 % de su coste (con 10 de tolerancia, regla base
-  de Odoo 17), la oferta lo avisa en amarillo; no bloquea. Los suplidos se refacturan exactos.
+- **Margen mínimo**: las reglas de Odoo 17, cargadas en **Ventas → Configuración → Márgenes mínimos** (jefes de
+  ventas): por grupo de servicios (Flete, Transporte, Gastos locales, Gastos locales extranjeros) y tipo de envío, con
+  un % del coste y mínimos por contenedor (según su tamaño) o por kg tasable; políticas de servicios sueltos (suplidos
+  exactos, «sin margen», «puede perder», margen bajo); y las
+  **excepciones** por cliente, naviera o flete prepaid. Sin regla, el 10 % del coste, con 10 de tolerancia. La oferta
+  avisa en amarillo y el cierre operativo pide un motivo; nada se bloquea.
 
 ## IVA
 

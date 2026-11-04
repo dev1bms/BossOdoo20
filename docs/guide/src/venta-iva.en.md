@@ -42,8 +42,12 @@ Container gives 180.00 €. The minimum margin of 30.00 € per unit applies».
 - What has no fixed price is sold at **expected cost + 20 %** (a setting; a typed price wins; 0 switches it off).
 - **7 quotation templates**, one per case: sea import FCL and LCL, sea export FCL and LCL, air import, air export and
   road transport. Cristina checks them.
-- **Minimum margin**: when a service group is below 10 % of its cost (with 10 of tolerance, the Odoo 17 base rule),
-  the quotation warns in yellow; it does not block. Amounts paid on behalf are re-invoiced exactly.
+- **Minimum margin**: the Odoo 17 rules, loaded in **Sales → Configuration → Minimum margins** (sales managers): by
+  group of services (Freight, Transport, Local charges, Foreign local charges) and kind of shipment, with a % of the
+  cost and minimums per container (by size) or per chargeable kg; policies of single services (paid on behalf exact,
+  «no margin», «may lose», low margin); and the
+  **exceptions** per customer, carrier or prepaid freight. Without a rule, 10 % of the cost, with 10 of tolerance. The
+  quotation warns in yellow and the operational close asks for a reason; nothing is blocked.
 
 ## VAT
 

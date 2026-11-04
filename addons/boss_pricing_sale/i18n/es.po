@@ -5,14 +5,26 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 
 #. module: boss_pricing_sale
-#. odoo-python
-#: code:addons/boss_pricing_sale/models/sale_order.py:0
-msgid "%(group)s: margin %(margin)s, minimum %(minimum)s (10 %% of %(cost)s)"
-msgstr "%(group)s: margen %(margin)s, mínimo %(minimum)s (10 %% de %(cost)s)"
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__percent
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__percent
+msgid "% of the cost"
+msgstr "% del coste"
 
 #. module: boss_pricing_sale
 #. odoo-python
-#: code:addons/boss_pricing_sale/models/sale_order.py:0
+#: code:addons/boss_pricing_sale/models/boss_margin_policy.py:0
+msgid "%(group)s: loss of %(loss)s"
+msgstr "%(group)s: pérdida de %(loss)s"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/boss_margin_policy.py:0
+msgid "%(group)s: margin %(margin)s, minimum %(minimum)s"
+msgstr "%(group)s: margen %(margin)s, mínimo %(minimum)s"
+
+#. module: boss_pricing_sale
+#. odoo-python
+#: code:addons/boss_pricing_sale/models/boss_margin_policy.py:0
 msgid ""
 "%(group)s: paid on behalf, re-invoiced %(sale)s for %(cost)s paid (must be equal)"
 msgstr ""
@@ -248,6 +260,13 @@ msgid "Accepted without cost because"
 msgstr "Aceptado sin coste porque"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__active
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__active
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_pricing_test__storage_end
 msgid "Actual end (pickup / exit of the goods, return of the container)."
 msgstr ""
@@ -340,6 +359,7 @@ msgstr ""
 "Añadidos: %(added)s. Ya estaban en la oferta (se conservan como estaban): %(present)s. Borre a mano los servicios que no apliquen."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__business__agent
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_business__agent
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__crm_lead__boss_business__agent
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_business__agent
@@ -360,6 +380,7 @@ msgstr ""
 "Precio pactado en la lista de precios %(pricelist)s (%(rule)s) por %(uom)s."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_transport_mode__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__air
@@ -370,6 +391,7 @@ msgid "Air"
 msgstr "Aéreo"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__load_type__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__load_type__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_load_type__air
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__air
@@ -392,6 +414,11 @@ msgid ""
 "Already on the quotation: %(present)s. Added: %(added)s. To add a service again for a second supplier, choose that supplier here."
 msgstr ""
 "Ya están en la oferta: %(present)s. Añadidos: %(added)s. Para añadir un servicio otra vez con un segundo proveedor, elija ese proveedor aquí."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__amount
+msgid "Amount"
+msgstr "Importe"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_vat_tax__customer_zone__any
@@ -437,6 +464,31 @@ msgid "Asked to the supplier (case by case)"
 msgstr "Pedido al proveedor (caso por caso)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__min_amount
+msgid "At least (amount)"
+msgstr "Como mínimo (importe)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__min_per_container_20
+msgid "At least, per 20' container"
+msgstr "Como mínimo, por contenedor de 20'"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__min_per_container_40
+msgid "At least, per 40'/45' container"
+msgstr "Como mínimo, por contenedor de 40'/45'"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__min_per_kg
+msgid "At least, per chargeable kg"
+msgstr "Como mínimo, por kg tasable"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__min_per_container
+msgid "At least, per container"
+msgstr "Como mínimo, por contenedor"
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid ""
@@ -468,6 +520,7 @@ msgid "BOSS VAT table"
 msgstr "Tabla de IVA BOSS"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__business__boss
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_business__boss
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__crm_lead__boss_business__boss
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order__boss_business__boss
@@ -532,6 +585,7 @@ msgid "Boss Pricing Alert"
 msgstr "Aviso de precios"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__business
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_business
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_business
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_business
@@ -667,6 +721,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
 msgid "Close"
 msgstr "Cerrar"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_exception__freight_payment__collect
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__freight_payment__collect
+msgid "Collect"
+msgstr "Collect (en destino)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_goods_value
@@ -822,6 +882,9 @@ msgstr "País en el extranjero"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_uid
@@ -835,6 +898,9 @@ msgstr "Creado por"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_date
@@ -846,6 +912,7 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__direction__cross
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__direction__cross
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__cross
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__cross
@@ -863,6 +930,7 @@ msgid "Currency"
 msgstr "Moneda"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__customer_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__customer_id
 msgid "Customer"
 msgstr "Cliente"
@@ -1002,6 +1070,7 @@ msgid "Determined"
 msgstr "Determinado"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__direction
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__direction
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_direction
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__direction
@@ -1021,6 +1090,10 @@ msgstr ""
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_policy__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__display_name
@@ -1246,6 +1319,7 @@ msgid "Explanation"
 msgstr "Explicación"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__direction__export
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__direction__export
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__export
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__export
@@ -1256,6 +1330,7 @@ msgid "Export"
 msgstr "Exportación"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__load_type__fcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__load_type__fcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_load_type__fcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__fcl
@@ -1292,6 +1367,12 @@ msgstr "Sin cargo (confirmado)"
 #: code:addons/boss_pricing_sale/models/sale_order_line.py:0
 msgid "Free of charge, confirmed by a person."
 msgstr "Sin cargo, confirmado por una persona."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__freight_payment
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__freight_payment
+msgid "Freight"
+msgstr "Flete"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__spot_rate
@@ -1333,6 +1414,11 @@ msgid "From the expected cost (pricelist rule)"
 msgstr "Sobre el coste previsto (regla de lista de precios)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_margin_rule__freight_payment
+msgid "From the incoterm: C and D terms prepaid, E and F terms collect."
+msgstr "Según el incoterm: términos C y D prepaid, términos E y F collect."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__goods_value
 msgid "Goods Value"
 msgstr "Valor de la mercancía"
@@ -1348,6 +1434,17 @@ msgstr "Valor de la mercancía"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_gross_kg
 msgid "Gross weight (kg)"
 msgstr "Peso bruto (kg)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__family_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__family_id
+msgid "Group of services"
+msgstr "Grupo de servicios"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_family__kind__group
+msgid "Group of services (its margin is checked together, by the rules)"
+msgstr "Grupo de servicios (su margen se controla junto, con las reglas)"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_method
@@ -1372,6 +1469,10 @@ msgstr "Cómo se fija el precio de venta"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_policy__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__id
@@ -1393,6 +1494,7 @@ msgid "ID"
 msgstr "ID"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__direction__import
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__direction__import
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__import
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__import
@@ -1419,6 +1521,7 @@ msgid "Inland province"
 msgstr "Provincia interior"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__kind
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__kind
 msgid "Kind"
 msgstr "Tipo"
@@ -1436,6 +1539,7 @@ msgstr ""
 "Conocido: precio de proveedor aprobado o coste escrito. Estimado: coste por tiempo con días supuestos. Cero aprobado: el precio del proveedor es 0. Desconocido: aún sin coste; un servicio de proveedor con coste desconocido bloquea la aceptación salvo que se anote el motivo."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__load_type__lcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__load_type__lcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_load_type__lcl
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__lcl
@@ -1448,6 +1552,9 @@ msgstr "LCL (grupaje)"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_uid
@@ -1461,6 +1568,9 @@ msgstr "Última actualización por"
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_date
@@ -1494,6 +1604,7 @@ msgid "Load Type"
 msgstr "Forma de carga"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__load_type
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_load_type
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_load_type
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_load_type
@@ -1507,6 +1618,7 @@ msgstr ""
 "Vuelve a buscar los precios de proveedor (p. ej. tras aprobar una tarifa)."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__carrier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_carrier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_carrier_id
 msgid "Main carrier"
@@ -1540,6 +1652,11 @@ msgid "Margin (on sale)"
 msgstr "Margen (sobre venta)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_margin_alert
+msgid "Margin below the minimum"
+msgstr "Margen por debajo del mínimo"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_product_pricelist_item__boss_sale_margin
 msgid "Margin on sale (%)"
 msgstr "Margen sobre la venta (%)"
@@ -1555,6 +1672,12 @@ msgid "Maximum"
 msgstr "Máximo"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__allow_negative
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__allow_negative
+msgid "May lose money"
+msgstr "Puede perder"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_pricing_test_view_form
 msgid "Measures"
 msgstr "Medidas"
@@ -1563,6 +1686,53 @@ msgstr "Medidas"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__min_amount
 msgid "Minimum"
 msgstr "Mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__force_percent
+msgid "Minimum %"
+msgstr "% mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__force_amount
+msgid "Minimum amount"
+msgstr "Importe mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__percent
+msgid "Minimum margin (% of cost)"
+msgstr "Margen mínimo (% del coste)"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_margin_policy
+msgid "Minimum margin check"
+msgstr "Control del margen mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_margin_exception
+msgid "Minimum margin exception"
+msgstr "Excepción de margen mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.actions.act_window,name:boss_pricing_sale.boss_margin_exception_action
+#: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_margin_exceptions
+msgid "Minimum margin exceptions"
+msgstr "Excepciones de margen mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_margin_rule
+msgid "Minimum margin rule"
+msgstr "Regla de margen mínimo"
+
+#. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_margin_family
+msgid "Minimum margin: service group or policy"
+msgstr "Margen mínimo: grupo de servicios o política"
+
+#. module: boss_pricing_sale
+#: model:ir.actions.act_window,name:boss_pricing_sale.boss_margin_family_action
+#: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_margin_families
+msgid "Minimum margins"
+msgstr "Márgenes mínimos"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_missing
@@ -1596,6 +1766,14 @@ msgid "NS - not subject"
 msgstr "NS - no sujeto"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__direction__national
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__direction__national
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_direction__national
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__direction__national
@@ -1623,6 +1801,11 @@ msgid ""
 "No AWB yet: chargeable weight ESTIMATED as %(kg)s kg, the higher of the gross weight (%(gross)s kg) and the volume weight (%(volume)s m³ × 167 = %(volume_kg)s kg)."
 msgstr ""
 "Aún sin AWB: peso tasable ESTIMADO en %(kg)s kg, el mayor del peso bruto (%(gross)s kg) y el peso volumen (%(volume)s m³ × 167 = %(volume_kg)s kg)."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.actions.act_window,help:boss_pricing_sale.boss_margin_family_action
+msgid "No minimum margin rule yet"
+msgstr "Aún no hay reglas de margen mínimo"
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -1911,6 +2094,29 @@ msgid "Planned date"
 msgstr "Fecha prevista"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_family__kind__policy
+msgid "Policy of single services (each checked on its own)"
+msgstr "Política de servicios sueltos (cada uno se controla solo)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_margin_family__percent
+msgid ""
+"Policy: minimum margin of each of its services. Group: used when no rule applies (empty: the default 10 %)."
+msgstr ""
+"Política: margen mínimo de cada uno de sus servicios. Grupo: se usa cuando no aplica ninguna regla (vacío: el 10 % por defecto)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_margin_family__allow_negative
+msgid "Policy: no warning even with a negative margin."
+msgstr "Política: sin aviso aunque el margen sea negativo."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_margin_family__exact
+msgid "Policy: sale must equal cost (taxes and duties paid on behalf)."
+msgstr ""
+"Política: la venta debe ser igual al coste (impuestos y aranceles suplidos)."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__foreign_port_id
 msgid "Port / airport abroad"
 msgstr "Puerto / aeropuerto extranjero"
@@ -1949,6 +2155,12 @@ msgstr "Puertos / aeropuertos extranjeros"
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ports
 msgid "Ports and airports"
 msgstr "Puertos y aeropuertos"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_exception__freight_payment__prepaid
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__freight_payment__prepaid
+msgid "Prepaid"
+msgstr "Prepaid (en origen)"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_supplier_price_wizard_view_form
@@ -2113,6 +2325,11 @@ msgstr ""
 "Oferta de tarifas: deje los contenedores vacíos mientras el cliente no diga cuántos embarca; cada servicio por contenedor se valora para un contenedor del tamaño de su línea y el documento muestra precios unitarios sin total. Introduzca los contenedores antes de aceptar."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__exact
+msgid "Re-invoiced exactly"
+msgstr "Se refactura exacto"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Re-price"
@@ -2168,6 +2385,7 @@ msgid "Review the supplier price"
 msgstr "Revisar el precio de proveedor"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__transport_mode__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__transport_mode__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_transport_mode__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__road
@@ -2178,6 +2396,7 @@ msgid "Road"
 msgstr "Terrestre"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__load_type__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__load_type__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_load_type__road
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__load_type__road
@@ -2194,6 +2413,11 @@ msgid ""
 "Rule '%(rule)s' of pricelist %(pricelist)s builds the sale price on the expected cost, which is not known yet (see the cost)."
 msgstr ""
 "La regla «%(rule)s» de la lista de precios %(pricelist)s calcula la venta sobre el coste previsto, que aún no se conoce (vea el coste)."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__rule_ids
+msgid "Rules"
+msgstr "Reglas"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__sale_total
@@ -2279,6 +2503,7 @@ msgid "Save price"
 msgstr "Guardar precio"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_margin_rule__transport_mode__sea
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_pricing_test__transport_mode__sea
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_shipment_route__boss_transport_mode__sea
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_supplier_price_wizard__transport_mode__sea
@@ -2297,6 +2522,13 @@ msgstr "Precio de venta (unitario)"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__submit
 msgid "Send for approval now"
 msgstr "Enviar a aprobación ahora"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__sequence
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__sequence
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__sequence
+msgid "Sequence"
+msgstr "Secuencia"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_service_wizard__product_id
@@ -2332,6 +2564,8 @@ msgstr ""
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_add_services__product_ids
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__product_ids
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__product_ids
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__service_kind
 #: model:ir.ui.menu,name:boss_pricing_sale.menu_boss_ws_services
 msgid "Services"
@@ -2619,6 +2853,11 @@ msgid "Test pricing"
 msgstr "Probar tarifa"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__cap_per_container
+msgid "The % at most, per container"
+msgstr "El % como máximo, por contenedor"
+
+#. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_reprice_wizard_view_form
 msgid ""
 "The accepted prices stay in the pricing history; this change is recorded with its reason."
@@ -2666,6 +2905,13 @@ msgid "The minimum margin of %s per unit applies."
 msgstr "Se aplica el margen mínimo de %s por unidad."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_margin_alert
+msgid ""
+"The minimum margin rules of Odoo 17 (Sales › Configuration › Minimum margins): by group of services and kind of shipment, with the customer exceptions; 10 % of the cost without a rule, 10 of tolerance; amounts paid on behalf re-invoiced exactly. Only services whose cost is known. A warning: nothing is blocked."
+msgstr ""
+"Las reglas de margen mínimo de Odoo 17 (Ventas › Configuración › Márgenes mínimos): por grupo de servicios y tipo de envío, con las excepciones de cliente; 10 % del coste sin regla, 10 de tolerancia; los suplidos se refacturan exactos. Solo servicios con coste conocido. Es un aviso: no bloquea nada."
+
+#. module: boss_pricing_sale
 #. odoo-python
 #: code:addons/boss_pricing_sale/models/product_pricelist_item.py:0
 msgid "The minimum margin should be lower than the maximum margin."
@@ -2696,6 +2942,15 @@ msgid ""
 "The route of this price: origin port of an import, destination port of an export. Empty: any."
 msgstr ""
 "La ruta de este precio: puerto de origen de una importación, de destino de una exportación. Vacío: cualquiera."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_margin_family_view_form
+msgid ""
+"The rules give the minimum margin of\n"
+"                        these services together, by kind of shipment; without a rule, the % above (or 10 %). A margin up to\n"
+"                        10 below the minimum is accepted."
+msgstr ""
+"Las reglas dan el margen mínimo de estos servicios juntos, por tipo de envío; sin regla, el % de arriba (o el 10 %). Se acepta un margen hasta 10 por debajo del mínimo."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope_confirmed
@@ -2786,6 +3041,7 @@ msgid "Transport Mode"
 msgstr "Modo de transporte"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__transport_mode
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_transport_mode
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_transport_mode
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_transport_mode
@@ -2999,6 +3255,18 @@ msgid "Why this price"
 msgstr "Por qué este precio"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_margin_exception__allow_negative
+msgid "With no minimum set, a negative margin is accepted too."
+msgstr "Sin mínimo fijado, también se acepta un margen negativo."
+
+#. module: boss_pricing_sale
+#: model_terms:ir.actions.act_window,help:boss_pricing_sale.boss_margin_family_action
+msgid ""
+"Without rules every group of services must leave 10 % of its cost (10 of tolerance), as in Odoo 17."
+msgstr ""
+"Sin reglas, cada grupo de servicios debe dejar el 10 % de su coste (10 de tolerancia), como en Odoo 17."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__wizard_id
 msgid "Wizard"
 msgstr "Asistente"
@@ -3114,19 +3382,3 @@ msgstr "precio unitario"
 #: code:addons/boss_pricing_sale/wizard/boss_supplier_price_wizard.py:0
 msgid "valid from"
 msgstr "válida desde"
-
-#. module: boss_pricing_sale
-#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_margin_alert
-msgid "Margin below the minimum"
-msgstr "Margen por debajo del mínimo"
-
-#. module: boss_pricing_sale
-#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order__boss_margin_alert
-msgid ""
-"Per service group, the margin of the services whose cost is known against 10"
-" % of their cost (10 of tolerance), as in Odoo 17; amounts paid on behalf "
-"must be re-invoiced exactly. A warning: nothing is blocked."
-msgstr ""
-"Por grupo de servicios, el margen de los servicios con coste conocido frente"
-" al 10 % de su coste (10 de tolerancia), como en Odoo 17; los suplidos se "
-"refacturan por el importe exacto. Es un aviso: no bloquea nada."
