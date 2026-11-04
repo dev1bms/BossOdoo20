@@ -261,6 +261,21 @@ con su fuente escrita; ninguna se inventa.
      en Odoo 20 y queda fuera; las líneas por tramos de Odoo 17 no se usaban en su código y no se pasan.
    Evidencia: `docs/evidencias/20261104_1016_check_margin_rules_boss20_7db676a12f5e.txt` (12/0), cadena de tarifas 12/0,
    arnés 89/0; reunión 2 69/0, flujo 39/0, cierre 8/0, consolidaciones 22/0, coste + % 30/0.
+16. **Ajustes de BOSS (fase 1 del estudio `docs/estudio-ajustes.md`).** *Hecho cuando* la dirección cambie los valores
+   del sistema desde Ajustes sin tocar código. **Entregado el 04/11** (boss_pricing 20.0.1.13.1, boss_pricing_sale
+   20.0.1.21.2, boss_expediente 20.0.1.26.2, boss_documents 20.0.1.3.2; commits `c82f783`, `7d6d39b`, `135c88e`):
+   - tres pestañas en Ajustes (jefes de ventas): **BOSS · Tarifas y precios** (tarifas de proveedor, precio de venta y
+     margen, medidas del envío, IVA), **BOSS · Expedientes** (apertura, cierre, avisos) y **BOSS · Documentos**
+     (documentos house, factura al cliente), con enlaces a las tablas (tarifas, listas de precios, plantillas, márgenes,
+     operativos, handlers, roles, puertos, servicios, IVA); los 8 ajustes anteriores salen de la pestaña Ventas;
+   - 11 valores que estaban en el código son ajustes de la compañía con el valor de hoy por defecto: días de aviso de
+     caducidad de tarifa (30), validez del flete semanal (7), margen mínimo sin regla y tolerancia (10 %, 10),
+     factores volumétricos (167/333/1000), días para cerrar tras la entrega (7), reparto por defecto de una
+     consolidación (peso tasable), originales del BL house (3), lugar de emisión (ciudad de la compañía), fecha de la
+     operación en la factura (sí) y mención de los suplidos (texto estándar, traducible).
+   Evidencia: `docs/evidencias/20261104_1033_check_settings_boss20_b8d4757cbb1d.txt` (14/0); arnés 89/0, márgenes 12/0,
+   cadena 12/0, documentos house 11/0, avisos 15/0, consolidaciones 22/0, flujo 39/0. Fases 2–4 pendientes (campos del
+   servicio, interruptores de las condiciones de estado, guía).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -296,4 +311,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. (15) the Odoo 17 minimum margin rules and exceptions as data, one check for quotation and close — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. (14) reminders without e-mail (container free days, month close) and the operation date on the invoice — delivered 04/11. (15) the Odoo 17 minimum margin rules and exceptions as data, one check for quotation and close — delivered 04/11. (16) settings, phase 1: three BOSS tabs in Settings and 11 values moved out of the code — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
