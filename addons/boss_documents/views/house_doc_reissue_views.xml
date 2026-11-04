@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_house_doc_reissue_view_form" model="ir.ui.view">
+        <field name="name">boss.house.doc.reissue.form</field>
+        <field name="model">boss.house.doc.reissue</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">An issued document does not change: this issues a new one with today's date and the
+                    current data of the file. The earlier copies stay in the attachments and the reason in the history.</p>
+                <group>
+                    <field name="expediente_id" readonly="1"/>
+                    <field name="reason" placeholder="e.g. the shipper corrected the consignee's address"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Re-issue" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

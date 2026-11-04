@@ -1,0 +1,2 @@
+id,name,model_id,group_id/id,operation,domain
+boss_house_doc_reissue_purchase,Re-issue a house document,boss.house.doc.reissue,purchase.group_purchase_user,crud,

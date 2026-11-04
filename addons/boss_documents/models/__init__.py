@@ -4,3 +4,4 @@ from . import boss_expediente
 from . import sale_order
 from . import account_move
 from . import purchase_order
+from . import house_doc_reissue

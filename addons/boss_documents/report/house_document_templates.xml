@@ -27,6 +27,9 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">boss_documents.report_house_bl</field>
         <field name="print_report_name">'HBL %s%s' % (object.hbl_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')</field>
+        <!-- kept at issue, reprinted as issued (a draft is never kept) -->
+        <field name="attachment">object.house_doc_issue_date and ('HBL %s - issue %s.pdf' % (object.hbl_ref or object.name, object.house_doc_issue_count)) or ''</field>
+        <field name="attachment_use" eval="True"/>
     </record>
     <record id="action_report_house_awb" model="ir.actions.report">
         <field name="paperformat_id" ref="paperformat_house_documents"/>
@@ -37,6 +40,8 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">boss_documents.report_house_awb</field>
         <field name="print_report_name">'HAWB %s%s' % (object.hawb_ref or object.name, '' if object.house_doc_issue_date else ' DRAFT')</field>
+        <field name="attachment">object.house_doc_issue_date and ('HAWB %s - issue %s.pdf' % (object.hawb_ref or object.name, object.house_doc_issue_count)) or ''</field>
+        <field name="attachment_use" eval="True"/>
     </record>
     <record id="action_report_cargo_manifest" model="ir.actions.report">
         <field name="paperformat_id" ref="paperformat_house_documents"/>
@@ -59,6 +64,14 @@
             .boss-hd .draft { border: 2px solid #c00; color: #c00; font-weight: bold; text-align: center; padding: 4px;
                               margin-bottom: 6px; font-size: 11pt; }
             .boss-hd h1 { font-size: 14pt; margin: 0; }
+            .boss-hd .clause { font-size: 6.5pt; text-align: justify; line-height: 1.25; }
+            .boss-hd .copy-label { font-weight: bold; text-align: center; font-size: 10pt; margin-top: 6px; }
+            .boss-hd .conditions { font-size: 7pt; line-height: 1.25; column-count: 2; column-gap: 14px; }
+            .boss-hd .conditions p { margin: 0 0 3px 0; }
+            .awb-green table.boxes td { border-color: #1a7f37; } .awb-green .copy-label { color: #1a7f37; }
+            .awb-red table.boxes td { border-color: #c0392b; } .awb-red .copy-label { color: #c0392b; }
+            .awb-blue table.boxes td { border-color: #1f4e9c; } .awb-blue .copy-label { color: #1f4e9c; }
+            .awb-yellow table.boxes td { border-color: #b8860b; } .awb-yellow .copy-label { color: #b8860b; }
         </style>
     </template>
 
@@ -101,6 +114,9 @@
                     <t t-call="boss_documents.house_document_style"/>
                     <t t-set="company" t-value="doc.company_id"/>
                     <t t-set="express" t-value="doc.hbl_release == 'swb'"/>
+                    <!-- text that does not fit its box goes to an attached sheet (Odoo 17 «AS ATTACHED») -->
+                    <t t-set="long_marks" t-value="len(doc.house_doc_marks or '') &gt; 450 or len((doc.house_doc_marks or '').splitlines()) &gt; 15"/>
+                    <t t-set="long_goods" t-value="len(doc.goods_description or '') &gt; 600 or len((doc.goods_description or '').splitlines()) &gt; 15"/>
                     <div class="page boss-hd">
                         <div t-if="not doc.house_doc_issue_date" class="draft">DRAFT — FOR CHECKING ONLY, NOT ISSUED</div>
                         <table class="boxes">
@@ -169,7 +185,7 @@
                                 <td style="width: 10%;"><span class="box-label">Measurement (CBM)</span></td>
                             </tr>
                             <tr style="height: 300px;">
-                                <td class="box-value" t-out="doc.house_doc_marks or 'N/M'"/>
+                                <td class="box-value"><t t-if="long_marks">AS PER ATTACHED SHEET</t><t t-else="" t-out="doc.house_doc_marks or 'N/M'"/></td>
                                 <td>
                                     <div t-if="doc.load_type != 'fcl'">LCL</div>
                                     <div t-foreach="doc.container_ids or doc.master_id.container_ids" t-as="c">
@@ -182,7 +198,8 @@
                                     <div t-if="doc.package_type" t-field="doc.package_type"/>
                                 </td>
                                 <td>
-                                    <div class="box-value" t-out="doc.goods_description"/>
+                                    <div t-if="doc.load_type == 'fcl'">S.T.C.</div>
+                                    <div class="box-value"><t t-if="long_goods">AS PER ATTACHED SHEET</t><t t-else="" t-out="doc.goods_description"/></div>
                                     <div t-if="doc.hs_code">HS CODE <t t-out="doc.hs_code"/></div>
                                     <div t-if="doc.load_type == 'fcl'" class="mt-2">SHIPPER'S LOAD, STOW AND COUNT</div>
                                 </td>
@@ -195,8 +212,7 @@
                                 <td style="width: 50%;">
                                     <span class="box-label">Freight and disbursements</span>
                                     AS ARRANGED — FREIGHT <t t-out="(doc.house_doc_freight or '').upper()"/>
-                                    <div class="small mt-1">Excess value declaration: refer to the clauses of BOSS's
-                                        bill of lading.</div>
+                                    <div class="small mt-1">EXCESS VALUE DECLARATION REFER TO CLAUSE 6(4) (B) + (C) ON REVERSE SIDE</div>
                                 </td>
                                 <td style="width: 25%;">
                                     <span class="box-label">Place and date of issue</span>
@@ -209,6 +225,28 @@
                                     <t t-out="company.name.upper()"/>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="3" class="clause">RECEIVED by the Carrier the Goods as specified above in
+                                    apparent good order and condition unless otherwise stated, to be transported to such
+                                    place as agreed, authorised or permitted herein and subject to all the terms and
+                                    conditions appearing on the front and reverse of this Bill of Lading to which the
+                                    Merchant agrees by accepting this Bill of Lading, any local privileges and customs
+                                    notwithstanding. The particulars given above as stated by the shipper and the weight,
+                                    measure, quantity, condition, contents and value of the Goods are unknown to the
+                                    Carrier. In WITNESS whereof one (1) original Bill of Lading has been signed if not
+                                    otherwise stated hereafter, the same being accomplished the other(s), if any, to be
+                                    void. If required by the Carrier one (1) original Bill of Lading must be surrendered
+                                    duly endorsed in exchange for the Goods or delivery order.</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div t-if="long_marks or long_goods" class="page boss-hd" style="page-break-before: always;">
+                        <h1>ATTACHED SHEET — <t t-if="express">EXPRESS </t>B/L No. <t t-out="doc.hbl_ref or doc.name"/></h1>
+                        <table class="boxes mt-2">
+                            <tr t-if="long_marks"><td><span class="box-label">Marks &amp; numbers</span>
+                                <div class="box-value" t-out="doc.house_doc_marks"/></td></tr>
+                            <tr t-if="long_goods"><td><span class="box-label">Description of packages and goods (particulars furnished by shipper)</span>
+                                <div class="box-value" t-out="doc.goods_description"/></td></tr>
                         </table>
                     </div>
                 </t>
@@ -223,11 +261,27 @@
         </t>
     </template>
 
+    <!-- The IATA set of an issued air waybill, as Odoo 17 printed it (report 1143): three originals (green for the
+         issuing carrier, red for the consignee, blue for the shipper) and seven copies, each with the conditions of
+         contract on its reverse. A draft prints one front page only. -->
     <template id="report_house_awb_document">
                 <t t-call="web.basic_layout">
                     <t t-call="boss_documents.house_document_style"/>
                     <t t-set="company" t-value="doc.company_id"/>
-                    <div class="page boss-hd">
+                    <t t-set="copies" t-value="[
+                        ('ORIGINAL 1 (FOR ISSUING CARRIER)', 'awb-green'),
+                        ('ORIGINAL 2 (FOR CONSIGNEE)', 'awb-red'),
+                        ('ORIGINAL 3 (FOR SHIPPER)', 'awb-blue'),
+                        ('COPY 4 (DELIVERY RECEIPT)', 'awb-yellow'),
+                        ('COPY 5 (FOR AIRPORT OF DESTINATION)', ''),
+                        ('COPY 6 (FOR FIRST CARRIER)', ''),
+                        ('COPY 7 (EXTRA COPY FOR CARRIER)', ''),
+                        ('COPY 8 (EXTRA COPY FOR AGENT)', ''),
+                        ('COPY 9 (FOR AGENT)', ''),
+                        ('COPY 10 (EXTRA COPY FOR CARRIER)', '')] if doc.house_doc_issue_date else [('', '')]"/>
+                    <t t-set="long_goods" t-value="len(doc.goods_description or '') &gt; 500 or len((doc.goods_description or '').splitlines()) &gt; 12"/>
+                    <t t-foreach="copies" t-as="copy">
+                    <div t-attf-class="page boss-hd #{copy[1]}" style="page-break-after: always;">
                         <div t-if="not doc.house_doc_issue_date" class="draft">DRAFT — FOR CHECKING ONLY, NOT ISSUED</div>
                         <table class="boxes">
                             <tr>
@@ -236,10 +290,12 @@
                                     <t t-set="party" t-value="doc.shipper_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
                                 <td colspan="2">
-                                    <span class="box-label">House air waybill</span>
+                                    <span class="box-label">Not negotiable — Air Waybill</span>
                                     <h1 t-out="doc.hawb_ref or doc.name"/>
                                     <div>Master air waybill <strong t-out="doc.mawb_ref"/></div>
-                                    <div>Not negotiable — issued by <t t-out="company.name.upper()"/></div>
+                                    <div>Issued by <t t-out="company.name.upper()"/></div>
+                                    <div class="clause mt-1">Copies 1, 2 and 3 of this Air Waybill are originals and have the
+                                        same validity.</div>
                                 </td>
                             </tr>
                             <tr>
@@ -247,9 +303,24 @@
                                     <span class="box-label">Consignee's name and address</span>
                                     <t t-set="party" t-value="doc.consignee_id"/><t t-call="boss_documents.house_document_party"/>
                                 </td>
+                                <td colspan="2" class="clause">It is agreed that the goods described herein are accepted in
+                                    apparent good order and condition (except as noted) for carriage SUBJECT TO THE
+                                    CONDITIONS OF CONTRACT ON THE REVERSE HEREOF. ALL GOODS MAY BE CARRIED BY ANY OTHER MEANS
+                                    INCLUDING ROAD OR ANY OTHER CARRIER UNLESS SPECIFIC CONTRARY INSTRUCTIONS ARE GIVEN HEREON
+                                    BY THE SHIPPER, AND SHIPPER AGREES THAT THE SHIPMENT MAY BE CARRIED VIA INTERMEDIATE
+                                    STOPPING PLACES WHICH THE CARRIER DEEMS APPROPRIATE. THE SHIPPER'S ATTENTION IS DRAWN TO
+                                    THE NOTICE CONCERNING CARRIER'S LIMITATION OF LIABILITY. Shipper may increase such
+                                    limitation of liability by declaring a higher value for carriage and paying a
+                                    supplemental charge if required.</td>
+                            </tr>
+                            <tr>
                                 <td colspan="2">
-                                    <span class="box-label">Issuing carrier's agent</span>
+                                    <span class="box-label">Issuing carrier's agent name and city</span>
                                     <t t-set="party" t-value="company.partner_id"/><t t-call="boss_documents.house_document_party"/>
+                                </td>
+                                <td colspan="2">
+                                    <span class="box-label">Accounting information</span>
+                                    FREIGHT <t t-out="(doc.house_doc_freight or '').upper()"/>
                                 </td>
                             </tr>
                             <tr>
@@ -263,6 +334,14 @@
                                     <t t-if="doc.atd or doc.etd" t-out="(doc.atd.date() if doc.atd else doc.etd).strftime('%d/%m/%Y')"/>
                                 </td>
                                 <td><span class="box-label">Charges</span><t t-out="(doc.house_doc_freight or '').upper()"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><span class="box-label">Declared value for carriage / for customs</span>NVD / NCV</td>
+                                <td colspan="2"><span class="box-label">Amount of insurance</span>NIL
+                                    <div class="clause">If carrier offers insurance, and such insurance is requested in
+                                        accordance with the conditions thereof, indicate amount to be insured in figures in
+                                        box marked «Amount of Insurance».</div>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="4" style="height: 45px;">
@@ -280,33 +359,105 @@
                                 <td style="width: 15%;"><span class="box-label">Rate / charge</span></td>
                                 <td style="width: 45%;"><span class="box-label">Nature and quantity of goods (incl. dimensions or volume)</span></td>
                             </tr>
-                            <tr style="height: 260px;">
+                            <tr style="height: 230px;">
                                 <td><t t-out="doc.packages"/> <div t-if="doc.package_type" t-field="doc.package_type"/></td>
                                 <td t-out="'%.2f' % doc.gross_kg"/>
                                 <td><t t-if="doc.awb_kg or doc.chargeable_kg" t-out="'%.2f' % (doc.awb_kg or doc.chargeable_kg)"/></td>
                                 <td>AS AGREED</td>
                                 <td>
-                                    <div class="box-value" t-out="doc.goods_description"/>
+                                    <div class="box-value"><t t-if="long_goods">AS PER ATTACHED SHEET</t><t t-else="" t-out="doc.goods_description"/></div>
                                     <div t-if="doc.hs_code">HS CODE <t t-out="doc.hs_code"/></div>
                                     <div t-if="doc.volume_m3">VOLUME <t t-out="'%.3f' % doc.volume_m3"/> M3</div>
+                                    <div class="mt-1">-NOT RESTRICTED-</div>
+                                    <div class="clause mt-1"><t t-out="company.name.upper()"/> HAS REVIEWED ALL AVAILABLE
+                                        DOCUMENTS AND HAS DETERMINED THAT NONE OF THE CARGO BEING OFFERED ON THIS CONSIGNMENT
+                                        OR CONSOL EITHER HAS BEEN TRANSFERRED FROM OR TRANSITED THROUGH ANY POINT IN SYRIA,
+                                        SOMALIA, YEMEN OR AFGHANISTAN.</div>
                                 </td>
                             </tr>
                         </table>
                         <table class="boxes mt-2">
+                            <tr>
+                                <td colspan="2" class="clause">Shipper certifies that the particulars on the face hereof are
+                                    correct and that insofar as any part of the consignment contains dangerous goods, such
+                                    part is properly described by name and is in proper condition for carriage by air
+                                    according to the applicable Dangerous Goods Regulations.
+                                    <div class="mt-1"><strong t-out="company.name.upper()"/> — signature of shipper or his agent</div>
+                                </td>
+                            </tr>
                             <tr>
                                 <td style="width: 50%;">
                                     <span class="box-label">Executed on (date) at (place)</span>
                                     <t t-if="doc.house_doc_issue_date" t-out="doc.house_doc_issue_date.strftime('%d/%m/%Y')"/>
                                     <t t-else="">—</t> at <t t-out="(company.boss_doc_issue_place or company.city or '').upper()"/>
                                 </td>
-                                <td style="width: 50%; height: 60px;">
+                                <td style="width: 50%; height: 50px;">
                                     <span class="box-label">Signature of issuing carrier or its agent</span>
                                     <t t-out="company.name.upper()"/>
                                 </td>
                             </tr>
                         </table>
+                        <div t-if="copy[0]" class="copy-label" t-out="copy[0]"/>
+                    </div>
+                    <div t-if="doc.house_doc_issue_date" t-attf-class="page boss-hd #{copy[1]}" style="page-break-after: always;">
+                        <t t-call="boss_documents.house_awb_conditions"/>
+                    </div>
+                    </t>
+                    <div t-if="long_goods" class="page boss-hd">
+                        <h1>ATTACHED SHEET — HAWB <t t-out="doc.hawb_ref or doc.name"/></h1>
+                        <table class="boxes mt-2">
+                            <tr><td><span class="box-label">Nature and quantity of goods</span>
+                                <div class="box-value" t-out="doc.goods_description"/></td></tr>
+                        </table>
                     </div>
                 </t>
+    </template>
+
+    <!-- IATA notice and conditions of contract on the reverse of each copy, as in the Odoo 17 air waybill. -->
+    <template id="house_awb_conditions">
+            <div class="conditions">
+                <p><strong>NOTICE CONCERNING CARRIERS&#x27; LIMITATION OF LIABILITY</strong></p>
+                <p>If the carriage involves an ultimate destination or stop in a country other than the country of departure, the Montreal Convention or the Warsaw Convention may be applicable to the liability of the Carrier in respect of loss of, damage or delay of cargo. Carrier&#x27;s limitation of liability in accordance with those Conventions shall be as set forth in subparagraph 4 unless a higher value is declared.</p>
+                <p><strong>CONDITIONS OF CONTRACT</strong></p>
+                <p>1. In this contract and the Notices appearing hereon:</p>
+                <p>1.1 CARRIER includes the air carrier issuing this air waybill and all carriers that carry or undertake to carry the cargo or perform any other services related to such carriage. SPECIAL DRAWING RIGHT (SDR) is a Special Drawing Right as defined by the International Monetary Fund.</p>
+                <p>1.2 WARSAW CONVENTION means whichever of the following instruments is applicable to the contract of carriage:</p>
+                <p>1.2.1 The Convention for the Unification of Certain Rules Relating to International Carriage by Air, signed at Warsaw, 12 October 1929;</p>
+                <p>1.2.2 That Convention as amended at The Hague on 28 September 1955;</p>
+                <p>1.2.3 That Convention as amended at The Hague 1955 and by Montreal Protocol No. 1, 2 or 4 (1975) as the case may be.</p>
+                <p>1.3 MONTREAL CONVENTION means the Convention for the Unification of Certain Rules for International Carriage by Air, done at Montreal on 28 May 1999.</p>
+                <p>2./2.1 Carriage is subject to the rules relating to liability established by the Warsaw Convention or the Montreal Convention unless such carriage is not &quot;international carriage&quot; as defined by the applicable Conventions.</p>
+                <p>2.2 To the extent not in conflict with the foregoing, carriage and other related services performed by each Carrier are subject to:</p>
+                <p>2.2.1 applicable laws and government regulations;</p>
+                <p>2.2.2 provisions contained in the air waybill, Carrier&#x27;s conditions of carriage and related rules, regulations, and timetables (but not the times of departure and arrival stated therein) and applicable tariffs of such Carrier, which are made part hereof, and which may be inspected at any airports or other cargo sales offices from which it operates regular services. When carriage is to/from the USA, the shipper and the consignee are entitled, upon request, to receive a free copy of the Carrier&#x27;s conditions of carriage. The Carrier&#x27;s conditions of carriage include, but are not limited to:</p>
+                <p>2.2.2.1 limits on the Carrier&#x27;s liability for loss, damage or delay of goods, including fragile or perishable goods;</p>
+                <p>2.2.2.2 claims restrictions, including time periods within which shippers or consignees must file a claim or bring an action against the Carrier for its acts or omissions, or those of its agents;</p>
+                <p>2.2.2.3 rights, if any, of the Carrier to change the terms of the contract;</p>
+                <p>2.2.2.4 rules about Carrier&#x27;s right to refuse to carry;</p>
+                <p>2.2.2.5 rights of the Carrier and limitations concerning delay or failure to perform service, including schedule changes, substitution of alternate Carrier or aircraft and rerouting</p>
+                <p>3. The agreed stopping places (which may be altered by Carrier in case of necessity) are those places, except the place of departure and place of destination, set forth on the face hereof or shown in Carrier&#x27;s timetables as scheduled stopping places for the route. Carriage to be performed hereunder by several successive Carriers is regarded as a single operation.</p>
+                <p>4. For carriage to which the Montreal Convention does not apply, Carrier&#x27;s liability limitation for cargo lost, damaged or delayed shall be 19 SDRs per kilogram unless a greater per kilogram monetary limit is provided in any applicable Convention or in Carrier&#x27;s tariffs or general conditions of carriage.</p>
+                <p>5./5.1 Except when the Carrier has extended credit to the consignee without the written consent of the shipper, the shipper guarantees payment of all charges for the carriage due in accordance with Carrier&#x27;s tariff, conditions of carriage and related regulations, applicable laws (including national laws implementing the Warsaw Convention and the Montreal Convention), government regulations, orders and requirements.</p>
+                <p>5.2 When no part of the consignment is delivered, a claim with respect to such consignment will be considered even though transportation charges thereon are unpaid.</p>
+                <p>6./6.1 For cargo accepted for carriage. The Warsaw Convention and the Montreal Convention permit shipper to increase the limitation of liability by declaring a higher value for carriage and paying a supplemental charge if required.</p>
+                <p>6.2 In carriage to which neither the Warsaw Convention nor the Montreal Convention applies Carrier shall, in accordance with the procedures set forth in its general conditions of carriage and applicable tariffs, permit shipper to increase the limitation of liability by declaring a higher value for carriage and paying a supplemental charge if so required.</p>
+                <p>7./7.1 In cases of loss of, damage or delay to part of the cargo, the weight to be taken into account in determining Carrier&#x27;s limit of liability shall be only the weight of the package or packages concerned.</p>
+                <p>7.2 Notwithstanding any other provisions, for &quot;foreign air transportation&quot; as defined by the U.S. Transportation Code:</p>
+                <p>7.2.1 in the case of loss of, damage or delay to a shipment, the weight to be used in determining Carrier&#x27;s limit of liability shall be the weight which is used to determine the charge for carriage of such shipment; and</p>
+                <p>7.2.2 in the case of loss of, damage or delay to a part of a shipment, the shipment weight in 7.2.1 shall be prorated to the packages covered by the same air waybill whose value is affected by the loss, damage or delay. The weight applicable in the case of loss or damage to one or more articles in a package shall be the weight of the entire package</p>
+                <p>8. Any exclusion or limitation of liability applicable to Carrier shall apply to Carrier&#x27;s agents, employees, and representatives and to any person whose aircraft or equipment is used by Carrier for carriage and such person&#x27;s agents, employees and representatives.</p>
+                <p>9. Carrier undertakes to complete the carriage with reasonable dispatch. Where permitted by applicable laws, tariffs and government regulations. Carrier may use alternative carriers, aircraft or modes of transport without notice but with due regard to the interests of the shipper. Carrier is authorized by the shipper to select the routing and all intermediate stopping places that it deems appropriate or to change or deviate from the routing shown on the face hereof.</p>
+                <p>10 Receipt by the person entitled to delivery of the cargo without complaint shall be prima facie evidence that the cargo has been delivered in good condition and in accordance with the contract of carriage.</p>
+                <p>10.1 In the case of loss of, damage or delay to cargo a written complaint must be made to Carrier by the person entitled to delivery. Such complaint must be made:</p>
+                <p>10.1.1 in the case of damage to the cargo, immediately after discovery of the damage and at the latest within 14 days from the date of receipt of the cargo;</p>
+                <p>10.1.2 in the case of delay, within 21 days from the date on which the cargo was placed at the disposal of the person entitled to delivery.</p>
+                <p>10.1.3 in the case of non-delivery of the cargo, within 120 days from the date of issue of the air waybill, or if an air waybill has not been issued, within 120 days from the date of receipt of the cargo for transportation by the Carrier.</p>
+                <p>10.2 Such complaint may be made to the Carrier whose air waybill was used, or to the first Carrier or to the last Carrier or to the Carrier, which performed the carriage during which the loss, damage or delay took place.</p>
+                <p>10.3 Unless a written complaint is made within the time limits specified in 10.1 no action may be brought against Carrier.</p>
+                <p>10.4 Any rights to damages against Carrier shall be extinguished unless an action is brought within two years from the date of arrival at the destination, or from the date on which the aircraft ought to have arrived, or from the date on which the carriage stopped.</p>
+                <p>11. Shipper shall comply with all applicable laws and government regulations of any country to or from which the cargo may be carried, including those relating to the packing, carriage or delivery of the cargo, and shall furnish such information and attach such documents to the air waybill as may be necessary to comply with such laws and regulations. Carrier is not liable to shipper and shipper shall indemnify Carrier for loss or expense due to shipper&#x27;s failure to comply with this provision.</p>
+                <p>12. No agent, employee or representative of Carrier has authority to alter, modify or waive any provisions of this contract.</p>
+            </div>
     </template>
 
     <template id="report_cargo_manifest">

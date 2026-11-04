@@ -49,9 +49,13 @@ class BossExpediente(models.Model):
     house_doc_issue_date = fields.Date(
         "House document issued on", copy=False, tracking=True,
         help="Set by «Issue»: until then the house B/L or air waybill prints as a DRAFT for the shipper to check.")
+    # An issued document does not change (roadmap item 19): its PDF is kept on the file at issue (report attachment) and
+    # every reprint gives that copy; a correction is a new issue, numbered, with its reason in the history.
+    house_doc_issue_count = fields.Integer("House document issues", copy=False, readonly=True)
 
     def _boss_frozen_fields(self):
-        return super()._boss_frozen_fields() + ("house_doc_freight", "house_doc_marks", "house_doc_issue_date")
+        return super()._boss_frozen_fields() + ("house_doc_freight", "house_doc_marks", "house_doc_issue_date",
+                                                "house_doc_issue_count")
 
     # Proposed when the file's incoterm is set or changed; editing an incoterm does not rewrite the files (closed ones,
     # issued documents and values chosen by hand stay as they are).
@@ -141,8 +145,39 @@ class BossExpediente(models.Model):
                 raise UserError(self.env._("%(file)s cannot issue its house document yet, it lacks: %(problems)s.",
                                            file=file.name, problems=", ".join(problems)))
             ref_field = "hbl_ref" if file._boss_house_doc_kind() == "hbl" else "hawb_ref"
-            file.write({ref_field: file[ref_field] or file.name,
-                        "house_doc_issue_date": fields.Date.context_today(file)})
+            file.write({ref_field: file[ref_field] or file.name})
+            file._boss_issue_house_document()
+        return self.action_print_house_document()
+
+    def _boss_issue_house_document(self):
+        """Date and number the issue, and keep its PDF on the file: reprints give this copy, not today's data."""
+        self.ensure_one()
+        self.write({"house_doc_issue_date": fields.Date.context_today(self),
+                    "house_doc_issue_count": self.house_doc_issue_count + 1})
+        self.env["ir.actions.report"]._render_qweb_pdf(self._boss_house_doc_report(), self.ids)
+
+    def _boss_house_doc_report(self):
+        kind = self._boss_house_doc_kind()
+        return "boss_documents.action_report_house_bl" if kind == "hbl" else "boss_documents.action_report_house_awb"
+
+    def action_reissue_house_document(self):
+        """A correction after the issue: a new issue with its reason; the earlier copies stay in the attachments."""
+        self.ensure_one()
+        return {"type": "ir.actions.act_window", "name": self.env._("Re-issue the house document"),
+                "res_model": "boss.house.doc.reissue", "view_mode": "form", "target": "new",
+                "context": {"default_expediente_id": self.id}}
+
+    def _boss_reissue_house_document(self, reason):
+        self.ensure_one()
+        if not self.house_doc_issue_date:
+            raise UserError(self.env._("%s has no issued house document yet: issue it first.", self.name))
+        problems = self._boss_house_doc_problems()
+        if problems:
+            raise UserError(self.env._("%(file)s cannot issue its house document yet, it lacks: %(problems)s.",
+                                       file=self.name, problems=", ".join(problems)))
+        self.message_post(body=self.env._("House document re-issued (issue %(number)s): %(reason)s",
+                                          number=self.house_doc_issue_count + 1, reason=reason))
+        self._boss_issue_house_document()
         return self.action_print_house_document()
 
     def action_print_house_document(self):
@@ -150,8 +185,7 @@ class BossExpediente(models.Model):
         kind = self._boss_house_doc_kind()
         if not kind:
             raise UserError(self._boss_house_doc_problems()[0])
-        report = "action_report_house_bl" if kind == "hbl" else "action_report_house_awb"
-        return self.env.ref(f"boss_documents.{report}").report_action(self)
+        return self.env.ref(self._boss_house_doc_report()).report_action(self)
 
     def _boss_manifest_houses(self):
         """The houses a manifest lists: those of a master (not cancelled), or the file itself."""
