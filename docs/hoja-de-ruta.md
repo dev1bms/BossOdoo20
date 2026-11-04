@@ -225,6 +225,14 @@ con su fuente escrita; ninguna se inventa.
    `docs/evidencias/20261103_1754_check_file_close_boss20_03b6173ec8d5.txt` (8/0) y el arnés con valoración y datos
    congelados `docs/evidencias/20261103_1754_check_file_e2e_boss20_03b6173ec8d5.txt` (89/0, un hueco menos);
    consolidaciones 22/0, cola 10/0. Pendiente: migrar las valoraciones de Odoo 17 (migración en pausa).
+13. **Preparar la prueba completa con Ángel y Cristina.** *Hecho cuando* tengan un guion paso a paso y la guía
+   explique lo construido. **Entregado el 04/11** (commit `9637047`): guía publicada en
+   https://doc.bosscontinental.com/new/ con la página «Prueba completa con Ángel y Cristina» (reparto por persona,
+   8 escenarios sobre los expedientes [PRUEBA] E260181–E260184 y E260231–E260233, preguntas de la llamada) y tres páginas
+   nuevas: «Cierre del expediente», «Consolidaciones» y «Documentos de transporte»; actualizadas «El expediente»,
+   «Oferta y envío» y «Precio de venta e IVA». Hoja «prueba-completa.xlsx» (la genera `dev/build_trial_sheet.py`; los Excel no van a Git) con 30 pasos (dónde, resultado
+   esperado, veredicto OK / Not OK / To discuss y notas) y las 7 preguntas. Sin precios ni nombres de clientes (la guía
+   es pública).
 
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
@@ -260,4 +268,4 @@ conditions (Cristina's «Nuevo Odoo» workbook), VAT table (Ángel 31/08), supli
 One meeting question remains: SII or VERI*FACTU. The UI language is not a task. Items: (1) next step on the file —
 delivered; (2) [PRUEBA] files from real cases; (3) fast quotation with BOSS's prices; (4) operator work queue;
 (5) status conditions, customs and delivery; (6) invoicing and collection as in Odoo 17; (7) close and margin report;
-(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
+(8) consolidations; (9) quotation in about 6 entries (port fills its country, address and Spanish port proposed, «MSC» finds the carrier group) — delivered 03/11; (10) «Arrived» status set by the ATA and the data for the customs broker, copied by the operator — delivered 03/11; (11) house B/L, house air waybill and cargo manifest (draft until issued, ADR-014) — delivered 03/11; (12) ratings of the customer and suppliers before closing and shipment data frozen once closed — delivered 03/11. (13) full trial prepared: guide updated and a 30-step sheet for Ángel and Cristina — delivered 04/11. Items 3, 4 and 6 copy configuration from Odoo 17 and need Belal's go-ahead (migration paused).
