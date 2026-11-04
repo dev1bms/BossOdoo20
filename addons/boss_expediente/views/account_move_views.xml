@@ -23,6 +23,14 @@
                          help="A supplier bill of a file service before that service is invoiced to the customer (Cristina's requirement, approved 23/10: the payment waits, the bill is posted on time).">
                     <field name="boss_bill_before_invoice"/>
                 </setting>
+                <setting id="boss_free_alert_days" string="Container free-time alert"
+                         help="Activity to the operator this many working days before the last free day of each container, another on that day, and one to the salesperson on the first day with a cost (F0-C55). 0 switches it off.">
+                    <field name="boss_free_alert_days"/>
+                </setting>
+                <setting id="boss_month_close_copy" string="Month-close reminder"
+                         help="On the last day of the month each responsible gets an activity on every file still to invoice or to close; this person gets the summary (F0-A37, Odoo 17 «CIERRE MENSUAL»).">
+                    <field name="boss_month_close_copy_user_id" options="{'no_create': True}"/>
+                </setting>
                 <setting id="boss_ratings_to_close" string="Ratings required to close operations"
                          help="The customer and every supplier of a file are rated from 0 to 10 before its operations close (F0-C66, as in Odoo 17 since 01/03/2025).">
                     <field name="boss_ratings_to_close"/>

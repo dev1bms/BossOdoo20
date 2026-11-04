@@ -32,6 +32,17 @@ class ResConfigSettings(models.TransientModel):
 class AccountMove(models.Model):
     _inherit = "account.move"
 
+    # F0-A20 as reviewed (RD 1619/2012 art. 6): the invoice keeps its issue date; the date of the operation goes apart.
+    # Odoo's own «Delivery Date» of the invoice (printed, no accounting effect) is that date, from the file.
+    delivery_date = fields.Date(string="Operation date")
+
+    @api.depends("invoice_line_ids.boss_expediente_id")
+    def _compute_delivery_date(self):
+        super()._compute_delivery_date()
+        for move in self.filtered(lambda m: m.is_sale_document(include_receipts=True) and not m.delivery_date):
+            dates = [d for d in (f._boss_operation_date() for f in move.invoice_line_ids.boss_expediente_id) if d]
+            move.delivery_date = max(dates) if dates else False
+
     boss_bill_warning = fields.Text("Supplier bill checks", compute="_compute_boss_bill_warning")
     boss_paid_before_invoice = fields.Boolean(
         "Paid before the customer invoice", readonly=True, copy=False,

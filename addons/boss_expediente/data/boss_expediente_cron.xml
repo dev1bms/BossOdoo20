@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Roadmap item 14: reminders as Odoo activities (no e-mail during the tests). -->
+    <record id="cron_container_alerts" model="ir.cron">
+        <field name="name">BOSS: containers close to their last free day (F0-C55)</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="state">code</field>
+        <field name="code">model._boss_cron_container_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="cron_month_close" model="ir.cron">
+        <field name="name">BOSS: month-close reminder of the files to invoice or close (F0-A37)</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="state">code</field>
+        <field name="code">model._boss_cron_month_close()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

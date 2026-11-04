@@ -22,6 +22,9 @@
             <span t-if="not hide_prices" class="text-nowrap" t-out="line.price_unit"
                   t-options="{'widget': 'float', 'precision': 2 if round(line.price_unit, 2) == line.price_unit else 4}"/>
         </xpath>
+        <xpath expr="//div[@id='informations']/div[@name='delivery_date']/strong" position="replace">
+            <strong>Operation date</strong>
+        </xpath>
         <xpath expr="//div[@id='informations']" position="after">
             <t t-set="block" t-value="o._boss_document_block()"/>
             <t t-set="for_supplier" t-value="o.move_type in ('in_invoice', 'in_refund')"/>
