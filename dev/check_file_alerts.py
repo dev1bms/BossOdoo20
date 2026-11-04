@@ -100,7 +100,9 @@ invoice = env["account.move"].create({
 check("13 the invoice keeps its issue date and takes the operation date of the file (arrival of an import)",
       (date(2026, 12, 20), date(2026, 12, 1)), (invoice.invoice_date, invoice.delivery_date))
 html = env["ir.actions.report"]._render_qweb_html("account.account_invoices", invoice.ids)[0].decode()
-check("14 the invoice prints «Operation date»", True, "Operation date" in html)
+label = "Fecha de la operación" if (invoice.partner_id.lang or env.company.partner_id.lang or "").startswith("es")     else "Operation date"
+check("14 the invoice prints the operation date in the customer's language", (True, label),
+      (label in html, label))
 
 env.cr.rollback()
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
