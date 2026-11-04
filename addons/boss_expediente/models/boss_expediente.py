@@ -12,7 +12,6 @@ from odoo.tools.misc import formatLang
 from odoo.addons.boss_pricing.models.boss_container_type import CONTAINER_SIZES
 from odoo.addons.boss_pricing.models.boss_tariff import DIRECTIONS, LOAD_TYPES, TRANSPORT_MODES
 from odoo.addons.boss_pricing_sale.models.boss_shipment_container import shipment_quantity
-from odoo.addons.boss_pricing_sale.models.sale_order import MIN_MARGIN_RATE, MIN_MARGIN_TOLERANCE
 from odoo.addons.boss_pricing_sale.models.boss_shipment_route import (BUSINESSES, chargeable_by_mode, chargeable_kg,
                                                                       abroad_side, key_date, spanish_side, traffic_code)
 
@@ -1129,13 +1128,14 @@ class BossExpediente(models.Model):
         category = product.categ_id
         return category.name if category and category != root else self.env._("Other")
 
-    def _boss_summary_rows(self):
+    def _boss_summary_rows(self, key=None):
         """Buying and selling by service group (the product category of each service), like the Odoo 17 «Resumen»
         (Ángel, 27/10/2026): agreed sale, invoiced to the customer and still to invoice; cost still expected, actual
         (posted vendor bills and credit notes) and forecast; forecast margin. Company currency, untaxed; the same
         documents and rules as the figures above, so the total row equals them. Returns [(group, figures)] with a
-        last («Total») row."""
+        last («Total») row. key: how the services are grouped (default: their service group; e.g. by service)."""
         self.ensure_one()
+        group_of = key or self._boss_service_group
         company, currency = self.company_id, self.company_id.currency_id
         today = fields.Date.context_today(self)
         account = self.analytic_account_id
@@ -1145,27 +1145,29 @@ class BossExpediente(models.Model):
 
         rows = defaultdict(lambda: {"sale": 0.0, "invoiced": 0.0, "pending": 0.0, "actual": 0.0})
         for allocation in self.allocation_ids.filtered(lambda a: a.order_id.state == "sale"):
-            rows[self._boss_service_group(allocation.product_id)]["sale"] += company_amount(
+            rows[group_of(allocation.product_id)]["sale"] += company_amount(
                 allocation.amount, allocation.currency_id, allocation.order_id.date_order)
         for item in self._boss_journal_items(("out_invoice", "out_refund")):
-            rows[self._boss_service_group(item.product_id)]["invoiced"] -= item.balance * account_share(item, account)
+            rows[group_of(item.product_id)]["invoiced"] -= item.balance * account_share(item, account)
         for item in self._boss_journal_items(("in_invoice", "in_refund", "in_receipt")):
-            rows[self._boss_service_group(item.product_id)]["actual"] += item.balance * account_share(item, account)
+            rows[group_of(item.product_id)]["actual"] += item.balance * account_share(item, account)
         for need in self.cost_ids:
-            rows[self._boss_service_group(need.product_id)]["pending"] += need.pending_amount_company
+            rows[group_of(need.product_id)]["pending"] += need.pending_amount_company
         purchase_lines = self.purchase_order_ids.filtered(lambda p: p.state == "purchase").order_line.filtered(
             lambda l: not l.display_type)
         billed_by_line = self.cost_ids._boss_billed_by_purchase_line(purchase_lines)
         for line in purchase_lines.filtered(lambda l: not l.boss_cost_id):
             ordered = company_amount(line.price_subtotal, line.currency_id, line.order_id.date_order)
-            rows[self._boss_service_group(line.product_id)]["pending"] += max(
+            rows[group_of(line.product_id)]["pending"] += max(
                 ordered - billed_by_line.get(line.id, 0.0), 0.0)
         order = [self.env.ref(xmlid, raise_if_not_found=False).name for xmlid in (
             "boss_services.product_category_freight", "boss_services.product_category_inland",
             "boss_services.product_category_local", "boss_services.product_category_customs",
             "boss_services.product_category_storage", "boss_services.product_category_insurance",
             "boss_services.product_category_profit_share", "boss_services.product_category_duties")]
-        ordered_rows = sorted(rows.items(), key=lambda kv: (order.index(kv[0]) if kv[0] in order else len(order), kv[0]))
+        ordered_rows = sorted(rows.items(), key=lambda kv: (order.index(kv[0]) if kv[0] in order else len(order),
+                                                            str(kv[0].display_name if hasattr(kv[0], "display_name")
+                                                                else kv[0])))
         total = {"sale": 0.0, "invoiced": 0.0, "pending": 0.0, "actual": 0.0}
         result = []
         for group, figures in ordered_rows:
@@ -1624,24 +1626,18 @@ class BossExpediente(models.Model):
         self._boss_sync_ratings()  # the parties to rate before closing are listed in «Ratings»
 
     def _boss_margin_warnings(self):
-        """Service groups of the file below the minimum margin: the base rule of Odoo 17 also used on the quotation
-        (10 % of the forecast cost, 10 of tolerance), amounts paid on behalf re-invoiced exactly."""
+        """Groups and services of the file below the minimum margin, with the rules of Odoo 17 also used on the
+        quotation (boss.margin.policy), on the forecast cost; amounts paid on behalf re-invoiced exactly."""
         self.ensure_one()
-        _ = self.env._
         currency = self.company_id.currency_id
-        duties = self.env.ref("boss_services.product_category_duties", raise_if_not_found=False)
         money = lambda amount: formatLang(self.env, amount, currency_obj=currency)  # noqa: E731
-        warnings = []
-        for group, figures in self.sudo()._boss_summary_rows()[:-1]:
-            sale, cost, margin = figures["sale"], figures["forecast"], figures["margin"]
-            if duties and group == duties.name:
-                if not currency.is_zero(sale - cost):
-                    warnings.append(_("%(group)s re-invoiced %(sale)s for %(cost)s paid", group=group, sale=money(sale),
-                                      cost=money(cost)))
-            elif cost and margin + MIN_MARGIN_TOLERANCE < MIN_MARGIN_RATE * cost:
-                warnings.append(_("%(group)s margin %(margin)s, minimum %(minimum)s", group=group,
-                                  margin=money(margin), minimum=money(MIN_MARGIN_RATE * cost)))
-        return warnings
+        by_product = {product: (figures["sale"], figures["forecast"])
+                      for product, figures in self.sudo()._boss_summary_rows(key=lambda p: p)[:-1]}
+        Policy = self.env["boss.margin.policy"]
+        freight = self.house_doc_freight if "house_doc_freight" in self._fields else None
+        ctx = Policy._boss_context(self, [(c.size, 1) for c in self.container_ids], self.awb_kg or self.chargeable_kg,
+                                   freight_payment=freight)
+        return [problem for *_rest, problem, _exc in Policy._boss_check(by_product, ctx, money) if problem]
 
     def action_close_operations(self):
         """Operational close as Cristina wrote it and Odoo 17 enforced it (F0-C60; F0-A07, Belal): every service

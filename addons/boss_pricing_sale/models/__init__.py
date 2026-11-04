@@ -2,6 +2,7 @@ from . import res_company
 from . import boss_vat_tax
 from . import boss_shipment_container
 from . import boss_shipment_route
+from . import boss_margin_policy
 from . import boss_pricing_snapshot
 from . import boss_tariff
 from . import product_pricelist_item

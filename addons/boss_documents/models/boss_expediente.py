@@ -6,9 +6,8 @@ from .shipment_block import scope_sentence, shipment_rows
 
 # Incoterms whose main carriage is paid by the seller (C and D terms): the house document says freight «prepaid»; with
 # the E and F terms the buyer pays it at destination: «collect». The usual reading of the Incoterms 2020, editable on
-# the file (Odoo 17: field «Freight» of the B/L, chosen by hand).
-PREPAID_INCOTERMS = ("CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP")
-COLLECT_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
+# the file (Odoo 17: field «Freight» of the B/L, chosen by hand). One definition, shared with the margin rules.
+from odoo.addons.boss_pricing_sale.models.boss_margin_policy import COLLECT_INCOTERMS, PREPAID_INCOTERMS  # noqa: E402
 
 
 class BossExpediente(models.Model):

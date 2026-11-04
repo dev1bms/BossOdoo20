@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Minimum margins (roadmap item 15): the Odoo 17 margin control as data. Sales managers maintain it. -->
+    <record id="boss_margin_family_view_list" model="ir.ui.view">
+        <field name="name">boss.margin.family.list</field>
+        <field name="model">boss.margin.family</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="kind"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="percent" optional="show"/>
+                <field name="allow_negative" optional="show"/>
+                <field name="exact" optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record id="boss_margin_family_view_form" model="ir.ui.view">
+        <field name="name">boss.margin.family.form</field>
+        <field name="model">boss.margin.family</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="kind"/>
+                            <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="percent"/>
+                            <field name="allow_negative" invisible="kind != 'policy'"/>
+                            <field name="exact" invisible="kind != 'policy'"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="text-muted small mb-2" invisible="kind != 'group'">The rules give the minimum margin of
+                        these services together, by kind of shipment; without a rule, the % above (or 10 %). A margin up to
+                        10 below the minimum is accepted.</div>
+                    <field name="rule_ids" invisible="kind != 'group'">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="transport_mode" optional="show"/>
+                            <field name="load_type" optional="show"/>
+                            <field name="business" optional="show"/>
+                            <field name="direction" optional="hide"/>
+                            <field name="freight_payment" optional="show"/>
+                            <field name="percent"/>
+                            <field name="cap_per_container" optional="show"/>
+                            <field name="min_amount" optional="show"/>
+                            <field name="min_per_container" optional="show"/>
+                            <field name="min_per_container_20" optional="show"/>
+                            <field name="min_per_container_40" optional="show"/>
+                            <field name="min_per_kg" optional="show"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="boss_margin_family_action" model="ir.actions.act_window">
+        <field name="name">Minimum margins</field>
+        <field name="res_model">boss.margin.family</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No minimum margin rule yet</p>
+            <p>Without rules every group of services must leave 10 % of its cost (10 of tolerance), as in Odoo 17.</p>
+        </field>
+    </record>
+    <record id="boss_margin_exception_view_list" model="ir.ui.view">
+        <field name="name">boss.margin.exception.list</field>
+        <field name="model">boss.margin.exception</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="customer_id" options="{'no_create': True}"/>
+                <field name="carrier_id" options="{'no_create': True}" optional="show"/>
+                <field name="freight_payment" optional="show"/>
+                <field name="family_id" options="{'no_create': True}"/>
+                <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                <field name="force_amount"/>
+                <field name="amount"/>
+                <field name="force_percent"/>
+                <field name="percent"/>
+                <field name="allow_negative"/>
+            </list>
+        </field>
+    </record>
+    <record id="boss_margin_exception_action" model="ir.actions.act_window">
+        <field name="name">Minimum margin exceptions</field>
+        <field name="res_model">boss.margin.exception</field>
+        <field name="view_mode">list</field>
+    </record>
+    <menuitem id="menu_boss_margin_families" name="Minimum margins" parent="sale.menu_sale_config"
+              action="boss_margin_family_action" sequence="64" groups="sales_team.group_sale_manager"/>
+    <menuitem id="menu_boss_margin_exceptions" name="Minimum margin exceptions" parent="sale.menu_sale_config"
+              action="boss_margin_exception_action" sequence="65" groups="sales_team.group_sale_manager"/>
+</odoo>
