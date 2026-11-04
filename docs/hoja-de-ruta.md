@@ -321,6 +321,20 @@ con su fuente escrita; ninguna se inventa.
    Siguen pendientes de decisión (Cristina/Ángel): si los dos ajustes del cierre admiten «No se comprueba», quién
    reabre un expediente cerrado y si un factor nuevo debe aplicarse a ofertas abiertas.
 
+17. **Oferta de tarifas como la envía el equipo comercial (reunión con Ángel del 04/11, fase A).** *Hecho cuando* el PDF
+   y el portal de una oferta de tarifas se parezcan a la hoja «SEA FCL» de Ángel (`NEW ODOO/SEA - FCL import cliente y
+   agente.xlsx`). **Entregado el 04/11** (boss_pricing_sale 20.0.1.22.4, boss_portal 20.0.1.0.9, boss_documents
+   20.0.1.3.5; commits `2ee65fa`, `a7aabc3`, `9792ede`, `3bde8f8`): un servicio por fila, una columna por tamaño y tipo
+   de contenedor, la base de cada precio y el total de **un** contenedor de cada tamaño en un embarque (BL, embarque y
+   despacho cuentan una vez), con el tipo de cambio de Odoo y los totales en USD si hay precios de proveedor en dólares;
+   condiciones de la oferta de sus hojas en las plantillas IMB FOB y EMB (es/en, datos privados en `.research/`).
+   Arreglados al verlo en Chrome: error de la página del portal (faltaba la tabla que espera Odoo) e «Incoterm FOB
+   False». Evidencia `docs/evidencias/20261104_1338_check_rate_matrix_boss20_16cb0055fdca.txt` (7/0, incluye un máximo
+   por embarque: 2 × 60 = 90); reunión 2 69/0, portal 46/0 y 27/0, documentos 19/0, flujo 39/0. Muestra en boss20:
+   S01457 «[PRUEBA] Oferta de tarifas SEA FCL» (precios inventados). Pendiente (fases B y C del plan): proveedor del flete
+   = naviera principal, servicios opcionales, búsqueda de servicios, coste agrupado del agente, tabla de salidas,
+   coeficiente de venta por servicio, oficinas y facturador del transportista, tipos de bulto de Odoo 17, IVA.
+
 Las tareas 3, 4 y 6 copian configuración de Odoo 17 (precios de venta, tabla de operativos, diarios, plazos, límites,
 reglas de margen), no expedientes ni saldos: necesitan el visto bueno de Belal porque la migración está en pausa.
 
