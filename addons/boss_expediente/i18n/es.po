@@ -71,6 +71,14 @@ msgstr "%(file)s todavía no puede cerrar operaciones: %(problems)s."
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%(file)s cannot leave yet, it lacks: %(missing)s (required in Settings › BOSS · Files)."
+msgstr ""
+"%(file)s aún no puede salir, le falta: %(missing)s (obligatorio en Ajustes › BOSS · Expedientes)."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "%(file)s: %(parties)s"
 msgstr "%(file)s: %(parties)s"
 
@@ -135,6 +143,14 @@ msgstr "%(service)s: coste adicional aún «%(cls)s»"
 #: code:addons/boss_expediente/wizard/boss_expediente_split.py:0
 msgid "%(service)s: only %(qty)s in %(file)s."
 msgstr "%(service)s: solo %(qty)s en %(file)s."
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid ""
+"%(step)s without: %(missing)s. A warning: complete them when they are known."
+msgstr ""
+"%(step)s sin: %(missing)s. Es un aviso: complételos cuando se conozcan."
 
 #. module: boss_expediente
 #. odoo-python
@@ -411,6 +427,16 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__ata
 msgid "ATA (actual arrival)"
 msgstr "ATA (llegada real)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "ATA (import)"
+msgstr "ATA (importación)"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "ATD"
+msgstr "ATD"
 
 #. module: boss_expediente
 #. odoo-python
@@ -867,6 +893,7 @@ msgstr "Bloquear contabilización y pago"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__booking_ref
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Booking"
 msgstr "Booking"
 
@@ -1050,6 +1077,18 @@ msgid "Close operations"
 msgstr "Cerrar operaciones"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_close_invoiced
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_close_invoiced
+msgid "Close: every service invoiced"
+msgstr "Cierre: todo facturado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_close_margin
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_close_margin
+msgid "Close: low margin explained"
+msgstr "Cierre: margen bajo justificado"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__state__closed
 msgid "Closed"
 msgstr "Cerrado"
@@ -1201,6 +1240,11 @@ msgstr "Aviso de días libres del contenedor"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "Container number"
 msgstr "Número de contenedor"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Container numbers"
+msgstr "Números de contenedor"
 
 #. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_boss_expediente_container
@@ -1513,6 +1557,11 @@ msgid "Customs origin"
 msgstr "Aduana origen"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Customs release"
+msgstr "Levante aduanero"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_release_date
 msgid "Customs release (levante)"
 msgstr "Levante de aduana"
@@ -1626,6 +1675,42 @@ msgid "Delivered over a week ago"
 msgstr "Entregados hace más de una semana"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_ata
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_ata
+msgid "Delivered: ATA of an import"
+msgstr "Entregado: ATA de una importación"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_release
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_release
+msgid "Delivered: customs release"
+msgstr "Entregado: levante aduanero"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_delivery
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_delivery
+msgid "Delivered: delivery date and time"
+msgstr "Entregado: fecha y hora de entrega"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_hbl
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_hbl
+msgid "Delivered: house B/L released"
+msgstr "Entregado: BL house liberado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_pickup
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_pickup
+msgid "Delivered: pickup date and time"
+msgstr "Entregado: fecha y hora de recogida"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_delivered_discharge
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_delivered_discharge
+msgid "Delivered: vessel discharge"
+msgstr "Entregado: descarga del buque"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_delivery
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_scope_delivery
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_scope_delivery
@@ -1645,6 +1730,11 @@ msgstr "Entrega (real)"
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_delivery_address_id
 msgid "Delivery address"
 msgstr "Dirección de entrega"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Delivery date and time"
+msgstr "Fecha y hora de entrega"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_service_period__end_event__delivery
@@ -1966,6 +2056,11 @@ msgstr "Todo coste externo está facturado o cerrado."
 msgid "Every file with part of the accepted services of this order."
 msgstr ""
 "Todos los expedientes con parte de los servicios aceptados de este pedido."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Every service invoiced"
+msgstr "Todo facturado"
 
 #. module: boss_expediente
 #: model_terms:ir.actions.act_window,help:boss_expediente.boss_expediente_cost_forecast_action
@@ -2457,6 +2552,11 @@ msgid "House B/L release"
 msgstr "Liberación del HBL"
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "House B/L released"
+msgstr "BL house liberado"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__hbl_ref
 msgid "House BL"
 msgstr "House BL"
@@ -2611,12 +2711,6 @@ msgstr "En este expediente"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "In transit"
 msgstr "En tránsito"
-
-#. module: boss_expediente
-#. odoo-python
-#: code:addons/boss_expediente/models/boss_expediente.py:0
-msgid "In transit without: %s. A warning: complete them when they are known."
-msgstr "En tránsito sin: %s. Es un aviso: complételo cuando se sepa."
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__incident
@@ -2777,6 +2871,30 @@ msgid "Lead"
 msgstr "Oportunidad"
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_transit_atd
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_transit_atd
+msgid "Leaving: actual departure (ATD)"
+msgstr "Salida: salida real (ATD)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_transit_booking
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_transit_booking
+msgid "Leaving: booking"
+msgstr "Salida: booking"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_transit_containers
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_transit_containers
+msgid "Leaving: container numbers"
+msgstr "Salida: números de contenedor"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_res_company__boss_cond_transit_master
+#: model:ir.model.fields,field_description:boss_expediente.field_res_config_settings__boss_cond_transit_master
+msgid "Leaving: master B/L or AWB"
+msgstr "Salida: BL o AWB máster"
+
+#. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente__next_step__link_quotation
 msgid "Link the accepted quotation"
 msgstr "Vincular la oferta aceptada"
@@ -2830,6 +2948,11 @@ msgstr "Roles logísticos"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Low margin"
 msgstr "Margen bajo"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Low margin explained"
+msgstr "Margen bajo justificado"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__scope_main
@@ -2915,6 +3038,11 @@ msgstr "Máster"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__mawb_ref
 msgid "Master AWB"
 msgstr "Master AWB"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Master B/L or AWB"
+msgstr "BL o AWB máster"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__mbl_ref
@@ -3176,6 +3304,22 @@ msgid "Not billed"
 msgstr "Sin facturar"
 
 #. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_invoiced__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_margin__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_ata__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_delivery__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_discharge__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_hbl__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_pickup__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_release__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_atd__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_booking__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_containers__off
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_master__off
+msgid "Not checked"
+msgstr "No se comprueba"
+
+#. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid ""
@@ -3249,6 +3393,13 @@ msgstr "Número de mensajes que requieren una acción"
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de entrega"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"Odoo 17 practice (F0-C31, F0-C38): a warning in the history, the file leaves anyway. Required: the file cannot leave without it."
+msgstr ""
+"Práctica de Odoo 17 (F0-C31, F0-C38): un aviso en el historial y el expediente sale igualmente. Obligatorio: el expediente no puede salir sin ello."
 
 #. module: boss_expediente
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__margin_exception_reason
@@ -3360,6 +3511,12 @@ msgstr "Operaciones"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_margin_report__state__closed
 msgid "Operations closed"
 msgstr "Operaciones cerradas"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Operations closed with a warning: %s."
+msgstr "Operaciones cerradas con un aviso: %s."
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
@@ -3651,6 +3808,11 @@ msgstr "Recogida (real)"
 #: model:ir.model.fields,field_description:boss_expediente.field_crm_lead__boss_pickup_address_id
 msgid "Pickup address"
 msgstr "Dirección de recogida"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Pickup date and time"
+msgstr "Fecha y hora de recogida"
 
 #. module: boss_expediente
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_service_period__end_event__pickup
@@ -4043,6 +4205,22 @@ msgstr "Solicitudes de presupuesto"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "Requests for quotation to confirm"
 msgstr "Solicitudes de presupuesto por confirmar"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_invoiced__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_margin__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_ata__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_delivery__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_discharge__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_hbl__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_pickup__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_release__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_atd__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_booking__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_containers__block
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_master__block
+msgid "Required (stops the step)"
+msgstr "Obligatorio (detiene el paso)"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__user_id
@@ -4473,6 +4651,11 @@ msgstr ""
 "Estado según las actividades. Vencida: la fecha ya ha pasado. Hoy: la actividad es hoy. Planificada: actividades futuras."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "Status conditions"
+msgstr "Condiciones de estado"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__pending_amount_company
 msgid "Still expected"
 msgstr "Aún previsto"
@@ -4711,6 +4894,16 @@ msgstr ""
 "Servicios por tiempo (almacenaje, demora, ocupación): días del periodo. Al aceptar, los días de la oferta; mientras el periodo no termine, escriba los días previstos. Con el inicio y el fin del periodo, el recálculo los cuenta con las horas reales."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "To close operations"
+msgstr "Para cerrar operaciones"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "To deliver («Delivered»)"
+msgstr "Para entregar («Entregado»)"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__completeness
 msgid "To do"
 msgstr "Pendiente"
@@ -4741,6 +4934,11 @@ msgstr "Por facturar en este expediente"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_search
 msgid "To invoice or close"
 msgstr "Por facturar o cerrar"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid "To leave («In transit»)"
+msgstr "Para salir («En tránsito»)"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__quantity
@@ -4932,6 +5130,7 @@ msgstr "Buque / vuelo: %s"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__discharge_date
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid "Vessel discharge"
 msgstr "Descarga del buque"
 
@@ -4980,6 +5179,36 @@ msgstr "Almacén"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_bill_before_invoice__warn
 msgid "Warn only"
 msgstr "Solo avisar"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_invoiced__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_close_margin__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_ata__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_delivery__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_discharge__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_hbl__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_pickup__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_delivered_release__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_atd__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_booking__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_containers__warn
+#: model:ir.model.fields.selection,name:boss_expediente.selection__res_company__boss_cond_transit_master__warn
+msgid "Warning only"
+msgstr "Solo aviso"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"What Cristina wrote (F0-C60) and Belal decided (F0-A07). The ratings have their own setting below."
+msgstr ""
+"Lo que escribió Cristina (F0-C60) y decidió Belal (F0-A07). Las valoraciones tienen su propio ajuste más abajo."
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
+msgid ""
+"What Cristina wrote (OPS- exptes A42, A73) and Odoo 17 enforced (Check Update 3-4). Each one applies only where it makes sense (an import, a sea shipment, a service BOSS performs)."
+msgstr ""
+"Lo que escribió Cristina (OPS- exptes A42, A73) y aplicaba Odoo 17 (Check Update 3-4). Cada uno se aplica solo donde tiene sentido (una importación, un envío marítimo, un servicio que hace BOSS)."
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.crm_lead_view_form
@@ -5114,6 +5343,54 @@ msgstr "facturado"
 #: code:addons/boss_expediente/models/boss_expediente.py:0
 msgid "booking"
 msgstr "reserva"
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_delivered_delivery"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_delivered_discharge"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_delivered_hbl"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_delivered_pickup"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_delivered_release"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_transit_booking"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_transit_containers"
+msgstr ""
+
+#. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "boss_cond_transit_master"
+msgstr ""
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
