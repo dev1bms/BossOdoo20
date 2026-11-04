@@ -989,6 +989,7 @@ msgstr ""
 "Se puede cambiar mientras no haya nada pedido (cancele antes el pedido de compra para cambiar de proveedor)."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_reopen_view_form
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_split_view_form
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_invoice_services_view_form
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
@@ -1422,6 +1423,7 @@ msgstr "Crear las solicitudes de presupuesto"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__create_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_uid
@@ -1442,6 +1444,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__create_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__create_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__create_date
@@ -1609,6 +1612,11 @@ msgstr ""
 #: model:ir.model.fields,help:boss_expediente.field_boss_expediente__hs_code
 msgid "Customs tariff code of the goods: it decides the duties."
 msgstr "Código arancelario de la mercancía: decide los derechos."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__cutoff
+msgid "Cut-off"
+msgstr "Cut-off"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__customs_broker_text
@@ -1867,6 +1875,7 @@ msgstr "Descarga del buque"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__display_name
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__display_name
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__display_name
@@ -2299,6 +2308,7 @@ msgstr ""
 "Expediente de esta línea de factura (una línea de venta puede estar en varios expedientes)."
 
 #. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__expediente_ids
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order__boss_expediente_ids
 #: model:ir.model.fields,field_description:boss_expediente.field_sale_order_line__boss_allocation_ids
 #: model:ir.ui.menu,name:boss_expediente.menu_boss_files
@@ -2666,6 +2676,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__id
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__id
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__id
@@ -2764,6 +2775,11 @@ msgstr "En tránsito"
 #: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_event__kind__incident
 msgid "Incident"
 msgstr "Incidencia"
+
+#. module: boss_expediente
+#: model:ir.model.fields.selection,name:boss_expediente.selection__boss_expediente_cost__accepted_cost_kind__included
+msgid "Included in another line of the service"
+msgstr "Incluido en otra línea del servicio"
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__incoterm_id
@@ -2881,6 +2897,7 @@ msgstr "LCL (grupaje)"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__write_uid
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_uid
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_uid
@@ -2901,6 +2918,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_event__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_rating__write_date
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_split_line__write_date
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_invoice_services__write_date
@@ -2911,6 +2929,13 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_service_period__write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
+
+#. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente__cutoff
+msgid ""
+"Last day to deliver the cargo at the terminal for the booked sailing (Cristina, F0-C36)."
+msgstr ""
+"Último día para entregar la carga en la terminal para la salida reservada (Cristina, F0-C36)."
 
 #. module: boss_expediente
 #: model:ir.model,name:boss_expediente.model_crm_lead
@@ -3574,6 +3599,12 @@ msgid "Operations closed, finance open"
 msgstr "Operaciones cerradas, economía abierta"
 
 #. module: boss_expediente
+#. odoo-python
+#: code:addons/boss_expediente/models/boss_expediente.py:0
+msgid "Operations reopened: %s"
+msgstr "Operaciones reabiertas: %s"
+
+#. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_operator_assignment__user_id
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_operator_assignment_view_search
 msgid "Operator"
@@ -4156,6 +4187,7 @@ msgstr "Refacturado en"
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost__reason
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_cost_revision__reason
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente_reopen__reason
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_rebill_wizard__reason
 msgid "Reason"
 msgstr "Motivo"
@@ -4230,9 +4262,15 @@ msgstr "Avisos (actividades de Odoo, sin correo)"
 #. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/boss_expediente.py:0
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_reopen_view_form
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
 msgid "Reopen"
 msgstr "Reabrir"
+
+#. module: boss_expediente
+#: model:ir.model,name:boss_expediente.model_boss_expediente_reopen
+msgid "Reopen a file"
+msgstr "Reabrir un expediente"
 
 #. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_form
@@ -4880,6 +4918,14 @@ msgstr ""
 "La fecha clave del envío: ETA en una importación, ETD en una exportación, un cross-trade o un envío nacional. Elige la versión de cada tarifa de proveedor."
 
 #. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_reopen_view_form
+msgid ""
+"The operations open again and the shipment data can be corrected. The reason is\n"
+"                    written in the history of the file."
+msgstr ""
+"Las operaciones se abren de nuevo y los datos del envío se pueden corregir. El motivo queda en el historial del expediente."
+
+#. module: boss_expediente
 #: model_terms:ir.ui.view,arch_db:boss_expediente.res_config_settings_view_form
 msgid ""
 "The operator proposed by customer and traffic, and the handler of each airline at each airport (both from Odoo 17)."
@@ -5388,6 +5434,11 @@ msgid "Working days"
 msgstr "Días laborables"
 
 #. module: boss_expediente
+#: model:ir.model.fields,help:boss_expediente.field_boss_expediente_reopen__reason
+msgid "Written in the history of the file."
+msgstr "Queda en el historial del expediente."
+
+#. module: boss_expediente
 #. odoo-python
 #: code:addons/boss_expediente/models/res_partner.py:0
 msgid "address (street, city, country)"
@@ -5549,6 +5600,11 @@ msgstr "facturas de proveedor en borrador"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_rebill_wizard_view_form
 msgid "e.g. 4 extra storage days requested by the customer"
 msgstr "p. ej. 4 días más de almacenaje pedidos por el cliente"
+
+#. module: boss_expediente
+#: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_reopen_view_form
+msgid "e.g. the customer changed the delivery address"
+msgstr "p. ej. el cliente cambió la dirección de entrega"
 
 #. module: boss_expediente
 #. odoo-python

@@ -701,7 +701,9 @@ msgstr "Carga"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__carrier_id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__carrier_id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__carrier_id
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Carrier"
 msgstr "Transportista / naviera"
@@ -760,6 +762,11 @@ msgstr "Elija un cliente o una lista de precios para ver el precio de venta."
 #: code:addons/boss_pricing_sale/wizard/boss_pricing_test.py:0
 msgid "Choose a service and its charge basis."
 msgstr "Elija un servicio y su base de cobro."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__chosen
+msgid "Chosen"
+msgstr "Elegida"
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -898,6 +905,12 @@ msgstr ""
 "Coste en %(cur)s y oferta en %(order)s: aún no hay política de conversión (ajuste de la compañía)."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_included
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Cost in another line"
+msgstr "Coste en otra línea"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_line__boss_cost_kind
 msgid "Cost kind"
 msgstr "Tipo de coste"
@@ -949,6 +962,7 @@ msgstr "País en el extranjero"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__create_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__create_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__create_uid
@@ -965,6 +979,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__create_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__create_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__create_date
@@ -1009,6 +1024,12 @@ msgstr "Aranceles"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_duties_amount
 msgid "Customs duties (estimate)"
 msgstr "Impuestos aduaneros (estimación)"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__cutoff
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "Cut-off"
+msgstr "Cut-off"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_snapshot__data
@@ -1172,6 +1193,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__display_name
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__display_name
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__display_name
@@ -1235,14 +1257,18 @@ msgstr ""
 "ESTIMACIÓN con %(days)s días (%(where)s); el coste real se conoce al terminar el periodo."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__eta
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_eta
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_eta
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
 msgid "ETA"
 msgstr "ETA (llegada estimada)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__etd
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_etd
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_etd
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
 msgid "ETD"
 msgstr "ETD (salida estimada)"
 
@@ -1567,6 +1593,7 @@ msgstr "Cómo se fija el precio de venta"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__id
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__id
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__id
@@ -1593,6 +1620,11 @@ msgstr "ID"
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_template__boss_direction__import
 msgid "Import"
 msgstr "Importación"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields.selection,name:boss_pricing_sale.selection__sale_order_line__boss_cost_kind__included
+msgid "Included in another line of the service"
+msgstr "Incluido en otra línea del servicio"
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_incoterm_id
@@ -1654,6 +1686,7 @@ msgstr "LCL (grupaje)"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__write_uid
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__write_uid
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__write_uid
@@ -1670,6 +1703,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_reprice_wizard_line__write_date
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_container__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__write_date
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__write_date
@@ -2185,6 +2219,16 @@ msgid "Other services"
 msgstr "Otros servicios"
 
 #. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "POD"
+msgstr "POD"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "POL"
+msgstr "POL"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields.selection,name:boss_pricing_sale.selection__boss_vat_tax__customer_zone__pro
 msgid "PRO - mainland Spain and Balearics"
 msgstr "PRO - península y Baleares"
@@ -2482,6 +2526,11 @@ msgid "Quantity typed on the line"
 msgstr "Cantidad tecleada en la línea"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__order_id
+msgid "Quotation"
+msgstr "Oferta"
+
+#. module: boss_pricing_sale
 #: model:ir.model,name:boss_pricing_sale.model_sale_order_template_line
 msgid "Quotation Template Line"
 msgstr "Línea de plantilla de presupuesto"
@@ -2612,6 +2661,22 @@ msgid "Rules"
 msgstr "Reglas"
 
 #. module: boss_pricing_sale
+#: model:ir.model,name:boss_pricing_sale.model_boss_sale_sailing
+msgid "Sailing offered with a quotation"
+msgstr "Salida ofrecida con una oferta"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_sailing_ids
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "Sailings"
+msgstr "Salidas"
+
+#. module: boss_pricing_sale
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
+msgid "Sailings (optional)"
+msgstr "Salidas (opcional)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__sale_total
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Sale"
@@ -2725,6 +2790,7 @@ msgstr "Enviar a aprobación ahora"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_exception__sequence
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_family__sequence
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_margin_rule__sequence
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__sequence
 msgid "Sequence"
 msgstr "Secuencia"
 
@@ -2848,6 +2914,13 @@ msgstr "Simulación: %s cuenta como aprobada solo en esta prueba."
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.view_order_form
 msgid "Size"
 msgstr "Tamaño"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_sale_order_line__boss_cost_included
+msgid ""
+"Sold as its own line, bought together with another line of the same service (an agent's lump-sum origin charges): no cost here and nothing to buy; the margin is judged on the whole service group. Ticked by itself on a second line of the same service, unit and container; untick it to price the line on its own."
+msgstr ""
+"Se vende en su propia línea y se compra junto con otra línea del mismo servicio (gastos en origen de un agente en una sola factura): aquí no hay coste ni nada que comprar; el margen se juzga en el grupo de servicios. Se marca sola en la segunda línea del mismo servicio, unidad y contenedor; desmárquela para valorar la línea por separado."
 
 #. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_vat_tax__source
@@ -3184,6 +3257,13 @@ msgstr ""
 "Las reglas dan el margen mínimo de estos servicios juntos, por tipo de envío; sin regla, el % de arriba (o el 10 %). Se acepta un margen hasta 10 por debajo del mínimo."
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_sale_sailing__chosen
+msgid ""
+"The sailing the customer books: its ETD and ETA become the quotation's and it goes to the file."
+msgstr ""
+"La salida que reserva el cliente: su ETD y ETA pasan a la oferta y va al expediente."
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,help:boss_pricing_sale.field_boss_supplier_price_wizard__tariff_scope_confirmed
 msgid ""
 "The scope of the chosen draft tariff matches its supplier document (empty fields = applies to any). Needed to send it for approval."
@@ -3286,6 +3366,12 @@ msgid "Traffic"
 msgstr "Tráfico"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__transit_days
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "Transit (days)"
+msgstr "Tránsito (días)"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__transport_mode
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_supplier_price_wizard__transport_mode
 msgid "Transport Mode"
@@ -3298,6 +3384,11 @@ msgstr "Modo de transporte"
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order_template__boss_transport_mode
 msgid "Transport mode"
 msgstr "Modo de transporte"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,help:boss_pricing_sale.field_boss_sale_sailing__via
+msgid "Transshipment port or route (e.g. Singapore, Rotterdam)."
+msgstr "Puerto de transbordo o ruta (p. ej. Singapur, Róterdam)."
 
 #. module: boss_pricing_sale
 #. odoo-python
@@ -3433,6 +3524,18 @@ msgid "Validity of a freight rate entered from a quotation (days)"
 msgstr "Validez de una tarifa de flete introducida desde una oferta (días)"
 
 #. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__vessel
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "Vessel"
+msgstr "Buque"
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__via
+#: model_terms:ir.ui.view,arch_db:boss_pricing_sale.boss_sailings
+msgid "Via"
+msgstr "Vía"
+
+#. module: boss_pricing_sale
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_pricing_test__volume_m3
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_shipment_route__boss_volume_m3
 #: model:ir.model.fields,field_description:boss_pricing_sale.field_sale_order__boss_volume_m3
@@ -3475,6 +3578,11 @@ msgid ""
 "Volume × factor of the transport mode in Settings › BOSS · Pricing when the measures were entered."
 msgstr ""
 "Volumen × factor del modo de transporte en Ajustes › BOSS · Tarifas y precios cuando se introdujeron las medidas."
+
+#. module: boss_pricing_sale
+#: model:ir.model.fields,field_description:boss_pricing_sale.field_boss_sale_sailing__voyage
+msgid "Voyage"
+msgstr "Viaje"
 
 #. module: boss_pricing_sale
 #: model_terms:ir.ui.view,arch_db:boss_pricing_sale.res_config_settings_view_form
