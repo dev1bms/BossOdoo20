@@ -4,7 +4,7 @@ from odoo import http
 from odoo.exceptions import AccessError, MissingError, UserError, ValidationError
 from odoo.http import request
 
-from odoo.addons.sale.controllers.portal import CustomerPortal
+from odoo.addons.sale.controllers.portal import CustomerPortal, PaymentPortal
 
 
 class BossCustomerPortal(CustomerPortal):
@@ -47,18 +47,6 @@ class BossCustomerPortal(CustomerPortal):
             document_sudo = document_sudo.with_context(boss_portal_viewer_uid=request.env.uid)
         return document_sudo
 
-    @http.route("/my/orders/<int:order_id>/transaction", type="jsonrpc", auth="public")
-    def portal_order_transaction(self, order_id, access_token, **kwargs):
-        try:
-            order_sudo = self._document_check_access("sale.order", order_id, access_token)
-        except MissingError:
-            raise
-        except AccessError:
-            raise ValidationError(request.env._("The access token is invalid.")) from None
-        if order_sudo.boss_rate_quotation or not order_sudo._boss_portal_viewer_allowed():
-            raise ValidationError(request.env._(
-                "This order cannot be paid from here: an authorised representative of the customer pays it."))
-        return super().portal_order_transaction(order_id, access_token, **kwargs)
 
     @http.route(["/my/orders/<int:order_id>/boss_booking"], type="http", auth="user", methods=["POST"], website=True)
     def boss_booking_request(self, order_id, **post):
@@ -111,3 +99,23 @@ class BossCustomerPortal(CustomerPortal):
         if not file:
             raise request.not_found()
         return request.render("boss_portal.portal_public_tracking", {"shipment": file._boss_portal_values("public")})
+
+
+class BossPaymentPortal(PaymentPortal):
+    """The payment route of a quotation is served by the payment controller, so the BOSS check must live here (audit
+    05/11/2026, P2-19: on the sale-portal class it never ran): a rate quotation is never paid, and only an authorised
+    representative of the customer pays a shipment quotation (ADR-010)."""
+
+    @http.route("/my/orders/<int:order_id>/transaction", type="jsonrpc", auth="public")
+    def portal_order_transaction(self, order_id, access_token, **kwargs):
+        try:
+            order_sudo = self._document_check_access("sale.order", order_id, access_token)
+        except MissingError:
+            raise
+        except AccessError:
+            raise ValidationError(request.env._("The access token is invalid.")) from None
+        order_sudo = order_sudo.with_context(boss_portal_viewer_uid=request.env.uid)
+        if order_sudo.boss_rate_quotation or not order_sudo._boss_portal_viewer_allowed():
+            raise ValidationError(request.env._(
+                "This order cannot be paid from here: an authorised representative of the customer pays it."))
+        return super().portal_order_transaction(order_id, access_token, **kwargs)

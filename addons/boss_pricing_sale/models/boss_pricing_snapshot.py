@@ -10,7 +10,7 @@ class BossPricingSnapshot(models.Model):
     _order = "date desc, id desc"
 
     order_id = fields.Many2one("sale.order", required=True, ondelete="cascade", index=True, readonly=True)
-    kind = fields.Selection([("acceptance", "Acceptance"), ("repricing", "Re-pricing"),
+    kind = fields.Selection([("sent", "Sent"), ("update", "Costs updated"), ("acceptance", "Acceptance"), ("repricing", "Re-pricing"),
                              ("addition", "Service added after acceptance")], required=True, readonly=True)
     reason = fields.Text(readonly=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)

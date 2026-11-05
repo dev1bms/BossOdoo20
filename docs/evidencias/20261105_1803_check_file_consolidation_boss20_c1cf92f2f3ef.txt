@@ -1,0 +1,40 @@
+# Evidence: dev/check_file_consolidation.py on boss20
+# Date: 2026-11-05 18:03    
+# Commit tested: c1cf92f2f3ef (feat(expediente): go-live tracker phase 2: «Margin per file» shows a master net of the costs passe)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.10 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.10 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-05 17:04:01,515 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-05 17:04:01,576 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-05 17:04:02,423 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS the master forecasts its shared costs (freight, THC, haulage of the container): expected 1500.0 got 1500.0
+CHECK PASS two houses accepted, each for its own customer, sold per W/M: expected (res.partner(28601,), res.partner(28602,), 'lcl') got (res.partner(28601,), res.partner(28602,), 'lcl')
+CHECK PASS the master has two houses, the houses know their master: expected ('master', 2, 'house', 'house') got ('master', 2, 'house', 'house')
+CHECK PASS a master sells nothing itself: it is not asked to link a quotation, its next step is to order: expected 'order' got 'order'
+CHECK PASS the master's transport data is copied to the houses (master B/L, vessel, carrier, dates): expected [('[PRUEBA] MBL-CONSOL', '[PRUEBA] VESSEL', res.partner(28603,), datetime.date(2026, 12, 22)), ('[PRUEBA] MBL-CONSOL', '[PRUEBA] VESSEL', res.partner(28603,), datetime.date(2026, 12, 22))] got [('[PRUEBA] MBL-CONSOL', '[PRUEBA] VESSEL', res.partner(28603,), datetime.date(2026, 12, 22)), ('[PRUEBA] MBL-CONSOL', '[PRUEBA] VESSEL', res.partner(28603,), datetime.date(2026, 12, 22))]
+CHECK PASS ... and follows every later change of the master: expected [('[PRUEBA] VESSEL 2', True), ('[PRUEBA] VESSEL 2', True)] got [('[PRUEBA] VESSEL 2', True), ('[PRUEBA] VESSEL 2', True)]
+CHECK PASS the house's freight and local charges are bought on the master, not ordered again; its customs stay its own: expected (['FMI-LCL', 'THC-LCL'], ['FAD']) got (['FMI-LCL', 'THC-LCL'], ['FAD'])
+CHECK PASS shared costs split by chargeable weight (W/M): 20 000 kg and 10 000 kg: expected (66.67, 33.33) got (66.67, 33.33)
+CHECK PASS ... by equal parts: expected (50.0, 50.0) got (50.0, 50.0)
+CHECK PASS ... or typed by hand: expected (70.0, 30.0) got (70.0, 30.0)
+CHECK PASS house A bears 66.67 % of the master's 1 500 and its own customs cost: expected (1000.05, 1050.05) got (1000.05, 1050.05)
+CHECK PASS house A's margin = its sale - its cost (share of the master + own customs): expected 20109.95 got 20109.95
+CHECK PASS house B bears the other 33.33 %: expected (499.95, 549.95) got (499.95, 549.95)
+CHECK PASS the master's consolidated view: sale of the houses, shared costs 1 500, own costs of the houses 100, margin: expected (27120.0, 1500.0, 100.0, 25520.0) got (27120.0, 1500.0, 100.0, 25520.0)
+CHECK PASS margin report: the rows of the master and its houses add up to the consolidated margin (no double count): expected 25520.0 got 25520.0
+CHECK PASS margin report: the master's row shows its costs net of what it passed to the houses: expected 0.0 got 0.0
+CHECK PASS the explanation of house A names its share of the master: expected True got True
+CHECK PASS putting the master in transit puts its houses in transit: expected ['in_transit', 'in_transit', 'in_transit'] got ['in_transit', 'in_transit', 'in_transit']
+CHECK PASS each house is invoiced to its own customer: expected {res.partner(28602,), res.partner(28601,)} got {res.partner(28602,), res.partner(28601,)}
+      «E269002 cannot be closed financially: 1 services to order (RFQ) 1 draft customer invoices 21,160.00 € to invoice 1,050.05 € of cost not billed yet»
+CHECK PASS a house cannot close financially while the master's shared costs are not billed (its share is pending): expected 'refused' got 'refused'
+      «E269001 cannot be closed financially: its houses are not closed financially: E269003, E269002 3 services to order (RFQ) 1,500.00 € of cost not billed yet»
+CHECK PASS a master cannot close financially while a house is open: expected 'refused' got 'refused'
+      «A house hangs from a master file, and a master is not a house itself.»
+CHECK PASS a house cannot be the master of another file: expected 'refused' got 'refused'
+CHECK PASS «New house» on the master opens a house with the same case and route, linked and synced: expected ('house', 'import', boss.port(1,), '[PRUEBA] MBL-CONSOL', res.partner(28601,)) got ('house', 'import', boss.port(1,), '[PRUEBA] MBL-CONSOL', res.partner(28601,))
+CHECK PASS a file that is neither master nor house is a single shipment: nothing changes for it: expected ('single', 0.0) got ('single', 0.0)
+RESULT 24 passed, 0 failed
+# Exit status: 0

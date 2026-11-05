@@ -204,7 +204,11 @@ class SaleOrderLine(models.Model):
         """Lines whose price is frozen (accepted) and not being re-priced on purpose."""
         if self.env.context.get("boss_reprice"):
             return self.browse()
-        return self.filtered("boss_price_frozen")
+        frozen = self.filtered("boss_price_frozen")
+        if not self.env.context.get("boss_update_costs"):
+            # a quotation already sent keeps the prices the customer saw: only «Update costs» (logged) changes them
+            frozen |= self.filtered(lambda l: l.order_id.state == "sent" and l.boss_cost_status)  # new lines are priced
+        return frozen
 
     def _boss_keep(self, *fnames):
         """Frozen lines keep their stored values when a dependency changes: a stored compute that

@@ -428,7 +428,16 @@ class SaleOrder(models.Model):
         return super().action_quotation_send()
 
     def action_quotation_sent(self):
-        return super(SaleOrder, self._boss_transition()).action_quotation_sent()
+        res = super(SaleOrder, self._boss_transition()).action_quotation_sent()
+        self._boss_snapshot_sent()
+        return res
+
+    def _boss_snapshot_sent(self):
+        """What the customer saw: a snapshot when the quotation is marked as sent (audit 05/11/2026, P2-18); from
+        then on its prices change only with «Update costs», which is logged in the history."""
+        Snapshot = self.env["boss.pricing.snapshot"].sudo()
+        for order in self.filtered(lambda o: o.state == "sent"):
+            Snapshot._take(order, "sent")
 
     def action_draft(self):
         return super(SaleOrder, self._boss_transition()).action_draft()
@@ -438,7 +447,10 @@ class SaleOrder(models.Model):
 
     def message_post(self, **kwargs):
         if self.env.context.get("mark_so_as_sent"):  # the mail composer marks a sent quotation (standard)
-            return super(SaleOrder, self._boss_transition()).message_post(**kwargs)
+            was_draft = self.filtered(lambda o: o.state == "draft")
+            res = super(SaleOrder, self._boss_transition()).message_post(**kwargs)
+            was_draft._boss_snapshot_sent()
+            return res
         return super().message_post(**kwargs)
 
     def action_boss_add_services(self):
@@ -450,7 +462,23 @@ class SaleOrder(models.Model):
         }
 
     def action_boss_update_costs(self):
-        self.order_line.filtered(lambda l: not l.boss_price_frozen)._boss_recompute_cost()
+        """Explicit update of the costs and sale prices from today's tariffs. On a sent quotation it is the only way
+        to change the prices the customer saw: the change is kept as a snapshot with the previous figures and
+        written in the history."""
+        Snapshot = self.env["boss.pricing.snapshot"].sudo()
+        for order in self:
+            lines = order.order_line.filtered(lambda l: not l.boss_price_frozen and not l.display_type)
+            before = {l.id: (l.purchase_price, l.price_unit) for l in lines}
+            lines.with_context(boss_update_costs=True)._boss_recompute_cost()
+            changed = [l for l in lines if (l.purchase_price, l.price_unit) != before[l.id]]
+            if order.state == "sent" and changed:
+                snap = Snapshot._take(order, "update", before=[{"line": l.id, "cost": before[l.id][0], "price": before[l.id][1]}
+                                                                 for l in changed])
+                order.message_post(body=self.env._(
+                    "Costs updated after the quotation was sent (%(count)s lines changed): %(lines)s. Previous figures "
+                    "kept in the pricing history (%(snapshot)s).", count=len(changed), snapshot=snap.display_name,
+                    lines="; ".join(f"{l.product_id.default_code or l.product_id.name}: {before[l.id][1]:.2f} → "
+                                    f"{l.price_unit:.2f}" for l in changed)))
 
     def action_boss_add_service(self):
         self.ensure_one()

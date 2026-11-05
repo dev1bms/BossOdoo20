@@ -51,6 +51,14 @@ check("P1-21 salesperson: direct write of state='sent' is refused", "UserError",
       refused(lambda: as_seller.write({"state": "sent"})))
 order.action_quotation_sent()
 check("P1-21 button Send (mark as sent) still works", "sent", order.state)
+# P2-18: what the customer saw is kept, and an explicit update is the only way to change it
+snaps = env["boss.pricing.snapshot"].sudo().search([("order_id", "=", order.id), ("kind", "=", "sent")])
+check("P2-18 a snapshot «sent» is taken when the quotation is marked as sent", 1, len(snaps))
+line_sent = order.order_line[:1]
+price_before = line_sent.price_unit
+line_sent.write({"product_uom_qty": 2})
+check("P2-18 a change on a sent quotation does not re-price the line", price_before, line_sent.price_unit)
+check("P2-18 «Update costs» still runs on a sent quotation", "allowed", refused(lambda: order.action_boss_update_costs()))
 order.action_draft()
 check("P1-21 button Set to quotation still works", "draft", order.state)
 order.action_cancel()

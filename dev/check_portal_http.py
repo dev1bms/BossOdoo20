@@ -150,7 +150,8 @@ try:
           ("error" in (accept(s["a_comm"], so_a).get("result") or {}), "error" in (accept(anon, so_a, so_a.access_token).get("result") or {})))
     tx = anon.post(f"{BASE}/my/orders/{so_a.id}/transaction", json={"jsonrpc": "2.0", "method": "call", "params": {
         "access_token": so_a.access_token, "amount": 1}}, timeout=30).json()
-    check("4 the token link cannot start a payment", True, "error" in tx)
+    check("4 the token link cannot start a payment, refused by the BOSS rule (not by a server error)", (True, True),
+          ("error" in tx, "authorised representative" in str(tx)))
     book = lambda k, qty: s[k].post(f"{BASE}/my/orders/{rate.id}/boss_booking", data={  # noqa: E731
         "csrf_token": re.search(r'name="csrf_token" value="([^"]+)"', s[k].get(f"{BASE}/my/orders/{rate.id}", timeout=30).text).group(1),
         f"qty_{rate_hc.id}": str(qty)}, timeout=30, allow_redirects=False)
