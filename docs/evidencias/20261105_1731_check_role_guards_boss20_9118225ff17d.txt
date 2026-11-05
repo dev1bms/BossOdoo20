@@ -1,0 +1,54 @@
+# Evidence: dev/check_role_guards.py on boss20
+# Date: 2026-11-05 17:31    
+# Commit tested: 9118225ff17d (fix(expediente): go-live tracker P1-22/23/24: a salesperson with own documents closes, cancels and r)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.7 boss_portal 20.0.1.0.10 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.10 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-05 16:31:41,581 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-05 16:31:41,642 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-05 16:31:42,475 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+2026-11-05 16:31:45,075 1 ERROR boss20 odoo.sql_db: bad query: b'INSERT INTO "boss_expediente_cost" ("create_date", "create_uid", "currency_id", "expediente_id", "kind", "name", "product_id", "quantity", "uom_id", "write_date", "write_uid") VALUES (\'2026-11-05T16:31:43.988943\'::timestamp, 1, 126, 822, \'extra\', \'[PRUEBA] coste guardas\', 34, \'1.00\', 35, \'2026-11-05T16:31:43.988943\'::timestamp, 1) RETURNING "id"'
+ERROR: insert or update on table "boss_expediente_cost" violates foreign key constraint "boss_expediente_cost_expediente_id_fkey"
+DETAIL:  Key (expediente_id)=(822) is not present in table "boss_expediente".
+      file E260812 state open owner [PRUEBA] Comercial propio
+CHECK PASS P1-22 salesperson reads their own file (form data): expected 'allowed' got 'allowed'
+CHECK PASS P1-22 salesperson reads the summary rows: expected 'allowed' got 'allowed'
+      refused: AccessError: ¡Uy! Parece que ha tropezado con unos registros ultrasecretos.
+Lo sentimos, [PRUEBA] Comercial ajeno (id=588) no tiene permiso de acceso 'leer' a:
+- Expediente
+CHECK PASS P1-22 another salesperson with «own documents» cannot read it: expected 'AccessError' got 'AccessError'
+CHECK PASS P1-22 salesperson can cancel their own open file: expected 'allowed' got 'allowed'
+CHECK PASS P1-22 file is cancelled: expected 'cancel' got 'cancel'
+CHECK PASS P1-22 sales manager reopened it: expected 'open' got 'open'
+CHECK FAIL P1-23 sales manager cannot delete a file with an order: expected 'UserError' got 'allowed'
+      refused: MissingError: Record does not exist or has been deleted.
+(Record: boss.expediente(822,), User: 1)
+CHECK FAIL P1-23 admin cannot delete a file with an order either: expected 'UserError' got 'MissingError'
+CHECK PASS P1-23 an empty draft can be deleted: expected 'allowed' got 'allowed'
+Traceback (most recent call last):
+  File "/opt/odoo-src/setup/odoo", line 6, in <module>
+    odoo.cli.main()
+  File "/opt/odoo-src/odoo/cli/command.py", line 139, in main
+    command().run(args)
+  File "/opt/odoo-src/odoo/cli/shell.py", line 161, in run
+    self.shell(dbnames[0])
+  File "/opt/odoo-src/odoo/cli/shell.py", line 147, in shell
+    self.console(local_vars)
+  File "/opt/odoo-src/odoo/cli/shell.py", line 82, in console
+    exec(sys.stdin.read(), local_vars)
+  File "<string>", line 89, in <module>
+  File "/opt/odoo-src/odoo/orm/decorators.py", line 330, in create
+    return method(self, vals_list)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/odoo-src/odoo/orm/models.py", line 4192, in create
+    records = self._create(data_list)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/odoo-src/odoo/orm/models.py", line 4387, in _create
+    cr.execute(SQL(
+  File "/opt/odoo-src/odoo/sql_db.py", line 418, in execute
+    self._obj.execute(query, params)
+psycopg2.errors.ForeignKeyViolation: insert or update on table "boss_expediente_cost" violates foreign key constraint "boss_expediente_cost_expediente_id_fkey"
+DETAIL:  Key (expediente_id)=(822) is not present in table "boss_expediente".
+# Exit status: 1

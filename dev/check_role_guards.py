@@ -79,16 +79,17 @@ mgr_file._boss_reopen("[PRUEBA] reopen for the guard check") if file.state == "c
 check("P1-22 sales manager reopened it", "open", file.state)
 
 # --- P1-23 deletion ---
-check("P1-23 sales manager cannot delete a file with an order", "UserError", outcome(lambda: file.with_user(mgr).unlink()))
-check("P1-23 admin cannot delete a file with an order either", "UserError", outcome(lambda: file.unlink()))
+# the file gets a service to buy (as admin): it is no longer an empty draft
+cost = env["boss.expediente.cost"].create({"expediente_id": file.id, "kind": "extra", "product_id": product("AWB").id,
+                                           "uom_id": product("AWB").uom_id.id, "quantity": 1.0,
+                                           "currency_id": env.company.currency_id.id, "name": "[PRUEBA] coste guardas"})
+check("P1-23 sales manager cannot delete a file with services", "UserError", outcome(lambda: file.with_user(mgr).unlink()))
+check("P1-23 admin cannot delete a file with services either", "UserError", outcome(lambda: file.unlink()))
 empty_vals = {"partner_id": customer.id}
 empty = env["boss.expediente"].create(empty_vals)
 check("P1-23 an empty draft can be deleted", "allowed", outcome(lambda: empty.unlink()))
 
 # --- P1-24 cost-control fields and frozen prices ---
-cost = env["boss.expediente.cost"].create({"expediente_id": file.id, "kind": "extra", "product_id": product("AWB").id,
-                                           "uom_id": product("AWB").uom_id.id, "quantity": 1.0,
-                                           "currency_id": env.company.currency_id.id, "name": "[PRUEBA] coste guardas"})
 if cost:
     check("P1-24 salesperson cannot mark a cost «closed»", "AccessError", outcome(lambda: cost.with_user(seller).write({"closed": True})))
     check("P1-24 salesperson cannot mark «variance reviewed»", "AccessError", outcome(lambda: cost.with_user(seller).write({"variance_reviewed": True})))
