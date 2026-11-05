@@ -6,7 +6,7 @@
 # Retention: 7 daily, 4 weekly (Sunday copy), 12 monthly (first-of-month copy), 5 predeploy.
 # Encryption: AES-256-CBC (PBKDF2) with the key file ~/backups/boss20/.key — keep a copy of that key in the password
 # manager: without it the backups cannot be read. Decrypt and list:
-#   openssl enc -d -aes-256-cbc -pbkdf2 -pass file:~/backups/boss20/.key -in <file> | tar -tzf - | head
+#   openssl enc -d -aes-256-cbc -pbkdf2 -pass file:$HOME/backups/boss20/.key -in <file> | tar -tzf - | head
 set -euo pipefail
 TAG="${1:-daily}"
 ROOT=~/backups/boss20

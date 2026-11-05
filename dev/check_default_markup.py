@@ -118,7 +118,8 @@ check("3 explicit re-pricing keeps the typed THC price", ("manual", 300.0), (thc
 agreed_list = env["product.pricelist"].create({
     "name": "[PRUEBA] Precios acordados", "currency_id": env.company.currency_id.id,
     "item_ids": [Command.create({"applied_on": "1_product", "product_tmpl_id": product("AWB").product_tmpl_id.id,
-                                 "compute_price": "fixed", "fixed_price": 123.45})]})
+                                 "uom_id": product("AWB").uom_id.id, "compute_price": "fixed",
+                                 "fixed_price": 123.45})]})
 agreed_customer = Partner.create({"name": "[PRUEBA] Cliente con precios acordados", "is_company": True,
                                   "country_id": ref("base.es").id, "vat": "ESB12345674", "city": "Madrid",
                                   "state_id": state("M").id, "property_product_pricelist": agreed_list.id})
