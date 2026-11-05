@@ -43,7 +43,7 @@ class BossRebillWizard(models.TransientModel):
             "boss_added_after_acceptance": True,
         })
         line.boss_price_frozen = True
-        need.write({"rebill_line_id": line.id, "extra_class": "rebill"})
+        need.with_context(boss_cost_control=True).write({"rebill_line_id": line.id, "extra_class": "rebill"})
         need.expediente_id._boss_link_orders(order)
         self.env["boss.pricing.snapshot"].sudo()._take(order, "addition", self.reason)
         order.message_post(body=self.env._("Service %(service)s added after acceptance. Reason: %(reason)s",

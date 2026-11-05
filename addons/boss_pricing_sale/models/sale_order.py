@@ -519,7 +519,7 @@ class SaleOrder(models.Model):
         self.env.flush_all()
         for order in self:
             lines = order.order_line.filtered(lambda l: not l.display_type)
-            lines.write({"boss_price_frozen": True})
+            lines.with_context(boss_state_transition=True).write({"boss_price_frozen": True})
             order.boss_pricing_frozen = True
             self.env["boss.pricing.snapshot"].sudo()._take(order, "acceptance")
         return res

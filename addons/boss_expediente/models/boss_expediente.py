@@ -885,7 +885,7 @@ class BossExpediente(models.Model):
             needs = house.cost_ids.filtered(lambda n: n.kind == "sale" and not n.closed and not n.purchase_line_ids
                                             and house._boss_service_group(n.product_id) in shared)
             if needs:
-                needs.write({"closed": True, "master_covered": True,
+                needs.with_context(boss_cost_control=True).write({"closed": True, "master_covered": True,
                              "reason": self.env._("Bought on the master file %s", house.master_id.name)})
                 house.message_post(body=self.env._("Services bought on the master %(master)s, not ordered here: %(codes)s.",
                                                    master=house.master_id.name,
@@ -1076,8 +1076,9 @@ class BossExpediente(models.Model):
         """Who is rated on this file: the customer, and every supplier the file bought from (confirmed purchase orders
         and posted bills), each by its legal entity. [(partner, role)]"""
         self.ensure_one()
-        suppliers = (self.purchase_order_ids.filtered(lambda p: p.state == "purchase").partner_id
-                     | self.bill_ids.filtered(lambda m: m.state == "posted").partner_id).commercial_partner_id
+        documents = self.sudo()  # bills are readable by cost groups only; the list of parties is not a secret
+        suppliers = (documents.purchase_order_ids.filtered(lambda p: p.state == "purchase").partner_id
+                     | documents.bill_ids.filtered(lambda m: m.state == "posted").partner_id).commercial_partner_id
         customer = self.partner_id.commercial_partner_id
         return [(customer, "customer")] * bool(customer) + [(supplier, "supplier") for supplier in suppliers]
 
@@ -1776,12 +1777,25 @@ class BossExpediente(models.Model):
     def action_cancel(self):
         self._boss_check_from(("open", "in_transit", "arrived", "delivered"), self.env._("Cancel file"))
         for file in self:
-            if file.purchase_order_ids.filtered(lambda p: p.state == "purchase") or file.invoice_ids.filtered(
-                    lambda m: m.state == "posted") or file.bill_ids.filtered(lambda m: m.state == "posted"):
+            documents = file.sudo()  # the salesperson cancels their own file without reading the bills (P1-22)
+            if documents.purchase_order_ids.filtered(lambda p: p.state == "purchase") or documents.invoice_ids.filtered(
+                    lambda m: m.state == "posted") or documents.bill_ids.filtered(lambda m: m.state == "posted"):
                 raise UserError(self.env._(
                     "%s has confirmed purchases or posted invoices: cancel or credit them first.", file.name))
         with file_action():
             self.write({"state": "cancel"})
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_only_empty(self):
+        """A file is deleted only while it is an empty draft (tracker P1-23, audit 05/11/2026): nothing sold, no
+        service, no purchase, no invoice or bill. Anything else is cancelled, never deleted."""
+        for file in self:
+            documents = file.sudo()
+            if (file.state != "open" or documents.order_link_ids or documents.allocation_ids or documents.cost_ids
+                    or documents.purchase_order_ids or documents.invoice_ids or documents.bill_ids):
+                raise UserError(self.env._(
+                    "%s cannot be deleted: it has an order, services, purchases or invoices. Cancel it instead.",
+                    file.name))
 
     def action_close_financial(self):
         """Financial close is separate from the operational close: everything invoiced, every cost billed or

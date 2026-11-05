@@ -713,6 +713,8 @@ class SaleOrderLine(models.Model):
             shipment_lines = self.filtered(lambda l: l.boss_days_source == "shipment")
             if shipment_lines:  # typing days on the line makes them the estimate of this line
                 super(SaleOrderLine, shipment_lines).write({"boss_days_source": "estimate"})
+        if "boss_price_frozen" in vals and not self.env.context.get("boss_state_transition"):
+            raise UserError(self.env._("The accepted price is set by the acceptance of the quotation, not by hand."))
         if "boss_unknown_cost_reason" in vals and not self.env.user.has_group("sales_team.group_sale_manager"):
             raise UserError(self.env._("Only a sales manager can accept a service with an unknown cost."))
         if FROZEN_FIELDS & set(vals) and self.filtered("boss_price_frozen"):

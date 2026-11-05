@@ -1,7 +1,7 @@
 from dataclasses import replace as dataclass_replace
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import float_compare
 
 from odoo.addons.boss_pricing.models.boss_pricing import COST_STATUSES
@@ -312,7 +312,21 @@ class BossExpedienteCost(models.Model):
                 "variance_to_review": not currency.is_zero(variance) and not need.variance_reviewed,
             })
 
+    # Cost-control fields are decided by purchasing, accounting or a sales manager; the accepted cost is the snapshot
+    # of the acceptance and never changes by hand (tracker P1-24, audit 05/11/2026). The screen already hides them;
+    # the server refuses a direct write too. Internal code sets the context flag.
+    CONTROL_FIELDS = ("extra_class", "paid_in_advance", "closed", "variance_reviewed", "without_order")
+    CONTROL_GROUPS = "purchase.group_purchase_user,account.group_account_invoice,sales_team.group_sale_manager"
+    ACCEPTED_FIELDS = ("accepted_unit_cost", "accepted_amount_company", "accepted_cost_kind")
+
     def write(self, vals):
+        if not self.env.su and not self.env.context.get("boss_cost_control"):
+            if set(self.ACCEPTED_FIELDS) & set(vals):
+                raise AccessError(self.env._("The accepted cost is the snapshot of the acceptance: it is not edited."))
+            if set(self.CONTROL_FIELDS) & set(vals) and not self.env.user.has_groups(self.CONTROL_GROUPS):
+                raise AccessError(self.env._(
+                    "Only purchasing, accounting or a sales manager can change how a cost is controlled "
+                    "(extra cost type, paid in advance, closed, variance reviewed, without order)."))
         if "partner_id" in vals or "currency_id" in vals or "uom_id" in vals:
             for need in self.filtered(lambda n: n._boss_active_lines()):
                 if vals.get("partner_id", need.partner_id.id) != need.partner_id.id or vals.get(

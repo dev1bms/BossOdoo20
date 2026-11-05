@@ -72,11 +72,11 @@ class BossExpedienteSplit(models.TransientModel):
                 moved = need.quantity * share
                 accepted = need.accepted_amount_company * share
                 left = need.quantity - moved
-                need.write({"quantity": left, "accepted_amount_company": need.accepted_amount_company - accepted,
+                need.with_context(boss_cost_control=True).write({"quantity": left, "accepted_amount_company": need.accepted_amount_company - accepted,
                             "closed": float_compare(left, 0.0, precision_digits=digits) <= 0})
                 twin = target.cost_ids.filtered(lambda n, line=line: n.sale_line_id == line and n.kind == "sale")
                 if twin:
-                    twin.write({"quantity": twin.quantity + moved,
+                    twin.with_context(boss_cost_control=True).write({"quantity": twin.quantity + moved,
                                 "accepted_amount_company": twin.accepted_amount_company + accepted})
                 else:
                     need.copy({"expediente_id": target.id, "quantity": moved, "accepted_amount_company": accepted,
