@@ -113,16 +113,21 @@ order.order_line._boss_recompute_cost()
 check("3 explicit re-pricing keeps the typed THC price", ("manual", 300.0), (thc.boss_sale_status, round(thc.price_unit, 2)))
 
 # 4. a customer with an agreed pricelist keeps it (no surcharge on top)
-cofitel = Partner.search([("name", "=ilike", "COFITEL%"), ("is_company", "=", True)], limit=1)
-if cofitel and cofitel.property_product_pricelist.item_ids:
-    agreed = env["sale.order"].create({
-        "partner_id": cofitel.id, "boss_direction": "import", "boss_transport_mode": "air", "boss_load_type": "air",
-        "order_line": [Command.create({"product_id": product("AWB").id, "product_uom_id": product("AWB").uom_id.id})]})
-    awb = agreed.order_line
-    check("4 COFITEL: agreed AWB 75 from its own pricelist, not cost + 20 %", ("agreed", 75.0),
-          (awb.boss_sale_status, round(awb.price_unit, 2)))
-else:
-    print("CHECK SKIP 4 no customer with an agreed pricelist on boss20")
+# (a [PRUEBA] customer with its own pricelist and an invented agreed price: real customers and their prices never
+# appear in a check or in its evidence)
+agreed_list = env["product.pricelist"].create({
+    "name": "[PRUEBA] Precios acordados", "currency_id": env.company.currency_id.id,
+    "item_ids": [Command.create({"applied_on": "1_product", "product_tmpl_id": product("AWB").product_tmpl_id.id,
+                                 "compute_price": "fixed", "fixed_price": 123.45})]})
+agreed_customer = Partner.create({"name": "[PRUEBA] Cliente con precios acordados", "is_company": True,
+                                  "country_id": ref("base.es").id, "vat": "ESB12345674", "city": "Madrid",
+                                  "state_id": state("M").id, "property_product_pricelist": agreed_list.id})
+agreed = env["sale.order"].create({
+    "partner_id": agreed_customer.id, "boss_direction": "import", "boss_transport_mode": "air", "boss_load_type": "air",
+    "order_line": [Command.create({"product_id": product("AWB").id, "product_uom_id": product("AWB").uom_id.id})]})
+awb = agreed.order_line
+check("4 agreed price from the customer's own pricelist, not cost + 20 %", ("agreed", 123.45),
+      (awb.boss_sale_status, round(awb.price_unit, 2)))
 
 # 5. a product that is not a BOSS service keeps its list price under the global rule
 plain = env["product.product"].create({"name": "[PRUEBA] Artículo sin tarifa BOSS", "type": "consu", "list_price": 10.0})

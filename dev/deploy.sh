@@ -21,11 +21,19 @@ git archive --format=tar HEAD addons | $SSH 'set -e; cd ~/BossOdoo20; rm -rf /tm
   tar -x -C /tmp/boss-addons; for d in /tmp/boss-addons/addons/boss_*; do rm -rf "addons/$(basename "$d")"; cp -r "$d" addons/; done;
   rm -rf /tmp/boss-addons; ls addons'
 
-# 3. Install or update with the web stopped (RAM is shared with Odoo 19), then start it again.
+# 3. Backup before the upgrade (tracker P1-25, 05/11/2026): an encrypted copy in ~/backups/boss20/predeploy.
+$SSH 'test -x ~/bin/backup_boss20.sh && ~/bin/backup_boss20.sh predeploy' || { echo "Refusing to deploy: the pre-deploy backup failed"; exit 1; }
+
+# 4. Install or update with the web stopped, then start it again. The web is NOT started when the upgrade fails:
+#    the log says why; fix it and deploy again, or restore the pre-deploy backup (see dev/backup_boss20.sh).
 FLAG=$([ "$MODE" = install ] && echo "-i" || echo "-u")
+COMMIT=$(git rev-parse --short=12 HEAD)
 $SSH "cd ~/BossOdoo20 && LOG=deploy_\$(date +%Y%m%d_%H%M%S).log && docker compose stop odoo >/dev/null 2>&1 \
-  && (docker compose run --rm -T odoo -c /etc/odoo/odoo.conf -d boss20 $FLAG $MODULES --stop-after-init --no-http \
-      < /dev/null > \$LOG 2>&1; echo \"exit \$?\" >> \$LOG); docker compose start odoo >/dev/null 2>&1; \
-  grep -E 'ERROR|CRITICAL|Traceback' \$LOG | head -5; tail -2 \$LOG; echo log: ~/BossOdoo20/\$LOG"
+  && docker compose run --rm -T odoo -c /etc/odoo/odoo.conf -d boss20 $FLAG $MODULES --stop-after-init --no-http \
+      < /dev/null > \$LOG 2>&1; RC=\$?; echo \"exit \$RC\" >> \$LOG; \
+  if [ \$RC -ne 0 ] || grep -qE 'CRITICAL|Traceback' \$LOG; then grep -E 'ERROR|CRITICAL|Traceback' \$LOG | head -5; tail -5 \$LOG; \
+     echo \"UPGRADE FAILED (exit \$RC): the web is stopped. Log: ~/BossOdoo20/\$LOG\"; exit 1; fi; \
+  printf '%s %s %s\n' '$COMMIT' \"\$(date '+%F %T')\" '$MODULES' > VERSION; docker compose start odoo >/dev/null 2>&1; \
+  grep -E 'ERROR|CRITICAL|Traceback' \$LOG | head -5; tail -2 \$LOG; echo log: ~/BossOdoo20/\$LOG; echo VERSION: \$(cat VERSION)"
 $SSH "cd ~/BossOdoo20 && docker compose exec -T db psql -U odoo -d boss20 -Atc \
   \"select name, state, latest_version from ir_module_module where name like 'boss%' order by name\""

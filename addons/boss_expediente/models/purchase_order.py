@@ -8,15 +8,17 @@ class PurchaseOrder(models.Model):
     boss_expediente_id = fields.Many2one("boss.expediente", "File", index="btree_not_null", copy=False,
                                          tracking=True)
 
-    def action_create_invoice(self):
+    def action_create_invoice(self, attachment_ids=False):
         """Odoo 20 copies every line on the bill, quantity 0 when the service is not performed yet: an order of a
-        file with nothing performed would give a bill of zeros. Say so instead (seen on boss20_uat, 26/10/2026)."""
+        file with nothing performed would give a bill of zeros. Say so instead (seen on boss20_uat, 26/10/2026).
+        Same signature as the standard method: «Upload Bill» passes the uploaded attachments (audit 05/11/2026, a
+        TypeError on boss20 the 04/11)."""
         for order in self.filtered("boss_expediente_id"):
             if not any(l.qty_to_invoice for l in order.order_line if not l.display_type):
                 raise UserError(self.env._(
                     "%s: no service of this order is marked as performed yet, there is nothing to bill. Mark the "
                     "performed services on the file first.", order.display_name))
-        return super().action_create_invoice()
+        return super().action_create_invoice(attachment_ids=attachment_ids)
 
 
 class PurchaseOrderLine(models.Model):

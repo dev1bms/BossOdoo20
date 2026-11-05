@@ -98,7 +98,18 @@ class SaleOrder(models.Model):
                 vals["boss_storage_days_known"] = True
         return super().create(vals_list)
 
+    # The status of a quotation changes only through its buttons (Send, Confirm, Cancel, Set to quotation): a direct
+    # write of «state» would skip the readiness checks, the price freeze, the acceptance snapshot and the creation of
+    # the file (audit 05/11/2026, permissions finding). The standard transitions run with this context flag.
+    _BOSS_STATE_FLAG = "boss_state_transition"
+
+    def _boss_transition(self):
+        return self.with_context(**{self._BOSS_STATE_FLAG: True})
+
     def write(self, vals):
+        if "state" in vals and not self.env.context.get(self._BOSS_STATE_FLAG):
+            raise UserError(self.env._(
+                "The status of a quotation changes only with its buttons (Send, Confirm, Cancel, Set to quotation)."))
         if "boss_storage_days" in vals and "boss_storage_days_known" not in vals:
             vals = dict(vals, boss_storage_days_known=True)
         res = super().write(vals)
@@ -416,6 +427,20 @@ class SaleOrder(models.Model):
         self._boss_check_ready()
         return super().action_quotation_send()
 
+    def action_quotation_sent(self):
+        return super(SaleOrder, self._boss_transition()).action_quotation_sent()
+
+    def action_draft(self):
+        return super(SaleOrder, self._boss_transition()).action_draft()
+
+    def _action_cancel(self):
+        return super(SaleOrder, self._boss_transition())._action_cancel()
+
+    def message_post(self, **kwargs):
+        if self.env.context.get("mark_so_as_sent"):  # the mail composer marks a sent quotation (standard)
+            return super(SaleOrder, self._boss_transition()).message_post(**kwargs)
+        return super().message_post(**kwargs)
+
     def action_boss_add_services(self):
         self.ensure_one()
         return {
@@ -488,7 +513,7 @@ class SaleOrder(models.Model):
         self._boss_check_ready()
         self._boss_check_containers()
         self._boss_check_costs()
-        res = super().action_confirm()
+        res = super(SaleOrder, self._boss_transition()).action_confirm()
         # Acceptance = evidence: finish pending computations, then freeze every line and keep a
         # snapshot (ADR-003). Nothing is recomputed from tariffs here: what was quoted is accepted.
         self.env.flush_all()

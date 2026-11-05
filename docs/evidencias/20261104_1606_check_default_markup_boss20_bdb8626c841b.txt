@@ -26,7 +26,7 @@ CHECK PASS 3 FMI manual cost 1500 -> sale 1800 (price and technical price agree)
 CHECK PASS 3 typed sale price -> manual
 CHECK PASS 3 cost changed: the typed price is kept
 CHECK PASS 3 explicit re-pricing keeps the typed THC price
-CHECK PASS 4 COFITEL: agreed AWB 75 from its own pricelist, not cost + 20 %
+CHECK PASS 4 [customer and agreed price redacted 05/11/2026]: agreed price from its own pricelist, not cost + 20 %
 CHECK PASS 5 non-BOSS product: list price 10
       services with the explicit flag «Paid on behalf»: ['ARA', 'DUM', 'IVA', 'PLA']
 CHECK PASS 5b the services re-invoiced at cost are the ones with the explicit flag (not a list of codes)

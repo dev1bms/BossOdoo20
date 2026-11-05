@@ -15,7 +15,7 @@ CHECK PASS 3 FMI manual cost 1500 -> sale 1800 (price and technical price agree)
 CHECK PASS 3 typed sale price -> manual: expected ('manual', 1700.0) got ('manual', 1700.0)
 CHECK PASS 3 cost changed: the typed price is kept: expected ('manual', 1600.0, 1700.0) got ('manual', 1600.0, 1700.0)
 CHECK PASS 3 explicit re-pricing keeps the typed THC price: expected ('manual', 300.0) got ('manual', 300.0)
-CHECK PASS 4 COFITEL: agreed AWB 75 from its own pricelist, not cost + 20 %: expected ('agreed', 75.0) got ('agreed', 75.0)
+CHECK PASS 4 [customer and agreed price redacted 05/11/2026]: agreed price from its own pricelist, not cost + 20 %
 CHECK PASS 5 non-BOSS product: list price 10: expected 10.0 got 10.0
 CHECK PASS 6 S00009: frozen prices unchanged: expected [('BL', 'cost_based', 75.0), ('DEM', 'cost_based', 120.0), ('DEM', 'cost_based', 120.0), ('THC', 'agreed', 280.0), ('THC', 'agreed', 280.0), ('ARA', 'cost_based', 350.0), ('OCU', 'cost_based', 160.0)] got [('BL', 'cost_based', 75.0), ('DEM', 'cost_based', 120.0), ('DEM', 'cost_based', 120.0), ('THC', 'agreed', 280.0), ('THC', 'agreed', 280.0), ('ARA', 'cost_based', 350.0), ('OCU', 'cost_based', 160.0)]
 CHECK PASS 7 off: no rule: expected 0 got 0
