@@ -69,7 +69,7 @@ so_b = quotation(cust_b, lines=[("THC", "40", dv)])
 rate = quotation(cust_a, rate=True, lines=[("THC", "20", dv), ("THC", "40", dv), ("THC", "40", hc), ("BL", False, None)])
 for o in (so_a, so_b, rate):
     o.order_line.filtered(lambda l: not l.display_type).write({"price_unit": 300.0})
-    o.write({"state": "sent"})
+    o.action_quotation_sent()  # the state changes only with its buttons (P1-21)
     o._portal_ensure_token()
 rate_hc = rate.order_line.filtered(lambda l: l.boss_container_type_id == hc)
 rate_hc.price_unit = 310.0

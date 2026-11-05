@@ -1,0 +1,27 @@
+# Evidence: dev/check_portal_http.py on boss20
+# Date: 2026-11-05 18:11    
+# Commit tested: 4095c7655874 (feat(pricing_sale,portal): go-live tracker P2-18/P2-19/P2-08/P2-14: a sent quotation keeps the price)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-05 17:11:31,113 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-05 17:11:31,174 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-05 17:11:32,001 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+Traceback (most recent call last):
+  File "/opt/odoo-src/setup/odoo", line 6, in <module>
+    odoo.cli.main()
+  File "/opt/odoo-src/odoo/cli/command.py", line 139, in main
+    command().run(args)
+  File "/opt/odoo-src/odoo/cli/shell.py", line 161, in run
+    self.shell(dbnames[0])
+  File "/opt/odoo-src/odoo/cli/shell.py", line 147, in shell
+    self.console(local_vars)
+  File "/opt/odoo-src/odoo/cli/shell.py", line 82, in console
+    exec(sys.stdin.read(), local_vars)
+  File "<string>", line 72, in <module>
+  File "/mnt/extra-addons/boss_pricing_sale/models/sale_order.py", line 111, in write
+    raise UserError(self.env._(
+odoo.exceptions.UserError: The status of a quotation changes only with its buttons (Send, Confirm, Cancel, Set to quotation).
+# Exit status: 1
