@@ -1,0 +1,37 @@
+# Evidence: dev/check_role_guards.py on boss20
+# Date: 2026-11-05 17:32    
+# Commit tested: 08a84eb9cbc8 (test(roles): the deletion guard is checked on a file with a service, not on an empty draft; first ev)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.7 boss_portal 20.0.1.0.10 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.10 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-05 16:32:32,500 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-05 16:32:32,561 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-05 16:32:33,394 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+      file E260814 state open owner [PRUEBA] Comercial propio
+CHECK PASS P1-22 salesperson reads their own file (form data): expected 'allowed' got 'allowed'
+CHECK PASS P1-22 salesperson reads the summary rows: expected 'allowed' got 'allowed'
+      refused: AccessError: ¡Uy! Parece que ha tropezado con unos registros ultrasecretos.
+Lo sentimos, [PRUEBA] Comercial ajeno (id=592) no tiene permiso de acceso 'leer' a:
+- Expediente
+CHECK PASS P1-22 another salesperson with «own documents» cannot read it: expected 'AccessError' got 'AccessError'
+CHECK PASS P1-22 salesperson can cancel their own open file: expected 'allowed' got 'allowed'
+CHECK PASS P1-22 file is cancelled: expected 'cancel' got 'cancel'
+CHECK PASS P1-22 sales manager reopened it: expected 'open' got 'open'
+      refused: UserError: E260814 cannot be deleted: it has an order, services, purchases or invoices. Cancel it instead.
+CHECK PASS P1-23 sales manager cannot delete a file with services: expected 'UserError' got 'UserError'
+      refused: UserError: E260814 cannot be deleted: it has an order, services, purchases or invoices. Cancel it instead.
+CHECK PASS P1-23 admin cannot delete a file with services either: expected 'UserError' got 'UserError'
+CHECK PASS P1-23 an empty draft can be deleted: expected 'allowed' got 'allowed'
+      refused: AccessError: Only purchasing, accounting or a sales manager can change how a cost is controlled (extra cost type, paid in advance, closed, variance reviewed, without order).
+CHECK PASS P1-24 salesperson cannot mark a cost «closed»: expected 'AccessError' got 'AccessError'
+      refused: AccessError: Only purchasing, accounting or a sales manager can change how a cost is controlled (extra cost type, paid in advance, closed, variance reviewed, without order).
+CHECK PASS P1-24 salesperson cannot mark «variance reviewed»: expected 'AccessError' got 'AccessError'
+CHECK PASS P1-24 purchasing can mark «variance reviewed»: expected 'allowed' got 'allowed'
+      refused: UserError: The accepted price is set by the acceptance of the quotation, not by hand.
+CHECK PASS P1-24 admin: direct write of boss_price_frozen is refused: expected 'UserError' got 'UserError'
+      refused: UserError: The accepted price is set by the acceptance of the quotation, not by hand.
+CHECK PASS P1-24 salesperson: direct write of boss_price_frozen is refused: expected True got True
+RESULT 14 passed, 0 failed
+# Exit status: 0
