@@ -1,0 +1,24 @@
+# Evidence: dev/check_load_1500.py on boss20
+# Date: 2026-11-05 18:11    
+# Commit tested: 4095c7655874 (feat(pricing_sale,portal): go-live tracker P2-18/P2-19/P2-08/P2-14: a sent quotation keeps the price)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-05 17:11:47,905 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-05 17:11:47,966 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-05 17:11:48,795 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+      created 1500 files in 5.0 s (files before: 49)
+      files list, 80 rows with next step (as the list view reads): 0.47 s
+      files list, 1,000 rows: 4.73 s
+      files filtered by state open, count: 0.0 s
+      one file form (amounts, next step, documents): 0.02 s
+      margin report refresh of every open file: 8.99 s
+      margin report list, 80 rows: 0.0 s
+CHECK PASS list of 80 files under target: expected True got True
+CHECK PASS file form under target: expected True got True
+CHECK PASS margin report refresh under target: expected True got True
+RESULT 3 passed, 0 failed | 1500 files | list80 0.47s list1000 4.73s count 0.0s form 0.02s report 8.99s report80 0.0s
+      rolled back: 49 files, as before
+# Exit status: 0
