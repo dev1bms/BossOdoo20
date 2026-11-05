@@ -43,15 +43,21 @@ class BossMarginReport(models.Model):
         actual = (file.ata if file.direction == "import" else file.atd)
         planned = file.eta if file.direction == "import" else file.etd
         order = file.sale_order_ids.filtered(lambda o: o.state == "sale")[:1]
+        # A master's shared costs are already counted in each house's share (amount_master_cost): the master's row
+        # shows its costs net of what it passed to its houses, so the rows add up to the consolidated margin
+        # (go-live tracker P2-17, audit 05/11/2026: the report counted the shared costs twice).
+        houses = file.house_ids.filtered(lambda h: h.state != "cancel")
+        passed, passed_actual = sum(houses.mapped("amount_master_cost")), sum(houses.mapped("amount_master_cost_actual"))
         return {
             "expediente_id": file.id, "company_id": file.company_id.id, "user_id": file.user_id.id,
             "salesman_id": order.user_id.id, "partner_id": file.partner_id.id, "traffic_code": file.traffic_code,
             "direction": file.direction, "transport_mode": file.transport_mode, "load_type": file.load_type,
             "key_date": fields.Date.to_date(actual) if actual else planned, "state": file.state,
             "financial_closed": file.financial_closed, "amount_sale": file.amount_sale,
-            "amount_invoiced": file.amount_invoiced, "amount_cost_forecast": file.amount_cost_forecast,
-            "amount_cost_actual": file.amount_cost_actual, "amount_margin_forecast": file.amount_margin_forecast,
-            "amount_margin_final": file.amount_margin_final, "margin_final": file.margin_final,
+            "amount_invoiced": file.amount_invoiced, "amount_cost_forecast": file.amount_cost_forecast - passed,
+            "amount_cost_actual": file.amount_cost_actual - passed_actual,
+            "amount_margin_forecast": file.amount_margin_forecast + passed,
+            "amount_margin_final": file.amount_margin_final + passed_actual, "margin_final": file.margin_final,
             "refreshed_on": fields.Datetime.now(),
         }
 

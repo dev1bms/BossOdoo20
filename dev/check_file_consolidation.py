@@ -139,6 +139,15 @@ check("the master's consolidated view: sale of the houses, shared costs 1 500, o
       (houses_sale, 1500.0, 100.0, round(houses_sale - 1600.0, 2)),
       (round(master.amount_houses_sale, 2), round(master.amount_cost_forecast, 2),
        round(master.amount_houses_cost, 2), round(master.amount_consolidated_margin, 2)))
+# «Margin per file» report (go-live tracker P2-17): the master's row is net of the costs passed to its houses, so the
+# rows of a consolidation add up to the consolidated margin instead of counting the shared costs twice.
+Report = env["boss.margin.report"]
+Report._boss_refresh(master | house_a | house_b)
+rows = Report.search([("expediente_id", "in", (master | house_a | house_b).ids)])
+check("margin report: the rows of the master and its houses add up to the consolidated margin (no double count)",
+      round(master.amount_consolidated_margin, 2), round(sum(rows.mapped("amount_margin_forecast")), 2))
+check("margin report: the master's row shows its costs net of what it passed to the houses", 0.0,
+      round(rows.filtered(lambda r: r.expediente_id == master).amount_cost_forecast, 2))
 check("the explanation of house A names its share of the master", True,
       master.name in (house_a.profit_explanation or "") and "66.67" in (house_a.profit_explanation or ""))
 
