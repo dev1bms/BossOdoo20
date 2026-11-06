@@ -12,7 +12,7 @@ SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"
 
 # 1. Identity of the environment, checked every time.
 $SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && grep -qE "^dbfilter = \^boss20(\(_uat\)\?)?[$]$" config/odoo.conf \
-      && docker compose ps --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
+      && docker compose ps -a --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
   || { echo "Refusing to deploy: ~/BossOdoo20 is not the BOSS Odoo 20 environment"; exit 1; }
 [ -z "$(git status --porcelain -- addons)" ] || { echo "Refusing to deploy: uncommitted changes in addons/"; exit 1; }
 

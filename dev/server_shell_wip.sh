@@ -10,7 +10,7 @@ SCRIPT="${1:?script}"
 shift
 HOST=boss@100.87.98.15
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"
-$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && docker compose ps --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
+$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && docker compose ps -a --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
   || { echo "Refusing: ~/BossOdoo20 is not the BOSS Odoo 20 environment"; exit 1; }
 TMP=$($SSH 'mkdir -p ~/tmp && d=$(mktemp -d ~/tmp/boss-wip-XXXX) && chmod 755 $d && mkdir $d/addons $d/data && echo $d')
 tar -c -C addons $(ls addons | grep '^boss_') | $SSH "tar -x -C $TMP/addons && chmod -R a+rX $TMP/addons"

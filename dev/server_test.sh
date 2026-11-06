@@ -17,7 +17,7 @@ fi
 TAGS=$(echo "$MODULES" | sed 's/[^,]*/\/&/g')
 HOST=boss@100.87.98.15
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=15 $HOST"
-$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && docker compose ps --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
+$SSH 'cd ~/BossOdoo20 && grep -qxF "db_name = boss20" config/odoo.conf && docker compose ps -a --format "{{.Name}}" | grep -qx bossodoo20-odoo-1' \
   || { echo "Refusing: ~/BossOdoo20 is not the BOSS Odoo 20 environment"; exit 1; }
 [ -z "$(git status --porcelain -- addons)" ] || { echo "Refusing: uncommitted changes in addons/"; exit 1; }
 git archive --format=tar HEAD addons | $SSH 'set -e; rm -rf ~/tmp/boss-test-addons; mkdir -p ~/tmp/boss-test-addons;
