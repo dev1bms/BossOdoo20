@@ -28,10 +28,10 @@ TEMPLATES = {
                                                                                 "FAD", "TTE-CON"],
     "EMB LCL · Exportación marítima LCL (grupaje) · servicios fijos": ["TTE-CON", "DEX", "CSM", "BL", "THC-LCL", "T3",
                                                                         "FME-LCL"],
+    "TTE · Transporte por carretera · servicios fijos": ["TTE-CON", "CST"],
     # customs clearance only (Odoo 17 traffic ITB, e.g. E261189 with a BOSS guarantee): no carriage, the declaration
     # and its disbursements; CAU/QBR and ARA/IVA are added on the quotation when they apply (go-live tracker P4-08)
     "ITB · Solo despacho de aduana (importación) · servicios fijos": ["FAD"],
-    "TTE · Transporte por carretera · servicios fijos": ["TTE-CON", "CST"],
 }
 EN_NAMES = dict(zip(TEMPLATES, [
     "IAB FOB · Air import FOB · fixed services",
