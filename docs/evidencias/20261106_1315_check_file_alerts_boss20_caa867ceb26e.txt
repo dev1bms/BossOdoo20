@@ -1,0 +1,29 @@
+# Evidence: dev/check_file_alerts.py on boss20
+# Date: 2026-11-06 13:15    
+# Commit tested: caa867ceb26e (feat(expediente): go-live tracker P4-08, export data of Cristina (F0-C36): documents, SI, VGM, port )
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.10 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 12:15:25,307 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 12:15:25,367 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 12:15:26,195 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 the last free day comes from the MSC tariff (after the arrival): expected True got True
+      free days until 2026-12-07 (arrival 2026-12-01)
+CHECK PASS 2 nothing before the alert day: expected 0 got 0
+CHECK PASS 3 an activity for the operator 3 working days before the last free day: expected 1 got 1
+CHECK PASS ... with the container and the last free day, assigned to the operator: expected (True, res.users(1,)) got (True, res.users(1,))
+CHECK PASS 4 not repeated the same day: expected 0 got 0
+CHECK PASS 5 another on the last free day: expected 1 got 1
+CHECK PASS 6 and one on the first day with a cost (to the salesperson, here the responsible): expected 1 got 1
+CHECK PASS 7 nothing more afterwards: expected 0 got 0
+CHECK PASS 8 a container already returned gets no alert: expected 0 got 0
+CHECK PASS 9 not on another day of the month: expected 0 got 0
+CHECK PASS 10 on the last day: the delivered file not closed gets its activity for the responsible: expected (True, 1, res.users(1,)) got (True, 1, res.users(1,))
+CHECK PASS 11 the person in copy gets one summary listing the file: expected (1, res.users(11,), True) got (1, res.users(11,), True)
+CHECK PASS 12 run twice, nothing is repeated: expected (1, 1) got (1, 1)
+CHECK PASS 13 the invoice keeps its issue date and takes the operation date of the file (arrival of an import): expected (datetime.date(2026, 12, 20), datetime.date(2026, 12, 1)) got (datetime.date(2026, 12, 20), datetime.date(2026, 12, 1))
+CHECK PASS 14 the invoice prints the operation date in the customer's language: expected (True, 'Fecha de la operación') got (True, 'Fecha de la operación')
+RESULT 15 passed, 0 failed
+# Exit status: 0

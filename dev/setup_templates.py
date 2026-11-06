@@ -28,6 +28,9 @@ TEMPLATES = {
                                                                                 "FAD", "TTE-CON"],
     "EMB LCL · Exportación marítima LCL (grupaje) · servicios fijos": ["TTE-CON", "DEX", "CSM", "BL", "THC-LCL", "T3",
                                                                         "FME-LCL"],
+    # customs clearance only (Odoo 17 traffic ITB, e.g. E261189 with a BOSS guarantee): no carriage, the declaration
+    # and its disbursements; CAU/QBR and ARA/IVA are added on the quotation when they apply (go-live tracker P4-08)
+    "ITB · Solo despacho de aduana (importación) · servicios fijos": ["FAD"],
     "TTE · Transporte por carretera · servicios fijos": ["TTE-CON", "CST"],
 }
 EN_NAMES = dict(zip(TEMPLATES, [
@@ -38,6 +41,7 @@ EN_NAMES = dict(zip(TEMPLATES, [
     "IMB LCL FOB · Sea import LCL (groupage) FOB · fixed services",
     "EMB LCL · Sea export LCL (groupage) · fixed services",
     "TTE · Road transport · fixed services",
+    "ITB · Customs clearance only (import) · fixed services",
 ]))
 # The case of each template (ADR-006, meeting with Ángel 27/10/2026: the template fills the quotation). Direction, mode
 # and whose client come from the case code (IAB = import · air · BOSS client, decision B13); the incoterm from the name;
@@ -57,6 +61,8 @@ CASES = {
                         incoterm="FOB", scope=("main", "destination_customs", "delivery")),
     "EMB LCL": dict(boss_business="boss", boss_direction="export", boss_transport_mode="sea", boss_load_type="lcl",
                     incoterm=False, scope=("pickup", "origin_customs", "main")),
+    "ITB": dict(boss_business="boss", boss_direction="import", boss_transport_mode="sea", boss_load_type="fcl",
+                incoterm=False, scope=("destination_customs",)),
     # road: national, import or export, chosen on the quotation (customs FAD/DEX added when BOSS clears)
     "TTE": dict(boss_business="boss", boss_direction=False, boss_transport_mode="road", boss_load_type="road",
                 incoterm=False, scope=("main", "delivery")),

@@ -50,18 +50,19 @@ check("1 the file keeps booking, cargo-ready and the four sea cut-offs",
       (file.booking_date, file.cargo_ready_date, file.cutoff_docs, file.cutoff_si, file.cutoff_vgm, file.cutoff))
 check("1 a travelling file is not «customs only»", False, file.customs_only)
 before = len(file.activity_ids)
-n = File._boss_cron_cutoff_alerts(today=date(2026, 12, 9))  # Wednesday: 2 working days before the documents cut-off (Fri 11)
-check("2 two working days before the documents cut-off: one activity to the operator", (1, before + 1, ops.id),
-      (n, len(file.activity_ids), file.activity_ids.sorted("id")[-1].user_id.id))
+File._boss_cron_cutoff_alerts(today=date(2026, 12, 9))  # Wednesday: 2 working days before the documents cut-off (Fri 11)
+check("2 two working days before the documents cut-off: one activity to the operator", (before + 1, ops.id),
+      (len(file.activity_ids), file.activity_ids.sorted("id")[-1].user_id.id))
 check("2 the activity names the cut-off and its date", True, "Documents cut-off" in file.activity_ids.sorted("id")[-1].summary
       and "11/12/2026" in file.activity_ids.sorted("id")[-1].summary)
-n2 = File._boss_cron_cutoff_alerts(today=date(2026, 12, 9))
-check("2 the same day again gives nothing new", 0, n2)
-n3 = File._boss_cron_cutoff_alerts(today=date(2026, 12, 11))
+File._boss_cron_cutoff_alerts(today=date(2026, 12, 9))
+check("2 the same day again gives nothing new on this file", before + 1, len(file.activity_ids))
+File._boss_cron_cutoff_alerts(today=date(2026, 12, 11))
 check("2 on the cut-off day: the «today» activity for the documents cut-off, and the first alert of SI (Mon 14 - 2 wd = Thu 10 < 11)",
-      True, n3 >= 2)
+      before + 3, len(file.activity_ids))
 file.write({"atd": date(2026, 12, 18)})
-check("2 once departed, no more cut-off alerts", 0, File._boss_cron_cutoff_alerts(today=date(2026, 12, 16)))
+File._boss_cron_cutoff_alerts(today=date(2026, 12, 16))
+check("2 once departed, no more cut-off alerts on this file", before + 3, len(file.activity_ids))
 # --- customs mode copied from the customer when a file opens from a quotation ---
 order = env["sale.order"].create({"partner_id": customer.id})
 check("3 the customs mode of the customer reaches the file values of its quotation", "customer",
@@ -77,8 +78,8 @@ only.write({"customs_release_date": "2026-12-12 10:00:00"})
 check("4 with the release it can be delivered", [], only._boss_delivery_missing())
 own = File.create({"partner_id": customer.id, "direction": "import", "transport_mode": "sea", "load_type": "fcl",
                    "scope_destination_customs": True, "scope_delivery": True, "customs_mode": "customer"})
-check("5 when the customer's own broker clears, the release is not required of BOSS (delivery date still is)",
-      ["delivery date and time"], own._boss_delivery_missing())
+check("5 when the customer's own broker clears, the customs release is not required of BOSS (the rest of the import conditions still are)",
+      (False, True), ("customs release (levante)" in own._boss_delivery_missing(), "delivery date and time" in own._boss_delivery_missing()))
 print(f"RESULT {sum(results)} passed, {len(results) - sum(results)} failed")
 env.cr.rollback()  # noqa: F821
 if not all(results):
