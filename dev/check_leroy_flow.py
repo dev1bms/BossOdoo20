@@ -58,8 +58,8 @@ check("0 the customer is a periodic-invoice customer with two delivery warehouse
       (customer.boss_invoice_grouping, len(customer.child_ids.filtered(lambda c: c.type == "delivery"))))
 
 # ---- 1. one contract quotation for three shipments, accepted ---------------------------------------------------------------
-PRICES = {"FMI": 1000.0, "THC": 150.0, "FAD": 120.0, "CSM": 60.0, "TTE-FCL": 200.0}
-SUPPLIERS = {"FMI": carrier, "THC": carrier, "FAD": broker, "TTE-FCL": haulier}
+PRICES = {"FMI": 1000.0, "THC": 150.0, "FAD": 120.0, "TTE-FCL": 200.0}  # per shipment fees (CSM) are not part of a contract
+SUPPLIERS = {"THC": carrier, "FAD": broker, "TTE-FCL": haulier}  # asked case by case; the freight has an offer
 order = env["sale.order"].create({
     "partner_id": customer.id, "partner_shipping_id": torija.id, "client_order_ref": "[PRUEBA] LM-2026-11",
     "boss_direction": "import", "boss_transport_mode": "sea", "boss_load_type": "fcl", "incoterm": fob.id,
@@ -72,17 +72,19 @@ order = env["sale.order"].create({
                                    "product_uom_qty": 3.0}) for c in PRICES]})
 for code, supplier in SUPPLIERS.items():
     line_of(order, code).write({"boss_supplier_id": supplier.id, "boss_cost_on_request": True})
+line_of(order, "FMI").write({"boss_supplier_id": carrier.id, "boss_manual_cost": 800.0,
+                             "boss_manual_cost_note": "[PRUEBA] oferta de flete de la naviera para el contrato"})
 order.action_boss_update_costs()
 for code, price in PRICES.items():
     line_of(order, code).price_unit = price
 for l in order.order_line:
     print(f"      {l.product_id.default_code:8} qty {l.product_uom_qty:g} sale {l.price_unit:8.2f} cost {l.boss_cost_status} vat {l.boss_vat_status}")
-check("1 the contract quotation holds three shipments: every service x3, 3 containers", ([3.0] * 5, 3),
+check("1 the contract quotation holds three shipments: every service x3, 3 containers", ([3.0] * 4, 3),
       (order.order_line.mapped("product_uom_qty"), sum(order.boss_container_ids.mapped("quantity"))))
 order.action_confirm()
 file1 = order.boss_expediente_id
 check("1 accepted: one file with the whole agreement, the three containers and the first warehouse",
-      ("IMB", [3.0] * 5, 3, torija.id),
+      ("IMB", [3.0] * 4, 3, torija.id),
       (file1.traffic_code, file1.allocation_ids.sorted("id").mapped("quantity"), len(file1.container_ids),
        file1.delivery_address_id.id))
 
@@ -106,12 +108,12 @@ for file, warehouse in ((file2, ribarroja), (file3, torija)):
 env.invalidate_all()
 files = file1 | file2 | file3
 check("2 three files of the same customer, each with one shipment of every service (quantities moved, never duplicated)",
-      [(1.0,) * 5] * 3, [tuple(f.allocation_ids.sorted("id").mapped("quantity")) for f in files])
-check("2 the accepted totals are unchanged on the quotation", [3.0] * 5, order.order_line.mapped("product_uom_qty"))
-check("2 each file sells one third of the agreement", [1530.0] * 3, [round(f.sudo().amount_sale, 2) for f in files])
+      [(1.0,) * 4] * 3, [tuple(f.allocation_ids.sorted("id").mapped("quantity")) for f in files])
+check("2 the accepted totals are unchanged on the quotation", [3.0] * 4, order.order_line.mapped("product_uom_qty"))
+check("2 each file sells one third of the agreement", [1470.0] * 3, [round(f.sudo().amount_sale, 2) for f in files])
 check("2 each file has its own warehouse and container", [(torija.id, 1), (ribarroja.id, 1), (torija.id, 1)],
       [(f.delivery_address_id.id, len(f.container_ids)) for f in files])
-check("2 each file buys its own shipment: 4 needs of quantity 1 (own fee CSM needs nothing)", [[1.0] * 4] * 3,
+check("2 each file buys its own shipment: 4 needs of quantity 1", [[1.0] * 4] * 3,
       [f.cost_ids.mapped("quantity") for f in files])
 print(f"      next step of the second shipment: {file2.next_step} · {file2.next_step_detail}")
 
@@ -152,13 +154,13 @@ action = files.action_invoice_together()
 invoice = env["account.move"].browse(action["res_id"])
 products = invoice.invoice_line_ids.filtered(lambda l: l.display_type == "product")
 sections = invoice.invoice_line_ids.filtered(lambda l: l.display_type == "line_section").sorted("sequence")
-check("4 one invoice to the customer with the 15 services of the three files and a section per file",
-      (customer.id, 15, 3), (invoice.partner_id.commercial_partner_id.id, len(products), len(sections)))
+check("4 one invoice to the customer with the 12 services of the three files and a section per file",
+      (customer.id, 12, 3), (invoice.partner_id.commercial_partner_id.id, len(products), len(sections)))
 check("4 the sections name each file, its customer reference, route and container",
       [f.name for f in files.sorted("name")], [s.name.split(" · ")[0] for s in sections])
 print("      sections:", [s.name for s in sections])
 check("4 every line carries its file and its file's analytic account, with the quantity of that file",
-      {(f.id, 5, True) for f in files},
+      {(f.id, 4, True) for f in files},
       {(f.id, len(products.filtered(lambda l, f=f: l.boss_expediente_id == f)),
         all(l.quantity == 1.0 and str(f.analytic_account_id.id) in ",".join((l.analytic_distribution or {}).keys())
             for l in products.filtered(lambda l, f=f: l.boss_expediente_id == f))) for f in files})
@@ -192,7 +194,7 @@ check("5 nothing left to review on it", False, bool(file1.completeness))
 file1.action_close_financial()
 check("5 the first Leroy file is closed financially (acceptance criterion of P4-10)", True, file1.financial_closed)
 row = env["boss.margin.report"].search([("expediente_id", "=", file1.id)])
-check("5 «Margin by file» keeps its final margin: one third of the agreement less its own costs", (1, 400.0),
+check("5 «Margin by file» keeps its final margin: one third of the agreement less its own costs", (1, 340.0),
       (len(row), round(row.amount_margin_final, 2)))
 check("5 the other two shipments stay open, invoiced, with their services still to buy", [("open", 0.0, 4)] * 2,
       [(f.state, round(f.sudo().amount_to_invoice, 2), len(f.cost_ids.filtered(lambda n: n.state == "to_order")))
