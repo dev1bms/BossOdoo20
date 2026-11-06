@@ -1598,6 +1598,14 @@ class BossExpediente(models.Model):
         for fname, order_field in FROM_ORDER.items():
             value = self[fname]
             context[f"default_{order_field}"] = value.id if isinstance(value, models.BaseModel) else value
+        # the containers of the file, so that per-container services (THC, demurrage...) have their quantity
+        containers = defaultdict(int)
+        for row in self.container_ids:
+            containers[(row.size, row.container_type_id.id)] += 1
+        if containers:
+            context["default_boss_container_ids"] = [
+                Command.create({"size": size, "container_type_id": ctype, "quantity": qty})
+                for (size, ctype), qty in containers.items()]
         return {"type": "ir.actions.act_window", "res_model": "sale.order", "view_mode": "form",
                 "views": [(False, "form")], "name": self.env._("New quotation"), "context": context}
 

@@ -109,6 +109,8 @@ check("2 the new quotation opens for the consignee, linked to the file, with the
       (importer.id, file.id, True, "agent"),
       (ctx.get("default_partner_id"), ctx.get("default_boss_expediente_id"),
        ctx.get("default_boss_origin_port_id") == port("CNSHA", "sea").id, ctx.get("default_boss_business")))
+check("2 ... and with the file's containers (per-container services get their quantity)", [("40", dv.id, 1)],
+      [(c[2]["size"], c[2]["container_type_id"], c[2]["quantity"]) for c in ctx.get("default_boss_container_ids", [])])
 quote = env["sale.order"].with_context(ctx).create({"partner_id": importer.id, "order_line": [
     Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id}),
     Command.create({"product_id": product("THC").id, "product_uom_id": product("THC").uom_id.id}),
@@ -135,9 +137,9 @@ check("2 the file has the accepted orders of both payers, each in its currency",
 check("2 the file sums the sales of both payers in company currency (more than the EUR part alone)", True,
       file.sudo().amount_sale > 270.0)
 print(f"      agreed sale of the file {file.sudo().amount_sale:.2f} {file.currency_id.name}")
-fad = file.cost_ids.filtered(lambda n: n.product_id == product("FAD"))
-check("2 the consignee's customs clearance is a purchase need of the file (customs broker, EUR)",
-      ("FAD", broker.id, "EUR"), (fad.product_id.default_code, fad.partner_id.id, fad.currency_id.name))
+check("2 the consignee's customs clearance and terminal handling are purchase needs of the file (broker and carrier, EUR)",
+      {("FAD", broker.id, "EUR"), ("THC", carrier.id, "EUR")},
+      {(n.product_id.default_code, n.partner_id.id, n.currency_id.name) for n in file.cost_ids.filtered("sale_line_id")})
 
 # ---- 3. guards -------------------------------------------------------------------------------------------------------------
 check("3 a quotation of a partner that is not a party of the file is refused (put it on the file first)", "refused",
