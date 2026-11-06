@@ -1,0 +1,61 @@
+# Evidence: dev/check_multi_payer.py on boss20
+# Date: 2026-11-06 13:52    
+# Commit tested: dc1a21a90431 (test(expediente): the consignee's invoice is checked per service (customs 21 %, terminal handling ex)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.12 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 12:52:31,551 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 12:52:31,612 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 12:52:32,443 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 a USD price list exists (setup_phase4_agents): expected True got True
+CHECK PASS 0 the origin agent's profit share is a cost only (607401, never sold: P12); BOSS's profit share to the agent is sold as income (705005, F0-C58 / P37-a): expected (False, '607401', True, '705005') got (False, '607401', True, '705005')
+CHECK PASS 1 the agent's quotation is in USD on the USD price list taken from the agent's contact: expected ('USD', 98) got ('USD', 98)
+      PFT-BOSS  sale   500.00 USD vat ok base NR · TER->PRO: NR · customer TER: EX · 0% EX S (Ángel: cliente de tercer país → EX · Odoo 17 acción 1232: «0% EX S», 303 [120] · PGC: no sujeta por localización) taxes ['0% EX S']
+      CSM       sale    60.00 USD vat ok base NR · TER->PRO: NR · customer TER: EX · 0% EX S (Ángel: cliente de tercer país → EX · Odoo 17 acción 1232: «0% EX S», 303 [120] · PGC: no sujeta por localización) taxes ['0% EX S']
+CHECK PASS 1 BOSS's profit share to an agent outside the EU is exempt (F0-A27: NR, then EX by the counterparty), nothing pending: expected (True, True) got (True, True)
+CHECK PASS 1 the accepted quotation opened an agent-business file (traffic IMA) whose customer is the agent: expected ('agent', 28789, 'IMA') got ('agent', 28789, 'IMA')
+CHECK PASS 2 the payers of the file are its customer (the agent) and its parties (the consignee): expected {28789, 28790} got {28789, 28790}
+CHECK PASS 2 «Quote to another payer» is an action of the file form: expected True got True
+CHECK PASS 2 the file opens the wizard: expected 'boss.payer.quotation' got 'boss.payer.quotation'
+CHECK PASS 2 the wizard offers the parties of the file only and says who pays the freight (Incoterm FOB: collect): expected ({28789, 28790}, True) got ({28789, 28790}, True)
+      hint: Freight collect (FOB): the freight is invoiced to the payer at destination (consignee or agent).
+CHECK PASS 2 the new quotation opens for the consignee, linked to the file, with the file's shipment data: expected (28790, 2418, True, 'agent') got (28790, 2418, True, 'agent')
+CHECK PASS 2 ... and with the file's containers (per-container services get their quantity): expected [('40', 1, 1)] got [('40', 1, 1)]
+      FAD       cost on_request 0.00
+      THC       cost on_request 0.00
+CHECK PASS 2 services asked to the supplier case by case can be accepted (cost typed in the file later): expected ['on_request', 'on_request'] got ['on_request', 'on_request']
+CHECK PASS 2 the consignee's quotation is linked to the file, in EUR: expected (2418, 'EUR') got (2418, 'EUR')
+      FAD       sale   120.00 EUR vat ok base NR · TER->PRO: NR · customer PRO: NR · 21% S (Ángel 31/08/2026: NR lleva IVA · Odoo 17 acción 1232: NR = 21 % → «21% S» · PGC: sujeta, 303 [07]/[09]) taxes ['21% S']
+      THC       sale   150.00 EUR vat ok base EX · 0% EXEMPT Art.22 (Belal 23/10/2026 (propuesta aprobada, P17): cliente español → exento art. 22 LIVA, 303 [60]) taxes ['0% EXEMPT Art.22']
+CHECK PASS 2 the file has the accepted orders of both payers, each in its currency: expected {(28790, 'EUR'), (28789, 'USD')} got {(28790, 'EUR'), (28789, 'USD')}
+CHECK PASS 2 the file sums the sales of both payers in company currency (more than the EUR part alone): expected True got True
+      agreed sale of the file 768.93 EUR
+CHECK PASS 2 the consignee's customs clearance and terminal handling are purchase needs of the file (broker and carrier, EUR): expected {('THC', 28792, 'EUR'), ('FAD', 28791, 'EUR')} got {('THC', 28792, 'EUR'), ('FAD', 28791, 'EUR')}
+      refused: S02048: [PRUEBA] Tercero ajeno al expediente is neither the customer nor a party (consignee, shipper, agent, notify) of file E269090. Put it on the file first, then quote to it.
+CHECK PASS 3 a quotation of a partner that is not a party of the file is refused (put it on the file first): expected 'refused' got 'refused'
+CHECK PASS 4 each payer gets its own invoice in its currency: the agent in USD, the consignee in EUR: expected {(28790, 'EUR'), (28789, 'USD')} got {(28790, 'EUR'), (28789, 'USD')}
+CHECK PASS 4 BOSS's profit share is income on 705005, exempt for the third-country agent (0 %): expected ('705005', True) got ('705005', True)
+CHECK PASS 4 the consignee's invoice follows the Spanish rules per service: customs clearance 21 %, terminal handling exempt (art. 22 LIVA, catalogue class EX): expected {('FAD', '21% S'), ('THC', '0% EXEMPT Art.22')} got {('FAD', '21% S'), ('THC', '0% EXEMPT Art.22')}
+      refused: Draft Invoice (S02047) invoices the services of a quotation of [PRUEBA] Importador Madrid (segundo pagador): it cannot be moved to [PRUEBA] Tercero ajeno al expediente. Make a quotation to that payer 
+CHECK PASS 4 a draft invoice of a file quotation cannot be moved to a stranger by hand: expected 'refused' got 'refused'
+      refused: Draft Invoice (S02047) invoices the services of a quotation of [PRUEBA] Importador Madrid (segundo pagador): it cannot be moved to [PRUEBA] Agente Shanghai (pagador USD). Make a quotation to that paye
+CHECK PASS 4 ... nor to the other payer of the file: each payer has its own quotation and invoice: expected 'refused' got 'refused'
+CHECK PASS 4 both invoices posted: expected ['posted', 'posted'] got ['posted', 'posted']
+      need PFT-FCL  extra rfq          [PRUEBA] Agente Shanghai (pa 1 x 300.00 USD
+      need FAD      sale  rfq          [PRUEBA] Agente de aduanas p 1 x 80.00 EUR
+      need THC      sale  rfq          [PRUEBA] Naviera pagadores   1 x 100.00 EUR
+CHECK PASS 5 RFQs of the file: the customs broker and the carrier in EUR, the origin agent in USD: expected {(28789, 'USD'), (28791, 'EUR'), (28792, 'EUR')} got {(28789, 'USD'), (28792, 'EUR'), (28791, 'EUR')}
+CHECK PASS 5 the origin agent's profit share is billed in USD at the agreed amount on 607401: expected ('USD', '607401', 300.0) got ('USD', '607401', 300.0)
+CHECK PASS 5 every need of the file is performed and billed: expected [] got []
+CHECK PASS 6 the file is delivered: expected 'delivered' got 'delivered'
+CHECK PASS 6 operations closed: both payers invoiced, parties rated: expected 'closed' got 'closed'
+CHECK PASS 6 nothing left to review (the USD cost billed at the order amount has no variance to review, P2-12): expected False got False
+CHECK PASS 6 the file closes financially with two payers and a USD cost: expected True got True
+CHECK PASS 6 «Margin by file» keeps the agent file with a positive final margin (sales of both payers in EUR above its costs): expected (1, True) got (1, True)
+      final margin 321.65 EUR on sales 768.93
+      cross-trade CSM vat ok base NR · TER->TER: EX · 0% EX S (Ángel: cliente de tercer país → EX · Odoo 17 acción 1232: «0% EX S», 303 [120] · PGC: no sujeta por localización) taxes ['0% EX S']
+CHECK PASS 7 a cross-trade service (third country to third country) is exempt (NR, then EX by the route), VAT decided, in USD: expected (True, True, 'USD') got (True, True, 'USD')
+RESULT 32 passed, 0 failed
+# Exit status: 0
