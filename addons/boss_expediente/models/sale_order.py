@@ -86,6 +86,7 @@ class SaleOrder(models.Model):
             values[file_field] = self.currency_id._convert(self[order_field], company_currency, self.company_id,
                                                            fields.Date.to_date(self.date_order) or fields.Date.today())
         values.update({
+            "customs_mode": self.partner_id.commercial_partner_id.boss_customs_mode or "boss",
             "partner_id": self.partner_id.commercial_partner_id.id, "user_id": self.user_id.id,
             "company_id": self.company_id.id, "haulier_id": self.boss_haulier_id.id,
             "container_ids": [Command.create({"size": c.size, "container_type_id": c.container_type_id.id})

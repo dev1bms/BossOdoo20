@@ -26,6 +26,10 @@ class ResCompany(models.Model):
         help="F0-C55: the operator gets an activity this many working days before the last free day of each container "
              "(demurrage, storage, detention), another on the last free day, and the salesperson one on the first day "
              "with a cost. 0 switches the alerts off.")
+    boss_cutoff_alert_days = fields.Integer(
+        "Cut-off alert: working days before", default=2,
+        help="P4-08 (Cristina, F0-C36): the operator gets an activity this many working days before each cut-off "
+             "of an export file (documents, SI, VGM, port, CFS) and another on the day. 0 switches it off.")
     boss_month_close_copy_user_id = fields.Many2one(
         "res.users", "Month-close reminder: copy to",
         help="F0-A37: on the last day of the month every responsible gets an activity on each file still to invoice or "
@@ -36,6 +40,7 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     boss_free_alert_days = fields.Integer(related="company_id.boss_free_alert_days", readonly=False)
+    boss_cutoff_alert_days = fields.Integer(related="company_id.boss_cutoff_alert_days", readonly=False)
     boss_month_close_copy_user_id = fields.Many2one(related="company_id.boss_month_close_copy_user_id", readonly=False)
 
 
@@ -130,6 +135,53 @@ class BossExpediente(models.Model):
                                        summary=summary, note=note, user_id=(user or self.env.user).id)
                 done = [d for d in (container.free_alerts_done or "").split(",") if d] + [f"{code}-{stage}"]
                 container.free_alerts_done = ",".join(done)
+                count += 1
+        return count
+
+    # --- P4-08: cut-off reminders of export files ---------------------------------------------------------------
+    CUTOFF_FIELDS = (("cutoff_docs", "Documents cut-off"), ("cutoff_si", "SI cut-off"), ("cutoff_vgm", "VGM cut-off"),
+                     ("cutoff", "Port cut-off"), ("cutoff_cfs", "CFS cut-off"))
+
+    def _boss_cutoff_alerts_due(self, today):
+        """[(field, label, cut-off date, stage)] due today for this file: «first» N working days before the cut-off,
+        «day» on the cut-off itself; each once."""
+        self.ensure_one()
+        days_before = self.company_id.boss_cutoff_alert_days
+        if not days_before or self.atd or self.state not in ("open",):
+            return []
+        done = [d for d in (self.cutoff_alerts_done or "").split(",") if d]
+        due = []
+        for field, label in self.CUTOFF_FIELDS:
+            day = self[field]
+            if not day:
+                continue
+            for stage, when in (("day", day), ("first", minus_working_days(day, days_before))):
+                key = f"{field}-{stage}-{day}"
+                if key in done:
+                    break
+                if today >= when:
+                    due.append((field, label, day, stage))
+                    break
+        return due
+
+    @api.model
+    def _boss_cron_cutoff_alerts(self, today=None):
+        """Daily: activities for the cut-offs of the export files not yet departed."""
+        today = today or fields.Date.context_today(self)
+        _ = self.env._
+        count = 0
+        for file in self.search([("direction", "=", "export"), ("state", "=", "open")]):
+            for field, label, day, stage in file._boss_cutoff_alerts_due(today):
+                order = file.sale_order_ids.filtered(lambda o: o.state == "sale")[:1]
+                user = file.user_id or order.user_id or self.env.user
+                summary = (_("%(label)s today (%(day)s)", label=_(label), day=day.strftime("%d/%m/%Y")) if stage == "day"
+                           else _("%(label)s on %(day)s", label=_(label), day=day.strftime("%d/%m/%Y")))
+                note = _("Booking %(booking)s, vessel %(vessel)s. Deliver what this cut-off asks for before the date, "
+                         "or ask the carrier for an extension.", booking=file.booking_ref or "-", vessel=file.vessel or "-")
+                file.activity_schedule("mail.mail_activity_data_todo", date_deadline=max(day, today), summary=summary,
+                                       note=note, user_id=user.id)
+                done = [d for d in (file.cutoff_alerts_done or "").split(",") if d] + [f"{field}-{stage}-{day}"]
+                file.cutoff_alerts_done = ",".join(done)
                 count += 1
         return count
 

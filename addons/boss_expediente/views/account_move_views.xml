@@ -94,6 +94,15 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting id="boss_cutoff_alert_days" string="Cut-off alert (export)"
+                                 help="Activity to the operator this many working days before each cut-off of an export file (documents, SI, VGM, port, CFS) and another on the day (P4-08, Cristina F0-C36). 0 switches it off.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="boss_cutoff_alert_days" string="Working days" class="col-lg-4 o_light_label"/>
+                                    <field name="boss_cutoff_alert_days" class="col-lg-3"/>
+                                </div>
+                            </div>
+                        </setting>
                         <setting id="boss_month_close_copy" string="Month-close reminder"
                                  help="On the last day of the month each responsible gets an activity on every file still to invoice or to close; this person gets the summary (F0-A37, Odoo 17 «CIERRE MENSUAL»).">
                             <field name="boss_month_close_copy_user_id" options="{'no_create': True}"/>

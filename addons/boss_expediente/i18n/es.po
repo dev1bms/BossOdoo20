@@ -5790,3 +5790,113 @@ msgstr "descarga del buque"
 #: model_terms:ir.ui.view,arch_db:boss_expediente.boss_expediente_view_kanban
 msgid "· ETA"
 msgstr "· ETA"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Port cut-off (gate-in)"
+msgstr "Cut-off de puerto (gate-in)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Documents cut-off"
+msgstr "Cut-off de documentos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "SI cut-off"
+msgstr "Cut-off de instrucciones (SI)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "VGM cut-off"
+msgstr "Cut-off de VGM"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "CFS cut-off (LCL)"
+msgstr "Cut-off de CFS (grupaje)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Booking confirmed on"
+msgstr "Booking confirmado el"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Cargo ready (CRD)"
+msgstr "Mercancía lista (CRD)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Master B/L verified"
+msgstr "B/L máster verificado"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Customs handled by"
+msgstr "Aduana a cargo de"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "BOSS clears (its customs broker)"
+msgstr "BOSS despacha (su agente de aduanas)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Customer's own broker"
+msgstr "Agente propio del cliente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "No customs"
+msgstr "Sin aduana"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Customs clearance only"
+msgstr "Solo despacho de aduana"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Customs authorisation"
+msgstr "Autorización aduanera"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Cut-offs (export)"
+msgstr "Cut-offs (exportación)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Cut-off alert (export)"
+msgstr "Aviso de cut-off (exportación)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Cut-off alert: working days before"
+msgstr "Aviso de cut-off: días laborables antes"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Port cut-off"
+msgstr "Cut-off de puerto"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "CFS cut-off"
+msgstr "Cut-off de CFS"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "%(label)s today (%(day)s)"
+msgstr "%(label)s hoy (%(day)s)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "%(label)s on %(day)s"
+msgstr "%(label)s el %(day)s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
+msgid "Booking %(booking)s, vessel %(vessel)s. Deliver what this cut-off asks for before the date, or ask the carrier for an extension."
+msgstr "Booking %(booking)s, buque %(vessel)s. Entregue lo que pide este cut-off antes de la fecha, o pida una prórroga a la naviera."

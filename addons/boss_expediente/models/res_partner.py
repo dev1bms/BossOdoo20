@@ -31,6 +31,13 @@ class ResPartner(models.Model):
         "boss.partner.role", string="Logistic roles",
         help="Roles this party plays in shipments (shipper, consignee, agent, carrier, haulier...).")
     boss_eori = fields.Char("EORI", help="Economic Operators Registration and Identification number (customs).")
+    boss_customs_mode = fields.Selection(
+        [("boss", "BOSS clears (its customs broker)"), ("customer", "Customer's own broker"), ("none", "No customs")],
+        "Customs handled by", default="boss",
+        help="How this customer's declarations are presented; copied to each new file (P4-08).")
+    boss_customs_authorisation = fields.Char(
+        "Customs authorisation", help="Reference of the customs representation authorisation given to BOSS's broker "
+                                      "(or the customer's own authorised economic operator status).")
     boss_mobile = fields.Char("Mobile", help="Mobile phone kept apart from the phone (Odoo 20 has one phone field; migrated from the Odoo 17 mobile, F2).")
     boss_contact_purpose = fields.Selection(
         [("commercial", "Commercial"), ("operations", "Operations"), ("accounting", "Accounting")], "Contact for",

@@ -10,6 +10,15 @@
         <field name="interval_type">days</field>
         <field name="active" eval="True"/>
     </record>
+    <record id="cron_cutoff_alerts" model="ir.cron">
+        <field name="name">BOSS: cut-offs of the export files (P4-08, F0-C36)</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="state">code</field>
+        <field name="code">model._boss_cron_cutoff_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
     <record id="cron_month_close" model="ir.cron">
         <field name="name">BOSS: month-close reminder of the files to invoice or close (F0-A37)</field>
         <field name="model_id" ref="model_boss_expediente"/>

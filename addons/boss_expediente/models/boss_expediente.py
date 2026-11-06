@@ -67,7 +67,8 @@ FROZEN_FIELDS = (
     "booking_ref", "mbl_ref", "hbl_ref", "mawb_ref", "hawb_ref", "vessel", "voyage", "customs_ref", "etd", "eta", "atd",
     "ata", "noa", "foh", "emptying_date", "discharge_date", "pickup_date", "delivery_date", "delivered_date",
     "customs_channel", "customs_admission_date", "customs_release_date", "customs_guarantee",
-    "customs_docs_received_date", "customs_docs_sent_date", "hbl_release", "master_id",
+    "customs_docs_received_date", "customs_docs_sent_date", "hbl_release", "master_id", "booking_date",
+    "cargo_ready_date", "cutoff_docs", "cutoff_si", "cutoff_vgm", "cutoff_cfs", "mbl_verified", "customs_mode",
 )
 FROZEN_STATES = ("closed", "cancel")
 # The status and the financial close of a file change only through its actions (In transit, Delivered, Close
@@ -92,7 +93,8 @@ def file_action():
 # each service («Counts for the customs value as»).
 CUSTOMS_VALUE_CHARGES = ("freight", "THC", "T3", "insurance")
 # Transport data of a consolidation that belongs to the master (MBL / MAWB) and is copied to its houses (ADR-013).
-MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "cutoff", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd",
+MASTER_FIELDS = ("carrier_id", "vessel", "voyage", "cutoff", "cutoff_docs", "cutoff_si", "cutoff_vgm", "cutoff_cfs",
+                 "booking_date", "mbl_verified", "booking_ref", "mbl_ref", "mawb_ref", "etd", "eta", "atd",
                  "ata", "discharge_date")
 # Case and route copied from a master to a new house (the house keeps its own parties, cargo and customs).
 HOUSE_FROM_MASTER = ("business", "direction", "transport_mode", "load_type", "incoterm_id", "origin_country_id",
@@ -278,8 +280,28 @@ class BossExpediente(models.Model):
     hawb_ref = fields.Char("House AWB", tracking=True)
     vessel = fields.Char("Vessel / flight")
     voyage = fields.Char("Voyage")
-    cutoff = fields.Date("Cut-off", tracking=True,
-                         help="Last day to deliver the cargo at the terminal for the booked sailing (Cristina, F0-C36).")
+    cutoff = fields.Date("Port cut-off (gate-in)", tracking=True,
+                         help="Last day to deliver the full container at the terminal for the booked sailing (Cristina, "
+                              "F0-C36).")
+    # Export data Cristina asked for (F0-C36, answered; go-live tracker P4-08): every cut-off of the booking, the
+    # booking and cargo-ready dates, the verified master B/L. Each cut-off gives the operator an activity some
+    # working days before (Settings › BOSS · Files › reminders), like the container free days.
+    cutoff_docs = fields.Date("Documents cut-off", tracking=True,
+                              help="Last day to hand the shipping documents (commercial invoice, packing list, "
+                                   "certificates) to the carrier or the forwarder at origin.")
+    cutoff_si = fields.Date("SI cut-off", tracking=True,
+                            help="Last day to send the shipping instructions (B/L draft data) to the carrier.")
+    cutoff_vgm = fields.Date("VGM cut-off", tracking=True,
+                             help="Last day to declare the verified gross mass of each container.")
+    cutoff_cfs = fields.Date("CFS cut-off (LCL)", tracking=True,
+                             help="Last day to deliver loose cargo at the consolidation warehouse (groupage).")
+    booking_date = fields.Date("Booking confirmed on", tracking=True)
+    cargo_ready_date = fields.Date("Cargo ready (CRD)", tracking=True,
+                                   help="Date the goods are ready to be collected or delivered to the carrier.")
+    mbl_verified = fields.Boolean("Master B/L verified", tracking=True,
+                                  help="The master B/L draft was checked against the booking and the house B/L "
+                                       "(Cristina, F0-C36: Odoo 17 had it).")
+    cutoff_alerts_done = fields.Char(copy=False, help="Cut-off alerts already given (field and date).")
     customs_ref = fields.Char("Customs declaration (DUA)")
     # Customs of the file (the customs unit of Odoo 17 «partida»: channel, admission and release «levante», guarantee;
     # Cristina, «Nuevo Odoo» › OPS- exptes A32-A36). Roadmap item 5.
@@ -296,6 +318,15 @@ class BossExpediente(models.Model):
         [("boss", "BOSS guarantee (aval)"), ("customer", "Customer's guarantee"), ("payment", "Duties paid (form 031)")],
         "Duties paid or guaranteed by",
         help="How the duties of the declaration are paid or guaranteed (Cristina, «Nuevo Odoo» › OPS- exptes A33).")
+    customs_mode = fields.Selection(
+        [("boss", "BOSS clears (its customs broker)"), ("customer", "Customer's own broker"), ("none", "No customs")],
+        "Customs handled by", tracking=True,
+        help="Copied from the customer's contact when the file opens (P4-08); who presents the declaration decides "
+             "whether the customs release is required before delivery.")
+    customs_only = fields.Boolean(
+        "Customs clearance only", compute="_compute_customs_only", store=True,
+        help="A file with a customs scope and no main carriage (Odoo 17 traffic ITB/ETB): it does not travel, so "
+             "booking, master document, arrival and discharge are not required; the customs release is.")
     customs_docs_received_date = fields.Date("Customer documents complete",
                                              help="Every document of the customer for the declaration received (A35).")
     customs_docs_sent_date = fields.Date("Documents sent to the customs broker", help="(A36)")
@@ -1602,6 +1633,12 @@ class BossExpediente(models.Model):
                         "boss_default_file": self.id},
         }
 
+    @api.depends("scope_main", "scope_origin_customs", "scope_destination_customs", "scope_pickup", "scope_delivery")
+    def _compute_customs_only(self):
+        for file in self:
+            file.customs_only = bool((file.scope_origin_customs or file.scope_destination_customs)
+                                     and not file.scope_main and not file.scope_pickup and not file.scope_delivery)
+
     def _boss_conditions_missing(self, step):
         """[(label, level)] of the conditions of a step this file does not meet, each at the level set in Settings ›
         BOSS · Files (required, warning only; «not checked» ones are left out). Steps: in_transit (Odoo 17 practice,
@@ -1610,8 +1647,12 @@ class BossExpediente(models.Model):
         _ = self.env._
         company = self.company_id
         importing, sea = self.direction == "import", self.transport_mode == "sea"
+        if self.customs_only:  # the goods do not travel with this file: only the declaration matters (P4-08)
+            importing = sea = False
         checks = []
-        if step == "in_transit":
+        if step == "in_transit" and self.customs_only:
+            checks = []
+        elif step == "in_transit":
             checks = [
                 ("boss_cond_transit_atd", not self.atd, _("ATD (actual departure)")),
                 ("boss_cond_transit_booking", self.transport_mode in ("sea", "air") and not self.booking_ref,
@@ -1625,7 +1666,8 @@ class BossExpediente(models.Model):
             checks = [
                 ("boss_cond_delivered_ata", importing and not self.ata, _("ATA (actual arrival)")),
                 ("boss_cond_delivered_discharge", importing and sea and not self.discharge_date, _("vessel discharge")),
-                ("boss_cond_delivered_release", (self.scope_origin_customs or self.scope_destination_customs)
+                ("boss_cond_delivered_release", (self.scope_origin_customs or self.scope_destination_customs
+                                                 or self.customs_only) and self.customs_mode != "customer"
                  and not self.customs_release_date, _("customs release (levante)")),
                 ("boss_cond_delivered_pickup", self.scope_pickup and not self.pickup_date, _("pickup date and time")),
                 ("boss_cond_delivered_delivery", self.scope_delivery and not self.delivery_date,

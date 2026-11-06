@@ -379,9 +379,11 @@
                                     <field name="hawb_ref" invisible="transport_mode != 'air'"/>
                                     <field name="vessel" readonly="master_id"/>
                                     <field name="voyage" readonly="master_id"/>
-                                    <field name="cutoff" invisible="transport_mode != 'sea'" readonly="master_id"/>
+                                    <field name="mbl_verified" invisible="transport_mode != 'sea'" readonly="master_id"/>
                                 </group>
                                 <group string="Dates">
+                                    <field name="cargo_ready_date" invisible="direction != 'export'"/>
+                                    <field name="booking_date" invisible="transport_mode not in ('sea', 'air')" readonly="master_id"/>
                                     <field name="atd" readonly="master_id"/>
                                     <field name="foh" invisible="direction != 'export'"/>
                                     <field name="ata" invisible="direction == 'export'" readonly="master_id"/>
@@ -390,6 +392,13 @@
                                     <field name="emptying_date" invisible="direction == 'export' or load_type != 'lcl'"/>
                                     <field name="noa" invisible="direction == 'export' or transport_mode != 'air'"/>
                                     <field name="pickup_date"/>
+                                </group>
+                                <group string="Cut-offs (export)" invisible="direction != 'export' or transport_mode == 'road'">
+                                    <field name="cutoff_docs" readonly="master_id"/>
+                                    <field name="cutoff_si" invisible="transport_mode != 'sea'" readonly="master_id"/>
+                                    <field name="cutoff_vgm" invisible="load_type != 'fcl'" readonly="master_id"/>
+                                    <field name="cutoff" invisible="transport_mode != 'sea' or load_type == 'lcl'" readonly="master_id"/>
+                                    <field name="cutoff_cfs" invisible="load_type != 'lcl'" readonly="master_id"/>
                                     <field name="delivery_date"/>
                                     <field name="delivered_date" invisible="not delivered_date"/>
                                 </group>
@@ -403,6 +412,8 @@
                         <page string="Customs" name="customs">
                             <group>
                                 <group string="Declaration">
+                                    <field name="customs_mode"/>
+                                    <field name="customs_only" invisible="not customs_only"/>
                                     <field name="customs_ref"/>
                                     <field name="customs_broker_id" string="Customs broker"/>
                                     <field name="customs_guarantee"/>
