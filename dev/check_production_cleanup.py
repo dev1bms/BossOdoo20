@@ -45,9 +45,9 @@ for pay in payments:
 drafts.button_cancel()
 for f in all_files.filtered(lambda f: f.state not in ("cancel",)):
     try:
-        f.with_context(file_action=True).write({"state": "cancel"})
+        f.action_cancel()  # the button's own checks apply; what it refuses is listed and cancelled by hand in Odoo
     except Exception as e:  # noqa: BLE001
-        print(f"OUT file {f.name} not cancelled: {e}")
+        print(f"OUT file {f.name} not cancelled by the button: {str(e)[:120]}")
 orders.filtered(lambda o: o.state not in ("cancel",))._action_cancel()
 test_partners.write({"active": False})
 env.cr.commit()  # noqa: F821
