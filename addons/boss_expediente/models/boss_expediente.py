@@ -598,7 +598,8 @@ class BossExpediente(models.Model):
         fields_to_copy = ["partner_id", "user_id", "company_id", "shipper_id", "consignee_id", "notify_id", "agent_id",
                           "carrier_id", "haulier_id", "customs_broker_id", "direction", "transport_mode", "load_type",
                           "incoterm_id", "port_id", "country_id", "inland_state_id", "origin_place",
-                          "destination_place", "goods_description", *[f"scope_{scope}" for scope in SCOPES]]
+                          "destination_place", "origin_country_id", "origin_port_id", "destination_country_id",
+                          "destination_port_id", "goods_description", *[f"scope_{scope}" for scope in SCOPES]]
         values = {}
         for fname in fields_to_copy:
             value = self[fname]

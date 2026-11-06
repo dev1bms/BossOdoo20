@@ -157,7 +157,8 @@ sections = invoice.invoice_line_ids.filtered(lambda l: l.display_type == "line_s
 check("4 one invoice to the customer with the 12 services of the three files and a section per file",
       (customer.id, 12, 3), (invoice.partner_id.commercial_partner_id.id, len(products), len(sections)))
 check("4 the sections name each file, its customer reference, route and container",
-      [f.name for f in files.sorted("name")], [s.name.split(" · ")[0] for s in sections])
+      ([f.name for f in files.sorted("name")], [True] * 3),
+      ([s.name.split(" · ")[0] for s in sections], [" → " in s.name and "40DV" in s.name for s in sections]))
 print("      sections:", [s.name for s in sections])
 check("4 every line carries its file and its file's analytic account, with the quantity of that file",
       {(f.id, 4, True) for f in files},
@@ -168,13 +169,15 @@ check("4 the lines of each file follow its section", True,
       all(sec.sequence < l.sequence < sec.sequence + 100 for sec in sections
           for l in products.filtered(lambda l, s=sec: l.boss_expediente_id.name == s.name.split(" · ")[0])))
 env.invalidate_all()
-check("4 nothing left to invoice on the three files; the invoice is on each of them", ([0.0] * 3, [True] * 3),
-      ([round(f.sudo().amount_to_invoice, 2) for f in files], [invoice in f.invoice_ids for f in files]))
+check("4 nothing left to invoice on the three files (the draft counts); the invoice is on each of them", ([0.0] * 3, [True] * 3),
+      ([sum(f.allocation_ids.mapped("to_invoice_quantity")) for f in files], [invoice in f.invoice_ids for f in files]))
 check("4 a mixed invoice prints no shipment block of its own (ADR-011: the sections identify the files)", 0,
       len(invoice._boss_document_file()))
 invoice.invoice_date = date(2026, 12, 31)
 invoice.action_post()
 check("4 the grouped invoice is posted", "posted", invoice.state)
+env.invalidate_all()
+check("4 once posted, the three files show nothing to invoice", [0.0] * 3, [round(f.sudo().amount_to_invoice, 2) for f in files])
 check("4 invoicing again finds nothing", "refused", outcome(lambda: files.action_invoice_together()))
 
 # ---- 5. supplier bills of the first shipment, then its two closes ----------------------------------------------------------
