@@ -35,6 +35,12 @@ class ResPartner(models.Model):
         [("boss", "BOSS clears (its customs broker)"), ("customer", "Customer's own broker"), ("none", "No customs")],
         "Customs handled by", default="boss",
         help="How this customer's declarations are presented; copied to each new file (P4-08).")
+    boss_invoice_grouping = fields.Selection(
+        [("file", "One invoice per file"), ("grouped", "Several files on one invoice (periodic)")],
+        "Customer invoicing", default="file",
+        help="One invoice per file by default (F0-C59). «Several files on one invoice»: the customer receives a "
+             "periodic invoice that groups its files (as Leroy Merlin in Odoo 17): the files are invoiced together "
+             "from the list of files (Actions › Invoice files together), one section per file.")
     boss_customs_authorisation = fields.Char(
         "Customs authorisation", help="Reference of the customs representation authorisation given to BOSS's broker "
                                       "(or the customer's own authorised economic operator status).")

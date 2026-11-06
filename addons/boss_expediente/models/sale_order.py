@@ -129,6 +129,14 @@ class SaleOrder(models.Model):
                 "views": [(False, "list"), (False, "form")], "domain": [("id", "in", files.ids)],
                 "name": self.env._("Files of %s", self.name)}
 
+    def _get_invoice_grouping_keys(self):
+        """Files invoiced together (P4-10, F0-C59): one invoice per customer and currency, whatever the delivery
+        address of each shipment (Odoo also splits by the shipping address)."""
+        keys = super()._get_invoice_grouping_keys()
+        if self.env.context.get("boss_invoice_together"):
+            keys = [k for k in keys if k != "partner_shipping_id"]
+        return keys
+
     def _get_invoiceable_lines(self, final=False):
         """Invoice selected services only (milestones, partial invoicing): the selection comes from the 'Invoice
         services' wizard; without it the standard rule applies."""

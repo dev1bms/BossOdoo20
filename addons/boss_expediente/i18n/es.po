@@ -5950,3 +5950,43 @@ msgstr "%(move)s factura los servicios de una oferta de %(customer)s: no se pued
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
 msgid "The payer gets its own quotation linked to this file: its services, its prices and currency, its VAT and its invoice. The file sums the sales of every payer."
 msgstr "El pagador recibe su propia oferta ligada a este expediente: sus servicios, sus precios y moneda, su IVA y su factura. El expediente suma las ventas de todos los pagadores."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "Invoice files together"
+msgstr "Facturar expedientes juntos"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "Customer invoicing"
+msgstr "Facturación del cliente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "One invoice per file"
+msgstr "Una factura por expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "Several files on one invoice (periodic)"
+msgstr "Varios expedientes en una factura (periódica)"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "One invoice per file by default (F0-C59). «Several files on one invoice»: the customer receives a periodic invoice that groups its files (as Leroy Merlin in Odoo 17): the files are invoiced together from the list of files (Actions › Invoice files together), one section per file."
+msgstr "Una factura por expediente por defecto (F0-C59). «Varios expedientes en una factura»: el cliente recibe una factura periódica que agrupa sus expedientes (como Leroy Merlin en Odoo 17): los expedientes se facturan juntos desde la lista de expedientes (Acciones › Facturar expedientes juntos), con una sección por expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "Files invoiced together must belong to one customer: %s."
+msgstr "Los expedientes facturados juntos deben ser de un solo cliente: %s."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "Invoiced together with %(files)s: %(moves)s"
+msgstr "Facturado junto con %(files)s: %(moves)s"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p410
+msgid "periodic customer: invoice it together with its other files (list of files › Actions › Invoice files together)"
+msgstr "cliente periódico: factúrelo junto con sus otros expedientes (lista de expedientes › Acciones › Facturar expedientes juntos)"

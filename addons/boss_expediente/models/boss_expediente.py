@@ -1487,6 +1487,10 @@ class BossExpediente(models.Model):
                 step, detail = "perform", _("%s services", len(ordered))
             elif to_invoice:
                 step, detail = "invoice", money(amount_sale - invoiced) if sees_sale else False
+                if file.partner_id.commercial_partner_id.boss_invoice_grouping == "grouped":
+                    detail = (detail + " · " if detail else "") + _(
+                        "periodic customer: invoice it together with its other files (list of files › Actions › "
+                        "Invoice files together)")
             elif file.state == "delivered":
                 step = "close_operations"
                 if file.rating_missing and file.company_id.boss_ratings_to_close:
@@ -1579,6 +1583,111 @@ class BossExpediente(models.Model):
             "views": [(False, "form")], "target": "new", "name": self.env._("Invoice services"),
             "context": {"default_expediente_id": self.id},
         }
+
+    def action_invoice_together(self):
+        """Several files of one customer on one invoice (F0-C59: periodic invoice of customers like Leroy Merlin;
+        P4-10): everything still to invoice in the selected files, one section per file, each line with the quantity
+        of its file and the file's analytic account. One sale line shared by several files (a contract quotation
+        split into shipments) gives one line per file."""
+        self._boss_check_open_financially()
+        _ = self.env._
+        customers = self.partner_id.commercial_partner_id
+        if len(customers) != 1:
+            raise UserError(_("Files invoiced together must belong to one customer: %s.",
+                              ", ".join(customers.mapped("name"))))
+        allocations = self.allocation_ids.filtered(lambda a: a.order_id.state == "sale" and a.to_invoice_quantity > 0)
+        if not allocations:
+            raise UserError(_("Nothing to invoice in %s.", ", ".join(self.mapped("name"))))
+        moves = self._boss_invoice_allocations(allocations)
+        for file in self:
+            file.message_post(body=_("Invoiced together with %(files)s: %(moves)s",
+                                     files=", ".join((self - file).mapped("name")) or "-",
+                                     moves=", ".join(moves.mapped("display_name"))))
+        return self._boss_moves_action(moves)
+
+    def _boss_moves_action(self, moves):
+        if len(moves) == 1:
+            return {"type": "ir.actions.act_window", "res_model": "account.move", "view_mode": "form",
+                    "views": [(False, "form")], "res_id": moves.id}
+        return {"type": "ir.actions.act_window", "res_model": "account.move", "view_mode": "list,form",
+                "views": [(False, "list"), (False, "form")], "domain": [("id", "in", moves.ids)],
+                "name": self.env._("Customer invoices")}
+
+    def _boss_invoice_section_label(self):
+        """One line that identifies the file on a grouped invoice: number, customer reference, route, master document
+        and containers."""
+        self.ensure_one()
+        order = (self.sale_order_ids.filtered(lambda o: o.state == "sale") or self.sale_order_ids)[:1]
+        origin = self.origin_port_id.name or self.origin_place or self.origin_country_id.name or ""
+        destination = self.destination_port_id.name or self.destination_place or self.destination_country_id.name or ""
+        containers = defaultdict(int)
+        for row in self.container_ids:
+            containers[f"{row.size}{row.container_type_id.code or ''}".strip()] += 1
+        parts = [self.name, order.client_order_ref if order else "", f"{origin} → {destination}".strip(" →"),
+                 self.mbl_ref or self.mawb_ref or self.hbl_ref or self.hawb_ref or "",
+                 ", ".join(f"{qty} × {kind}" for kind, qty in sorted(containers.items()))]
+        return " · ".join(p for p in parts if p)
+
+    def _boss_invoice_allocations(self, allocations):
+        """Draft customer invoices for the given parts of accepted sale lines (one or several files of one customer).
+        Each invoice line gets the quantity of its file, the file and the file's analytic account; a sale line shared
+        by several files gives one invoice line per file. Amounts paid on behalf of the customer (duties, import VAT…)
+        go on an invoice of their own, as in Odoo 17 («NORMAL or TAX, since we don't mix»; F0-A21), in the same series
+        (F0-A22), with the mention of art. 78.Tres.3º Ley 37/1992 and the declaration that justifies them (F0-A15).
+        With several files, every invoice gets one section per file."""
+        _ = self.env._
+        files = allocations.expediente_id
+        quantities = {a.id: a.to_invoice_quantity for a in allocations}  # before the new invoice lines count
+        lines = allocations.sale_line_id
+        on_behalf = lines.filtered("product_id.boss_paid_on_behalf")
+        moves = self.env["account.move"]
+        for group in (lines - on_behalf, on_behalf):
+            if group:
+                moves |= group.order_id.with_context(boss_invoice_line_ids=group.ids,
+                                                     boss_invoice_together=len(files) > 1)._create_invoices()
+        for move in moves.filtered(lambda m: m.invoice_line_ids.sale_line_ids <= on_behalf):
+            _lang = self.with_context(lang=move.partner_id.lang).env._
+            mention = (move.company_id.with_context(lang=move.partner_id.lang).boss_paid_on_behalf_note
+                       or _lang("Amounts paid in the name and on behalf of the customer, not included in the taxable "
+                                "base (art. 78.Tres.3º Ley 37/1992)."))
+            refs = [f.customs_ref for f in files if f.customs_ref]
+            if refs:
+                mention += " " + _lang("Customs declaration (DUA): %s.", ", ".join(refs))
+            move.narration = mention
+        plan = self.env.ref("boss_expediente.analytic_plan_files")
+        for item in moves.invoice_line_ids.filtered(lambda l: l.sale_line_ids & lines):
+            parts = allocations.filtered(lambda a: a.sale_line_id in item.sale_line_ids).sorted(
+                lambda a: a.expediente_id.name)
+            present = self.env["account.analytic.account"].browse(
+                {int(k) for c in (item.analytic_distribution or {}) for k in c.split(",") if k.strip()}).exists()
+            kept = present.filtered(lambda a: a.plan_id == plan)
+            for index, allocation in enumerate(parts):
+                file = allocation.expediente_id
+                values = {
+                    "quantity": quantities[allocation.id], "boss_expediente_id": file.id,
+                    "analytic_distribution": with_accounts(item.analytic_distribution,
+                                                           {file.analytic_account_id.id: 100.0},
+                                                           kept | file.analytic_account_id),
+                }
+                if index == 0:
+                    item.write(values)
+                else:  # the same sale line in another file: its own invoice line
+                    item.copy(dict(values, move_id=item.move_id.id,
+                                   sale_line_ids=[Command.set(item.sale_line_ids.ids)]))
+        if len(files) > 1:
+            for move in moves:
+                products = move.invoice_line_ids.filtered(lambda l: l.display_type == "product")
+                by_file = sorted(products.boss_expediente_id, key=lambda f: f.name)
+                sections = []
+                for index, file in enumerate(by_file, start=1):
+                    base = index * 100
+                    sections.append(Command.create({"display_type": "line_section", "sequence": base,
+                                                    "name": file._boss_invoice_section_label()}))
+                    for offset, line in enumerate(products.filtered(lambda l, f=file: l.boss_expediente_id == f),
+                                                  start=1):
+                        line.sequence = base + offset
+                move.write({"invoice_line_ids": sections})
+        return moves
 
     def _boss_payer_partners(self):
         """Who may be quoted and invoiced on this file: its customer and its parties (F0-C56 one sale order per

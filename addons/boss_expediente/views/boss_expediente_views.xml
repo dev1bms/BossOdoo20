@@ -629,6 +629,14 @@
         <field name="state">code</field>
         <field name="code">action = records.action_new_quotation()</field>
     </record>
+    <record id="boss_expediente_action_invoice_together" model="ir.actions.server">
+        <field name="name">Invoice files together</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_invoice_together()</field>
+    </record>
     <record id="boss_expediente_action_new_quotation_payer" model="ir.actions.server">
         <field name="name">Quote to another payer</field>
         <field name="model_id" ref="model_boss_expediente"/>
