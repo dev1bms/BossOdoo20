@@ -12,8 +12,7 @@
                     <field name="pricelist_id" options="{'no_create': True}"/>
                 </group>
                 <div class="alert alert-info" role="status" invisible="not hint"><field name="hint" nolabel="1"/></div>
-                <p class="text-muted">The payer gets its own quotation linked to this file: its services, its prices and
-                    currency, its VAT and its invoice. The file sums the sales of every payer.</p>
+                <p class="text-muted">The payer gets its own quotation linked to this file: its services, its prices and currency, its VAT and its invoice. The file sums the sales of every payer.</p>
                 <footer>
                     <button string="New quotation" type="object" name="action_confirm" class="btn-primary"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>

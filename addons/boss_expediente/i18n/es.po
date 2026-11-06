@@ -5948,6 +5948,5 @@ msgstr "%(move)s factura los servicios de una oferta de %(customer)s: no se pued
 
 #. module: boss_expediente
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
-msgid "The payer gets its own quotation linked to this file: its services, its prices and
-                    currency, its VAT and its invoice. The file sums the sales of every payer."
+msgid "The payer gets its own quotation linked to this file: its services, its prices and currency, its VAT and its invoice. The file sums the sales of every payer."
 msgstr "El pagador recibe su propia oferta ligada a este expediente: sus servicios, sus precios y moneda, su IVA y su factura. El expediente suma las ventas de todos los pagadores."
