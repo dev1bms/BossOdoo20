@@ -118,6 +118,9 @@ line_of(quote, "FAD").write({"boss_supplier_id": broker.id, "boss_manual_cost": 
                              "boss_manual_cost_note": "[PRUEBA] despacho pactado con el agente de aduanas"})
 line_of(quote, "DEM").write({"boss_supplier_id": carrier.id, "boss_manual_cost": 100.0,
                              "boss_manual_cost_note": "[PRUEBA] demoras según la naviera"})
+quote.action_boss_update_costs()  # the engine takes the typed costs (as the e2e does before accepting)
+for l in quote.order_line:
+    print(f"      {l.product_id.default_code:9} cost {l.boss_cost_status} {l.boss_cost_amount:.2f}")
 line_of(quote, "FAD").price_unit = 120.0
 line_of(quote, "DEM").price_unit = 150.0
 check("2 the consignee's quotation is linked to the file, in EUR", (file.id, "EUR"), (quote.boss_expediente_id.id, quote.currency_id.name))
