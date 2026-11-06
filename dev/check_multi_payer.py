@@ -71,9 +71,11 @@ order = env["sale.order"].create({
     "boss_scope_main": True, "boss_scope_destination_customs": True, "boss_etd": date(2026, 11, 20),
     "boss_eta": date(2026, 12, 20), "boss_container_ids": [Command.create({"size": "40", "container_type_id": dv.id})],
     "order_line": [
-        Command.create({"product_id": pft_income.id, "product_uom_id": pft_income.uom_id.id, "price_unit": 500.0}),
-        Command.create({"product_id": product("CSM").id, "product_uom_id": product("CSM").uom_id.id, "price_unit": 60.0}),
+        Command.create({"product_id": pft_income.id, "product_uom_id": pft_income.uom_id.id}),
+        Command.create({"product_id": product("CSM").id, "product_uom_id": product("CSM").uom_id.id}),
     ]})
+line_of(order, "PFT-BOSS").price_unit = 500.0  # BOSS's own fees: the price is typed on the line (as CSM in the e2e)
+line_of(order, "CSM").price_unit = 60.0
 check("1 the agent's quotation is in USD on the USD price list taken from the agent's contact", ("USD", usd_list.id),
       (order.currency_id.name, order.pricelist_id.id))
 for l in order.order_line:
@@ -106,11 +108,13 @@ check("2 the new quotation opens for the consignee, linked to the file, with the
       (ctx.get("default_partner_id"), ctx.get("default_boss_expediente_id"),
        ctx.get("default_boss_origin_port_id") == port("CNSHA", "sea").id, ctx.get("default_boss_business")))
 quote = env["sale.order"].with_context(ctx).create({"partner_id": importer.id, "order_line": [
-    Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id, "price_unit": 120.0,
+    Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id,
                     "boss_supplier_id": broker.id, "boss_manual_cost": 80.0,
                     "boss_manual_cost_note": "[PRUEBA] despacho pactado con el agente de aduanas"}),
-    Command.create({"product_id": product("DEM").id, "product_uom_id": product("DEM").uom_id.id, "price_unit": 150.0}),
+    Command.create({"product_id": product("DEM").id, "product_uom_id": product("DEM").uom_id.id}),
 ]})
+line_of(quote, "FAD").price_unit = 120.0
+line_of(quote, "DEM").price_unit = 150.0
 check("2 the consignee's quotation is linked to the file, in EUR", (file.id, "EUR"), (quote.boss_expediente_id.id, quote.currency_id.name))
 for l in quote.order_line:
     print(f"      {l.product_id.default_code:9} sale {l.price_unit:8.2f} {quote.currency_id.name} vat {l.boss_vat_status} "
@@ -208,8 +212,9 @@ cross = env["sale.order"].create({
     "partner_id": agent.id, "boss_business": "agent", "boss_direction": "import", "boss_transport_mode": "sea",
     "boss_load_type": "fcl", "boss_origin_country_id": ref("base.cn").id, "boss_origin_port_id": port("CNSHA", "sea").id,
     "boss_destination_country_id": ref("base.us").id, "order_line": [
-        Command.create({"product_id": product("CSM").id, "product_uom_id": product("CSM").uom_id.id, "price_unit": 60.0})]})
+        Command.create({"product_id": product("CSM").id, "product_uom_id": product("CSM").uom_id.id})]})
 csm = line_of(cross, "CSM")
+csm.price_unit = 60.0
 print(f"      cross-trade CSM vat {csm.boss_vat_status} {csm.boss_vat_trace or ''} taxes {csm.tax_ids.mapped('name')}")
 check("7 a cross-trade service (third country to third country) is exempt (NR, then EX by the route), VAT decided, in USD",
       (True, True, "USD"), (csm.boss_vat_status != "pending", bool(csm.tax_ids) and all(t.amount == 0 for t in csm.tax_ids),
