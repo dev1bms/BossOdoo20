@@ -153,8 +153,9 @@ check("4 each payer gets its own invoice in its currency: the agent in USD, the 
 pft_inv = inv_usd.invoice_line_ids.filtered(lambda l: l.product_id == pft_income)
 check("4 BOSS's profit share is income on 705005, exempt for the third-country agent (0 %)", ("705005", True),
       (pft_inv.account_id.code, bool(pft_inv.tax_ids) and all(t.amount == 0 for t in pft_inv.tax_ids)))
-check("4 the consignee's invoice carries Spanish VAT (21 %) on its services", True,
-      bool(inv_eur.invoice_line_ids.tax_ids) and all(t.amount == 21 for t in inv_eur.invoice_line_ids.tax_ids))
+check("4 the consignee's invoice follows the Spanish rules per service: customs clearance 21 %, terminal handling exempt "
+      "(art. 22 LIVA, catalogue class EX)", {("FAD", "21% S"), ("THC", "0% EXEMPT Art.22")},
+      {(l.product_id.default_code, ", ".join(l.tax_ids.mapped("name"))) for l in inv_eur.invoice_line_ids if l.product_id})
 check("4 a draft invoice of a file quotation cannot be moved to a stranger by hand", "refused",
       outcome(lambda: inv_eur.with_user(ref("base.user_admin")).write({"partner_id": stranger.id})))
 check("4 ... nor to the other payer of the file: each payer has its own quotation and invoice", "refused",
