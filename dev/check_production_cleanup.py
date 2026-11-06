@@ -1,6 +1,8 @@
 """boss20 as the production database (go-live tracker P3-04): what test data would be cleaned before go-live, the Odoo
-way (cancel/reverse posted test documents, archive test records), and the 2027 sequences. DRY RUN by default: it only
-counts and lists; nothing changes. Run with the token file to apply (after the owners' trial, never before):
+way (cancel/reverse posted test documents, archive test records), and the 2027 sequences. Before go-live EVERY posted
+document, payment, file and quotation of boss20 is a test (some were made on real partner names: AGUILERA, ADUCEX,
+MSC... in the trials of 27-28/10), so the clean-up takes them all. DRY RUN by default: it only counts and lists;
+nothing changes. Run with the token file to apply (after the owners' trial, never before):
     dev/server_shell.sh check_production_cleanup.py                       # dry run
     dev/server_shell.sh check_production_cleanup.py dev/apply-on-boss20.txt   # apply"""
 import os
@@ -34,19 +36,19 @@ if not APPLY:
     raise SystemExit(0)
 # --- apply (the Odoo way): reverse posted test documents, cancel payments, cancel test files and quotations, archive
 reversed_moves = Move
-for move in posted.filtered(lambda m: m.partner_id.commercial_partner_id in test_partners.commercial_partner_id):
+for move in (posted | entries):
     reversal = move._reverse_moves([{"date": move.date, "ref": "[PRUEBA] limpieza antes del arranque"}], cancel=True)
     reversed_moves |= reversal
 print(f"OUT reversed {len(reversed_moves)} test documents")
-for pay in payments.filtered(lambda p: p.partner_id.commercial_partner_id in test_partners.commercial_partner_id):
+for pay in payments:
     pay.action_cancel()
-drafts.filtered(lambda m: m.partner_id.commercial_partner_id in test_partners.commercial_partner_id).button_cancel()
-for f in test_files.filtered(lambda f: f.state not in ("cancel",)):
+drafts.button_cancel()
+for f in all_files.filtered(lambda f: f.state not in ("cancel",)):
     try:
         f.with_context(file_action=True).write({"state": "cancel"})
     except Exception as e:  # noqa: BLE001
         print(f"OUT file {f.name} not cancelled: {e}")
-test_orders.filtered(lambda o: o.state not in ("cancel",))._action_cancel()
+orders.filtered(lambda o: o.state not in ("cancel",))._action_cancel()
 test_partners.write({"active": False})
 env.cr.commit()  # noqa: F821
 print("OUT applied: test documents reversed, payments cancelled, test files and quotations cancelled, [PRUEBA] partners archived")
