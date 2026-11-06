@@ -629,6 +629,14 @@
         <field name="state">code</field>
         <field name="code">action = records.action_new_quotation()</field>
     </record>
+    <record id="boss_expediente_action_new_quotation_payer" model="ir.actions.server">
+        <field name="name">Quote to another payer</field>
+        <field name="model_id" ref="model_boss_expediente"/>
+        <field name="binding_model_id" ref="model_boss_expediente"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_new_quotation_payer()</field>
+    </record>
 
     <!-- The services a next step is about (no supplier, unknown cost, ordered, to review), completed in place. -->
     <record id="boss_expediente_cost_view_list_todo" model="ir.ui.view">

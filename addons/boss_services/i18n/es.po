@@ -1396,3 +1396,13 @@ msgstr ""
 msgid ""
 "Which date of the shipment chooses the version of the supplier tariff. Ocean and air freight always take the departure, import or export (Ángel, 27/10/2026); the other services the key date of the shipment (ETA of an import, ETD of an export)."
 msgstr ""
+
+#. module: boss_services
+#: model:product.template,name:boss_services.service_pft_boss
+msgid "Profit share invoiced to the agent (BOSS share)"
+msgstr "Profit share facturado al agente (parte de BOSS)"
+
+#. module: boss_services
+#: model:product.template,description:boss_services.service_pft_boss
+msgid "BOSS's share of the profit of an agent file, invoiced to the agent when the case asks for it (F0-C58); the amount is agreed per file. The origin agent's share is a cost (PFT-AIR/FCL/LCL), never sold."
+msgstr "Parte de BOSS del beneficio de un expediente de agente, facturada al agente cuando el caso lo pide (F0-C58); el importe se pacta por expediente. La parte del agente de origen es un coste (PFT-AIR/FCL/LCL), nunca se vende."

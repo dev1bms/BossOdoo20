@@ -2,7 +2,7 @@
     "name": "BOSS Shipment Files",
     "summary": "Expediente per accepted shipment: parties, route, cargo, references, purchase needs and RFQs, "
                "selective invoicing and profitability from Odoo documents",
-    "version": "20.0.1.28.10",
+    "version": "20.0.1.28.11",
     "category": "Sales/Sales",
     "author": "BiDATiA",
     "license": "LGPL-3",
@@ -16,6 +16,7 @@
         "wizard/boss_rebill_wizard_views.xml",
         "wizard/boss_expediente_split_views.xml",
         "wizard/boss_expediente_reopen_views.xml",
+        "wizard/boss_payer_quotation_views.xml",
         "views/boss_airline_handler_views.xml",
         "views/boss_operator_assignment_views.xml",
         "views/boss_margin_report_views.xml",

@@ -242,7 +242,7 @@ check("2 «Create RFQs» shown (something to order) and «Invoice services» sho
       (file.has_to_order, file.has_to_invoice))
 bindings = env["ir.actions.actions"].with_user(ops).get_bindings("boss.expediente")["action"]
 check("2 occasional actions in the «Actions» menu of the form; «Add a service» for sales managers only",
-      ["Move services to another file", "Recompute expected cost", "Sell another service"],
+      ["Move services to another file", "Quote to another payer", "Recompute expected cost", "Sell another service"],
       sorted(b["name"] for b in bindings if b.get("binding_view_types") == "form"))
 gap("S1 milestone plan of the traffic (an activity per step)", "feature",
     "F5 (Cristina's list: Nuevo Odoo › Hoja1 A13/A19)", "the next step guides the file; operator from the table")

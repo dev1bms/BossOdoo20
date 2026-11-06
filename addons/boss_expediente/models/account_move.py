@@ -210,6 +210,22 @@ class AccountMove(models.Model):
                 problems.append(_("%s: not invoiced to the customer yet", need.display_name))
         return problems
 
+    def write(self, vals):
+        # The payer of an invoice is the customer of its quotation: changing it by hand would move the invoice to
+        # another partner while VAT, prices and the file's sales keep the first one (P4-09). Another payer gets its
+        # own quotation on the file («Quote to another payer»).
+        if "partner_id" in vals and not self.env.su:
+            partner = self.env["res.partner"].browse(vals["partner_id"]).commercial_partner_id
+            for move in self.filtered(lambda m: m.move_type in ("out_invoice", "out_refund")
+                                      and m.invoice_line_ids.sale_line_ids):
+                order_partner = move.invoice_line_ids.sale_line_ids.order_id.partner_id.commercial_partner_id
+                if partner not in order_partner:
+                    raise UserError(self.env._(
+                        "%(move)s invoices the services of a quotation of %(customer)s: it cannot be moved to "
+                        "%(partner)s. Make a quotation to that payer on the file instead.", move=move.display_name,
+                        customer=", ".join(order_partner.mapped("name")), partner=partner.name))
+        return super().write(vals)
+
     def _post(self, soft=True):
         self._boss_check_post()
         posted = super()._post(soft)

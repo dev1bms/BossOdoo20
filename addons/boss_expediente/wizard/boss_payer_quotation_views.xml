@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="boss_payer_quotation_view_form" model="ir.ui.view">
+        <field name="name">boss.payer.quotation.form</field>
+        <field name="model">boss.payer.quotation</field>
+        <field name="arch" type="xml">
+            <form string="Quotation to another payer">
+                <group>
+                    <field name="expediente_id" readonly="1"/>
+                    <field name="allowed_payer_ids" invisible="1"/>
+                    <field name="payer_id" options="{'no_create': True}"/>
+                    <field name="pricelist_id" options="{'no_create': True}"/>
+                </group>
+                <div class="alert alert-info" role="status" invisible="not hint"><field name="hint" nolabel="1"/></div>
+                <p class="text-muted">The payer gets its own quotation linked to this file: its services, its prices and
+                    currency, its VAT and its invoice. The file sums the sales of every payer.</p>
+                <footer>
+                    <button string="New quotation" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

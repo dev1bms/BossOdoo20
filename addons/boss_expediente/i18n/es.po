@@ -5900,3 +5900,54 @@ msgstr "%(label)s el %(day)s"
 #: model:ir.model.fields,field_description:boss_expediente.field_boss_expediente__p408
 msgid "Booking %(booking)s, vessel %(vessel)s. Deliver what this cut-off asks for before the date, or ask the carrier for an extension."
 msgstr "Booking %(booking)s, buque %(vessel)s. Entregue lo que pide este cut-off antes de la fecha, o pida una prórroga a la naviera."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Quote to another payer"
+msgstr "Ofertar a otro pagador"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Quotation to another payer"
+msgstr "Oferta a otro pagador"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Quotation to another payer of the file"
+msgstr "Oferta a otro pagador del expediente"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Payer"
+msgstr "Pagador"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Price list"
+msgstr "Lista de precios"
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Freight collect (%s): the freight is invoiced to the payer at destination (consignee or agent)."
+msgstr "Flete collect (%s): el flete se factura al pagador en destino (destinatario o agente)."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "Freight prepaid (%s): the freight is invoiced to the orderer; other services may go to another payer."
+msgstr "Flete prepaid (%s): el flete se factura al ordenante; otros servicios pueden ir a otro pagador."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "%(order)s: %(partner)s is neither the customer nor a party (consignee, shipper, agent, notify) of file %(file)s. Put it on the file first, then quote to it."
+msgstr "%(order)s: %(partner)s no es el cliente ni una parte (destinatario, cargador, agente, notify) del expediente %(file)s. Póngalo primero en el expediente y después ofértele."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "%(move)s invoices the services of a quotation of %(customer)s: it cannot be moved to %(partner)s. Make a quotation to that payer on the file instead."
+msgstr "%(move)s factura los servicios de una oferta de %(customer)s: no se puede pasar a %(partner)s. Haga una oferta a ese pagador en el expediente."
+
+#. module: boss_expediente
+#: model:ir.model.fields,field_description:boss_expediente.field_boss_payer_quotation__p409
+msgid "The payer gets its own quotation linked to this file: its services, its prices and
+                    currency, its VAT and its invoice. The file sums the sales of every payer."
+msgstr "El pagador recibe su propia oferta ligada a este expediente: sus servicios, sus precios y moneda, su IVA y su factura. El expediente suma las ventas de todos los pagadores."

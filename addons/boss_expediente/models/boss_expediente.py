@@ -1580,17 +1580,39 @@ class BossExpediente(models.Model):
             "context": {"default_expediente_id": self.id},
         }
 
-    def action_new_quotation(self):
-        """A service sold later: a new quotation of the same customer, linked to this file, with its shipment data."""
+    def _boss_payer_partners(self):
+        """Who may be quoted and invoiced on this file: its customer and its parties (F0-C56 one sale order per
+        payer; F0-C57 the freight goes to the orderer when prepaid and to the payer at destination when collect)."""
+        self.ensure_one()
+        parties = self.partner_id | self.consignee_id | self.shipper_id | self.agent_id | self.notify_id
+        return parties.commercial_partner_id
+
+    def _boss_quotation_action(self, partner, pricelist=None):
+        """A new quotation of this file for the given payer, with the shipment data of the file."""
         self.ensure_one()
         self._boss_check_active()
-        context = {"default_partner_id": self.partner_id.id, "default_boss_expediente_id": self.id,
+        context = {"default_partner_id": partner.id, "default_boss_expediente_id": self.id,
                    "default_origin": self.name}
+        if pricelist:
+            context["default_pricelist_id"] = pricelist.id
         for fname, order_field in FROM_ORDER.items():
             value = self[fname]
             context[f"default_{order_field}"] = value.id if isinstance(value, models.BaseModel) else value
         return {"type": "ir.actions.act_window", "res_model": "sale.order", "view_mode": "form",
                 "views": [(False, "form")], "name": self.env._("New quotation"), "context": context}
+
+    def action_new_quotation(self):
+        """A service sold later: a new quotation of the same customer, linked to this file, with its shipment data."""
+        self.ensure_one()
+        return self._boss_quotation_action(self.partner_id)
+
+    def action_new_quotation_payer(self):
+        """A quotation to another payer of the file (consignee, shipper, agent, notify party): P4-09."""
+        self.ensure_one()
+        self._boss_check_active()
+        return {"type": "ir.actions.act_window", "res_model": "boss.payer.quotation", "view_mode": "form",
+                "views": [(False, "form")], "target": "new", "name": self.env._("Quotation to another payer"),
+                "context": {"default_expediente_id": self.id}}
 
     def action_add_service(self):
         """A service sold after acceptance, added to the accepted order of the file (explicit change, reason)."""

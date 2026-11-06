@@ -32,6 +32,12 @@ TEMPLATES = {
     # customs clearance only (Odoo 17 traffic ITB, e.g. E261189 with a BOSS guarantee): no carriage, the declaration
     # and its disbursements; CAU/QBR and ARA/IVA are added on the quotation when they apply (go-live tracker P4-08)
     "ITB · Solo despacho de aduana (importación) · servicios fijos": ["FAD"],
+    # agent business (Odoo 17 traffic IMA, business of the agent's client): the import FCL services, quoted to the
+    # agent in USD on the USD price list (go-live tracker P4-09). The profit share is settled per case (F0-C58): BOSS's
+    # share is added as PFT-BOSS when invoiced to the agent; the origin agent's share is a cost of the file (PFT-FCL),
+    # never sold (P12). The freight goes to the payer the Incoterm gives (F0-C57).
+    "IMA FOB · Importación marítima FCL de agente · servicios fijos": ["FMI", "THC", "BL", "GLO-CCC", "T3-PAD", "FAD",
+                                                                      "CSM", "TTE-FCL"],
 }
 EN_NAMES = dict(zip(TEMPLATES, [
     "IAB FOB · Air import FOB · fixed services",
@@ -42,6 +48,7 @@ EN_NAMES = dict(zip(TEMPLATES, [
     "EMB LCL · Sea export LCL (groupage) · fixed services",
     "TTE · Road transport · fixed services",
     "ITB · Customs clearance only (import) · fixed services",
+    "IMA FOB · Agent sea import FCL · fixed services",
 ]))
 # The case of each template (ADR-006, meeting with Ángel 27/10/2026: the template fills the quotation). Direction, mode
 # and whose client come from the case code (IAB = import · air · BOSS client, decision B13); the incoterm from the name;
@@ -63,6 +70,8 @@ CASES = {
                     incoterm=False, scope=("pickup", "origin_customs", "main")),
     "ITB": dict(boss_business="boss", boss_direction="import", boss_transport_mode="sea", boss_load_type="fcl",
                 incoterm=False, scope=("destination_customs",)),
+    "IMA FOB": dict(boss_business="agent", boss_direction="import", boss_transport_mode="sea", boss_load_type="fcl",
+                    incoterm="FOB", scope=("main", "destination_customs", "delivery")),
     # road: national, import or export, chosen on the quotation (customs FAD/DEX added when BOSS clears)
     "TTE": dict(boss_business="boss", boss_direction=False, boss_transport_mode="road", boss_load_type="road",
                 incoterm=False, scope=("main", "delivery")),

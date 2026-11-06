@@ -63,11 +63,15 @@ class SaleOrder(models.Model):
 
     @api.constrains("boss_expediente_id", "partner_id")
     def _check_boss_expediente_customer(self):
+        """One sale order per payer (F0-C56, go-live tracker P4-09): a file takes the orders of its customer and of
+        its other parties (consignee, shipper, agent abroad, notify party), each invoiced to that party. Any other
+        partner is refused: a third party is first made a party of the file."""
         for order in self.filtered("boss_expediente_id"):
-            if order.partner_id.commercial_partner_id != order.boss_expediente_id.partner_id.commercial_partner_id:
+            if order.partner_id.commercial_partner_id not in order.boss_expediente_id._boss_payer_partners():
                 raise ValidationError(self.env._(
-                    "%(order)s and file %(file)s have different customers.", order=order.name,
-                    file=order.boss_expediente_id.name))
+                    "%(order)s: %(partner)s is neither the customer nor a party (consignee, shipper, agent, notify) "
+                    "of file %(file)s. Put it on the file first, then quote to it.", order=order.name,
+                    partner=order.partner_id.commercial_partner_id.name, file=order.boss_expediente_id.name))
 
     def _boss_file_values(self):
         """A new file starts from the accepted quotation; afterwards each keeps its own data."""

@@ -996,7 +996,7 @@
         <field name="name">Origin agent profit share (air, per kg)</field>
         <field name="default_code">PFT-AIR</field>
         <field name="type">service</field>
-        <field name="categ_id" ref="product_category_services"/>
+        <field name="categ_id" ref="product_category_profit_share"/>
         <field name="list_price" eval="0.0"/>
         <field name="uom_id" ref="uom_kg_air"/>
         <field name="uom_ids" eval="[Command.set([])]"/>
@@ -1015,7 +1015,7 @@
         <field name="name">Origin agent profit share (FCL, per container)</field>
         <field name="default_code">PFT-FCL</field>
         <field name="type">service</field>
-        <field name="categ_id" ref="product_category_services"/>
+        <field name="categ_id" ref="product_category_profit_share"/>
         <field name="list_price" eval="0.0"/>
         <field name="uom_id" ref="uom_container"/>
         <field name="uom_ids" eval="[Command.set([])]"/>
@@ -1034,7 +1034,7 @@
         <field name="name">Origin agent profit share (LCL, per m³)</field>
         <field name="default_code">PFT-LCL</field>
         <field name="type">service</field>
-        <field name="categ_id" ref="product_category_services"/>
+        <field name="categ_id" ref="product_category_profit_share"/>
         <field name="list_price" eval="0.0"/>
         <field name="uom_id" ref="uom_m3"/>
         <field name="uom_ids" eval="[Command.set([])]"/>
@@ -1045,6 +1045,25 @@
         <field name="boss_pricing_mode">tariff</field>
         <field name="boss_cost_method">per_unit</field>
         <field name="description">Cost agreed with the origin agent, with minimum and maximum; never sold as a line.</field>
+        <field name="boss_vat_class">NR</field>
+        <field name="boss_o17_concept_id" eval="221"/>
+        <field name="boss_o17_concept_code">PFT</field>
+    </record>
+    <record id="service_pft_boss" model="product.template">
+        <field name="name">Profit share invoiced to the agent (BOSS share)</field>
+        <field name="default_code">PFT-BOSS</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_profit_share"/>
+        <field name="list_price" eval="0.0"/>
+        <field name="uom_id" ref="uom_shipment"/>
+        <field name="uom_ids" eval="[Command.set([])]"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="supplier_taxes_id" eval="[Command.clear()]"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="boss_pricing_mode">own</field>
+        <field name="boss_cost_method">none</field>
+        <field name="description">BOSS's share of the profit of an agent file, invoiced to the agent when the case asks for it (F0-C58); the amount is agreed per file. The origin agent's share is a cost (PFT-AIR/FCL/LCL), never sold.</field>
         <field name="boss_vat_class">NR</field>
         <field name="boss_o17_concept_id" eval="221"/>
         <field name="boss_o17_concept_code">PFT</field>
