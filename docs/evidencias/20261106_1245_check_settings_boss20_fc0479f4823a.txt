@@ -1,0 +1,30 @@
+# Evidence: dev/check_settings.py on boss20
+# Date: 2026-11-06 12:45    
+# Commit tested: fc0479f4823a (docs: evidence of the portal HTTP checks 27/0 with the payment rule on the payment controller)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:45:49,588 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:45:49,649 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:45:50,476 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 Settings has the three BOSS tabs and the Sales tab no longer holds BOSS settings: expected (True, True, True, False) got (True, True, True, False)
+CHECK PASS 1 the defaults equal the former code values: expected (30, 7, 10.0, 10.0, 167, 333, 1000, 7, 'chargeable', 3, True) got (30, 7, 10.0, 10.0, 167, 333, 1000, 7, 'chargeable', 3, True)
+CHECK PASS 2 air chargeable weight with the default factor 167: expected 167.0 got 167.0
+CHECK PASS 3 a new factor (200) applies to the quotations measured afterwards, not to the existing ones: expected (167.0, 200.0) got (167.0, 200.0)
+CHECK PASS 3 ... and to an existing quotation when its measures change: expected 220.0 got 220.0
+CHECK PASS 4 a service without a rule: 10 % minimum, within the tolerance: expected (10.0, False) got (10.0, False)
+CHECK PASS 5 ... 20 % and 2 of tolerance from Settings: warned: expected (20.0, True) got (20.0, True)
+CHECK PASS 6 a price valid 20 more days is «expiring» with the default 30: expected 'expiring' got 'expiring'
+CHECK PASS 7 ... and «current» when the setting is 10 days: expected 'current' got 'current'
+CHECK PASS 8 a new master proposes the split of Settings: expected 'chargeable' got 'chargeable'
+CHECK PASS 9 ... «equal parts» once the setting changes: expected 'equal' got 'equal'
+CHECK PASS 10 delivered 5 days ago: no warning with 7 days to close: expected False got False
+CHECK PASS 11 ... warns with 3 days in Settings: expected True got True
+CHECK PASS 12 the house B/L prints the originals and the place of issue of Settings: expected (True, True) got (True, True)
+CHECK PASS 13 operation date switched off: the invoice has none: expected False got False
+CHECK PASS 14 a zero or negative value is refused (volume factor 0, validity -1, originals 0): expected (True, True, True) got (True, True, True)
+CHECK PASS 15 the filter «Delivered, due to close» follows the days of Settings (5 days ago: due with 3, not with 7): expected (True, False) got (True, False)
+RESULT 17 passed, 0 failed
+# Exit status: 0

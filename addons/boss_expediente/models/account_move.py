@@ -244,6 +244,12 @@ class AccountMove(models.Model):
                                       line.product_id.display_name))
                 if move.move_type == "in_invoice" and move.company_id.boss_bill_before_invoice == "block":
                     problems += move._boss_bill_order_problems()
+                if move.duplicated_ref_ids and not (self.env.su or self.env.user.has_group("account.group_account_manager")):
+                    # a bill with a supplier reference already registered is posted only by an accounting manager
+                    # (P2-12 default rule, 05/11/2026); Odoo alone only warns
+                    problems.append(_("supplier reference «%(ref)s» already registered on %(moves)s: an accounting "
+                                      "manager confirms it is not a duplicate", ref=move.ref,
+                                      moves=", ".join(move.duplicated_ref_ids.mapped("name"))))
             if problems:
                 raise UserError(_("%(move)s cannot be posted:\n%(problems)s",
                                   move=move.display_name, problems="\n".join(f"- {p}" for p in problems)))
@@ -261,9 +267,41 @@ class AccountMove(models.Model):
         self._boss_check_payment_allowed()
         return super().action_register_payment()
 
+    def _boss_late_bill_needs(self):
+        """A posted vendor bill line that reaches a file through its analytic account, without purchase line and
+        without a service line to receive it (a late detention bill on a closed file, for instance), gets its own
+        service line of the file: extra cost «to approve», billed without order. The financial close then waits
+        for the decision re-invoice or absorb (P2-12 default rule, 05/11/2026)."""
+        Need = self.env["boss.expediente.cost"].sudo()
+        File = self.env["boss.expediente"].sudo()
+        created = Need
+        for move in self.filtered(lambda m: m.move_type == "in_invoice" and m.state == "posted"):
+            for line in move.invoice_line_ids.filtered(
+                    lambda l: l.display_type == "product" and l.product_id and l.quantity and not l.purchase_line_id
+                    and l.product_id.boss_pricing_mode and not l.product_id.boss_paid_on_behalf):
+                accounts = line.distribution_analytic_account_ids
+                if not accounts:
+                    continue
+                for file in File.search([("analytic_account_id", "in", accounts.ids)]):
+                    if Need.search_count([("expediente_id", "=", file.id), ("product_id", "=", line.product_id.id),
+                                          ("without_order", "=", True)]):
+                        continue
+                    need = Need.create({
+                        "expediente_id": file.id, "kind": "extra", "product_id": line.product_id.id,
+                        "name": line.name or line.product_id.display_name, "partner_id": move.partner_id.id,
+                        "currency_id": move.currency_id.id, "uom_id": line.product_uom_id.id or line.product_id.uom_id.id,
+                        "quantity": line.quantity, "expected_unit_cost": line.price_unit, "without_order": True,
+                        "extra_class": "approval"})
+                    created |= need
+                    file.message_post(body=self.env._(
+                        "%(bill)s: late cost %(service)s received without a service line. Added as an extra cost to "
+                        "approve: decide whether it is re-invoiced or borne by BOSS before the financial close.",
+                        bill=move.display_name, service=line.product_id.display_name))
+        return created
+
     def _boss_refresh_file_needs(self):
         """Services billed without purchase order follow their bills (state and billed amount)."""
-        needs = self.env["boss.expediente.cost"]
+        needs = self._boss_late_bill_needs()
         for move in self.filtered(lambda m: m.move_type in BILL_TYPES):
             needs |= move._boss_bill_needs().filtered("without_order")
         if needs:

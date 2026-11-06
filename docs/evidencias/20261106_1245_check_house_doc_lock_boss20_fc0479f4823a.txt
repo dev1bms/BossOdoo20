@@ -1,0 +1,21 @@
+# Evidence: dev/check_house_doc_lock.py on boss20
+# Date: 2026-11-06 12:45    
+# Commit tested: fc0479f4823a (docs: evidence of the portal HTTP checks 27/0 with the payment rule on the payment controller)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:46:03,415 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:46:03,476 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:46:04,301 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 issuing keeps its PDF on the file (issue 1): expected (1, 'HBL E269022 - issue 1.pdf') got (1, 'HBL E269022 - issue 1.pdf')
+CHECK PASS 2 after changing the consignee, a reprint gives the issued copy (old consignee), nothing new is kept: expected (True, False, 1) got (True, False, 1)
+CHECK PASS 3 re-issue: issue 2 kept beside issue 1, the reason in the history: expected (2, 2, True) got (2, 2, True)
+CHECK PASS 4 the B/L prints the Odoo 17 clause and excess value declaration: expected (True, True) got (True, True)
+CHECK PASS 5 a description that does not fit its box goes to an attached sheet: expected (True, True, True) got (True, True, True)
+CHECK PASS 6 a draft air waybill is one front page, no copies and no conditions: expected (True, False, False) got (True, False, False)
+CHECK PASS 7 the issued air waybill: three originals and seven copies, each with its conditions of contract: expected (True, True, True, 10, 10) got (True, True, True, 10, 10)
+CHECK PASS 8 the air waybill keeps its PDF too: expected 1 got 1
+RESULT 8 passed, 0 failed
+# Exit status: 0

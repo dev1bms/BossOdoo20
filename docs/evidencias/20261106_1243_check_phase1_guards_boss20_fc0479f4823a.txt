@@ -1,0 +1,27 @@
+# Evidence: dev/check_phase1_guards.py on boss20
+# Date: 2026-11-06 12:44    
+# Commit tested: fc0479f4823a (docs: evidence of the portal HTTP checks 27/0 with the payment rule on the payment controller)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:44:08,629 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:44:08,690 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:44:09,523 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS P1-21 admin: direct write of state='sale' is refused: expected 'UserError' got 'UserError'
+CHECK PASS P1-21 admin: the order stays a draft: expected 'draft' got 'draft'
+CHECK PASS P1-21 salesperson: direct write of state='sale' is refused: expected 'UserError' got 'UserError'
+CHECK PASS P1-21 salesperson: direct write of state='sent' is refused: expected 'UserError' got 'UserError'
+CHECK PASS P1-21 button Send (mark as sent) still works: expected 'sent' got 'sent'
+CHECK PASS P2-18 a snapshot «sent» is taken when the quotation is marked as sent: expected 1 got 1
+CHECK PASS P2-18 a change on a sent quotation does not re-price the line: expected 0.0 got 0.0
+CHECK PASS P2-18 «Update costs» still runs on a sent quotation: expected 'allowed' got 'allowed'
+CHECK PASS P1-21 button Set to quotation still works: expected 'draft' got 'draft'
+CHECK PASS P1-21 button Cancel still works: expected 'cancel' got 'cancel'
+CHECK PASS P1-21 writes without state are untouched: expected True got True
+CHECK PASS P1-20 action_create_invoice(attachment_ids=…) on a plain order works: expected True got True
+CHECK PASS P1-20 the uploaded attachment reaches the bill's chatter: expected True got True
+CHECK PASS P1-20 action_create_invoice(attachment_ids=False) on a file's order: no TypeError: expected 'ok' got 'ok'
+RESULT 14 passed, 0 failed
+# Exit status: 0

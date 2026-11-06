@@ -1,0 +1,20 @@
+# Evidence: dev/check_rate_matrix.py on boss20
+# Date: 2026-11-06 12:45    
+# Commit tested: fc0479f4823a (docs: evidence of the portal HTTP checks 27/0 with the payment rule on the payment controller)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:45:17,985 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:45:18,045 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:45:18,869 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 the IMB FOB template gives the incoterm FOB and its conditions in Spanish: expected ('FOB', True) got ('FOB', True)
+CHECK PASS 2 one column per container size and type, one row per service, the B/L in every column: expected (["20' DV", "40' HC"], 2, True) got (["20' DV", "40' HC"], 2, True)
+CHECK PASS 3 the total of each column is one container of that size in one shipment (THC + BL): expected [435.0, 525.0] got [435.0, 525.0]
+CHECK PASS 4 a supplier price in USD: the rate of Odoo and the totals in USD are given: expected ('USD', True) got ('USD', True)
+CHECK PASS 5 the PDF shows the rates by size with their totals and exchange rate, not the standard lines or total: expected (True, True, True, True, False, False) got (True, True, True, True, False, False)
+CHECK PASS 6 a shipment quotation keeps the standard lines and total: expected (False, True) got (False, True)
+CHECK PASS 7 a maximum per shipment: 2 containers × 60 = 120, charged 90: expected (2.0, 'ok', 90.0) got (2.0, 'ok', 90.0)
+RESULT 7 passed, 0 failed
+# Exit status: 0

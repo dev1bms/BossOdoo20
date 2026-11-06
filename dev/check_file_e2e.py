@@ -538,14 +538,13 @@ action = go(acct)
 # price and rate variances (gap declared below).
 fx_only = sorted(n.product_id.default_code for n in file.cost_ids.filtered("variance_to_review")
                  if n.currency_id != env.company.currency_id)
-if fx_only:
-    print(f"      exchange-rate-only variances to review: {fx_only}")
-check("10 «Go» opens the services to review (variances)", sorted(["BL", "THC"] + fx_only),
+check("10 a USD cost billed at the order price shows no variance to review (exchange rate only, P2-12)", [], fx_only)
+check("10 «Go» opens the services to review (variances)", ["BL", "THC"],
       sorted(env["boss.expediente.cost"].browse(action["domain"][0][2]).mapped("product_id.default_code")))
 refused("10 the financial close waits for the cost variances to be reviewed",
         lambda: file.with_user(acct).action_close_financial())
 to_review = file.cost_ids.filtered("variance_to_review")
-check("10 variances to review: THC billed above the order, BL lowered by the supplier credit note", sorted(["BL", "THC"] + fx_only),
+check("10 variances to review: THC billed above the order, BL lowered by the supplier credit note", ["BL", "THC"],
       sorted(to_review.mapped("product_id.default_code")))
 to_review.with_user(acct).write({"variance_reviewed": True,
                                  "variance_note": "[PRUEBA] revisado: tarifa nueva y abono de la naviera"})

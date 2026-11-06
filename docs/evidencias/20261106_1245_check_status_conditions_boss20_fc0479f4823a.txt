@@ -1,0 +1,35 @@
+# Evidence: dev/check_status_conditions.py on boss20
+# Date: 2026-11-06 12:45    
+# Commit tested: fc0479f4823a (docs: evidence of the portal HTTP checks 27/0 with the payment rule on the payment controller)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.8 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:45:36,335 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:45:36,396 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:45:37,223 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 defaults = today: leaving warns, delivering and closing are required: expected ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block') got ('warn', 'warn', 'warn', 'warn', 'block', 'block', 'block', 'block', 'block', 'block', 'block', 'block')
+CHECK PASS 2 by default a file leaves without ATD, with the warning in its history: expected ('accepted', True) got ('accepted', True)
+      «E269011 cannot leave yet, it lacks: ATD (actual departure) (required in Settings › BOSS · Files).»
+CHECK PASS 3 ATD set to «required»: the file cannot leave without it: expected 'refused' got 'refused'
+      «E269012 cannot be marked delivered yet, it lacks: vessel discharge, delivery date and time, house B/L released or sea waybill. Fill them in «Reference»
+CHECK PASS 4 by default «Delivered» needs the discharge, the delivery date and the B/L released: expected 'refused' got 'refused'
+CHECK PASS 5 discharge and delivery date not checked, B/L a warning: delivered, with the warning in the history: expected ('accepted', True) got ('accepted', True)
+CHECK PASS 6 the next step no longer lists what is not checked: expected False got False
+      «E269013 cannot close operations yet: margin below the minimum ([PRUEBA] Flete: margen bajo): a sales manager writes why in «Closed with a low margin b»
+CHECK PASS 7 a low margin without a reason stops the close by default: expected 'refused' got 'refused'
+CHECK PASS 8 set to «warning only»: the file closes, the warning stays in its history: expected ('accepted', True) got ('accepted', True)
+CHECK PASS 9 set to «not checked»: the file closes, nothing written: expected ('accepted', False) got ('accepted', False)
+      «E269015 cannot close operations yet: amounts paid on behalf must be re-invoiced exactly ([PRUEBA] IVA: suplido refacturado distinto): correct the sale»
+CHECK PASS 10 «not checked» on the margin never relaxes the exact re-invoicing of amounts paid on behalf: expected 'refused' got 'refused'
+CHECK PASS 11 the warning is written only when the file closes (here the ratings stop it): expected ('delivered', 0) got ('delivered', 0)
+      «The status and the financial close of a file change only with its buttons (In transit, Delivered, Close operations…), which check the conditions of Se»
+      «The status and the financial close of a file change only with its buttons (In transit, Delivered, Close operations…), which check the conditions of Se»
+CHECK PASS 12 a direct write of the status is refused; the button checks the conditions: expected ('refused', 'refused', 'open') got ('refused', 'refused', 'open')
+      «E269017 is closed financially: an accounting manager reopens it financially first.»
+      «E269018: «Close operations» is not possible from the status «Open».»
+CHECK PASS 13 a financially closed file is not reopened by «Reopen»; «Close operations» needs a delivered file: expected ('refused', 'refused') got ('refused', 'refused')
+CHECK PASS 14 a change of level is kept in the company's history: expected True got True
+RESULT 14 passed, 0 failed
+# Exit status: 0

@@ -7,9 +7,9 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 FAST=(check_phase1_guards.py check_role_guards.py check_quote_flow.py check_default_markup.py check_rate_matrix.py
-      check_status_conditions.py check_settings.py check_house_doc_lock.py check_portal_qweb.py)
+      check_status_conditions.py check_settings.py check_house_doc_lock.py)
 FULL=("${FAST[@]}" check_file_e2e.py check_file_consolidation.py check_file_close.py check_route_cases.py
-      check_vat_import_freight.py check_margin_rules.py)
+      check_vat_import_freight.py check_margin_rules.py check_portal_http.py check_late_costs.py)
 SET=("${FULL[@]}"); [ "${1:-}" = fast ] && SET=("${FAST[@]}")
 COMMIT=$(git rev-parse --short=12 HEAD)
 echo "regression on boss20 · commit $COMMIT · $(date '+%F %H:%M') · ${#SET[@]} scripts"

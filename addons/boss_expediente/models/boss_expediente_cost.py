@@ -304,12 +304,22 @@ class BossExpedienteCost(models.Model):
             unknown = (not need.closed and (not confirmed or currency.is_zero(ordered)) and not billed
                        and need.currency_id.is_zero(need.expected_unit_cost) and need.accepted_cost_kind != "zero")
             variance = billed - reference if need.state in ("billed", "closed") and billed else 0.0
+            # A cost in another currency billed at the ordered amount in that currency differs in euros only by the
+            # exchange rate: that difference is booked as such and is not a variance to review (P2-12, 05/11/2026).
+            fx_only = False
+            if confirmed and need.currency_id != currency:
+                items = need._boss_active_lines().invoice_lines.filtered(
+                    lambda l: l.parent_state == "posted" and l.display_type == "product"
+                    and l.currency_id == need.currency_id)
+                billed_cur = sum(items.mapped("amount_currency"))
+                ordered_cur = sum(l.price_subtotal for l in confirmed if l.currency_id == need.currency_id)
+                fx_only = bool(items) and need.currency_id.is_zero(billed_cur - ordered_cur)
             need.update({
                 "po_to_review": po_to_review and need.state not in ("billed", "closed"),
                 "ordered_amount_company": ordered, "billed_amount_company": billed,
                 "pending_amount_company": 0.0 if need.closed or need.state == "billed" else max(reference - billed, 0.0),
                 "variance_company": variance, "cost_unknown": unknown,
-                "variance_to_review": not currency.is_zero(variance) and not need.variance_reviewed,
+                "variance_to_review": not currency.is_zero(variance) and not need.variance_reviewed and not fx_only,
             })
 
     # Cost-control fields are decided by purchasing, accounting or a sales manager; the accepted cost is the snapshot
