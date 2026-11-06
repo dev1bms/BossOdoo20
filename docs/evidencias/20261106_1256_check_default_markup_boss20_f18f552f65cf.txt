@@ -1,0 +1,44 @@
+# Evidence: dev/check_default_markup.py on boss20
+# Date: 2026-11-06 12:56    
+# Commit tested: f18f552f65cf (chore(dev): the production clean-up takes every posted document, payment, file and quotation of boss)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.9 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:56:35,092 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:56:35,153 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:56:35,985 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 off: no global rule
+CHECK PASS 1 setting reads 0 while off
+CHECK PASS 1 one global rule created
+CHECK PASS 1 the rule is on the pricelist a new customer gets
+CHECK PASS 1 rule: cost + 20 % (surcharge, stored as a negative discount)
+CHECK PASS 1 setting reads 20 afterwards
+CHECK PASS 1 changing the percentage updates the same rule
+CHECK PASS 2 quotation on the default pricelist
+CHECK PASS 2 GLO-CCC: cost from the MSC tariff -> sale = cost + 20 %
+CHECK PASS 2 GLO-CCC explanation names the pricelist rule
+CHECK PASS 2 THC takes the agreed price of the general pricelist, not cost + 20 %
+CHECK PASS 2 FMI: no cost -> no sale price (never built on zero), missing
+CHECK PASS 2 the quotation still says what is missing
+CHECK PASS 3 FMI manual cost 1500 -> sale 1800 (price and technical price agree)
+CHECK PASS 3 typed sale price -> manual
+CHECK PASS 3 cost changed: the typed price is kept
+CHECK PASS 3 explicit re-pricing keeps the typed THC price
+CHECK PASS 4 agreed price from the customer's own pricelist, not cost + 20 %
+CHECK PASS 5 non-BOSS product: list price 10
+      services with the explicit flag «Paid on behalf»: ['ARA', 'DUM', 'IVA', 'PLA']
+CHECK PASS 5b the services re-invoiced at cost are the ones with the explicit flag (not a list of codes)
+CHECK PASS 5b duties (ARA) with no amount yet: no price proposed (never 0 taken as a price)
+CHECK PASS 5b duties 500 paid -> sale 500, without margin, shown as an estimate
+CHECK PASS 5b with a reference typed: shown as typed and unverified (no longer «estimate», never «documented»)
+CHECK PASS 5b GLO-CCC on the same quotation keeps cost + 20 %
+CHECK PASS 5b a selling price typed by a person is kept
+CHECK PASS 5b a price agreed in the pricelist for the service is kept (only the cost + % default changes)
+CHECK PASS 6 S00009: frozen prices unchanged
+CHECK PASS 7 off: no rule
+CHECK PASS 7 setting reads 0
+CHECK PASS 7 off: GLO-CCC cost known but no sale price proposed
+RESULT 30 passed, 0 failed
+# Exit status: 0

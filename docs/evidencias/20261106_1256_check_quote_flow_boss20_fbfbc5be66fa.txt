@@ -1,0 +1,56 @@
+# Evidence: dev/check_quote_flow.py on boss20
+# Date: 2026-11-06 12:56    
+# Commit tested: fbfbc5be66fa (docs: evidence of check_file_e2e 90/0 with the late-cost and exchange-rate rules)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.9 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:56:13,881 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:56:13,943 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:56:14,770 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 1 orderer of a BOSS import is proposed as consignee
+CHECK PASS 1 shipper stays empty (it is the foreign supplier of the customer)
+CHECK PASS 1 quantities with 1x40': per container 1, per shipment 1
+CHECK PASS 1 containers entered after the template: per-container lines take the 40' DV
+CHECK PASS 1 size-dependent price (T3-PAD 40') found
+CHECK PASS 1 containers persisted 2x40'
+CHECK PASS 1 quantities with 2x40': per container 2, per shipment 1
+CHECK PASS 1 THC cost = 2 x the MSC tariff (buying), sale typed separately
+CHECK PASS 1 THC cost source auditable
+CHECK PASS 1 freight (FMI) is a manual amount when no rate exists
+CHECK PASS 6 BOSS own fee: no supplier, cost ok 0
+CHECK PASS 7 WFS on an ocean freight: warning
+CHECK PASS 7 WFS on an ocean freight: still a manual amount (no rate of WFS)
+CHECK PASS 5 wizard pre-filled: MSC, ESVLC, Ningbo abroad, valid one week
+CHECK PASS 5 tariff with the route and validity, approved on entry
+CHECK PASS 5 priced at once: the freight comes from the rate, 2 x 1500
+CHECK PASS 5 source names the rate and its week
+CHECK PASS 5 another origin port (Qingdao) is not priced by the Ningbo rate
+CHECK PASS 5 departure outside the week: manual again
+   sale prices missing before typing: ['TTE-FCL']
+   cost gate before reasons: none
+CHECK PASS 8 the cost gate names the services without a known cost
+   still unknown: []
+CHECK PASS 8 complete customer and prices: Confirm succeeds
+CHECK PASS 8 accepted and frozen
+CHECK PASS 8 one file opened and linked
+CHECK PASS 8 confirming twice does not open a second file
+CHECK PASS 8 still one file after a second Confirm
+CHECK PASS 8 file receives orderer, consignee, route, containers
+CHECK PASS 8 no purchase order created by the acceptance
+CHECK PASS 8 no invoice created by the acceptance
+CHECK PASS 8 costs to buy carried into the file: THC from MSC (2 x its tariff), FMI 3000
+CHECK PASS 9 accepted quotation keeps its costs after a new rate
+CHECK PASS 9 accepted quotation keeps its cost after the rate is archived
+CHECK PASS 9 accepted quotation still names its source
+CHECK PASS 8b contact without country: one message naming the cause
+CHECK PASS 8b the message is short (grouped by cause, not one line per service)
+   message: S01994 is not ready to send or accept. |  | Sale price missing on 5 services: FMI, THC, GLO-CCC, T3-PAD, TTE-FCL. Type it on the line or set it in the customer's pricelist. |  | VAT pending on 8 services because the customer «[PRUEBA] contacto sin país» has no country: set the country (and tax ID) on the contact, then the VAT follows.
+CHECK PASS 8b pricing alert says why VAT is pending
+CHECK PASS 2 orderer of a BOSS export is proposed as shipper
+CHECK PASS 2 consignee stays empty
+CHECK PASS 3 agent business: consignee not copied from the agent
+CHECK PASS 3 traffic code IMA, orderer = agent, parties kept
+RESULT 39 passed, 0 failed
+# Exit status: 0

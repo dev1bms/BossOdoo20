@@ -1,0 +1,26 @@
+# Evidence: dev/check_margin_rules.py on boss20
+# Date: 2026-11-06 12:59    
+# Commit tested: 6e0ae19a1930 (chore(dev): the clean-up cancels files with their own button and lists what it refuses)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.9 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:59:33,443 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:59:33,504 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:59:34,331 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 loaded from Odoo 17: 4 groups, 4 policies, 13 rules, 16 exceptions: expected (4, 4, 13, 16) got (4, 4, 13, 16)
+CHECK PASS 1 sea FCL, BOSS customer, 1×20' + 1×40': freight minimum = 100 + 150 per container (above 10 %): expected (250.0, True) got (250.0, True)
+CHECK PASS 2 ... with 250 of margin, no warning: expected False got False
+CHECK PASS 3 agent business: 25 per container (above 1.5 %), 50 of margin is fine: expected (50.0, False) got (50.0, False)
+CHECK PASS 4 air, BOSS customer, 400 kg: max(50, 0.30 × 400) = 120 (above 10 %): expected (120.0, True) got (120.0, True)
+CHECK PASS 5 road: 10 % of the cost, at most 200 per container: expected (200.0, True) got (200.0, True)
+CHECK PASS 6 a customer exception of Odoo 17 replaces the rule for that customer (its own % of the cost): expected (True, True) got (True, True)
+CHECK PASS 7 «no margin» service at a loss is flagged (no tolerance), as in Odoo 17: expected True got True
+CHECK PASS 8 «may lose» service (profit share): no warning: expected False got False
+CHECK PASS 9 duties paid on behalf re-invoiced differently: flagged: expected True got True
+CHECK PASS 10 a service outside every group: 10 % of its cost, within 10 of tolerance: expected (10.0, False) got (10.0, False)
+CHECK PASS 11 the quotation warns with the rule (150 per 40', not 10 %): expected (True, True) got (True, True)
+      alert: Flete: margin 100.00 €, minimum 150.00 €
+RESULT 12 passed, 0 failed
+# Exit status: 0

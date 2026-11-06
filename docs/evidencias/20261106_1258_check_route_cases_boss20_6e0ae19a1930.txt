@@ -1,0 +1,66 @@
+# Evidence: dev/check_route_cases.py on boss20
+# Date: 2026-11-06 12:58    
+# Commit tested: 6e0ae19a1930 (chore(dev): the clean-up cancels files with their own button and lists what it refuses)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.9 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:58:59,521 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:58:59,585 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:59:00,410 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS ports abroad loaded (Shanghai, Tunis, Ningbo)
+CHECK PASS E1 template fills the case
+CHECK PASS E1 template fills what BOSS handles
+CHECK PASS E1 Spanish side is Spain (destination of an import)
+CHECK PASS E1 traffic code
+CHECK PASS E1 Spanish port = destination port
+CHECK PASS E1 country abroad = origin country
+CHECK PASS E1 province from the delivery address
+CHECK PASS E1 destination place from the address
+CHECK PASS E1 tariff date = ETA (import)
+CHECK PASS E1 storage estimate 0 days, indicated
+CHECK PASS E1 costs equal to the same inputs typed directly
+CHECK PASS E1 MSC THC priced from the route (ESVLC, China)
+CHECK PASS E2 Spanish side is Spain (origin of an export)
+CHECK PASS E2 the side abroad cannot be Spain
+CHECK PASS E2 traffic code
+CHECK PASS E2 Spanish port = origin port
+CHECK PASS E2 country abroad = destination country
+CHECK PASS E2 province from the pickup address
+CHECK PASS E2 tariff date = ETD (export)
+CHECK PASS E3 traffic code
+CHECK PASS E3 volume weight 4 m3 x 167
+CHECK PASS E3 chargeable weight = higher
+CHECK PASS E3 pricing AWB weight = estimate
+CHECK PASS E3 HAN quantity on the chargeable weight
+CHECK PASS E3 WFS HAN import on 668 kg (simulated, tariff waiting approval) = 668 x 0.05
+CHECK PASS E3 the AWB weight wins when known
+CHECK PASS E3 dense cargo: chargeable = gross
+CHECK PASS E4 traffic code of an agent's client
+CHECK PASS E5 file route
+CHECK PASS E5 file dates
+CHECK PASS E5 file pricing inputs
+CHECK PASS E5 file: changing the destination port changes the Spanish port
+CHECK PASS E6 opportunity traffic and pricing inputs
+CHECK PASS E6 quotation from the opportunity
+CHECK PASS E8 cross-trade: no country proposed
+CHECK PASS E8 traffic code
+CHECK PASS E8 sides kept as typed (CN -> NL)
+CHECK PASS E8 no Spanish port, no country abroad for tariffs
+CHECK PASS E8 no port abroad for tariffs either
+CHECK PASS E8 key date = ETD, never an unloading date
+CHECK PASS E8 VAT from the route: China (TER) -> Netherlands (COM) is an NR pair, Spanish customer -> NR
+CHECK PASS E8 orderer not proposed as a party of a cross-trade
+CHECK PASS E9 national: both sides proposed as Spain
+CHECK PASS E9 traffic code
+CHECK PASS E9 no country abroad; no Spanish port without ports
+CHECK PASS E9 province from the delivery address
+CHECK PASS E9 key date = ETD
+CHECK PASS E9 road chargeable weight 2 m3 x 333 = 666 > 500
+CHECK PASS E9 VAT from the route: PRO -> PRO, Spanish customer -> NR
+CHECK PASS E9 file: national, ETD as key date, province, no country abroad
+CHECK PASS E9 file pricing inputs: no port abroad
+CHECK PASS E7 S01968: frozen costs unchanged after a route edit
+RESULT 53 passed, 0 failed
+# Exit status: 0
