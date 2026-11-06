@@ -1,0 +1,29 @@
+# Evidence: dev/check_export_data.py on boss20
+# Date: 2026-11-06 17:31    
+# Commit tested: a27813f5c251 (fix(expediente): a file split from another keeps the route (origin and destination ports and countri)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.14 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 16:32:07,066 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 16:32:07,127 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 16:32:07,952 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 the customer's customs mode is stored on the contact: expected 'customer' got 'customer'
+CHECK PASS 1 the file keeps booking, cargo-ready and the four sea cut-offs: expected (datetime.date(2026, 11, 20), datetime.date(2026, 12, 10), datetime.date(2026, 12, 11), datetime.date(2026, 12, 14), datetime.date(2026, 12, 15), datetime.date(2026, 12, 16)) got (datetime.date(2026, 11, 20), datetime.date(2026, 12, 10), datetime.date(2026, 12, 11), datetime.date(2026, 12, 14), datetime.date(2026, 12, 15), datetime.date(2026, 12, 16))
+CHECK PASS 1 a travelling file is not «customs only»: expected False got False
+CHECK PASS 2 two working days before the documents cut-off: one activity to the operator: expected (1, 668) got (1, 668)
+CHECK PASS 2 the activity names the cut-off and its date: expected True got True
+CHECK PASS 2 the same day again gives nothing new on this file: expected 1 got 1
+CHECK PASS 2 on the cut-off day (Fri 11): «today» for the documents cut-off, first alerts of SI (Mon 14 - 2 wd = Thu 10) and VGM (Tue 15 - 2 wd = Fri 11): expected 4 got 4
+      activities so far: ['Documents cut-off on 11/12/2026', 'Documents cut-off today (11/12/2026)', 'SI cut-off on 14/12/2026', 'VGM cut-off on 15/12/2026']
+      activities after departure: ['Documents cut-off on 11/12/2026', 'Documents cut-off today (11/12/2026)', 'SI cut-off on 14/12/2026', 'VGM cut-off on 15/12/2026'] atd 2026-12-18 00:00:00
+CHECK PASS 2 once departed, no more cut-off alerts on this file: expected 4 got 4
+CHECK PASS 3 the customs mode of the customer reaches the file values of its quotation: expected 'customer' got 'customer'
+CHECK PASS 4 a file with only a customs scope is «customs only»: expected True got True
+CHECK PASS 4 it needs nothing to be put in transit (no booking, master B/L, containers): expected [] got []
+CHECK PASS 4 to be delivered it needs the customs release, not the arrival or the discharge: expected ['customs release (levante)'] got ['customs release (levante)']
+CHECK PASS 4 with the release it can be delivered: expected [] got []
+CHECK PASS 5 when the customer's own broker clears, the customs release is not required of BOSS (the rest of the import conditions still are): expected (False, True) got (False, True)
+RESULT 14 passed, 0 failed
+# Exit status: 0

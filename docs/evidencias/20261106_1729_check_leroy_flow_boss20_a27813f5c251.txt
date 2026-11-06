@@ -1,0 +1,51 @@
+# Evidence: dev/check_leroy_flow.py on boss20
+# Date: 2026-11-06 17:30    
+# Commit tested: a27813f5c251 (fix(expediente): a file split from another keeps the route (origin and destination ports and countri)
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.14 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.1 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 16:30:11,403 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 16:30:11,466 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 16:30:12,295 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 the customer is a periodic-invoice customer with two delivery warehouses (F0-C59): expected ('grouped', 2) got ('grouped', 2)
+      FMI      qty 3 sale  1000.00 cost manual vat ok
+      THC      qty 3 sale   150.00 cost on_request vat ok
+      FAD      qty 3 sale   120.00 cost on_request vat ok
+      TTE-FCL  qty 3 sale   200.00 cost on_request vat ok
+CHECK PASS 1 the contract quotation holds three shipments: every service x3, 3 containers: expected ([3.0, 3.0, 3.0, 3.0], 3) got ([3.0, 3.0, 3.0, 3.0], 3)
+CHECK PASS 1 accepted: one file with the whole agreement, the three containers and the first warehouse: expected ('IMB', [3.0, 3.0, 3.0, 3.0], 3, 28819) got ('IMB', [3.0, 3.0, 3.0, 3.0], 3, 28819)
+      refused: [FMI] Ocean freight import (FCL, per container): only 3.0 in E269100.
+CHECK PASS 2 moving more than the file holds is refused: expected 'refused' got 'refused'
+CHECK PASS 2 three files of the same customer, each with one shipment of every service (quantities moved, never duplicated): expected [(1.0, 1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0)] got [(1.0, 1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0)]
+CHECK PASS 2 the accepted totals are unchanged on the quotation: expected [3.0, 3.0, 3.0, 3.0] got [3.0, 3.0, 3.0, 3.0]
+CHECK PASS 2 each file sells one third of the agreement: expected [1470.0, 1470.0, 1470.0] got [1470.0, 1470.0, 1470.0]
+CHECK PASS 2 each file has its own warehouse and container: expected [(28819, 1), (28820, 1), (28819, 1)] got [(28819, 1), (28820, 1), (28819, 1)]
+CHECK PASS 2 each file buys its own shipment: 4 needs of quantity 1: expected [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]] got [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
+      next step of the second shipment: type_cost · 3 services
+CHECK PASS 3 RFQs of the first shipment only: carrier, customs broker, haulier: expected {28824, 28822, 28823} got {28824, 28822, 28823}
+CHECK PASS 3 the other shipments have nothing ordered: expected [0, 0] got [0, 0]
+CHECK PASS 3 the first shipment is delivered at its warehouse: expected ('delivered', 28819) got ('delivered', 28819)
+      refused: Files invoiced together must belong to one customer: [PRUEBA] Leroy Merlin España (cliente periódico), [PRUEBA] Otro cliente.
+CHECK PASS 4 files of different customers cannot be invoiced together: expected 'refused' got 'refused'
+CHECK PASS 4 «Invoice files together» is an action of the list of files: expected True got True
+CHECK PASS 4 one invoice to the customer with the 12 services of the three files and a section per file: expected (28818, 12, 3) got (28818, 12, 3)
+CHECK PASS 4 the sections name each file, its customer reference, route and container: expected (['E269100', 'E269102', 'E269103'], [True, True, True]) got (['E269100', 'E269102', 'E269103'], [True, True, True])
+      sections: ['E269100 · [PRUEBA] LM-2026-11 · Shanghái → Valencia · [PRUEBA] MBL-LM-1 · 1 × 40DV', 'E269102 · [PRUEBA] LM-2026-11 · Shanghái → Valencia · 1 × 40DV', 'E269103 · [PRUEBA] LM-2026-11 · Shanghái → Valencia · 1 × 40DV']
+CHECK PASS 4 every line carries its file and its file's analytic account, with the quantity of that file: expected {(2428, 4, True), (2431, 4, True), (2430, 4, True)} got {(2428, 4, True), (2431, 4, True), (2430, 4, True)}
+CHECK PASS 4 the lines of each file follow its section: expected True got True
+CHECK PASS 4 nothing left to invoice on the three files (the draft counts); the invoice is on each of them: expected ([0.0, 0.0, 0.0], [True, True, True]) got ([0.0, 0.0, 0.0], [True, True, True])
+CHECK PASS 4 a mixed invoice prints no shipment block of its own (ADR-011: the sections identify the files): expected 0 got 0
+CHECK PASS 4 the grouped invoice is posted: expected 'posted' got 'posted'
+CHECK PASS 4 once posted, the three files show nothing to invoice: expected [0.0, 0.0, 0.0] got [0.0, 0.0, 0.0]
+      refused: Nothing to invoice in E269100, E269102, E269103.
+CHECK PASS 4 invoicing again finds nothing: expected 'refused' got 'refused'
+CHECK PASS 5 every need of the first shipment is billed: expected ['billed', 'billed', 'billed', 'billed'] got ['billed', 'billed', 'billed', 'billed']
+CHECK PASS 5 operations of the first shipment closed: expected 'closed' got 'closed'
+CHECK PASS 5 nothing left to review on it: expected False got False
+CHECK PASS 5 the first Leroy file is closed financially (acceptance criterion of P4-10): expected True got True
+CHECK PASS 5 «Margin by file» keeps its final margin: one third of the agreement less its own costs: expected (1, 340.0) got (1, 340.0)
+CHECK PASS 5 the other two shipments stay open, invoiced, with their services still to buy: expected [('open', 0.0, 4), ('open', 0.0, 4)] got [('open', 0.0, 4), ('open', 0.0, 4)]
+RESULT 29 passed, 0 failed
+# Exit status: 0
