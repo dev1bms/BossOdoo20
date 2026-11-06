@@ -113,14 +113,15 @@ quote = env["sale.order"].with_context(ctx).create({"partner_id": importer.id, "
     Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id}),
     Command.create({"product_id": product("DEM").id, "product_uom_id": product("DEM").uom_id.id}),
 ]})
-# bought services without a tariff: the supplier and the agreed cost are typed on the line (as the e2e does), then the price
-line_of(quote, "FAD").write({"boss_supplier_id": broker.id, "boss_manual_cost": 80.0,
-                             "boss_manual_cost_note": "[PRUEBA] despacho pactado con el agente de aduanas"})
-line_of(quote, "DEM").write({"boss_supplier_id": carrier.id, "boss_manual_cost": 100.0,
-                             "boss_manual_cost_note": "[PRUEBA] demoras según la naviera"})
-quote.action_boss_update_costs()  # the engine takes the typed costs (as the e2e does before accepting)
+# bought services whose supplier has no tariff document yet (F0-C06): asked to the supplier case by case, the cost is
+# typed on the file's need when known; the sale price is typed on the line
+line_of(quote, "FAD").write({"boss_supplier_id": broker.id, "boss_cost_on_request": True})
+line_of(quote, "DEM").write({"boss_supplier_id": carrier.id, "boss_cost_on_request": True})
+quote.action_boss_update_costs()
 for l in quote.order_line:
     print(f"      {l.product_id.default_code:9} cost {l.boss_cost_status} {l.boss_cost_amount:.2f}")
+check("2 services asked to the supplier case by case can be accepted (cost typed in the file later)", ["on_request"] * 2,
+      quote.order_line.mapped("boss_cost_status"))
 line_of(quote, "FAD").price_unit = 120.0
 line_of(quote, "DEM").price_unit = 150.0
 check("2 the consignee's quotation is linked to the file, in EUR", (file.id, "EUR"), (quote.boss_expediente_id.id, quote.currency_id.name))
@@ -165,6 +166,8 @@ env["boss.expediente.cost"].create({
     "expediente_id": file.id, "kind": "extra", "product_id": pft_cost.id, "partner_id": agent.id, "currency_id": usd.id,
     "uom_id": pft_cost.uom_id.id, "quantity": 1.0, "expected_unit_cost": 300.0, "extra_class": "covered",
     "reason": "[PRUEBA] profit share pactado con el agente de origen: coste del expediente, nunca se vende (P12)"})
+for code, cost in (("FAD", 80.0), ("DEM", 100.0)):  # the costs asked case by case, now known, typed on the needs
+    file.cost_ids.filtered(lambda n, c=code: n.product_id.default_code == c).write({"expected_unit_cost": cost})
 file.action_create_rfqs()
 pos = file.purchase_order_ids
 check("5 RFQs of the file: the customs broker and the carrier in EUR, the origin agent in USD",
