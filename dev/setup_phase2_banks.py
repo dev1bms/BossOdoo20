@@ -29,6 +29,8 @@ for raw in open("/tmp/boss/banks-o17.txt", encoding="utf-8"):
                                   "bank_bic": bic})
     if journal.bank_account_id != acc:
         journal.write({"bank_account_id": acc.id})
+    if not acc.allow_out_payment:  # the company's own accounts are trusted: Odoo refuses to post invoices otherwise
+        acc.sudo().write({"allow_out_payment": True})
     done += 1
     print(f"OUT journal {code} «{journal.name}» -> account ending …{iban[-4:]} ({bank_name})")
 env.cr.commit()  # noqa: F821

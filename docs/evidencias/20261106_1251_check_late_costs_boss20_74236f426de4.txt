@@ -1,0 +1,24 @@
+# Evidence: dev/check_late_costs.py on boss20
+# Date: 2026-11-06 12:51    
+# Commit tested: 74236f426de4 (feat(expediente): go-live tracker P3-10: a late vendor bill without service line creates the file's )
+# Installed on boss20: boss_documents 20.0.1.4.0 boss_expediente 20.0.1.28.9 boss_portal 20.0.1.0.11 boss_pricing 20.0.1.13.5 boss_pricing_sale 20.0.1.22.11 boss_services 20.0.1.6.0 boss_web 20.0.1.1.0 
+
+ Container bossodoo20-db-1 Running 
+ Container bossodoo20-db-1 Waiting 
+ Container bossodoo20-db-1 Healthy 
+2026-11-06 11:52:03,104 1 WARNING boss20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-11-06 11:52:03,165 1 WARNING boss20 odoo.addons.ai.utils.custom_markdown: The library 'markdown2' is missing, cannot render markdown elements.
+2026-11-06 11:52:04,007 1 WARNING boss20 odoo.addons.documents.controllers.documents: markdown2 is not installed, markdown won't be rendered
+CHECK PASS 0 the file has its analytic account: expected True got True
+CHECK PASS 1 a late bill without service line creates one extra cost on the file: expected 1 got 1
+CHECK PASS 1 the extra cost is «to approve», billed without order, by the bill's supplier: expected ('approval', True, 'billed', 28659) got ('approval', True, 'billed', 28659)
+CHECK PASS 1 its billed amount is the bill's: expected 120.0 got 120.0
+CHECK PASS 1 the file's «to do» asks for the decision: expected True got True
+      refused: UserError: Draft Bill ([PRUEBA] DEM-TARDE-1) cannot be posted:
+- supplier reference «[PRUEBA] DEM-TARDE-1» already registered on FACTURA/2026/12/0001: an accounting manager confirms
+CHECK PASS 2 billing cannot post a bill with a supplier reference already registered: expected 'refused' got 'refused'
+CHECK PASS 2 an accounting manager can (confirms it is not a duplicate): expected 'allowed' got 'allowed'
+CHECK PASS 2 the second bill feeds the same extra cost (no second line): expected 1 got 1
+CHECK PASS 3 the decision «borne by BOSS» is written by accounting: expected 'absorb' got 'absorb'
+RESULT 9 passed, 0 failed
+# Exit status: 0
