@@ -58,13 +58,13 @@ check("2 the activity names the cut-off and its date", True, "Documents cut-off"
 File._boss_cron_cutoff_alerts(today=date(2026, 12, 9))
 check("2 the same day again gives nothing new on this file", before + 1, len(file.activity_ids))
 File._boss_cron_cutoff_alerts(today=date(2026, 12, 11))
-check("2 on the cut-off day: the «today» activity for the documents cut-off, and the first alert of SI (Mon 14 - 2 wd = Thu 10 < 11)",
-      before + 3, len(file.activity_ids))
+check("2 on the cut-off day (Fri 11): «today» for the documents cut-off, first alerts of SI (Mon 14 - 2 wd = Thu 10) and VGM (Tue 15 - 2 wd = Fri 11)",
+      before + 4, len(file.activity_ids))
 print("      activities so far:", [a.summary for a in file.activity_ids.sorted("id")])
 file.write({"atd": date(2026, 12, 18)})
 File._boss_cron_cutoff_alerts(today=date(2026, 12, 16))
 print("      activities after departure:", [a.summary for a in file.activity_ids.sorted("id")], "atd", file.atd)
-check("2 once departed, no more cut-off alerts on this file", before + 3, len(file.activity_ids))
+check("2 once departed, no more cut-off alerts on this file", before + 4, len(file.activity_ids))
 # --- customs mode copied from the customer when a file opens from a quotation ---
 order = env["sale.order"].create({"partner_id": customer.id})
 check("3 the customs mode of the customer reaches the file values of its quotation", "customer",
