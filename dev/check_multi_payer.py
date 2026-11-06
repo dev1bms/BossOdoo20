@@ -56,6 +56,8 @@ importer = Partner.create({"name": "[PRUEBA] Importador Madrid (segundo pagador)
                            "state_id": state_m.id})
 broker = Partner.create({"name": "[PRUEBA] Agente de aduanas pagadores", "is_company": True,
                          "country_id": ref("base.es").id, "city": "Valencia"})
+carrier = Partner.create({"name": "[PRUEBA] Naviera pagadores", "is_company": True, "country_id": ref("base.es").id,
+                          "city": "Valencia"})
 stranger = Partner.create({"name": "[PRUEBA] Tercero ajeno al expediente", "is_company": True,
                            "country_id": ref("base.es").id})
 purchase_0 = env["account.tax"].search([("type_tax_use", "=", "purchase"), ("amount", "=", 0),
@@ -108,11 +110,14 @@ check("2 the new quotation opens for the consignee, linked to the file, with the
       (ctx.get("default_partner_id"), ctx.get("default_boss_expediente_id"),
        ctx.get("default_boss_origin_port_id") == port("CNSHA", "sea").id, ctx.get("default_boss_business")))
 quote = env["sale.order"].with_context(ctx).create({"partner_id": importer.id, "order_line": [
-    Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id,
-                    "boss_supplier_id": broker.id, "boss_manual_cost": 80.0,
-                    "boss_manual_cost_note": "[PRUEBA] despacho pactado con el agente de aduanas"}),
+    Command.create({"product_id": product("FAD").id, "product_uom_id": product("FAD").uom_id.id}),
     Command.create({"product_id": product("DEM").id, "product_uom_id": product("DEM").uom_id.id}),
 ]})
+# bought services without a tariff: the supplier and the agreed cost are typed on the line (as the e2e does), then the price
+line_of(quote, "FAD").write({"boss_supplier_id": broker.id, "boss_manual_cost": 80.0,
+                             "boss_manual_cost_note": "[PRUEBA] despacho pactado con el agente de aduanas"})
+line_of(quote, "DEM").write({"boss_supplier_id": carrier.id, "boss_manual_cost": 100.0,
+                             "boss_manual_cost_note": "[PRUEBA] demoras según la naviera"})
 line_of(quote, "FAD").price_unit = 120.0
 line_of(quote, "DEM").price_unit = 150.0
 check("2 the consignee's quotation is linked to the file, in EUR", (file.id, "EUR"), (quote.boss_expediente_id.id, quote.currency_id.name))
@@ -159,8 +164,8 @@ env["boss.expediente.cost"].create({
     "reason": "[PRUEBA] profit share pactado con el agente de origen: coste del expediente, nunca se vende (P12)"})
 file.action_create_rfqs()
 pos = file.purchase_order_ids
-check("5 RFQs of the file: the customs broker in EUR and the origin agent in USD", {(broker.id, "EUR"), (agent.id, "USD")},
-      {(p.partner_id.id, p.currency_id.name) for p in pos})
+check("5 RFQs of the file: the customs broker and the carrier in EUR, the origin agent in USD",
+      {(broker.id, "EUR"), (carrier.id, "EUR"), (agent.id, "USD")}, {(p.partner_id.id, p.currency_id.name) for p in pos})
 for po in pos:
     po.partner_ref = f"[PRUEBA] conf. {po.currency_id.name}"
     po.button_confirm()
